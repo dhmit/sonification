@@ -1,1 +1,1 @@
-# Boilerplate project for DH Labs
+# DHMIT Sonification Project (Summer and Fall, 2021)

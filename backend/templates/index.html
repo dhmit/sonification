@@ -1,0 +1,24 @@
+{% load render_bundle from webpack_loader %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8" />
+        <title>{{page_metadata.title}}</title>
+        <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon">
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="theme-color" content="#000000" />
+        {% render_bundle 'index' 'css' %}
+    </head>
+    
+    <body>
+        <noscript>You need to enable JavaScript to run this app.</noscript>
+        <div id="app_root">
+            <p>Loading...</p>
+        </div>
+
+        {{component_props|json_script:"component_props"}}
+        {{component_name|json_script:"component_name"}}
+        {% render_bundle 'index' 'js' %}
+    </body>
+</html>

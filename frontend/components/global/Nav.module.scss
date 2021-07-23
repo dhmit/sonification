@@ -1,0 +1,27 @@
+.nav {
+  align-items: center;
+  border-bottom: 1px solid #f7f7f7;
+  display: flex;
+  justify-content: space-between;
+  padding: 0.5rem;
+}
+
+.linkHome {
+  font-size: 1.25rem;
+  font-weight: bold;
+  text-decoration: none;
+  &:visited {
+    color: black;
+    text-decoration: none;
+  }
+}
+
+.linkLab {
+  max-width: 10rem;
+}
+
+.imageLab {
+  height: auto;
+  max-width: 75vw;
+  width: 10rem;
+}

@@ -1,0 +1,61 @@
+{
+    "parser": "babel-eslint",
+
+    "env": {
+        "browser": true
+    },
+
+    "extends": [
+        "plugin:react/recommended"
+    ],
+
+
+    "plugins": [
+        "react"
+    ],
+
+    "rules": {
+        "arrow-body-style": ["off"],
+        "class-methods-use-this": ["off"],
+        "comma-dangle": ["warn"],
+        "dot-notation": ["off"],
+        "eqeqeq": ["error", "always"],
+        "import/extensions": ["off"],
+        "import/prefer-default-export": ["off"],
+        "indent": ["warn", 4],
+        "linebreak-style": ["off"],
+        "max-classes-per-file": ["off"],
+        "max-len": ["warn", { "code": 100, "ignoreUrls": true }],
+        "no-console": ["off"],
+        "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
+        "no-multiple-empty-lines": ["off"],
+        "no-param-reassign": ["off"],
+        "no-plusplus": ["off"],
+        "no-restricted-syntax": ["off"],
+        "no-unused-vars": ["warn", { "argsIgnorePattern": "^_" }],
+        "no-useless-constructor": ["off"],
+        "object-curly-spacing": ["warn"],
+        "object-shorthand": ["off"],
+        "operator-linebreak": ["warn"],
+        "prefer-destructuring": ["off"],
+        "prefer-template": ["off"],
+        "quote-props": ["error", "consistent"],
+        "quotes": ["warn"],
+        "radix": ["off"],
+        "react/no-unescaped-entities": [ "error", { "forbid": [">", "}"] }],
+        "semi": ["error", "always"]
+    },
+
+    "settings": {
+        "react": {
+            "version": "detect"
+        }
+    },
+
+    "overrides": [
+        {
+            "files": [ "**/*.test.js" ],
+            "env": { "jest": true }
+        }
+    ]
+}

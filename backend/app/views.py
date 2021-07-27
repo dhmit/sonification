@@ -83,3 +83,27 @@ def example_id(request, example_id):
     }
 
     return render(request, 'index.html', context)
+
+def sentimentanalysis(request):
+    """
+    Sentiment Analysis page
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Sentiment Analysis'
+        },
+        'component_name': 'SentimentAnalysis'
+    }
+
+    return render(request, 'index.html', context)
+
+@api_view(['POST'])
+def add_text(request):
+    """
+    API endpoint for adding user text
+    """
+    attributes = request.data
+    user_text = attributes['user_text']
+    sound = "something of a sound object"
+    return Response(sound)

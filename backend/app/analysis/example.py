@@ -31,3 +31,5 @@ def example():
 
     # wait for playback to finish before exiting
     play_obj.wait_done()
+
+example()

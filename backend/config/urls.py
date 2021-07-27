@@ -26,9 +26,11 @@ urlpatterns = [
 
     # API endpoints
     path('api/example/<int:example_id>', views.get_example),
+    path('api/add_text', views.add_text),
 
     # View paths
     path('', views.index, name='index'),
     path('example', views.example, name='example'),
     path('example/<int:example_id>', views.example_id, name='example_id'),
+    path('sentimentanalysis', views.sentimentanalysis, name='Sentiment Analysis')
 ]

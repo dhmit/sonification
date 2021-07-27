@@ -94,7 +94,7 @@ def sentiment_analysis(request):
         'page_metadata': {
             'title': 'Sentiment Analysis'
         },
-        'component_name': 'ExampleId'
+        'component_name': 'SentimentAnalysis'
     }
 
     return render(request, 'index.html', context)

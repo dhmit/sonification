@@ -83,3 +83,18 @@ def example_id(request, example_id):
     }
 
     return render(request, 'index.html', context)
+
+
+def sentiment_analysis(request):
+    """
+    Sentiment Analysis Page
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Sentiment Analysis'
+        },
+        'component_name': 'ExampleId'
+    }
+
+    return render(request, 'index.html', context)

@@ -26,6 +26,7 @@ urlpatterns = [
 
     # API endpoints
     path('api/example/<int:example_id>', views.get_example),
+    path('api/get_sentiment_analysis', views.get_sentiment_analysis),
 
     # View paths
     path('', views.index, name='index'),

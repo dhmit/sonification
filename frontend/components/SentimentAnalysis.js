@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Sound from "react-sound"
 
 const SentimentAnalysis = () => {
 
@@ -22,16 +23,20 @@ const SentimentAnalysis = () => {
                 user_text: text,
             })
         };
-        fetch("api/add_text", requestOptions)
-            .then(response => response.json())
-            .then(data => {
-                setResults(data);
-                setText("");
-            });
+        // fetch("api/add_text", requestOptions)
+        //     .then(response => response.json())
+        //     .then(data => {
+        //         setResults(data);
+        //         setText("");
+        //     });
     };
 
     return (
         <>
+            <script>
+                var audio = new Audio("../../backend/app/analysis/sentiment_analysis.wav");
+                audio.play();
+            </script>
             <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
                     <label htmlFor="text" className="col-2 col-form-label">Text</label>
@@ -41,6 +46,14 @@ const SentimentAnalysis = () => {
                 </div>
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
+            <h3>Play Audio: </h3>
+            <audio
+                controls
+                src="../../backend/app/analysis/sentiment_analysis.wav">
+            </audio>
+            <Sound
+                url={"../../backend/app/analysis/sentiment_analysis.wav"}
+            />
             </>
     );
 };

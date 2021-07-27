@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Sound from "react-sound"
+import Sound from "react-sound";
 
 const SentimentAnalysis = () => {
 

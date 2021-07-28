@@ -3,12 +3,13 @@ import simpleaudio as sa
 import string
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import numpy as np
+import random
 
 
 def analyse_sentiment(text):
     """
     :param text: a string of text
-    :return: analysis of the text
+    :return score: polarity analysis of the text
     """
     # Convert text to lowercase
     lower_case = text.lower()
@@ -16,6 +17,30 @@ def analyse_sentiment(text):
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
     score = SentimentIntensityAnalyzer().polarity_scores(text)
     return score
+
+
+def get_notes(text):
+    """
+    :param text: a string of input text
+    :return notes: a string of notes
+    """
+    notes = ""
+    musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
+    mc_list = list(musical_chars)
+    output_length = 4 if (len(text) > 125) else 2
+
+    lower_case = text.lower()
+    stripped_text = [char for char in lower_case if char in musical_chars]
+
+    if len(stripped_text) == 0:
+        notes = notes.join(random.choices(mc_list, k=output_length))
+    elif len(stripped_text) < output_length:
+        notes = notes.join(random.choices(mc_list, k=output_length-len(stripped_text))) + "".join(stripped_text)
+    else:
+        start = random.randint(0, len(stripped_text)-output_length)
+        notes = notes.join(stripped_text[start:start+output_length])
+
+    return notes
 
 
 def text_to_note(text):

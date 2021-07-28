@@ -5,6 +5,20 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import numpy as np
 import random
 
+musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
+mc_list = list(musical_chars)
+
+# frequencies found from https://pages.mtu.edu/~suits/notefreqs.html
+note_freqs = {
+    'a': 440,
+    'b': 494,
+    'c': 523,
+    'd': 587,
+    'e': 659,
+    'f': 698,
+    'g': 784
+}
+
 
 def analyse_sentiment(text):
     """
@@ -15,7 +29,7 @@ def analyse_sentiment(text):
     lower_case = text.lower()
     # Removing punctuations
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
-    score = SentimentIntensityAnalyzer().polarity_scores(text)
+    score = SentimentIntensityAnalyzer().polarity_scores(cleaned_text)
     return score
 
 
@@ -25,8 +39,6 @@ def get_notes(text):
     :return notes: a string of notes
     """
     notes = ""
-    musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
-    mc_list = list(musical_chars)
     output_length = 4 if (len(text) > 125) else 2
 
     lower_case = text.lower()
@@ -43,10 +55,52 @@ def get_notes(text):
     return notes
 
 
+def get_durations(notes):
+    """
+    :param notes: a list of notes
+    :return output: a list with corresponding durations
+    """
+    output = [random.uniform(0.25, 1.0) for _ in notes]
+    return output
+
+
+def text_to_sound(text):
+    """
+    :param text: a string of text
+    :return output: a sonification of text as a sound object
+    """
+    score = analyse_sentiment(text)
+    notes = get_notes(text)
+    durations = get_durations(notes)
+
+    sample_rate = 44100
+    audio = []
+
+    for index in range(len(notes)):
+        duration = durations[index]
+        note_freq = note_freqs[notes[index]]
+
+        t = np.linspace(0, 1, int(duration * sample_rate), False)
+        audio += np.sin(note_freq * t * 2 * np.pi).tolist()
+
+    # normalize to 16-bit range
+    audio = np.array(audio)
+    audio *= 32767 / np.max(np.abs(audio))
+
+    # convert to 16-bit data
+    audio = audio.astype(np.int16)
+
+    # start playback
+    play_obj = sa.play_buffer(audio, 1, 2, sample_rate)
+
+    # wait for playback to finish before exiting
+    play_obj.wait_done()
+
+
 def text_to_note(text):
     """
     :param text: Takes in a string of text
-    :return: A sound based on how negative or positive the text is.
+    :return : A sound based on how negative or positive the text is.
     """
     score = analyse_sentiment(text)
     print(score)

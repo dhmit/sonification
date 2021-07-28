@@ -4,6 +4,7 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 import numpy as np
 import simpleaudio as sa
 
+
 def text_to_sound(user_text):
     """
     Takes text, runs NLTK's sentiment analyzer, and then returns a sound object
@@ -14,11 +15,11 @@ def text_to_sound(user_text):
 
     all_scores = []
     for each_sentence in all_sentences:
-        all_scores.append(nltk_analyzer.polarity_scores(each_sentence)["compound"]*15)
+        all_scores.append(nltk_analyzer.polarity_scores(each_sentence)["compound"] * 15)
 
     all_frequencies = []
     for each_score in all_scores:
-        frequency = 440*(2**(each_score/12))
+        frequency = 440 * (2 ** (each_score / 12))
         all_frequencies.append(frequency)
 
     sample_rate = 44100
@@ -34,14 +35,14 @@ def text_to_sound(user_text):
     audio = audio.astype(np.int16)
     wave_obj = sa.WaveObject(audio, 1, 2, 44100)
 
-    obj = wave.open("sentiment_analysis.wav", 'w')
-    obj.setnchannels(1)
-    obj.setframerate(sample_rate)
-    obj.setsampwidth(2)
-    obj.writeframes(audio)
-    obj.close()
+    # obj = wave.open("sentiment_analysis.wav", 'w')
+    # obj.setnchannels(1)
+    # obj.setframerate(sample_rate)
+    # obj.setsampwidth(2)
+    # obj.writeframes(audio)
+    # obj.close()
 
     return wave_obj
 
-text_to_sound("This is awesome. This is good. This is bad. This is an atom.")
 
+text_to_sound("This is awesome. This is good. This is bad. This is an atom.")

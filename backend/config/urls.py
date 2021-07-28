@@ -17,8 +17,8 @@ Including another URL configuration
 from django.contrib import admin
 from django.urls import path
 
-from ..app import views
-
+# from ..app import views
+from backend.app import views
 
 urlpatterns = [
     # Django admin page

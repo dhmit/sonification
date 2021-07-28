@@ -2,6 +2,7 @@ import nltk
 import simpleaudio as sa
 import string
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
+from nltk.tokenize import sent_tokenize
 import numpy as np
 import random
 
@@ -57,7 +58,7 @@ def get_notes(text):
     :return notes: a string of notes
     """
     notes = ""
-    output_length = 4 if (len(text) > 125) else 2
+    output_length = 4 if (len(text) > 30) else 2
 
     lower_case = text.lower()
     stripped_text = [char for char in lower_case if char in musical_chars]
@@ -119,32 +120,7 @@ def text_to_sound(text):
     play_obj.wait_done()
 
 
-def text_to_note(text):
-    """
-    :param text: Takes in a string of text
-    :return : A sound based on how negative or positive the text is.
-    """
-    score = analyse_sentiment(text)
-    print(score)
-    Note_freq = 400 + (score["pos"] - score["neg"]) * 350 * (1 + score["neu"])
-
-    # get timesteps for the sample, T is note duration in seconds
-    sample_rate = 44100
-    T = 1
-    t = np.linspace(0, T, T * sample_rate, False)
-
-    # generate sine wave notes
-    Note = np.sin(Note_freq * t * 2 * np.pi)
-
-    # concatenate notes
-    audio = Note
-    # normalize to 16-bit range
-    audio *= 32767 / np.max(np.abs(audio))
-    # convert to 16-bit data
-    audio = audio.astype(np.int16)
-
-    # start playback
-    play_obj = sa.play_buffer(audio, 1, 2, sample_rate)
-
-    # wait for playback to finish before exiting
-    play_obj.wait_done()
+def sentence_to_sound(text):
+    sentences = sent_tokenize(text)
+    for sentence in sentences:
+        text_to_sound(sentence)

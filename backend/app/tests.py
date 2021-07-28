@@ -34,9 +34,9 @@ class SentimentAnalysisAPITests(APITestCase):
 
     def test_HttpResponse(self):
         response = self.client.get('/api/get_sentiment_analysis/testing')
+        result = response.json()
         expected_samplerate, expected_data = wavfile.read('app/example.wav')
-        result_data, result_samplerate = soundfile.read(io.BytesIO(response.content), dtype='int16')
-        self.assertEqual(expected_samplerate, result_samplerate)
-        self.assertEqual(expected_data.tolist(), result_data.tolist())
+        self.assertEqual(expected_samplerate, result['rate'])
+        self.assertEqual(expected_data.tolist(), result['data'])
 
 

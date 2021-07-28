@@ -25,6 +25,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 from django.http import HttpResponse
+import io
+import soundfile
 
 
 @api_view(['GET'])
@@ -109,7 +111,9 @@ def get_sentiment_analysis(request, text):
     TODO: write function to generate audio file based on text
     """
     audio_file = open('app/example.wav', 'rb')
-    response = HttpResponse()
-    response.write(audio_file.read())
-    response['Content-Type'] = 'audio/wav'
-    return response
+    data, samplerate = soundfile.read(io.BytesIO(audio_file.read()), dtype='int16')
+    res = {
+        'data': data.tolist(),
+        'rate': samplerate
+    }
+    return Response(res)

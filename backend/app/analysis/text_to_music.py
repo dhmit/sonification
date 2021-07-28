@@ -18,6 +18,9 @@ note_freqs = {
     'f': 349,
     'g': 392
 }
+dissonant_ratios = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
+neutral_ratios = [(3, 4), (3, 5), (4, 5)]
+consonant_ratios = [(1, 2), (2, 3)]
 
 
 def analyse_sentiment(text):
@@ -31,6 +34,21 @@ def analyse_sentiment(text):
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
     score = SentimentIntensityAnalyzer().polarity_scores(cleaned_text)
     return score
+
+
+def get_other_freq(score, current_freq):
+    if score['neu'] > score['pos'] and score['neu'] > score['neg']:
+        ratios = neutral_ratios
+    elif score['pos'] > score['neg']:
+        ratios = consonant_ratios
+    else:
+        ratios = dissonant_ratios
+
+    ratio = random.choices(ratios)[0]
+    print(ratio)
+    if random.random() > 0.5:
+        return current_freq*ratio[0]/(ratio[1])
+    return current_freq*ratio[1]/(ratio[0])
 
 
 def get_notes(text):
@@ -60,7 +78,7 @@ def get_durations(notes):
     :param notes: a list of notes
     :return output: a list with corresponding durations
     """
-    output = [random.uniform(0.25, 1.0) for _ in notes]
+    output = [random.uniform(0.3, 0.7) for _ in notes]
     return output
 
 
@@ -79,9 +97,13 @@ def text_to_sound(text):
     for index in range(len(notes)):
         duration = durations[index]
         note_freq = note_freqs[notes[index]]
+        other_freq = get_other_freq(score, note_freq)
 
-        t = np.linspace(0, duration, int(duration * sample_rate), False)
-        audio += np.sin(note_freq * t * 2 * np.pi).tolist()
+        time_steps = np.linspace(0, duration, int(duration * sample_rate), False)
+        louder_note = np.sin(note_freq * time_steps * 2 * np.pi).tolist()
+        quieter_note = np.sin(other_freq * time_steps * 2 * np.pi).tolist()
+
+        audio += [louder_note[ind] + 0.75*quieter_note[ind] for ind in range(len(time_steps))]
 
     # normalize to 16-bit range
     audio = np.array(audio)

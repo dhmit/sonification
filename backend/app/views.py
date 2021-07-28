@@ -25,7 +25,6 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 
-
 @api_view(['GET'])
 def get_example(request, example_id):
     """

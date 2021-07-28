@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import Sound from "react-sound";
+import {getCookie} from "../common";
 
 const SentimentAnalysis = () => {
 
@@ -23,12 +24,12 @@ const SentimentAnalysis = () => {
                 user_text: text,
             })
         };
-        // fetch("api/add_text", requestOptions)
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         setResults(data);
-        //         setText("");
-        //     });
+       fetch("api/add_text", requestOptions)
+            .then(response => response.json())
+          .then(data => {
+               setResults(data);
+               setText("");
+         });
     };
 
     return (
@@ -37,6 +38,7 @@ const SentimentAnalysis = () => {
                 var audio = new Audio("../../backend/app/analysis/sentiment_analysis.wav");
                 audio.play();
             </script>
+            {results}
             <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
                     <label htmlFor="text" className="col-2 col-form-label">Text</label>

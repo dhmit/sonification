@@ -100,6 +100,6 @@ def sentiment_analysis(request):
     return render(request, 'index.html', context)
 
 
-@api_view(['POST'])
-def get_sentiment_analysis(request):
+@api_view(['GET'])
+def get_sentiment_analysis(request, text):
     pass

@@ -80,7 +80,7 @@ def text_to_sound(text):
         duration = durations[index]
         note_freq = note_freqs[notes[index]]
 
-        t = np.linspace(0, 1, int(duration * sample_rate), False)
+        t = np.linspace(0, duration, int(duration * sample_rate), False)
         audio += np.sin(note_freq * t * 2 * np.pi).tolist()
 
     # normalize to 16-bit range

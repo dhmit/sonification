@@ -34,6 +34,7 @@ const SentimentAnalysis = () => {
 
     return (
         <>
+            <h1>Sentiment Analysis</h1>
             <script>
                 var audio = new Audio("../../backend/app/analysis/sentiment_analysis.wav");
                 audio.play();
@@ -41,7 +42,7 @@ const SentimentAnalysis = () => {
             {results}
             <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
-                    <label htmlFor="text" className="col-2 col-form-label">Text</label>
+                    <h2><label htmlFor="text" className="col-2 col-form-label">Text</label></h2>
                     <div className="col">
                         <textarea
                             className="form-control"
@@ -53,10 +54,10 @@ const SentimentAnalysis = () => {
                 </div>
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
-            <h3>Play Audio: </h3>
+            <h2>Play Audio: </h2>
             <audio
                 controls
-                src="../../backend/app/analysis/sentiment_analysis.wav">
+                src={"../../backend/app/analysis/sentiment_analysis.wav"}>
             </audio>
             <Sound
                 url={"../../backend/app/analysis/sentiment_analysis.wav"}

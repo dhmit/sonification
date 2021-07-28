@@ -24,6 +24,7 @@ context = {
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
+from django.http import HttpResponse
 
 
 @api_view(['GET'])
@@ -102,4 +103,13 @@ def sentiment_analysis(request):
 
 @api_view(['GET'])
 def get_sentiment_analysis(request, text):
-    pass
+    """
+    API endpoint for generating audio based on the sentiment analysis of the given text
+
+    TODO: write function to generate audio file based on text
+    """
+    audio_file = open('app/example.wav', 'rb')
+    response = HttpResponse()
+    response.write(audio_file.read())
+    response['Content-Type'] = 'audio/wav'
+    return response

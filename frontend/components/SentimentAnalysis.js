@@ -1,11 +1,11 @@
 import React, {useEffect, useState} from "react";
 import * as PropTypes from "prop-types";
-import STYLES from "./Corpus.module.scss";
-import {getCookie} from "../common";
+import STYLES from "./SentimentAnalysis.module.scss";
 
 const SentimentAnalysis = () => {
+    const [sentimentAnalysisData, setSentimentAnalysisData] = useState([]);
     const [loading, setLoading] = useState(true);
-    const [userInput, setUserInput] = useState('');
+    const [userInput, setUserInput] = useState("");
     const [submitted, setSubmitted] = useState(false);
 
     useEffect(() => {
@@ -13,26 +13,32 @@ const SentimentAnalysis = () => {
             .then(response => response.json())
             .then(data => {
                 setLoading(false);
+                setSentimentAnalysisData(data);
             });
     }, []);
 
     const handleSubmit = (event) => {
-        
+        event.preventDefault();
     };
 
     return(
         <div className="container-fluid">
-            <form onSubmit={handleSubmit}>
-                <div className="form-group">
-                    <label htmlFor="text">
-                        Please input your response in the textarea below.
-                    </label>
-                    <textarea className="form-control" id="text" rows="5" required></textarea>
+            {loading
+                ? <p>Currently loading Sentiment Analysis page...</p>
+                : <div>
+                    <form onSubmit={handleSubmit}>
+                        <div className="form-group">
+                            <label>
+                                Please input your response in the textarea below.
+                            </label>
+                            <textarea className="form-control" id="text" rows="5" required></textarea>
+                        </div>
+                        <button type="submit" className="btn btn-primary">Submit</button>
+                    </form>
                 </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
-            </form>
+            }
         </div>
     );
-}
+};
 
 export default SentimentAnalysis;

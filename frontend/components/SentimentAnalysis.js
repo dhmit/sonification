@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useState} from "react";
 import Sound from "react-sound";
 import {getCookie} from "../common";
 
@@ -21,15 +21,15 @@ const SentimentAnalysis = () => {
                 "X-CSRFToken": csrftoken
             },
             body: JSON.stringify({
-                user_text: text,
+                user_text: text
             })
         };
-       fetch("api/add_text", requestOptions)
+        fetch("api/add_text", requestOptions)
             .then(response => response.json())
-          .then(data => {
-               setResults(data);
-               setText("");
-         });
+            .then(data => {
+                setResults(data);
+                setText("");
+            });
     };
 
     return (
@@ -43,7 +43,12 @@ const SentimentAnalysis = () => {
                 <div className="row mb-3">
                     <label htmlFor="text" className="col-2 col-form-label">Text</label>
                     <div className="col">
-                        <textarea className="form-control" id="text" rows="8" value={text} onChange={handleTextChange} required></textarea>
+                        <textarea
+                            className="form-control"
+                            id="text" rows="8" value={text}
+                            onChange={handleTextChange}
+                            required
+                        />
                     </div>
                 </div>
                 <button className="btn btn-primary" type="submit">Submit</button>
@@ -56,7 +61,7 @@ const SentimentAnalysis = () => {
             <Sound
                 url={"../../backend/app/analysis/sentiment_analysis.wav"}
             />
-            </>
+        </>
     );
 };
 

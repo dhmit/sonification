@@ -50,6 +50,7 @@ def index(request):
         'page_metadata': {
             'title': 'Home page'
         },
+        'component_name': 'Home'
     }
 
     return render(request, 'index.html', context)

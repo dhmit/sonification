@@ -17,7 +17,7 @@ Including another URL configuration
 from django.contrib import admin
 from django.urls import path
 
-from app import views
+from ..app import views
 
 
 urlpatterns = [
@@ -32,5 +32,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('example', views.example, name='example'),
     path('example/<int:example_id>', views.example_id, name='example_id'),
-    path('sentimentanalysis', views.sentimentanalysis, name='Sentiment Analysis')
+    path('sentimentanalysis', views.sentiment_analysis, name='Sentiment Analysis')
 ]

@@ -25,6 +25,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 
+from backend.app.analysis.sentiment_analysis import text_to_sound
+
+
 @api_view(['GET'])
 def get_example(request, example_id):
     """
@@ -83,7 +86,8 @@ def example_id(request, example_id):
 
     return render(request, 'index.html', context)
 
-def sentimentanalysis(request):
+
+def sentiment_analysis(request):
     """
     Sentiment Analysis page
     """
@@ -97,6 +101,7 @@ def sentimentanalysis(request):
 
     return render(request, 'index.html', context)
 
+
 @api_view(['POST'])
 def add_text(request):
     """
@@ -104,5 +109,17 @@ def add_text(request):
     """
     attributes = request.data
     user_text = attributes['user_text']
-    sound = "something of a sound object"
+    # sound = "testing"
+    sound = text_to_sound(user_text)
+    print("sound", sound)
+
+    # response = HttpResponse()
+    # response.write(sound.read())
+    # response['Content-Type'] = 'audio/wav'
+    # response['Content-Length'] = os.path.getsize(sound)
+    # return response
+
+    # response = HttpResponse(sound, headers={'Content-Type': 'audio/wav'})
+    # return response
+
     return Response(sound)

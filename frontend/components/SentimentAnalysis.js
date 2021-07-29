@@ -27,6 +27,8 @@ const SentimentAnalysis = () => {
         fetch("api/add_text", requestOptions)
             .then(response => response.json())
             .then(data => {
+                console.log("data");
+                console.log(data);
                 setResults(data);
                 setText("");
             });
@@ -35,7 +37,7 @@ const SentimentAnalysis = () => {
     return (
         <>
             {/*<script>*/}
-            {/*    var audio = new Audio("../../backend/app/analysis/sentiment_analysis.wav");*/}
+            {/*    var audio = new Audio("/backend/sa.wav");*/}
             {/*    audio.play();*/}
             {/*</script>*/}
             {/*{results}*/}
@@ -53,11 +55,12 @@ const SentimentAnalysis = () => {
                 </div>
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
-            <h2>Play Audio: </h2>
-            <audio
-                controls
-                src={"../../backend/app/analysis/sentiment_analysis.wav"}>
-            </audio>
+            {/*<h2>Play Audio: </h2>*/}
+            {/*<audio*/}
+            {/*    controls*/}
+            {/*    src={"/backend/sa.wav"}>*/}
+            {/*</audio>*/}
+
             {/*<Sound*/}
             {/*    url={"../../backend/app/analysis/sentiment_analysis.wav"}*/}
             {/*/>*/}

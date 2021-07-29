@@ -35,7 +35,9 @@ def text_to_sound(user_text):
     audio = audio.astype(np.int16)
     wave_obj = sa.WaveObject(audio, 1, 2, 44100)
 
-    # obj = wave.open("sentiment_analysis.wav", 'w')
+    # Writing a .Wav File
+
+    # obj = wave.open("sa.wav", 'w')
     # obj.setnchannels(1)
     # obj.setframerate(sample_rate)
     # obj.setsampwidth(2)
@@ -43,6 +45,3 @@ def text_to_sound(user_text):
     # obj.close()
 
     return wave_obj
-
-
-text_to_sound("This is awesome. This is good. This is bad. This is an atom.")

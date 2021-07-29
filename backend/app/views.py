@@ -20,7 +20,9 @@ context = {
     'component_name': 'ExampleId'
 }
 """
+import os
 
+from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
@@ -112,10 +114,9 @@ def add_text(request):
     user_text = attributes['user_text']
     # sound = "testing"
     sound = text_to_sound(user_text)
-    print("sound", sound)
 
     # response = HttpResponse()
-    # response.write(sound.read())
+    # response.write(audio_file.read())
     # response['Content-Type'] = 'audio/wav'
     # response['Content-Length'] = os.path.getsize(sound)
     # return response
@@ -123,4 +124,5 @@ def add_text(request):
     # response = HttpResponse(sound, headers={'Content-Type': 'audio/wav'})
     # return response
 
+    sound.play()
     return Response(sound)

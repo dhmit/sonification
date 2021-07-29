@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from "react";
-import * as PropTypes from "prop-types";
-import STYLES from "./SentimentAnalysis.module.scss";
+import React, {useState} from "react";
+// import * as PropTypes from "prop-types";
+// import STYLES from "./SentimentAnalysis.module.scss";
 
 const SentimentAnalysis = () => {
     const [userInput, setUserInput] = useState("");
     const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(false);
     const [audioData, setAudioData] = useState(null);
 
     const handleInputChange = (event) => {
@@ -14,7 +13,19 @@ const SentimentAnalysis = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
+        fetch(`/api/get_sentiment_analysis?text=${userInput}`)
+            .then(response => response.json())
+            .then(data =>{
+                setAudioData(data.audio);
+            });
         setSubmitted(true);
+    };
+
+    const resetText = (event) => {
+        event.preventDefault();
+        setUserInput("");
+        setAudioData(null);
+        setSubmitted(false);
     };
 
     return(
@@ -24,15 +35,27 @@ const SentimentAnalysis = () => {
                     <label>
                         Please input your response in the textarea below.
                     </label>
-                    <textarea className="form-control" id="user-input-text" rows="5"
-                        onChange={handleInputChange} disabled={submitted} required></textarea>
+                    <textarea className="form-control col-7" id="user-input-text" rows="5"
+                        onChange={handleInputChange} disabled={submitted} required value={userInput}></textarea>
                 </div>
                 <button type="submit" className="btn btn-primary"
                     disabled={submitted}>Submit</button>
+                <button className="btn btn-primary mx-3" onClick={resetText}>Try again!</button>
             </form>
             {
                 submitted
-                    ? <div>Here is your submitted text: {userInput}</div>
+                    ? <div>
+                        <p>Here is your submitted text: <br/>
+                            {userInput}
+                        </p>
+                        {
+                            audioData
+                                ? <audio controls="controls"
+                                    src={`data:audio/wav;base64, ${audioData}`}
+                                    controlsList="nodownload"/>
+                                : <p>Loading audio...</p>
+                        }
+                    </div>
                     : <div>You have not submitted any response yet.</div>
             }
         </div>

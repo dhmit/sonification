@@ -2,14 +2,11 @@
 Tests for the gender analysis web app.
 """
 
-from collections import Counter
 from django.test import TestCase
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.test import APITestCase
-import numpy as np
-import io
-import soundfile
-from scipy.io import wavfile
+from rest_framework import status
+
 
 
 class MainTests(TestCase):
@@ -32,11 +29,8 @@ class MainTests(TestCase):
 
 class SentimentAnalysisAPITests(APITestCase):
 
-    def test_HttpResponse(self):
-        response = self.client.get('/api/get_sentiment_analysis/testing')
-        result = response.json()
-        expected_samplerate, expected_data = wavfile.read('app/example.wav')
-        self.assertEqual(expected_samplerate, result['rate'])
-        self.assertEqual(expected_data.tolist(), result['data'])
+    def test_API_status(self):
+        response = self.client.get('/api/get_sentiment_analysis?text=good%20morning%20america')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 

@@ -125,4 +125,4 @@ def add_text(request):
     # return response
 
     sound.play()
-    return Response(sound)
+    return Response("sound played")

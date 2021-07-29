@@ -33,7 +33,7 @@ def text_to_sound(user_text):
     audio = np.hstack(all_notes)
     audio *= 32767 / np.max(np.abs(audio))
     audio = audio.astype(np.int16)
-    wave_obj = sa.WaveObject(audio, 1, 2, 44100)
+    wave_obj = sa.WaveObject(audio, num_channels=1, bytes_per_sample=2, sample_rate=44100)
 
     # Writing a .Wav File
 

@@ -108,8 +108,6 @@ def sentiment_analysis(request):
 def get_sentiment_analysis(request):
     """
     API endpoint for generating audio based on the sentiment analysis of the given text
-
-    TODO: write function to generate audio file based on text
     """
     text = request.query_params.get('text')
     byte_array, sample_rate = text_to_note(text)

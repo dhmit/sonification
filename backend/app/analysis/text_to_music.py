@@ -19,6 +19,9 @@ note_freqs = {
     'f': 349,
     'g': 392
 }
+
+# Ratios found from Wikipedia
+# (https://en.wikipedia.org/wiki/Consonance_and_dissonance#/media/File:Dyadic_harmonic_entropy_graph_(optimized_for_low_resolution).png)
 dissonant_ratios = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
 neutral_ratios = [(3, 4), (3, 5), (4, 5)]
 consonant_ratios = [(1, 2), (2, 3)]

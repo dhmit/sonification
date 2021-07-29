@@ -41,6 +41,11 @@ def analyse_sentiment(text):
 
 
 def get_other_freq(score, current_freq):
+    """
+    :param score: the sentiment analysis score of a sentence
+    :param current_freq: the frequency of a note
+    :return other_freq: frequency for another note found from current_freq and a randomized ratio
+    """
     if score['neu'] > score['pos'] and score['neu'] > score['neg']:
         ratios = neutral_ratios
     elif score['pos'] > score['neg']:
@@ -50,9 +55,8 @@ def get_other_freq(score, current_freq):
 
     ratio = random.choices(ratios)[0]
     print(ratio)
-    if random.random() > 0.5:
-        return current_freq*ratio[0]/(ratio[1])
-    return current_freq*ratio[1]/(ratio[0])
+    other_freq = current_freq*ratio[0]/(ratio[1]) if random.random() > 0.5 else current_freq*ratio[1]/(ratio[0])
+    return other_freq
 
 
 def get_notes(text):

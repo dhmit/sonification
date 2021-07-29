@@ -86,16 +86,16 @@ def get_durations(notes):
     return output
 
 
-def text_to_sound(text):
+def sonify_sentence(text, sample_rate):
     """
-    :param text: a string of text
-    :return output: a sonification of text as a sound object
+    :param text: string of a sentence
+    :param sample_rate: integer, the sampling rate
+    :return audio: list of samples for this sentence
     """
     score = analyse_sentiment(text)
     notes = get_notes(text)
     durations = get_durations(notes)
 
-    sample_rate = 44100
     audio = []
 
     for index in range(len(notes)):
@@ -107,23 +107,35 @@ def text_to_sound(text):
         louder_note = np.sin(note_freq * time_steps * 2 * np.pi).tolist()
         quieter_note = np.sin(other_freq * time_steps * 2 * np.pi).tolist()
 
-        audio += [louder_note[ind] + 0.75*quieter_note[ind] for ind in range(len(time_steps))]
+        audio += [louder_note[ind] + 0.75 * quieter_note[ind] for ind in range(len(time_steps))]
+
+    return audio
+
+
+def text_to_sound(text):
+    """
+    :param text: a string of text
+    :return (full_audio, sample_rate): list of a sonification of text and its sample_rate
+    """
+
+    sample_rate = 44100
+    full_audio = []
+    sentences = sent_tokenize(text)
+    for sentence in sentences:
+        print("hi??")
+        full_audio += sonify_sentence(sentence, sample_rate)
 
     # normalize to 16-bit range
-    audio = np.array(audio)
-    audio *= 32767 / np.max(np.abs(audio))
+    full_audio = np.array(full_audio)
+    full_audio *= 32767 / np.max(np.abs(full_audio))
 
     # convert to 16-bit data
-    audio = audio.astype(np.int16)
+    full_audio = full_audio.astype(np.int16)
 
     # start playback
-    play_obj = sa.play_buffer(audio, 1, 2, sample_rate)
+    play_obj = sa.play_buffer(full_audio, 1, 2, sample_rate)
 
     # wait for playback to finish before exiting
     play_obj.wait_done()
 
-
-def sentence_to_sound(text):
-    sentences = sent_tokenize(text)
-    for sentence in sentences:
-        text_to_sound(sentence)
+    return full_audio.tolist(), sample_rate

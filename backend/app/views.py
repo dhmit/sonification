@@ -112,9 +112,9 @@ def get_sentiment_analysis(request):
     TODO: write function to generate audio file based on text
     """
     text = request.query_params.get('text')
-    data, sample_rate = text_to_note(text)
+    byte_array, sample_rate = text_to_note(text)
     byte_io = io.BytesIO(bytes())
-    wavfile.write(byte_io, sample_rate, data)
+    wavfile.write(byte_io, sample_rate, byte_array)
     wav_bytes = byte_io.read()
     audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
     res = {'audio': audio_data}

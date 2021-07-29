@@ -5,11 +5,11 @@ import STYLES from "./SentimentAnalysis.module.scss";
 const SentimentAnalysis = () => {
     const [userInput, setUserInput] = useState("");
     const [submitted, setSubmitted] = useState(false);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [audioData, setAudioData] = useState(null);
 
     const handleInputChange = (event) => {
-        setUserInput(document.getElementById('user-input-text').value);
+        setUserInput(event.target.value);
     };
 
     const handleSubmit = (event) => {
@@ -25,9 +25,10 @@ const SentimentAnalysis = () => {
                         Please input your response in the textarea below.
                     </label>
                     <textarea className="form-control" id="user-input-text" rows="5"
-                              onChange={handleInputChange} disabled={submitted} required></textarea>
+                        onChange={handleInputChange} disabled={submitted} required></textarea>
                 </div>
-                <button type="submit" className="btn btn-primary" disabled={submitted}>Submit</button>
+                <button type="submit" className="btn btn-primary"
+                    disabled={submitted}>Submit</button>
             </form>
             {
                 submitted

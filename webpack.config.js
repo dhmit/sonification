@@ -20,7 +20,7 @@ module.exports = {
     ],
     module: {
         rules: [
-            {test: /\.scss$/, use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]},
+            {test: /\.(scss|css)$/, use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]},
             {test: /\.js|.jsx$/, exclude: /node_modules/, use: "babel-loader"},
             {test: /\.(png|jpe?g|gif|svg)$/i, use: [{loader: "file-loader"}]}
         ]

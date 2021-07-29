@@ -54,7 +54,6 @@ def get_other_freq(score, current_freq):
         ratios = dissonant_ratios
 
     ratio = random.choices(ratios)[0]
-    print(ratio)
     other_freq = current_freq*ratio[0]/(ratio[1]) if random.random() > 0.5 else current_freq*ratio[1]/(ratio[0])
     return other_freq
 
@@ -86,7 +85,7 @@ def get_durations(notes):
     :param notes: a list of notes
     :return output: a list with corresponding durations
     """
-    output = [random.uniform(0.3, 0.7) for _ in notes]
+    output = [random.uniform(0.2, 0.8) for _ in notes]
     return output
 
 
@@ -111,7 +110,7 @@ def sonify_sentence(text, sample_rate):
         louder_note = np.sin(note_freq * time_steps * 2 * np.pi).tolist()
         quieter_note = np.sin(other_freq * time_steps * 2 * np.pi).tolist()
 
-        audio += [louder_note[ind] + 0.75 * quieter_note[ind] for ind in range(len(time_steps))]
+        audio += [louder_note[ind] + 0.6 * quieter_note[ind] for ind in range(len(time_steps))]
 
     return audio
 
@@ -126,7 +125,6 @@ def text_to_sound(text):
     full_audio = []
     sentences = sent_tokenize(text)
     for sentence in sentences:
-        print("hi??")
         full_audio += sonify_sentence(sentence, sample_rate)
 
     # normalize to 16-bit range

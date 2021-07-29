@@ -11,6 +11,5 @@ pytz==2020.5
 regex==2021.4.4
 scipy==1.7.0
 simpleaudio==1.0.4
-SoundFile==0.10.3.post1
 sqlparse==0.4.1
 tqdm==4.61.1

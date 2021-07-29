@@ -36,7 +36,8 @@ const SentimentAnalysis = () => {
                         Please input your response in the textarea below.
                     </label>
                     <textarea className="form-control col-7" id="user-input-text" rows="5"
-                        onChange={handleInputChange} disabled={submitted} required value={userInput}></textarea>
+                        onChange={handleInputChange} disabled={submitted}
+                        required value={userInput}></textarea>
                 </div>
                 <button type="submit" className="btn btn-primary"
                     disabled={submitted}>Submit</button>

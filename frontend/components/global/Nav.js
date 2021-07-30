@@ -5,16 +5,16 @@ const Nav = () => {
 
     return (
         <>
-        <nav className="navbar navbar-light bg-light navbar-expand-sm">
-            <a className={`navbar-brand ${STYLES.linkHome}`} href="/">Sonification</a>
-            <ul className="navbar-nav mr-auto">
-                <li className="nav-item">
-                    <a className="nav-link" href="/sentimentanalysis">
+            <nav role="navigation" className="navbar navbar-light bg-light navbar-expand-sm">
+                <h1><a className={`navbar-brand ${STYLES.linkHome}`} href="/">Sonification</a></h1>
+                <ul className="navbar-nav mr-auto">
+                    <li className="nav-item">
+                        <a className="nav-link" href="/sentimentanalysis">
                         Sentiment Analysis
-                    </a>
-                </li>
-            </ul>
-        </nav>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
         </>
     );
 };

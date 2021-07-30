@@ -54,7 +54,8 @@ def get_other_freq(score, current_freq):
         ratios = dissonant_ratios
 
     ratio = random.choices(ratios)[0]
-    other_freq = current_freq*ratio[0]/(ratio[1]) if random.random() > 0.5 else current_freq*ratio[1]/(ratio[0])
+    other_freq = current_freq * ratio[0] / (ratio[1])
+    #other_freq = current_freq*ratio[0]/(ratio[1]) if random.random() > 0.5 else current_freq*ratio[1]/(ratio[0])
     return other_freq
 
 

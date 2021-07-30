@@ -27,7 +27,7 @@ def text_to_note(text):
     :return: A sound based on how negative or positive the text is.
     """
     score = analyse_sentiment(text)
-    Note_freq = 400 + (score["pos"] - score["neg"]) * 350 * (1 + score["neu"])
+    note_freq = 400 + (score["pos"] - score["neg"]) * 350 * (1 + score["neu"])
 
     # get timesteps for the sample, T is note duration in seconds
     sample_rate = 44100
@@ -35,10 +35,10 @@ def text_to_note(text):
     t = np.linspace(0, T, T * sample_rate, False)
 
     # generate sine wave notes
-    Note = np.sin(Note_freq * t * 2 * np.pi)
+    note = np.sin(note_freq * t * 2 * np.pi)
 
     # concatenate notes
-    audio = Note
+    audio = note
     # normalize to 16-bit range
     audio *= 32767 / np.max(np.abs(audio))
     # convert to 16-bit data
@@ -83,7 +83,7 @@ def get_other_freq(score, current_freq):
 
     ratio = random.choices(ratios)[0]
     other_freq = current_freq * ratio[0] / (ratio[1])
-    #other_freq = current_freq*ratio[0]/(ratio[1]) if random.random() > 0.5 else current_freq*ratio[1]/(ratio[0])
+    # other_freq = current_freq*ratio[0]/(ratio[1]) if random.random() > 0.5 else current_freq*ratio[1]/(ratio[0])
     return other_freq
 
 

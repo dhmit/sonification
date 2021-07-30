@@ -8,6 +8,27 @@ from nltk.tokenize import sent_tokenize
 import random
 
 
+musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
+mc_list = list(musical_chars)
+
+# frequencies found from https://pages.mtu.edu/~suits/notefreqs.html
+note_freqs = {
+    'a': 440,
+    'b': 494,
+    'c': 523,
+    'd': 587,
+    'e': 330,
+    'f': 349,
+    'g': 392
+}
+
+# Ratios found from Wikipedia
+# (https://en.wikipedia.org/wiki/Consonance_and_dissonance#/media/File:Dyadic_harmonic_entropy_graph_(optimized_for_low_resolution).png)
+dissonant_ratios = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
+neutral_ratios = [(3, 4), (3, 5), (4, 5)]
+consonant_ratios = [(1, 2), (2, 3)]
+
+
 def analyse_sentiment(text):
     """
     :param text: a string of text
@@ -45,27 +66,6 @@ def text_to_note(text):
     audio = audio.astype(np.int16)
 
     return wav_to_base64(audio, sample_rate)
-
-
-musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
-mc_list = list(musical_chars)
-
-# frequencies found from https://pages.mtu.edu/~suits/notefreqs.html
-note_freqs = {
-    'a': 440,
-    'b': 494,
-    'c': 523,
-    'd': 587,
-    'e': 330,
-    'f': 349,
-    'g': 392
-}
-
-# Ratios found from Wikipedia
-# (https://en.wikipedia.org/wiki/Consonance_and_dissonance#/media/File:Dyadic_harmonic_entropy_graph_(optimized_for_low_resolution).png)
-dissonant_ratios = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
-neutral_ratios = [(3, 4), (3, 5), (4, 5)]
-consonant_ratios = [(1, 2), (2, 3)]
 
 
 def get_other_freq(score, current_freq):

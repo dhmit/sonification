@@ -1,8 +1,32 @@
-import nltk
-import simpleaudio as sa
 import string
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import numpy as np
+from scipy.io import wavfile
+import io
+import base64
+from nltk.tokenize import sent_tokenize
+import random
+
+
+musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
+mc_list = list(musical_chars)
+
+# frequencies found from https://pages.mtu.edu/~suits/notefreqs.html
+note_freqs = {
+    'a': 440,
+    'b': 494,
+    'c': 523,
+    'd': 587,
+    'e': 330,
+    'f': 349,
+    'g': 392
+}
+
+# Ratios found from Wikipedia
+# (https://en.wikipedia.org/wiki/Consonance_and_dissonance#/media/File:Dyadic_harmonic_entropy_graph_(optimized_for_low_resolution).png)
+dissonant_ratios = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
+neutral_ratios = [(3, 4), (3, 5), (4, 5)]
+consonant_ratios = [(1, 2), (2, 3)]
 
 
 def analyse_sentiment(text):
@@ -14,7 +38,7 @@ def analyse_sentiment(text):
     lower_case = text.lower()
     # Removing punctuations
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
-    score = SentimentIntensityAnalyzer().polarity_scores(text)
+    score = SentimentIntensityAnalyzer().polarity_scores(cleaned_text)
     return score
 
 
@@ -24,8 +48,7 @@ def text_to_note(text):
     :return: A sound based on how negative or positive the text is.
     """
     score = analyse_sentiment(text)
-    print(score)
-    Note_freq = 400 + (score["pos"] - score["neg"]) * 350 * (1 + score["neu"])
+    note_freq = 400 + (score["pos"] - score["neg"]) * 350 * (1 + score["neu"])
 
     # get timesteps for the sample, T is note duration in seconds
     sample_rate = 44100
@@ -33,17 +56,124 @@ def text_to_note(text):
     t = np.linspace(0, T, T * sample_rate, False)
 
     # generate sine wave notes
-    Note = np.sin(Note_freq * t * 2 * np.pi)
+    note = np.sin(note_freq * t * 2 * np.pi)
 
     # concatenate notes
-    audio = Note
+    audio = note
     # normalize to 16-bit range
     audio *= 32767 / np.max(np.abs(audio))
     # convert to 16-bit data
     audio = audio.astype(np.int16)
 
-    # start playback
-    play_obj = sa.play_buffer(audio, 1, 2, sample_rate)
+    return wav_to_base64(audio, sample_rate)
 
-    # wait for playback to finish before exiting
-    play_obj.wait_done()
+
+def get_other_freq(score, current_freq):
+    """
+    :param score: the sentiment analysis score of a sentence
+    :param current_freq: the frequency of a note
+    :return other_freq: frequency for another note found from current_freq and a randomized ratio
+    """
+    if score['neu'] > score['pos'] and score['neu'] > score['neg']:
+        ratios = neutral_ratios
+    elif score['pos'] > score['neg']:
+        ratios = consonant_ratios
+    else:
+        ratios = dissonant_ratios
+
+    ratio = random.choices(ratios)[0]
+    other_freq = current_freq * ratio[0] / (ratio[1])
+    return other_freq
+
+
+def get_notes(text):
+    """
+    :param text: a string of input text
+    :return notes: a string of notes
+    """
+    notes = ""
+    output_length = 4 if (len(text) > 30) else 2
+
+    lower_case = text.lower()
+    stripped_text = [char for char in lower_case if char in musical_chars]
+
+    if len(stripped_text) == 0:
+        notes = notes.join(random.choices(mc_list, k=output_length))
+    elif len(stripped_text) < output_length:
+        notes = notes.join(random.choices(mc_list, k=output_length-len(stripped_text))) + "".join(stripped_text)
+    else:
+        start = random.randint(0, len(stripped_text)-output_length)
+        notes = notes.join(stripped_text[start:start+output_length])
+
+    return notes
+
+
+def get_durations(notes):
+    """
+    :param notes: a list of notes
+    :return output: a list with corresponding durations
+    """
+    output = [random.uniform(0.2, 0.8) for _ in notes]
+    return output
+
+
+def sonify_sentence(text, sample_rate):
+    """
+    :param text: string of a sentence
+    :param sample_rate: integer, the sampling rate
+    :return audio: list of samples for this sentence
+    """
+    score = analyse_sentiment(text)
+    notes = get_notes(text)
+    durations = get_durations(notes)
+
+    audio = []
+
+    for index in range(len(notes)):
+        duration = durations[index]
+        note_freq = note_freqs[notes[index]]
+        other_freq = get_other_freq(score, note_freq)
+
+        time_steps = np.linspace(0, duration, int(duration * sample_rate), False)
+        louder_note = np.sin(note_freq * time_steps * 2 * np.pi).tolist()
+        quieter_note = np.sin(other_freq * time_steps * 2 * np.pi).tolist()
+
+        audio += [louder_note[ind] + 0.6 * quieter_note[ind] for ind in range(len(time_steps))]
+
+    return audio
+
+
+def text_to_sound(text):
+    """
+    :param text: a string of text
+    :return (full_audio, sample_rate): list of a sonification of text and its sample_rate
+    """
+
+    sample_rate = 44100
+    full_audio = []
+    sentences = sent_tokenize(text)
+    for sentence in sentences:
+        full_audio += sonify_sentence(sentence, sample_rate)
+
+    # normalize to 16-bit range
+    full_audio = np.array(full_audio)
+    full_audio *= 32767 / np.max(np.abs(full_audio))
+
+    # convert to 16-bit data
+    full_audio = full_audio.astype(np.int16)
+
+    return wav_to_base64(full_audio, sample_rate)
+
+
+def wav_to_base64(byte_array, sample_rate):
+    """
+    Encode the WAV byte array with base64
+    :param byte_array: int16 numpy array
+    :param sample_rate: integer, the sampling rate
+    :return: base64 encoding of the given array
+    """
+    byte_io = io.BytesIO(bytes())
+    wavfile.write(byte_io, sample_rate, byte_array)
+    wav_bytes = byte_io.read()
+    audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
+    return audio_data

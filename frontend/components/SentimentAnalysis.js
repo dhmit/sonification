@@ -30,6 +30,7 @@ const SentimentAnalysis = () => {
 
     return(
         <div className="container-fluid">
+            <h1>Sentiment Analysis</h1>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>

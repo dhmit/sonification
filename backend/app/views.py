@@ -24,10 +24,10 @@ context = {
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
-from .analysis.text_to_music import text_to_note
-from scipy.io import wavfile
-import io
-import base64
+from .analysis.text_to_music import (
+    text_to_note,
+    text_to_sound
+)
 
 
 @api_view(['GET'])
@@ -110,10 +110,8 @@ def get_sentiment_analysis(request):
     API endpoint for generating audio based on the sentiment analysis of the given text
     """
     text = request.query_params.get('text')
-    byte_array, sample_rate = text_to_note(text)
-    byte_io = io.BytesIO(bytes())
-    wavfile.write(byte_io, sample_rate, byte_array)
-    wav_bytes = byte_io.read()
-    audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
-    res = {'audio': audio_data}
+    res = {
+        'note': text_to_note(text),
+        'sound': text_to_sound(text)
+    }
     return Response(res)

@@ -16,7 +16,7 @@ const SentimentAnalysis = () => {
         fetch(`/api/get_sentiment_analysis?text=${userInput}`)
             .then(response => response.json())
             .then(data =>{
-                setAudioData(data.audio);
+                setAudioData(data);
             });
         setSubmitted(true);
     };
@@ -46,14 +46,20 @@ const SentimentAnalysis = () => {
             {
                 submitted
                     ? <div>
-                        <p>Here is your submitted text: <br/>
-                            {userInput}
-                        </p>
+                        <p>Here is your submitted text:</p>
+                        <p className="mx-3">{userInput}</p>
                         {
                             audioData
-                                ? <audio controls="controls"
-                                    src={`data:audio/wav;base64, ${audioData}`}
+                                ? <>
+                                    <p><b>Note:</b></p>
+                                    <audio controls="controls"
+                                    src={`data:audio/wav;base64, ${audioData.note}`}
                                     controlsList="nodownload"/>
+                                    <p><b>Sound:</b></p>
+                                    <audio controls="controls"
+                                    src={`data:audio/wav;base64, ${audioData.sound}`}
+                                    controlsList="nodownload"/>
+                                </>
                                 : <p>Loading audio...</p>
                         }
                     </div>

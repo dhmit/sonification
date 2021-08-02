@@ -50,13 +50,13 @@ def text_to_note(text):
     score = analyse_sentiment(text)
     note_freq = 400 + (score["pos"] - score["neg"]) * 350 * (1 + score["neu"])
 
-    # get timesteps for the sample, T is note duration in seconds
+    # get time steps for the sample
     sample_rate = 44100
-    T = 1
-    t = np.linspace(0, T, T * sample_rate, False)
+    note_duration = 1
+    time_steps = np.linspace(0, note_duration, note_duration * sample_rate, False)
 
     # generate sine wave notes
-    note = np.sin(note_freq * t * 2 * np.pi)
+    note = np.sin(note_freq * time_steps * 2 * np.pi)
 
     # concatenate notes
     audio = note
@@ -123,6 +123,7 @@ def sonify_sentence(text, sample_rate):
     :param sample_rate: integer, the sampling rate
     :return audio: list of samples for this sentence
     """
+    lower_note_loudness = 0.6
     score = analyse_sentiment(text)
     notes = get_notes(text)
     durations = get_durations(notes)
@@ -138,7 +139,7 @@ def sonify_sentence(text, sample_rate):
         louder_note = np.sin(note_freq * time_steps * 2 * np.pi).tolist()
         quieter_note = np.sin(other_freq * time_steps * 2 * np.pi).tolist()
 
-        audio += [louder_note[ind] + 0.6 * quieter_note[ind] for ind in range(len(time_steps))]
+        audio += [louder_note[ind] + lower_note_loudness * quieter_note[ind] for ind in range(len(time_steps))]
 
     return audio
 

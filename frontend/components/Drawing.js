@@ -109,27 +109,26 @@ const Drawing = () => {
     const handleSubmitDrawing = (event) => {
         event.preventDefault();
         setSubmitted(true);
-        const csrftoken = getCookie("csrftoken");
-        const formData = new FormData();
-        let imageBlob;
+
         const canvas = canvasRef.current;
         canvas.toBlob((blob)=> {
-            imageBlob = blob;
+            const csrftoken = getCookie("csrftoken");
+            const formData = new FormData();
+            formData.append("image", blob, "image.jpg");
+            const requestOptions = {
+                method: "POST",
+                headers: {
+                    "X-CSRFToken": csrftoken
+                },
+                body: formData
+            };
+            fetch("/api/image_to_sound", requestOptions)
+                .then(response => response.json())
+                .then(data => {
+                    console.log(data);
+                });
         }, "image/jpeg");
-        formData.append("image", imageBlob, "image.jpg");
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
-            },
-            body: formData
-        };
-        fetch("/api/image_to_sound", requestOptions)
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-            });
+
     };
 
     return (

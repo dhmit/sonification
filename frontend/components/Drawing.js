@@ -4,6 +4,8 @@ import STYLES from "./Drawing.module.scss";
 const Drawing = () => {
     const canvasRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
+    const [mode, setMode] = useState("draw");
+    const [brushSize, setBrushSize] = useState(1);
     const [mouseCoord, setMouseCoord] = useState(undefined);
 
     const getCoords = (event) => {
@@ -20,15 +22,14 @@ const Drawing = () => {
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
         if (context) {
-            context.strokeStyle = "black";
-            context.lineJoin = "round";
-            context.lineWidth = 2;
-
             context.beginPath();
+            context.lineWidth = brushSize;
+            context.lineJoin = "round";
+            context.lineCap = "round";
+            context.strokeStyle = "black";
+            context.globalCompositeOperation = mode === "draw" ? "source-over" : "destination-out";
             context.moveTo(startCoord.x, startCoord.y);
             context.lineTo(endCoord.x, endCoord.y);
-            context.closePath();
-
             context.stroke();
         }
     };
@@ -65,9 +66,9 @@ const Drawing = () => {
     useEffect(() => {
         if (!canvasRef.current) return;
         const canvas = canvasRef.current;
-        canvas.addEventListener('mousemove', draw);
+        canvas.addEventListener("mousemove", draw);
         return () => {
-            canvas.removeEventListener('mousemove', draw);
+            canvas.removeEventListener("mousemove", draw);
         };
     }, [draw]);
 
@@ -79,18 +80,37 @@ const Drawing = () => {
     useEffect(() => {
         if (!canvasRef.current) return;
         const canvas = canvasRef.current;
-        canvas.addEventListener('mouseup', endDrawing);
-        canvas.addEventListener('mouseleave', endDrawing);
+        canvas.addEventListener("mouseup", endDrawing);
+        canvas.addEventListener("mouseleave", endDrawing);
         return () => {
-            canvas.removeEventListener('mouseup', endDrawing);
-            canvas.removeEventListener('mouseleave', endDrawing);
+            canvas.removeEventListener("mouseup", endDrawing);
+            canvas.removeEventListener("mouseleave", endDrawing);
         };
     },[endDrawing]);
+
+    const switchMode = (event) => {
+        event.preventDefault();
+        setMode(prevMode => prevMode === "draw" ? "erase": "draw");
+    };
+
+    const handleBrushSizeInput = (event) => {
+        setBrushSize(event.target.value);
+    };
 
     return (
         <div className="container-fluid">
             <canvas className={STYLES.canvas}
                 ref={canvasRef} id="canvas" width="500" height="500"></canvas>
+            <div className="row">
+                Mode: {mode}
+            </div>
+            <div className="row">
+                Brush Size:
+                <input type="range" id="brush" min="0" max="50"
+                    value={brushSize} step="1" onChange={handleBrushSizeInput}/>
+                <label htmlFor="brush">{brushSize}</label>
+            </div>
+            <button className="btn btn-primary" onClick={switchMode}>Switch Mode</button>
         </div>
     );
 };

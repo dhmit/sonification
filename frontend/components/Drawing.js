@@ -71,6 +71,22 @@ const Drawing = () => {
         };
     }, [draw]);
 
+    const endDrawing = useCallback(() => {
+        setIsDrawing(false);
+        setMouseCoord(undefined);
+    }, []);
+
+    useEffect(() => {
+        if (!canvasRef.current) return;
+        const canvas = canvasRef.current;
+        canvas.addEventListener('mouseup', endDrawing);
+        canvas.addEventListener('mouseleave', endDrawing);
+        return () => {
+            canvas.removeEventListener('mouseup', endDrawing);
+            canvas.removeEventListener('mouseleave', endDrawing);
+        };
+    },[endDrawing]);
+
     return (
         <div className="container-fluid">
             <canvas className={STYLES.canvas}

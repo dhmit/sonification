@@ -16,7 +16,8 @@ const SentimentAnalysis = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        const csrftoken = getCookie("csrftoken");
+        setResults("");
+        // const csrftoken = getCookie("csrftoken");
         // const requestOptions = {
         //     method: "POST",
         //     headers: {
@@ -30,10 +31,10 @@ const SentimentAnalysis = () => {
         fetch(`api/get_sentiment_analysis?text=${text}`)
             .then(response => response.json())
             .then(data => {
-                setResults(data['sound']);
+                setResults(data["sound"]);
                 setText("");
                 console.log("end of second then");
-                console.log(data['sound']);
+                console.log(data["sound"]);
                 console.log(results);
 
 

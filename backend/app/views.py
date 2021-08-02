@@ -26,6 +26,10 @@ from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
+from .analysis.text_to_music import (
+    text_to_note,
+    text_to_sound
+)
 
 from backend.app.analysis.sentiment_analysis import text_to_sound
 
@@ -92,7 +96,7 @@ def example_id(request, example_id):
 
 def sentiment_analysis(request):
     """
-    Sentiment Analysis page
+    Sentiment Analysis Page
     """
 
     context = {
@@ -105,24 +109,14 @@ def sentiment_analysis(request):
     return render(request, 'index.html', context)
 
 
-@api_view(['POST'])
-def add_text(request):
+@api_view(['GET'])
+def get_sentiment_analysis(request):
     """
-    API endpoint for adding user text
+    API endpoint for generating audio based on the sentiment analysis of the given text
     """
-    attributes = request.data
-    user_text = attributes['user_text']
-    # sound = "testing"
-    sound = text_to_sound(user_text)
-
-    # response = HttpResponse()
-    # response.write(audio_file.read())
-    # response['Content-Type'] = 'audio/wav'
-    # response['Content-Length'] = os.path.getsize(sound)
-    # return response
-
-    # response = HttpResponse(sound, headers={'Content-Type': 'audio/wav'})
-    # return response
-
-    sound.play()
-    return Response("sound played")
+    text = request.query_params.get('text')
+    res = {
+        'note': text_to_note(text),
+        'sound': text_to_sound(text)
+    }
+    return Response(res)

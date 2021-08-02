@@ -13,17 +13,17 @@ const SentimentAnalysis = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         const csrftoken = getCookie("csrftoken");
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "X-CSRFToken": csrftoken
-            },
-            body: JSON.stringify({
-                user_text: text
-            })
-        };
-        fetch("api/get_sentiment_analysis", requestOptions)
+        // const requestOptions = {
+        //     method: "POST",
+        //     headers: {
+        //         "Content-Type": "application/json",
+        //         "X-CSRFToken": csrftoken
+        //     },
+        //     body: JSON.stringify({
+        //         user_text: text
+        //     })
+        // };
+        fetch(`api/get_sentiment_analysis?text=${text}`)
             .then(response => response.json())
             .then(data => {
                 setResults(data);

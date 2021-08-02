@@ -34,9 +34,10 @@ const SentimentAnalysis = () => {
 
     return (
         <>
+            <h2>Sentiment Analysis</h2>
             <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
-                    <h4><label htmlFor="text" className="col-2 col-form-label">Text</label></h4>
+                    <h3><label htmlFor="text" className="col-2 col-form-label">Text</label></h3>
                     <div className="col">
                         <textarea
                             className="form-control"
@@ -48,7 +49,7 @@ const SentimentAnalysis = () => {
                 </div>
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
-            <h2>Play Audio:</h2>
+            <h3>Play Audio:</h3>
             <audio controls>
                 <source href={`data:audio/wav;base64,${results}`} />
             </audio>

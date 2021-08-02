@@ -15,8 +15,25 @@ const Drawing = () => {
         };
     };
 
+    const drawLine = (startCoord, endCoord) => {
+        if (!canvasRef.current) return;
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+        if (context) {
+            context.strokeStyle = "black";
+            context.lineJoin = "round";
+            context.lineWidth = 2;
 
-    const beginPaint = useCallback((event) => {
+            context.beginPath();
+            context.moveTo(startCoord.x, startCoord.y);
+            context.lineTo(endCoord.x, endCoord.y);
+            context.closePath();
+
+            context.stroke();
+        }
+    };
+
+    const beginDrawing = useCallback((event) => {
         const coords = getCoords(event);
         if (coords) {
             setMouseCoord(coords);
@@ -29,11 +46,30 @@ const Drawing = () => {
             return;
         }
         const canvas = canvasRef.current;
-        canvas.addEventListener("mousedown", beginPaint);
+        canvas.addEventListener("mousedown", beginDrawing);
         return () => {
-            canvas.removeEventListener("mousedown", beginPaint);
+            canvas.removeEventListener("mousedown", beginDrawing);
         };
-    }, [beginPaint]);
+    }, [beginDrawing]);
+
+    const draw = useCallback((event) => {
+        if (isDrawing) {
+            const newMouseCoord = getCoords(event);
+            if (newMouseCoord && mouseCoord) {
+                drawLine(mouseCoord, newMouseCoord);
+                setMouseCoord(newMouseCoord);
+            }
+        }
+    }, [isDrawing, mouseCoord]);
+
+    useEffect(() => {
+        if (!canvasRef.current) return;
+        const canvas = canvasRef.current;
+        canvas.addEventListener('mousemove', draw);
+        return () => {
+            canvas.removeEventListener('mousemove', draw);
+        };
+    }, [draw]);
 
     return (
         <div className="container-fluid">

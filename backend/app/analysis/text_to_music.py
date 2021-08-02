@@ -68,21 +68,23 @@ def text_to_note(text):
     return _wav_to_base64(audio, sample_rate)
 
 
-def _get_other_freq(score, current_freq):
+def _get_other_freq(positive_score, neutral_score, negative_score, current_freq):
     """
-    :param score: the sentiment analysis score of a sentence
-    :param current_freq: the frequency of a note
+    :param positive_score: positivity score of a sentence
+    :param neutral_score: neutrality score of a sentence
+    :param negative_score: negativity score of a sentence
+    :param current_freq: the frequency of a given note
     :return other_freq: frequency for another note found from current_freq and a randomized ratio
     """
-    if score['neu'] > score['pos'] and score['neu'] > score['neg']:
+    if neutral_score > positive_score and neutral_score > negative_score:
         ratios = neutral_ratios
-    elif score['pos'] > score['neg']:
+    elif positive_score > negative_score:
         ratios = consonant_ratios
     else:
         ratios = dissonant_ratios
 
     ratio = random.choices(ratios)[0]
-    other_freq = current_freq * ratio[0] / (ratio[1])
+    other_freq = current_freq * ratio[0] / ratio[1]
     return other_freq
 
 
@@ -123,23 +125,23 @@ def _sonify_sentence(text, sample_rate):
     :param sample_rate: integer, the sampling rate
     :return audio: list of samples for this sentence
     """
-    lower_note_loudness = 0.6
-    score = _analyse_sentiment(text)
+    quieter_note_loudness = 0.6
     notes = _get_notes(text)
     durations = _get_durations(notes)
+    score = _analyse_sentiment(text)
 
     audio = []
 
     for index in range(len(notes)):
         duration = durations[index]
-        note_freq = note_freqs[notes[index]]
-        other_freq = _get_other_freq(score, note_freq)
+        louder_note_freq = note_freqs[notes[index]]
+        quieter_note_freq = _get_other_freq(score['pos'], score['neu'], score['neg'], louder_note_freq)
 
         time_steps = np.linspace(0, duration, int(duration * sample_rate), False)
-        louder_note = np.sin(note_freq * time_steps * 2 * np.pi).tolist()
-        quieter_note = np.sin(other_freq * time_steps * 2 * np.pi).tolist()
+        louder_note = np.sin(louder_note_freq * time_steps * 2 * np.pi).tolist()
+        quieter_note = np.sin(quieter_note_freq * time_steps * 2 * np.pi).tolist()
 
-        audio += [louder_note[ind] + lower_note_loudness * quieter_note[ind] for ind in range(len(time_steps))]
+        audio += [louder_note[ind] + quieter_note_loudness * quieter_note[ind] for ind in range(len(time_steps))]
 
     return audio
 

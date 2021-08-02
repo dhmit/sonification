@@ -24,7 +24,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 
-from .analysis.common import wav_to_base64
+from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
 
 

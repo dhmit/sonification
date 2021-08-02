@@ -50,9 +50,9 @@ const SentimentAnalysis = () => {
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
             <h3>Play Audio:</h3>
-            <audio controls>
+            {results && <audio controls controlsList={"nodownload"}>
                 <source src={`data:audio/wav;base64,${results}`} type={"audio/wav"}/>
-            </audio>
+            </audio>}
         </>
     );
 };

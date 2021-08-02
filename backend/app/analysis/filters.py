@@ -16,8 +16,6 @@ def change_volume(audio, amplitude):
     :return: A new int16 NumPy array with a modified amplitude.
     """
 
-    # new_audio = amplitude * audio
-
     return (amplitude * audio).astype(np.int16)
 
 

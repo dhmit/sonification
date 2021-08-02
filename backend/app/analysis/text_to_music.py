@@ -32,7 +32,7 @@ consonant_ratios = [(1, 2), (2, 3)]
 def _analyse_sentiment(text):
     """
     :param text: a string of text
-    :return: analysis of the text
+    :return score: sentiment analysis of the text
     """
     # Convert text to lowercase
     lower_case = text.lower()
@@ -45,7 +45,7 @@ def _analyse_sentiment(text):
 def text_to_note(text):
     """
     :param text: Takes in a string of text
-    :return: A sound based on how negative or positive the text is.
+    :return _wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
     """
     score = _analyse_sentiment(text)
     note_freq = 400 + (score["pos"] - score["neg"]) * 350 * (1 + score["neu"])
@@ -89,7 +89,7 @@ def _get_other_freq(score, current_freq):
 def _get_notes(text):
     """
     :param text: a string of input text
-    :return notes: a string of notes
+    :return notes: a string of notes chosen randomly from musical characters in text
     """
     notes = ""
     output_length = 4 if (len(text) > 30) else 2
@@ -111,7 +111,7 @@ def _get_notes(text):
 def _get_durations(notes):
     """
     :param notes: a list of notes
-    :return output: a list with corresponding durations
+    :return output: a list with corresponding durations for each note in notes
     """
     output = [random.uniform(0.2, 0.8) for _ in notes]
     return output
@@ -147,7 +147,7 @@ def _sonify_sentence(text, sample_rate):
 def text_to_sound(text):
     """
     :param text: a string of text
-    :return (full_audio, sample_rate): list of a sonification of text and its sample_rate
+    :return _wav_to_base64(full_audio, sample_rate): base64 encoding of a sonification of text
     """
 
     sample_rate = 44100
@@ -171,7 +171,7 @@ def _wav_to_base64(byte_array, sample_rate):
     Encode the WAV byte array with base64
     :param byte_array: int16 numpy array
     :param sample_rate: integer, the sampling rate
-    :return: base64 encoding of the given array
+    :return audio_data: base64 encoding of the given array
     """
     byte_io = io.BytesIO(bytes())
     wavfile.write(byte_io, sample_rate, byte_array)

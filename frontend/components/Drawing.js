@@ -1,6 +1,7 @@
 import React, {useEffect, useState, useRef, useCallback} from "react";
 import STYLES from "./Drawing.module.scss";
 import {SketchPicker} from "react-color";
+import {getCookie} from "../common";
 
 const Drawing = () => {
     const canvasRef = useRef(null);
@@ -9,6 +10,7 @@ const Drawing = () => {
     const [brushSize, setBrushSize] = useState(1);
     const [color, setColor] = useState("#000000");
     const [mouseCoord, setMouseCoord] = useState(undefined);
+    const [submitted, setSubmitted] = useState(false);
 
     const getCoords = (event) => {
         if (!canvasRef.current) return;
@@ -57,7 +59,7 @@ const Drawing = () => {
     }, [beginDrawing]);
 
     const draw = useCallback((event) => {
-        if (isDrawing) {
+        if (isDrawing && !submitted) {
             const newMouseCoord = getCoords(event);
             if (newMouseCoord && mouseCoord) {
                 drawLine(mouseCoord, newMouseCoord);
@@ -104,6 +106,32 @@ const Drawing = () => {
         setColor(color.hex);
     };
 
+    const handleSubmitDrawing = (event) => {
+        event.preventDefault();
+        setSubmitted(true);
+        const csrftoken = getCookie("csrftoken");
+        const formData = new FormData();
+        let imageBlob;
+        const canvas = canvasRef.current;
+        canvas.toBlob((blob)=> {
+            imageBlob = blob;
+        }, "image/jpeg");
+        formData.append("image", imageBlob, "image.jpg");
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "X-CSRFToken": csrftoken
+            },
+            body: formData
+        };
+        fetch("/api/image_to_sound", requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                console.log(data);
+            });
+    };
+
     return (
         <div className="container-fluid">
             <canvas className={STYLES.canvas}
@@ -119,6 +147,7 @@ const Drawing = () => {
             </div>
             <SketchPicker color={color} onChange={handleColorInput}/>
             <button className="btn btn-primary" onClick={switchMode}>Switch Mode</button>
+            <button onClick={handleSubmitDrawing}>Submit Drawing</button>
         </div>
     );
 };

@@ -4,7 +4,7 @@ import {getCookie} from "../common";
 const SentimentAnalysis = () => {
 
     const [text, setText] = useState("");
-    const [results, setResults] = useState();
+    const [results, setResults] = useState("");
 
     const handleTextChange = (event) => {
         setText(event.target.value);
@@ -26,7 +26,8 @@ const SentimentAnalysis = () => {
         fetch(`api/get_sentiment_analysis?text=${text}`)
             .then(response => response.json())
             .then(data => {
-                setResults(data);
+                setResults(data['sound']);
+                console.log("Results: ", results)
                 setText("");
             });
     };

@@ -51,7 +51,7 @@ const SentimentAnalysis = () => {
             </form>
             <h3>Play Audio:</h3>
             <audio controls>
-                <source href={`data:audio/wav;base64,${results}`} />
+                <source src={`data:audio/wav;base64,${results}`} type={"audio/wav"}/>
             </audio>
         </>
     );

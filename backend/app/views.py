@@ -20,18 +20,12 @@ context = {
     'component_name': 'ExampleId'
 }
 """
-import os
-
-from django.http import HttpResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
-from .analysis.text_to_music import (
-    text_to_note,
-    text_to_sound
-)
 
-from backend.app.analysis.sentiment_analysis import text_to_sound
+from .analysis.common import wav_to_base64
+from .analysis.sentiment_analysis import text_to_sound
 
 
 @api_view(['GET'])
@@ -115,8 +109,9 @@ def get_sentiment_analysis(request):
     API endpoint for generating audio based on the sentiment analysis of the given text
     """
     text = request.query_params.get('text')
+    audio_data = text_to_sound(text)
+    encoded_audio = wav_to_base64(*audio_data)
     res = {
-        'note': text_to_note(text),
-        'sound': text_to_sound(text)
+        'sound': encoded_audio
     }
     return Response(res)

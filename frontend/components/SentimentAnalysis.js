@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import Sound from "react-sound";
 import {getCookie} from "../common";
 
 const SentimentAnalysis = () => {
@@ -24,11 +23,9 @@ const SentimentAnalysis = () => {
                 user_text: text
             })
         };
-        fetch("api/add_text", requestOptions)
+        fetch("api/get_sentiment_analysis", requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log("data");
-                console.log(data);
                 setResults(data);
                 setText("");
             });
@@ -36,11 +33,6 @@ const SentimentAnalysis = () => {
 
     return (
         <>
-            {/*<script>*/}
-            {/*    var audio = new Audio("/backend/sa.wav");*/}
-            {/*    audio.play();*/}
-            {/*</script>*/}
-            {/*{results}*/}
             <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
                     <h4><label htmlFor="text" className="col-2 col-form-label">Text</label></h4>
@@ -55,15 +47,11 @@ const SentimentAnalysis = () => {
                 </div>
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
-            {/*<h2>Play Audio: </h2>*/}
-            {/*<audio*/}
-            {/*    controls*/}
-            {/*    src={"/backend/sa.wav"}>*/}
-            {/*</audio>*/}
-
-            {/*<Sound*/}
-            {/*    url={"../../backend/app/analysis/sentiment_analysis.wav"}*/}
-            {/*/>*/}
+            <h2>Play Audio:</h2>
+            <audio
+                controls
+                src={`data:audio/wav;base64,${results}`}
+            />
         </>
     );
 };

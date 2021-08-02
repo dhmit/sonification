@@ -1,8 +1,6 @@
-import wave
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 import numpy as np
-import simpleaudio as sa
 
 
 def text_to_sound(user_text):
@@ -33,15 +31,5 @@ def text_to_sound(user_text):
     audio = np.hstack(all_notes)
     audio *= 32767 / np.max(np.abs(audio))
     audio = audio.astype(np.int16)
-    wave_obj = sa.WaveObject(audio, num_channels=1, bytes_per_sample=2, sample_rate=44100)
 
-    # Writing a .Wav File
-
-    # obj = wave.open("sa.wav", 'w')
-    # obj.setnchannels(1)
-    # obj.setframerate(sample_rate)
-    # obj.setsampwidth(2)
-    # obj.writeframes(audio)
-    # obj.close()
-
-    return wave_obj
+    return audio, sample_rate

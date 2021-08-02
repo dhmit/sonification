@@ -9,7 +9,7 @@ const Nav = () => {
                 <h1><a className={`navbar-brand ${STYLES.linkHome}`} href="/">Sonification</a></h1>
                 <ul className="navbar-nav mr-auto">
                     <li className="nav-item">
-                        <a className="nav-link" href="/sentimentanalysis">
+                        <a className="nav-link" href="/sentiment-analysis">
                         Sentiment Analysis
                         </a>
                     </li>

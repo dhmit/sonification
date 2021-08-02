@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useState} from "react";
 import {getCookie} from "../common";
 
 const SentimentAnalysis = () => {
@@ -10,34 +10,14 @@ const SentimentAnalysis = () => {
         setText(event.target.value);
     };
 
-    useEffect(() => {
-        console.log("re rendering");
-    },[results]);
-
     const handleSubmit = (event) => {
         event.preventDefault();
         setResults("");
-        // const csrftoken = getCookie("csrftoken");
-        // const requestOptions = {
-        //     method: "POST",
-        //     headers: {
-        //         "Content-Type": "application/json",
-        //         "X-CSRFToken": csrftoken
-        //     },
-        //     body: JSON.stringify({
-        //         user_text: text
-        //     })
-        // };
         fetch(`api/get_sentiment_analysis?text=${text}`)
             .then(response => response.json())
             .then(data => {
                 setResults(data["sound"]);
                 setText("");
-                console.log("end of second then");
-                console.log(data["sound"]);
-                console.log(results);
-
-
             });
     };
 

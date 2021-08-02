@@ -1,11 +1,13 @@
 import React, {useEffect, useState, useRef, useCallback} from "react";
 import STYLES from "./Drawing.module.scss";
+import {SketchPicker} from "react-color";
 
 const Drawing = () => {
     const canvasRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [mode, setMode] = useState("draw");
     const [brushSize, setBrushSize] = useState(1);
+    const [color, setColor] = useState("#000000");
     const [mouseCoord, setMouseCoord] = useState(undefined);
 
     const getCoords = (event) => {
@@ -26,10 +28,11 @@ const Drawing = () => {
             context.lineWidth = brushSize;
             context.lineJoin = "round";
             context.lineCap = "round";
-            context.strokeStyle = "black";
+            context.strokeStyle = color;
             context.globalCompositeOperation = mode === "draw" ? "source-over" : "destination-out";
             context.moveTo(startCoord.x, startCoord.y);
             context.lineTo(endCoord.x, endCoord.y);
+            context.closePath();
             context.stroke();
         }
     };
@@ -97,6 +100,10 @@ const Drawing = () => {
         setBrushSize(event.target.value);
     };
 
+    const handleColorInput = (color) => {
+        setColor(color.hex);
+    };
+
     return (
         <div className="container-fluid">
             <canvas className={STYLES.canvas}
@@ -110,6 +117,7 @@ const Drawing = () => {
                     value={brushSize} step="1" onChange={handleBrushSizeInput}/>
                 <label htmlFor="brush">{brushSize}</label>
             </div>
+            <SketchPicker color={color} onChange={handleColorInput}/>
             <button className="btn btn-primary" onClick={switchMode}>Switch Mode</button>
         </div>
     );

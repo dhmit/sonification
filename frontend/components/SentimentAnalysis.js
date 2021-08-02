@@ -27,7 +27,6 @@ const SentimentAnalysis = () => {
             .then(response => response.json())
             .then(data => {
                 setResults(data['sound']);
-                console.log("Results: ", results);
                 setText("");
             });
     };

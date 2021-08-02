@@ -28,6 +28,11 @@ const SentimentAnalysis = () => {
             .then(data => {
                 setResults(data['sound']);
                 setText("");
+                console.log("end of second then");
+                console.log(data['sound']);
+                console.log(results);
+
+
             });
     };
 

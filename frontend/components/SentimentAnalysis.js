@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {getCookie} from "../common";
 
 const SentimentAnalysis = () => {
@@ -9,6 +9,10 @@ const SentimentAnalysis = () => {
     const handleTextChange = (event) => {
         setText(event.target.value);
     };
+
+    useEffect(() => {
+        console.log("re rendering");
+    },[results]);
 
     const handleSubmit = (event) => {
         event.preventDefault();

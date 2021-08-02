@@ -24,10 +24,10 @@ context = {
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
-from .analysis.text_to_music import (
-    text_to_note,
-    text_to_sound
-)
+# from .analysis.text_to_music import (
+#     text_to_note,
+#     text_to_sound
+# )
 
 
 @api_view(['GET'])
@@ -115,3 +115,14 @@ def get_sentiment_analysis(request):
         'sound': text_to_sound(text)
     }
     return Response(res)
+
+
+def drawing(request):
+    context = {
+        'page_metadata': {
+            'title': 'Drawing'
+        },
+        'component_name': 'Drawing'
+    }
+
+    return render(request, 'index.html', context)

@@ -55,10 +55,32 @@ def add_chords(audio_metadata):
     """
     :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
 
-    :return: A Dict instance containing audio samples list, sample rate, and notes array
+    :return: A Dict instance containing audio sample with added chords, sample rate, and notes array
     """
+    notes = audio_metadata['notes']
+    sample_rate = audio_metadata['sample_rate']
+    chord_sin_waves = []
 
-    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": audio_metadata["notes"]}
+    for freq, T, n in notes:
+        t = np.linspace(0, T, T * sample_rate, False)
+        if n < 48:
+            # minor chord
+            first_freq = 2 ** ((n+3 + 1 - 49) / 12) * 440
+        else:
+            # major chord
+            first_freq = 2 ** ((n+4 + 1 - 49) / 12) * 440
+        second_freq = 2 ** ((n+7 + 1 - 49) / 12) * 440
+        sin_wave = np.sin(freq * t * 2 * np.pi) + np.sin(first_freq * t * 2 * np.pi) + np.sin(second_freq * t * 2 * np.pi)
+        chord_sin_waves.append(sin_wave)
+
+    # concatenate notes
+    audio = np.hstack(chord_sin_waves)
+    # normalize to 16-bit range
+    audio *= 32767 / np.max(np.abs(audio))
+    # convert to 16-bit data
+    audio = audio.astype(np.int16)
+
+    return {"audio_samples": audio, "sample_rate": sample_rate, "notes": notes}
 
 
 

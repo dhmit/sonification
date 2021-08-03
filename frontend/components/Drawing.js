@@ -11,6 +11,7 @@ const Drawing = () => {
     const [color, setColor] = useState("#000000");
     const [mouseCoord, setMouseCoord] = useState([]);
     const [submitted, setSubmitted] = useState(false);
+    const [soundData, setSoundData] = useState(null);
 
     const getCoords = (event) => {
         if (!canvasRef.current) return;
@@ -39,7 +40,9 @@ const Drawing = () => {
                 const d = (coords[i].y + coords[i + 1].y) / 2;
                 context.quadraticCurveTo(coords[i].x, coords[i].y, c, d);
             }
-            context.quadraticCurveTo(coords[i].x, coords[i].y, coords[i + 1].x, coords[i + 1].y);
+            if (i + 1 < coords.length) {
+                context.quadraticCurveTo(coords[i].x, coords[i].y, coords[i + 1].x, coords[i + 1].y);
+            }
             context.stroke();
         }
     };
@@ -130,7 +133,7 @@ const Drawing = () => {
             fetch("/api/image_to_sound", requestOptions)
                 .then(response => response.json())
                 .then(data => {
-                    console.log(data);
+                    setSoundData(data);
                 });
         }, "image/jpeg");
 

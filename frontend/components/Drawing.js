@@ -9,7 +9,7 @@ const Drawing = () => {
     const [mode, setMode] = useState("draw");
     const [brushSize, setBrushSize] = useState(1);
     const [color, setColor] = useState("#000000");
-    const [mouseCoord, setMouseCoord] = useState(undefined);
+    const [mouseCoord, setMouseCoord] = useState([]);
     const [submitted, setSubmitted] = useState(false);
 
     const getCoords = (event) => {
@@ -21,7 +21,7 @@ const Drawing = () => {
         };
     };
 
-    const drawLine = (startCoord, endCoord) => {
+    const drawLine = (coords) => {
         if (!canvasRef.current) return;
         const canvas = canvasRef.current;
         const context = canvas.getContext("2d");
@@ -32,9 +32,14 @@ const Drawing = () => {
             context.lineCap = "round";
             context.strokeStyle = color;
             context.globalCompositeOperation = mode === "draw" ? "source-over" : "destination-out";
-            context.moveTo(startCoord.x, startCoord.y);
-            context.lineTo(endCoord.x, endCoord.y);
-            context.closePath();
+            context.moveTo(coords[0].x, coords[0].y);
+            let i;
+            for (i = 1; i < coords.length - 2; i++) {
+                const c = (coords[i].x + coords[i + 1].x) / 2;
+                const d = (coords[i].y + coords[i + 1].y) / 2;
+                context.quadraticCurveTo(coords[i].x, coords[i].y, c, d);
+            }
+            context.quadraticCurveTo(coords[i].x, coords[i].y, coords[i + 1].x, coords[i + 1].y);
             context.stroke();
         }
     };
@@ -42,7 +47,7 @@ const Drawing = () => {
     const beginDrawing = useCallback((event) => {
         const coords = getCoords(event);
         if (coords) {
-            setMouseCoord(coords);
+            setMouseCoord(prevCoords => [...prevCoords, coords]);
             setIsDrawing(true);
         }
     }, []);
@@ -61,9 +66,9 @@ const Drawing = () => {
     const draw = useCallback((event) => {
         if (isDrawing && !submitted) {
             const newMouseCoord = getCoords(event);
-            if (newMouseCoord && mouseCoord) {
-                drawLine(mouseCoord, newMouseCoord);
-                setMouseCoord(newMouseCoord);
+            if (newMouseCoord) {
+                setMouseCoord(prevCoords => [...prevCoords, newMouseCoord]);
+                drawLine(mouseCoord);
             }
         }
     }, [isDrawing, mouseCoord]);
@@ -79,7 +84,7 @@ const Drawing = () => {
 
     const endDrawing = useCallback(() => {
         setIsDrawing(false);
-        setMouseCoord(undefined);
+        setMouseCoord([]);
     }, []);
 
     useEffect(() => {

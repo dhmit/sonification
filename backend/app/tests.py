@@ -3,10 +3,10 @@ Tests for the gender analysis web app.
 """
 
 from django.test import TestCase
-from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.test import APITestCase
 from rest_framework import status
 
+from .common import wav_to_base64
 
 
 class MainTests(TestCase):
@@ -32,3 +32,11 @@ class SentimentAnalysisAPITests(APITestCase):
     def test_API_status(self):
         response = self.client.get('/api/get_sentiment_analysis?text=good%20morning%20america')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+
+class WavToBase64TestCase(TestCase):
+    def setUp(self):
+        pass
+
+    def test_wav_to_base64(self):
+        pass

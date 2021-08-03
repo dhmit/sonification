@@ -109,8 +109,12 @@ def get_sentiment_analysis(request):
     API endpoint for generating audio based on the sentiment analysis of the given text
     """
     text = request.query_params.get('text')
-    audio_data = text_to_sound(text)
-    encoded_audio = wav_to_base64(*audio_data)
+    audio_metadata = text_to_sound(text)
+
+    audio = audio_metadata['audio_samples']
+    sample_rate = audio_metadata['sample_rate']
+    encoded_audio = wav_to_base64(audio, sample_rate)
+
     res = {
         'sound': encoded_audio
     }

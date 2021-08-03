@@ -1,6 +1,5 @@
 import React, {useEffect, useState, useRef, useCallback} from "react";
 import STYLES from "./Drawing.module.scss";
-import {SketchPicker} from "react-color";
 import {getCookie} from "../common";
 
 const Drawing = () => {
@@ -107,8 +106,8 @@ const Drawing = () => {
         setBrushSize(event.target.value);
     };
 
-    const handleColorInput = (color) => {
-        setColor(color.hex);
+    const handleColorInput = (event) => {
+        setColor(event.target.value);
     };
 
     const handleSubmitDrawing = (event) => {
@@ -149,7 +148,7 @@ const Drawing = () => {
                     value={brushSize} step="1" onChange={handleBrushSizeInput}/>
                 <label htmlFor="brush">{brushSize}</label>
             </div>
-            <SketchPicker color={color} disableAlpha={true} onChange={handleColorInput}/>
+            <input type="color" value={color} onChange={handleColorInput}/>
             <button className="btn btn-primary" onClick={switchMode}>Switch Mode</button>
             <button onClick={handleSubmitDrawing}>Submit Drawing</button>
         </div>

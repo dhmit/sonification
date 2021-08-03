@@ -8,6 +8,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 from .common import wav_to_base64
+from .analysis.sentiment_analysis import text_to_sound
 
 
 class MainTests(TestCase):
@@ -41,3 +42,17 @@ class WavToBase64TestCase(TestCase):
         data = np.array([1, 2, 3, 4, 255, 256, 5], dtype=np.int16)
         sample_rate = 10
         encoded_data = wav_to_base64(data, sample_rate)
+
+
+class TextToSoundTestCase(TestCase):
+    """
+    Test case for text_to_sound function.
+    """
+    def test_text_to_sound(self):
+        text = 'This is good. This is bad.'
+        result = text_to_sound(text)
+        audio_samples = result['audio_samples']
+        self.assertEqual(type(result), dict)
+        self.assertEqual(len(audio_samples), 88200)
+        self.assertEqual(type(audio_samples), np.ndarray)
+        self.assertEqual(audio_samples.dtype, 'int16')

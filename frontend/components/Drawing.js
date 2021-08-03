@@ -148,7 +148,10 @@ const Drawing = () => {
                     value={brushSize} step="1" onChange={handleBrushSizeInput}/>
                 <label htmlFor="brush">{brushSize}</label>
             </div>
-            <input type="color" value={color} onChange={handleColorInput}/>
+            <div className="row">
+                Brush Color: 
+                <input type="color" value={color} onChange={handleColorInput}/>
+            </div>
             <button className="btn btn-primary" onClick={switchMode}>Switch Mode</button>
             <button onClick={handleSubmitDrawing}>Submit Drawing</button>
         </div>

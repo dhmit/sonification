@@ -22,13 +22,21 @@ def change_volume(audio_metadata, amplitude):
     return {"audio_samples": audio.astype(np.int16), "sample_rate": audio_metadata["sample_rate"], "notes": audio_metadata["notes"]}
 
 
-def change_speed(audio_metadata, sample_rate=44100):
+def change_speed(audio_metadata, speed_factor, sample_rate=44100):
     """
-    :param audio_metadata: An int16 NumPy array representing a list of samples
+    :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
     :param sample_rate: An int representing a sample rate in Hz
-    """
+    :param speed_factor: An int representing the factor increase or decrease in a note's duration
 
-    return audio, sample_rate
+    :return: A Dict instance containing audio samples list, sample rate, and notes array with duration modifications
+
+    """
+    notes = []
+    for note_frequency, note_duration in audio_metadata["notes"]:
+        notes.append((note_frequency, note_duration * speed_factor))
+
+    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": notes}
+
 
 
 def add_chords(audio_metadata, sample_rate=44100):

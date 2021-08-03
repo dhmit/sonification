@@ -10,8 +10,8 @@ from textwrap import dedent
 def wav_to_base64(byte_array, sample_rate):
     """
     Encode the WAV byte array with base64
-    :param byte_array: int16 numpy array
-    :param sample_rate: integer, the sampling rate
+    :param byte_array: NumPy array representing the list of samples (usually int16: 2 bytes per sample)
+    :param sample_rate: int, the sampling rate in Hz
     :return: base64 encoding of the given array as a str
     """
     byte_io = io.BytesIO(bytes())

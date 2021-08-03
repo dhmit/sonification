@@ -31,7 +31,7 @@ def change_speed(audio_metadata, speed_factor):
     """
 
     notes = []
-    for note_frequency, note_duration in audio_metadata["notes"]:
+    for note_frequency, note_duration, _ in audio_metadata["notes"]:
         notes.append((note_frequency, note_duration * speed_factor))
 
     return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": notes}

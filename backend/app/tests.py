@@ -45,6 +45,8 @@ class WavToBase64TestCase(TestCase):
     """
 
     def test_wav_to_base64(self):
+        # TODO: Add expected results for encoded_data[32:34] (what exactly goes here? see link in docstring)
+
         one_byte_per_sample = np.array([0, 1, 15, 255], dtype=np.int8)
         self.assertEqual(bytes(one_byte_per_sample), b'\x00\x01\x0f\xff')
         self.assertEqual(bytes(np.array([256], dtype=np.int8)), bytes([0]))

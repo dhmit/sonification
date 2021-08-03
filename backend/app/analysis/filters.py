@@ -15,8 +15,11 @@ def change_volume(audio_metadata, amplitude):
     :return: A Dict instance containing audio samples list with modified amplitudes, sample rate, and notes array
     """
 
+    audio = []
+    for each_sample in audio_metadata["audio_samples"]:
+        audio.append(each_sample * amplitude)
 
-    return (amplitude * audio).astype(np.int16)
+    return {"audio_samples": audio.astype(np.int16), "sample_rate": audio_metadata["sample_rate"], "notes": audio_metadata["notes"]}
 
 
 def change_speed(audio_metadata, sample_rate=44100):

@@ -35,13 +35,10 @@ const Drawing = () => {
             context.globalCompositeOperation = mode === "draw" ? "source-over" : "destination-out";
             context.moveTo(coords[0].x, coords[0].y);
             let i;
-            for (i = 1; i < coords.length - 2; i++) {
+            for (i = 1; i < coords.length - 1; i++) {
                 const c = (coords[i].x + coords[i + 1].x) / 2;
                 const d = (coords[i].y + coords[i + 1].y) / 2;
                 context.quadraticCurveTo(coords[i].x, coords[i].y, c, d);
-            }
-            if (i + 1 < coords.length) {
-                context.quadraticCurveTo(coords[i].x, coords[i].y, coords[i + 1].x, coords[i + 1].y);
             }
             context.stroke();
         }
@@ -152,7 +149,7 @@ const Drawing = () => {
                     value={brushSize} step="1" onChange={handleBrushSizeInput}/>
                 <label htmlFor="brush">{brushSize}</label>
             </div>
-            <SketchPicker color={color} onChange={handleColorInput}/>
+            <SketchPicker color={color} disableAlpha={true} onChange={handleColorInput}/>
             <button className="btn btn-primary" onClick={switchMode}>Switch Mode</button>
             <button onClick={handleSubmitDrawing}>Submit Drawing</button>
         </div>

@@ -2,6 +2,7 @@
 Tests for the gender analysis web app.
 """
 
+import numpy as np
 from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
@@ -35,8 +36,8 @@ class SentimentAnalysisAPITests(APITestCase):
 
 
 class WavToBase64TestCase(TestCase):
-    def setUp(self):
-        pass
 
     def test_wav_to_base64(self):
-        pass
+        data = np.array([1, 2, 3, 4, 255, 256, 5], dtype=np.int16)
+        sample_rate = 10
+        encoded_data = wav_to_base64(data, sample_rate)

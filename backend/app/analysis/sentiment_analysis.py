@@ -26,7 +26,11 @@ def text_to_sound(user_text):
     all_notes = []
 
     for each_sentence in all_sentences:
+        # the compound score ranges from -1 to 1, this shifts the score so that there is no negative score
+        # multiplying by 44 and rounding the score gives us a range of keys from 0 to 88
         score = round((nltk_analyzer.polarity_scores(each_sentence)['compound'] + 1) * 44)
+        # formula calculates the frequency of a musical note using A4 as the base note
+        # the score is the nth key starting from key 0 being A0
         frequency = A4 * (2 ** ((score + 1 - 49) / 12))
         sin_waves.append(np.sin(2 * np.pi * frequency * t))
         all_notes.append((frequency, T, score))

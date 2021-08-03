@@ -1,5 +1,5 @@
 """
-Tests for the gender analysis web app.
+Tests for the sonification web app.
 """
 
 import base64
@@ -83,10 +83,9 @@ class WavToBase64TestCase(TestCase):
 
         results_2 = wav_to_base64(data_2, sample_rate)
         encoded_data_2 = base64.b64decode(results_2.encode('UTF-8'))
-
         self.assertEqual(encoded_data_2[22:24], bytes([1, 0]))
-        self.assertEqual(encoded_data_2[24:28], bytes([136, 88, 1, 0]))
-        self.assertEqual(encoded_data_2[28:32], bytes([136, 88, 1, 0]))
+        self.assertEqual(encoded_data_2[24:28], bytes(np.array([sample_rate], dtype=np.int32)))
+        self.assertEqual(encoded_data_2[28:32], encoded_data_2[24:28])
         self.assertEqual(encoded_data_2[34:36], bytes([8, 0]))
         self.assertEqual(encoded_data_2[44:], bytes(data_2))
 

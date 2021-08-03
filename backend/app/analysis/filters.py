@@ -62,12 +62,20 @@ def add_chords(audio_metadata):
 
 
 
-def overlap_notes(audio_metadata):
+def overlap_notes(audio_metadata, first_note, second_note):
     """
     :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
+    :param first_note: A Tuple instance containing a note frequency, a note duration, and a note score
+    :param second_note: A Tuple instance containing another note frequency, another note duration, and another note score
 
-    :return: A Dict instance containing audio samples list, sample rate, and notes array
+    :return: A Dict instance containing modified audio samples list, sample rate, and notes array
     """
 
-    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": audio_metadata["notes"]}
+    notes = []
+    for note_frequency, note_duration, note_score in audio_metadata["notes"]:
+        notes.append((note_frequency + first_note[0], note_duration + first_note[1], note_score + first_note[2]))
+        notes.append((note_frequency + second_note[0], note_duration + second_note[1], note_score + second_note[2]))
+
+
+    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": notes}
 

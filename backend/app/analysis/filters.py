@@ -11,6 +11,7 @@ def change_volume(audio_metadata, amplitude):
 
     :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
     :param amplitude: An int representing the factor increase or decrease in volume
+
     :return: A Dict instance containing audio samples list with modified amplitudes, sample rate, and notes array
     """
 

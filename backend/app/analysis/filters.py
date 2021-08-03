@@ -28,8 +28,8 @@ def change_speed(audio_metadata, speed_factor):
     :param speed_factor: An int representing the factor increase or decrease in a note's duration
 
     :return: A Dict instance containing audio samples list, sample rate, and notes array with duration modifications
-
     """
+
     notes = []
     for note_frequency, note_duration in audio_metadata["notes"]:
         notes.append((note_frequency, note_duration * speed_factor))
@@ -41,6 +41,8 @@ def change_speed(audio_metadata, speed_factor):
 def add_chords(audio_metadata):
     """
     :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
+
+    :return: A Dict instance containing audio samples list, sample rate, and notes array
     """
 
     return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": audio_metadata["notes"]}
@@ -50,6 +52,8 @@ def add_chords(audio_metadata):
 def overlap_notes(audio_metadata):
     """
     :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
+
+    :return: A Dict instance containing audio samples list, sample rate, and notes array
     """
 
     return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": audio_metadata["notes"]}

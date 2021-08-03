@@ -31,11 +31,24 @@ def change_speed(audio_metadata, speed_factor):
     """
 
     notes = []
-    for note_frequency, note_duration, _ in audio_metadata["notes"]:
-        notes.append((note_frequency, note_duration * speed_factor))
+    for note_frequency, note_duration, note_score in audio_metadata["notes"]:
+        notes.append((note_frequency, note_duration * speed_factor, note_score))
 
     return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": notes}
 
+def change_pitch(audio_metadata, pitch_factor):
+    """
+    :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
+    :param pitch_factor: An int representing the factor increase or decrease in a note's frequency
+
+    :return: A Dict instance containing audio samples list, sample rate, and notes array with frequency modifications
+    """
+
+    notes = []
+    for note_frequency, note_duration, note_score in audio_metadata["notes"]:
+        notes.append((note_frequency * pitch_factor, note_duration, note_score))
+
+    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": notes}
 
 
 def add_chords(audio_metadata):

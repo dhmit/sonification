@@ -1,6 +1,5 @@
-""""
-Various filtering functions to apply to audio waves (represented as int16 numpy arrays)
-"""
+"""" Various filtering functions to apply to audio objects (represented as Dict containing a 16 bit numpy samples
+array, sample rate, and notes array) """
 
 import numpy as np
 

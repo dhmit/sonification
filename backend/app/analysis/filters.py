@@ -22,10 +22,9 @@ def change_volume(audio_metadata, amplitude):
     return {"audio_samples": audio.astype(np.int16), "sample_rate": audio_metadata["sample_rate"], "notes": audio_metadata["notes"]}
 
 
-def change_speed(audio_metadata, speed_factor, sample_rate=44100):
+def change_speed(audio_metadata, speed_factor):
     """
     :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
-    :param sample_rate: An int representing a sample rate in Hz
     :param speed_factor: An int representing the factor increase or decrease in a note's duration
 
     :return: A Dict instance containing audio samples list, sample rate, and notes array with duration modifications
@@ -39,28 +38,19 @@ def change_speed(audio_metadata, speed_factor, sample_rate=44100):
 
 
 
-def add_chords(audio_metadata, sample_rate=44100):
+def add_chords(audio_metadata):
     """
-    :param audio_metadata: An int16 NumPy array representing a list of samples
-    :param sample_rate: An int representing a sample rate in Hz
-    """
-
-    return audio, sample_rate
-
-
-def overlap_notes(audio_metadata, sample_rate=44100):
-    """
-    :param audio_metadata: An int16 NumPy array representing a list of samples
-    :param sample_rate: An int representing a sample rate in Hz
+    :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
     """
 
-    return audio, sample_rate
+    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": audio_metadata["notes"]}
 
 
-def change_quality(audio_metadata, sample_rate=44100):
+
+def overlap_notes(audio_metadata):
     """
-    :param audio_metadata: An int16 NumPy array representing a list of samples
-    :param sample_rate: An int representing a sample rate in Hz
+    :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
     """
 
-    return audio, sample_rate
+    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": audio_metadata["notes"]}
+

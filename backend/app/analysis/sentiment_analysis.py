@@ -29,7 +29,7 @@ def text_to_sound(user_text):
         score = round((nltk_analyzer.polarity_scores(each_sentence)['compound'] + 1) * 44)
         frequency = A4 * (2 ** ((score + 1 - 49) / 12))
         sin_waves.append(np.sin(2 * np.pi * frequency * t))
-        all_notes.append((score, frequency, T))
+        all_notes.append((frequency, T, score))
 
     audio = np.hstack(sin_waves)
     audio *= 32767 / np.max(np.abs(audio))

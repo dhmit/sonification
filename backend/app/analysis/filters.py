@@ -50,12 +50,29 @@ def change_speed(audio_metadata, speed_factor):
         assert abs(num_samples - int(num_samples)) <= 1e-7, "Check reasoning and creation of original audio!"
 
         num_desired_samples = int(num_samples * fraction)
-        end_index = start_index + num_desired_samples + 1
-        new_audio = np.append(new_audio, audio[start_index: end_index])
-        # new_audio = np.concatenate([new_audio, audio[start_index: end_index]])  # ??
-        start_index += end_index
+
+        if speed_factor >= 1:
+            end_index = start_index + num_desired_samples + 1
+            new_audio = np.append(new_audio, audio[start_index: end_index])
+            start_index += num_samples + 1
+
+        else:
+            end_index = start_index + num_samples + 1
+            new_audio = np.append(new_audio, audio[start_index: end_index])
+
+            num_extra_samples = int(note_duration * sample_rate * (fraction - 1))
+            t = np.linspace(note_duration, note_duration * fraction, num_extra_samples, True)
+            sin_wave = np.sin(2 * np.pi * note_frequency * t)
+
+            sin_wave = np.array(sin_wave)
+            sin_wave *= 32767 / np.max(np.abs(sin_wave))
+            sin_wave = sin_wave.astype(np.int16)
+
+            new_audio = np.append(new_audio, sin_wave)
 
     assert new_audio.dtype == audio.dtype, "Check array concatenation!"
+
+    # breakpoint()
 
     return {
         "audio_samples": new_audio,

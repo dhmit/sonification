@@ -7,7 +7,6 @@ import base64
 from nltk.tokenize import sent_tokenize
 import random
 
-
 musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
 mc_list = list(musical_chars)
 
@@ -42,13 +41,22 @@ def _analyse_sentiment(text):
     return score
 
 
+def _generate_note_frequency(score_positive, score_negative, score_neutral):
+    base_frequency = 400
+    rounding_frequency = 350
+    base_percentage = 1
+    positivity_differential = score_positive - score_negative
+    rounded_neutral_score = base_percentage + score_neutral
+    return base_frequency + positivity_differential * rounding_frequency * rounded_neutral_score
+
+
 def text_to_note(text):
     """
     :param text: Takes in a string of text
     :return _wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
     """
     score = _analyse_sentiment(text)
-    note_freq = 400 + (score["pos"] - score["neg"]) * 350 * (1 + score["neu"])
+    note_freq = _generate_note_frequency(score["pos"], score["neg"], score["neu"])
 
     # get time steps for the sample
     sample_rate = 44100
@@ -102,10 +110,10 @@ def _get_notes(text):
     if len(stripped_text) == 0:
         notes = notes.join(random.choices(mc_list, k=output_length))
     elif len(stripped_text) < output_length:
-        notes = notes.join(random.choices(mc_list, k=output_length-len(stripped_text))) + "".join(stripped_text)
+        notes = notes.join(random.choices(mc_list, k=output_length - len(stripped_text))) + "".join(stripped_text)
     else:
-        start = random.randint(0, len(stripped_text)-output_length)
-        notes = notes.join(stripped_text[start:start+output_length])
+        start = random.randint(0, len(stripped_text) - output_length)
+        notes = notes.join(stripped_text[start:start + output_length])
 
     return notes
 

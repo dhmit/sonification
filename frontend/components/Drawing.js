@@ -10,6 +10,7 @@ const Drawing = () => {
     const [color, setColor] = useState("#000000");
     const [mouseCoord, setMouseCoord] = useState([]);
     const [submitted, setSubmitted] = useState(false);
+    const [imageFile, setImageFile] = useState(null);
     const [soundData, setSoundData] = useState(null);
 
     const getCoords = (event) => {
@@ -113,13 +114,30 @@ const Drawing = () => {
     const handleSubmitDrawing = (event) => {
         event.preventDefault();
         setSubmitted(true);
-
         const canvas = canvasRef.current;
         canvas.toBlob((blob)=> {
-            const csrftoken = getCookie("csrftoken");
-            const formData = new FormData();
-            formData.append("image", blob, "image.jpg");
-            const requestOptions = {
+            submitFileToAPI(blob);
+        }, "image/jpeg");
+    };
+
+    const handleFileInput = (event) => {
+        setImageFile(event.target.files[0]);
+    };
+
+    const handleSubmitFile = (event) => {
+        event.preventDefault();
+        if (imageFile) {
+            submitFileToAPI(imageFile);
+        } else {
+            alert("Please upload a JPEG file first.");
+        }
+    };
+
+    const submitFileToAPI = (file) => {
+        const formData = new FormData();
+        formData.append("image", file, "image.jpg");
+        const csrftoken = getCookie("csrftoken");
+        const requestOptions = {
                 method: "POST",
                 headers: {
                     "X-CSRFToken": csrftoken
@@ -131,8 +149,6 @@ const Drawing = () => {
                 .then(data => {
                     setSoundData(data);
                 });
-        }, "image/jpeg");
-
     };
 
     return (
@@ -154,6 +170,8 @@ const Drawing = () => {
             </div>
             <button className="btn btn-primary" onClick={switchMode}>Switch Mode</button>
             <button onClick={handleSubmitDrawing}>Submit Drawing</button>
+            <input type="file" accept="image/jpeg" onChange={handleFileInput}/>
+            <button onClick={handleSubmitFile}>Submit Image File</button>
         </div>
     );
 };

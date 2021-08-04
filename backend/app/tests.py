@@ -45,7 +45,6 @@ class WavToBase64TestCase(TestCase):
     """
 
     def test_wav_to_base64(self):
-        # TODO: Add expected results for encoded_data[32:34] (what exactly goes here? see link in docstring)
 
         one_byte_per_sample = np.array([0, 1, 15, 255], dtype=np.int8)
         self.assertEqual(bytes(one_byte_per_sample), b'\x00\x01\x0f\xff')
@@ -68,7 +67,9 @@ class WavToBase64TestCase(TestCase):
         constant = (sample_rate * bits_per_sample * num_channels) // 8
 
         results_1 = wav_to_base64(data_1, sample_rate)
+        self.assertTrue(isinstance(results_1, str))
         encoded_data = base64.b64decode(results_1.encode('UTF-8'))
+        self.assertTrue(isinstance(encoded_data, bytes))
 
         self.assertEqual(encoded_data[22:24], bytes([num_channels, 0]))
         self.assertEqual(encoded_data[24:28], bytes([sample_rate, 0, 0, 0]))
@@ -80,11 +81,13 @@ class WavToBase64TestCase(TestCase):
 
         sample_rate = 44100
         bits_per_sample = 8
-        num_channels = 1
         constant = (sample_rate * bits_per_sample * num_channels) // 8
 
         results_2 = wav_to_base64(data_2, sample_rate)
+        self.assertTrue(isinstance(results_2, str))
         encoded_data_2 = base64.b64decode(results_2.encode('UTF-8'))
+        self.assertTrue(isinstance(encoded_data_2, bytes))
+
         self.assertEqual(encoded_data_2[22:24], bytes([1, 0]))
         self.assertEqual(encoded_data_2[24:28], bytes(np.array([sample_rate], dtype=np.int32)))
         self.assertEqual(encoded_data_2[28:32], encoded_data_2[24:28])

@@ -11,7 +11,8 @@ def text_to_sound(user_text):
     :return: A dictionary of audio metadata with the following keys:
         audio_samples: An int16 Numpy array
         sample_rate: An int, recorded in Hz
-        notes: A list of 2-element tuples (freq, duration) for each note's frequency (Hz) and duration (s) in the audio
+        notes: A list of 3-element tuples (freq, duration, score) for each note's frequency (Hz) and duration (s)
+            in the audio, as well as the score used to acquire that note
 
     """
     A4 = 440

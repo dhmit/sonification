@@ -39,8 +39,47 @@ def generate_note(frequency, duration, sample_rate):
     return note
 
 
+def synthesize_cello(frequency, duration, sample_rate):
+    """
+    Cello overtone amplitudes found from https://www.vobarian.com/celloanly/
+    :param frequency: frequency of the note
+    :param duration: duration in seconds
+    :param sample_rate: sampling rate
+    :return note: list of samples for the note
+    """
+    cello_overtones = {
+        2: 0.5,
+        3: 0.1,
+        4: 0.4,
+        5: 0.23,
+        6: 0.3,
+        7: 0.43,
+        8: 0.4,
+        9: 0.3,
+        10: 0.12
+    }
+
+    fundamental = generate_note(frequency, duration, sample_rate)
+    for harmonic in cello_overtones.keys():
+        fundamental += generate_note(frequency * harmonic, duration, sample_rate)
+
+    note = fundamental * 32767 / np.max(np.abs(fundamental))
+    return note
+
+
 def analyze_image(im):
     """
     :param im: .jpg image to be analyzed
     :return sound: sound created from this im
     """
+
+    audio = np.concatenate((synthesize_cello(100, 0.5, 44100), synthesize_cello(200, 0.25, 44100), synthesize_cello(300, 1, 44100)))
+
+    audio = audio.astype(np.int16)
+
+    # start playback
+    play_obj = sa.play_buffer(audio, 1, 2, 44100)
+
+    # wait for playback to finish before exiting
+    play_obj.wait_done()
+

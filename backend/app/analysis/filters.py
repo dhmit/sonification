@@ -19,7 +19,8 @@ def change_volume(audio_metadata, amplitude):
     for each_sample in audio_metadata["audio_samples"]:
         audio.append(each_sample * amplitude)
 
-    return {"audio_samples": audio.astype(np.int16), "sample_rate": audio_metadata["sample_rate"], "notes": audio_metadata["notes"]}
+    return {"audio_samples": audio.astype(np.int16), "sample_rate": audio_metadata["sample_rate"],
+            "notes": audio_metadata["notes"]}
 
 
 def change_speed(audio_metadata, speed_factor):
@@ -34,7 +35,9 @@ def change_speed(audio_metadata, speed_factor):
     for note_frequency, note_duration, note_score in audio_metadata["notes"]:
         notes.append((note_frequency, note_duration * speed_factor, note_score))
 
-    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": notes}
+    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"],
+            "notes": notes}
+
 
 def change_pitch(audio_metadata, pitch_factor):
     """
@@ -48,7 +51,8 @@ def change_pitch(audio_metadata, pitch_factor):
     for note_frequency, note_duration, note_score in audio_metadata["notes"]:
         notes.append((note_frequency * pitch_factor, note_duration, note_score))
 
-    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": notes}
+    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"],
+            "notes": notes}
 
 
 def add_chords(audio_metadata):
@@ -65,12 +69,13 @@ def add_chords(audio_metadata):
         t = np.linspace(0, T, T * sample_rate, False)
         if n < 48:
             # minor chord
-            first_freq = 2 ** ((n+3 + 1 - 49) / 12) * 440
+            first_freq = 2 ** ((n + 3 + 1 - 49) / 12) * 440
         else:
             # major chord
-            first_freq = 2 ** ((n+4 + 1 - 49) / 12) * 440
-        second_freq = 2 ** ((n+7 + 1 - 49) / 12) * 440
-        sin_wave = np.sin(freq * t * 2 * np.pi) + np.sin(first_freq * t * 2 * np.pi) + np.sin(second_freq * t * 2 * np.pi)
+            first_freq = 2 ** ((n + 4 + 1 - 49) / 12) * 440
+        second_freq = 2 ** ((n + 7 + 1 - 49) / 12) * 440
+        sin_wave = np.sin(freq * t * 2 * np.pi) + np.sin(first_freq * t * 2 * np.pi) + np.sin(
+            second_freq * t * 2 * np.pi)
         chord_sin_waves.append(sin_wave)
 
     # concatenate notes
@@ -81,7 +86,6 @@ def add_chords(audio_metadata):
     audio = audio.astype(np.int16)
 
     return {"audio_samples": audio, "sample_rate": sample_rate, "notes": notes}
-
 
 
 def overlap_notes(audio_metadata, first_note, second_note):
@@ -98,6 +102,5 @@ def overlap_notes(audio_metadata, first_note, second_note):
         notes.append((note_frequency + first_note[0], note_duration + first_note[1], note_score + first_note[2]))
         notes.append((note_frequency + second_note[0], note_duration + second_note[1], note_score + second_note[2]))
 
-
-    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"], "notes": notes}
-
+    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"],
+            "notes": notes}

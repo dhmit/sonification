@@ -38,7 +38,7 @@ def change_speed(audio_metadata, speed_factor):
     """
     notes = []
     audio = audio_metadata["audio_samples"]
-    sample_rate = audio_metadata["audio_samples"]
+    sample_rate = audio_metadata["sample_rate"]
     new_audio = np.array([], dtype=audio.dtype)
     fraction = 1 / speed_factor
 

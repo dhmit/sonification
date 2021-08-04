@@ -138,29 +138,29 @@ const Drawing = () => {
         formData.append("image", file, "image.jpg");
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
-                method: "POST",
-                headers: {
-                    "X-CSRFToken": csrftoken
-                },
-                body: formData
-            };
-            fetch("/api/image_to_sound", requestOptions)
-                .then(response => response.json())
-                .then(data => {
-                    setSoundData(data);
-                });
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrftoken
+            },
+            body: formData
+        };
+        fetch("/api/image_to_sound", requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                setSoundData(data);
+            });
     };
 
     return (
         <div className="container-fluid">
-            <canvas className={STYLES.canvas}
+            <canvas className={!submitted && STYLES.activeCanvas}
                 ref={canvasRef} id="canvas" width="500" height="500"></canvas>
             <div className="row">
                 Mode: {mode}
             </div>
             <div className="row">
                 Brush Size:
-                <input type="range" id="brush" min="0" max="50"
+                <input type="range" id="brush" min="1" max="50"
                     value={brushSize} step="1" onChange={handleBrushSizeInput}/>
                 <label htmlFor="brush">{brushSize}</label>
             </div>

@@ -1,4 +1,8 @@
-canvas {
+.activeCanvas {
   border: 1px solid black;
   cursor: crosshair;
+}
+
+canvas {
+  border: 1px solid black;
 }

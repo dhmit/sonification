@@ -51,9 +51,9 @@ def change_speed(audio_metadata, speed_factor):
 
         num_desired_samples = int(num_samples * fraction)
         end_index = start_index + num_desired_samples + 1
-
-        new_audio = np.concatenate(new_audio, audio[start_index: end_index])
-        start_index = end_index
+        new_audio = np.append(new_audio, audio[start_index: end_index])
+        # new_audio = np.concatenate([new_audio, audio[start_index: end_index]])  # ??
+        start_index += end_index
 
     assert new_audio.dtype == audio.dtype, "Check array concatenation!"
 

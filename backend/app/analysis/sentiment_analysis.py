@@ -17,8 +17,8 @@ def text_to_sound(user_text):
     """
     A4 = 440
     sample_rate = 44100
-    T = 1
-    t = np.linspace(0, T, T * sample_rate, False)
+    duration = 1
+    t = np.linspace(0, duration, duration * sample_rate, False)
 
     nltk_analyzer = SentimentIntensityAnalyzer()
     all_sentences = nltk.sent_tokenize(user_text)
@@ -34,7 +34,7 @@ def text_to_sound(user_text):
         # the score is the nth key starting from key 0 being A0
         frequency = A4 * (2 ** ((score + 1 - 49) / 12))
         sin_waves.append(np.sin(2 * np.pi * frequency * t))
-        all_notes.append((frequency, T, score))
+        all_notes.append((frequency, duration, score))
 
     audio = np.hstack(sin_waves)
     audio *= 32767 / np.max(np.abs(audio))

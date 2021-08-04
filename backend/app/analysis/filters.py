@@ -15,28 +15,51 @@ def change_volume(audio_metadata, amplitude):
     :return: A Dict instance containing audio samples list with modified amplitudes, sample rate, and notes array
     """
 
-    audio = []
-    for each_sample in audio_metadata["audio_samples"]:
-        audio.append(each_sample * amplitude)
+    audio = audio_metadata["audio_samples"]
+    new_audio = amplitude * audio
 
-    return {"audio_samples": audio.astype(np.int16), "sample_rate": audio_metadata["sample_rate"],
-            "notes": audio_metadata["notes"]}
+    return {"audio_samples": new_audio.astype(audio.dtype), "sample_rate": audio_metadata["sample_rate"],
+            "notes": audio_metadata["notes"][:]}
 
 
 def change_speed(audio_metadata, speed_factor):
     """
-    :param audio_metadata: A Dict instance containing audio samples list, sample rate, and notes array
-    :param speed_factor: An int representing the factor increase or decrease in a note's duration
+    :param audio_metadata: A dict instance containing:
+     audio_samples: An int16 Numpy array,
+     sample_rate: An int recorded in Hz,
+     notes: A list of 3-element tuples, containing:
+        the frequency(ies) of a note/chord (int or tuple),
+
+
+    :param speed_factor: An int representing the new relative speed of playback for the output audio
+        (e.g., an output audio that plays twice as fast would require an input of `2`)
 
     :return: A Dict instance containing audio samples list, sample rate, and notes array with duration modifications
     """
-
     notes = []
-    for note_frequency, note_duration, note_score in audio_metadata["notes"]:
-        notes.append((note_frequency, note_duration * speed_factor, note_score))
+    audio = audio_metadata["audio_samples"]
+    sample_rate = audio_metadata["audio_samples"]
+    new_audio = np.array([], dtype=audio.dtype)
+    fraction = 1 / speed_factor
 
-    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"],
-            "notes": notes}
+    start_index = 0
+    for note_frequency, note_duration, note_score in audio_metadata["notes"]:
+        notes.append((note_frequency, note_duration * fraction, note_score))
+
+        num_samples = note_duration * sample_rate
+        assert abs(num_samples - int(num_samples)) <= 1e-7, "Check reasoning and creation of original audio!"
+
+        num_desired_samples = int(num_samples * fraction)
+        end_index = start_index + num_desired_samples + 1
+
+        new_audio += audio[start_index: end_index]
+        start_index = end_index
+
+    return {
+        "audio_samples": new_audio,
+        "sample_rate": sample_rate,
+        "notes": notes
+    }
 
 
 def change_pitch(audio_metadata, pitch_factor):
@@ -51,7 +74,7 @@ def change_pitch(audio_metadata, pitch_factor):
     for note_frequency, note_duration, note_score in audio_metadata["notes"]:
         notes.append((note_frequency * pitch_factor, note_duration, note_score))
 
-    return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": audio_metadata["sample_rate"],
+    return {"audio_samples": audio_metadata["audio_samples"][:], "sample_rate": audio_metadata["sample_rate"],
             "notes": notes}
 
 

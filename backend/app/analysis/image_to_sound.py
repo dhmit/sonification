@@ -87,6 +87,11 @@ def _synthesize_instruments(frequency, duration, sample_rate, overtones):
 
 
 def _get_instrument(im):
+    """
+    Chooses an instrument to synthesize based off of the dominant color in the image
+    :param im: image
+    :return: Dict instance that contains harmonics and relative amplitudes
+    """
     color_thief_obj = ColorThief(im)
     rgb_tuple = color_thief_obj.get_color(quality=2)
     if max(rgb_tuple) == rgb_tuple[0]:

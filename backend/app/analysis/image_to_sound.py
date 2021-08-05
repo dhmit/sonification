@@ -1,5 +1,6 @@
 import numpy as np
 import simpleaudio as sa
+import cv2 as cv
 
 # Found from https://www.vobarian.com/celloanly/
 cello_overtones = {
@@ -84,9 +85,27 @@ def synthesize_instruments(frequency, duration, sample_rate, overtones):
     return note
 
 
+def _hist_weighted_average(array):
+    total = 0
+    for bin in array:
+        total += bin[0]
+
+    w_average = 0
+    for idx, bin in enumerate(array):
+        w_average += idx * (bin[0] / total)
+
+    return w_average
+
+
+def _get_histogram_avg(image_path):
+    img = cv.imread(image_path)
+    gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+    gray_hist = cv.calcHist([gray], [0], None, [256], [0, 256])
+    return _hist_weighted_average(gray_hist)
+
 def analyze_image(im):
     """
     :param im: .jpg image to be analyzed
     :return sound: sound created from this im
     """
-
+    pass

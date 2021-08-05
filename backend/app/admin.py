@@ -1,5 +1,5 @@
 """
-This file controls the administrative interface for gender analysis web app.
+This file controls the administrative interface for the sonification web app.
 """
 
 from django.contrib import admin

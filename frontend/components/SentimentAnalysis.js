@@ -57,10 +57,12 @@ const SentimentAnalysis = () => {
                                 ? <>
                                     <p><b>Note:</b></p>
                                     <audio controls="controls"
-                                        src={`data:audio/wav;base64, ${noteData}`}
-                                        controlsList="nodownload"/>
+                                           src={`data:audio/wav;base64, ${noteData}`}
+                                           controlsList="nodownload"/>
                                 </>
                                 : <p>Loading note...</p>
+                        }
+                        {
                             soundData
                                 ? <>
                                     <p><b>Sound:</b></p>

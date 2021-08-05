@@ -86,7 +86,7 @@ def _synthesize_instruments(frequency, duration, sample_rate, overtones):
         fundamental += _generate_note(frequency * harmonic, duration, sample_rate)
 
     # note = fundamental * 32767 / np.max(np.abs(fundamental))
-    return fundamental.toList()
+    return fundamental.tolist()
 
 
 def _get_instrument(im):
@@ -210,7 +210,7 @@ def analyze_image(im):
     brightness = _get_histogram_avg(im)
     frequency = brightness_to_freq(brightness)
     tempos = _get_tempo_for_image(im, num_slices)
-    beats_and_durations = [(int(tempo*length_slice), length_slice*60/int(tempo*length_slice)) for tempo in tempos]
+    beats_and_durations = [(int(tempo*length_slice), length_slice*60/round(tempo*length_slice)) for tempo in tempos]
 
     full_audio = []
     for audio_slice in beats_and_durations:

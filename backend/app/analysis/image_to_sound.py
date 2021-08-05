@@ -2,6 +2,9 @@ import numpy as np
 import simpleaudio as sa
 from colorthief import ColorThief
 import cv2 as cv
+from scipy.io import wavfile
+import io
+import base64
 
 # Found from https://www.vobarian.com/celloanly/
 cello_overtones = {
@@ -157,13 +160,48 @@ def _get_tempo_for_image(im, num_slices):
         #tempo.append(_get_tempo_for_slice(im_array[0:num_rows, start_index:end_index]))
         start_index = end_index
 
+
 def brightness_to_freq(brightness):
     note_freq = 100 + brightness * 3.5
     return note_freq
+
 
 def analyze_image(im):
     """
     :param im: .jpg image to be analyzed
     :return sound: sound created from this im
     """
-    pass
+    length_slice = 1  #in seconds
+    num_slices = 4
+    sample_rate = 44100
+
+    instrument = _get_instrument(im)
+    brightness = _get_histogram_avg(im)
+    frequency = brightness_to_freq(brightness)
+    tempos = _get_tempo_for_image(im, num_slices)
+
+    full_audio = []
+    # something to generate repeated sounds based off of tempo and length_slice
+
+    # normalize to 16-bit range
+    full_audio = np.array(full_audio)
+    full_audio *= 32767 / np.max(np.abs(full_audio))
+
+    # convert to 16-bit data
+    full_audio = full_audio.astype(np.int16)
+
+    return _wav_to_base64(full_audio, sample_rate)
+
+
+def _wav_to_base64(byte_array, sample_rate):
+    """
+    Encode the WAV byte array with base64
+    :param byte_array: int16 numpy array
+    :param sample_rate: integer, the sampling rate
+    :return audio_data: base64 encoding of the given array
+    """
+    byte_io = io.BytesIO(bytes())
+    wavfile.write(byte_io, sample_rate, byte_array)
+    wav_bytes = byte_io.read()
+    audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
+    return audio_data

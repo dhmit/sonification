@@ -129,9 +129,8 @@ def _get_histogram_avg(image_path):
     return _hist_weighted_average(gray_hist)
 
 
-def brightness_to_freq(brightness):
-    note_freq = 100 + brightness * 3.5
-    return note_freq
+def _get_tempo_for_slice(image_slice):
+    pass
 
 
 def image_to_note(image_path):
@@ -155,6 +154,35 @@ def image_to_note(image_path):
     audio *= 32767 / np.max(np.abs(audio))
     # convert to 16-bit data
     audio = audio.astype(np.int16)
+
+    
+def _get_tempo_for_image(im, num_slices):
+    im_array = cv.imread(im)
+    num_rows = im_array.shape[0]
+    num_cols = im_array.shape[1]
+    if num_slices > num_cols:
+        num_slices = num_cols
+    slice_width = num_cols//num_slices
+    remainder = num_cols - (slice_width * num_slices)
+
+    tempo = []  # keeping track of the output from the _get_tempo_for_slice function
+    start_index = 0
+    count = 1
+    while start_index < num_cols - slice_width + 1:
+        if remainder == 0:
+            end_index = start_index + slice_width
+        else:
+            end_index = start_index + slice_width + 1
+            remainder -= 1
+        print(start_index, end_index)
+        print(count)
+        count += 1
+        #tempo.append(_get_tempo_for_slice(im_array[0:num_rows, start_index:end_index]))
+        start_index = end_index
+
+def brightness_to_freq(brightness):
+    note_freq = 100 + brightness * 3.5
+    return note_freq
 
 def analyze_image(im):
     """

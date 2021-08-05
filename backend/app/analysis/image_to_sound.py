@@ -136,13 +136,36 @@ def _get_tempo_for_slice(image_slice):
     pass
 
 
+def image_to_note(image_path):
+    """
+    :param image_path:
+    :return _wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
+    """
+    note_freq = brightness_to_freq(_get_histogram_avg(image_path))
+
+    # get time steps for the sample
+    sample_rate = 44100
+    note_duration = 1
+    time_steps = np.linspace(0, note_duration, note_duration * sample_rate, False)
+
+    # generate sine wave notes
+    note = np.sin(note_freq * time_steps * 2 * np.pi)
+
+    # concatenate notes
+    audio = note
+    # normalize to 16-bit range
+    audio *= 32767 / np.max(np.abs(audio))
+    # convert to 16-bit data
+    audio = audio.astype(np.int16)
+
+
 def _get_tempo_for_image(im, num_slices):
     im_array = cv.imread(im)
     num_rows = im_array.shape[0]
     num_cols = im_array.shape[1]
     if num_slices > num_cols:
         num_slices = num_cols
-    slice_width = num_cols//num_slices
+    slice_width = num_cols // num_slices
     remainder = num_cols - (slice_width * num_slices)
 
     tempo = []  # keeping track of the output from the _get_tempo_for_slice function
@@ -157,7 +180,7 @@ def _get_tempo_for_image(im, num_slices):
         print(start_index, end_index)
         print(count)
         count += 1
-        #tempo.append(_get_tempo_for_slice(im_array[0:num_rows, start_index:end_index]))
+        # tempo.append(_get_tempo_for_slice(im_array[0:num_rows, start_index:end_index]))
         start_index = end_index
 
 

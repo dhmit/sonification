@@ -134,7 +134,27 @@ def brightness_to_freq(brightness):
     return note_freq
 
 
+def image_to_note(image_path):
+    """
+    :param image_path:
+    :return _wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
+    """
+    note_freq = brightness_to_freq(_get_histogram_avg(image_path))
 
+    # get time steps for the sample
+    sample_rate = 44100
+    note_duration = 1
+    time_steps = np.linspace(0, note_duration, note_duration * sample_rate, False)
+
+    # generate sine wave notes
+    note = np.sin(note_freq * time_steps * 2 * np.pi)
+
+    # concatenate notes
+    audio = note
+    # normalize to 16-bit range
+    audio *= 32767 / np.max(np.abs(audio))
+    # convert to 16-bit data
+    audio = audio.astype(np.int16)
 
 def analyze_image(im):
     """

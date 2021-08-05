@@ -1,5 +1,6 @@
 import numpy as np
 import simpleaudio as sa
+from colorthief import ColorThief
 
 # Found from https://www.vobarian.com/celloanly/
 cello_overtones = {
@@ -30,7 +31,7 @@ trombone_overtones = {
 }
 
 
-def generate_note(frequency, duration, sample_rate):
+def _generate_note(frequency, duration, sample_rate):
     """
     Uses the ADSR (Attack, Decay, Sustain, Release) envelope to
     generate a note that fades in and out realistically
@@ -67,7 +68,7 @@ def generate_note(frequency, duration, sample_rate):
     return note
 
 
-def synthesize_instruments(frequency, duration, sample_rate, overtones):
+def _synthesize_instruments(frequency, duration, sample_rate, overtones):
     """
     :param frequency: frequency of the note
     :param duration: duration in seconds
@@ -76,12 +77,23 @@ def synthesize_instruments(frequency, duration, sample_rate, overtones):
     :return note: list of samples for the note
     """
 
-    fundamental = generate_note(frequency, duration, sample_rate)
+    fundamental = _generate_note(frequency, duration, sample_rate)
     for harmonic in overtones.keys():
-        fundamental += generate_note(frequency * harmonic, duration, sample_rate)
+        fundamental += _generate_note(frequency * harmonic, duration, sample_rate)
 
     note = fundamental * 32767 / np.max(np.abs(fundamental))
     return note
+
+
+def _get_instrument(im):
+    color_thief_obj = ColorThief(im)
+    rgb_tuple = color_thief_obj.get_color(quality=2)
+    if max(rgb_tuple) == rgb_tuple[0]:
+        return cello_overtones
+    elif max(rgb_tuple) == rgb_tuple[1]:
+        return clarinet_overtones
+    else:
+        return trombone_overtones
 
 
 def analyze_image(im):
@@ -89,4 +101,3 @@ def analyze_image(im):
     :param im: .jpg image to be analyzed
     :return sound: sound created from this im
     """
-

@@ -121,12 +121,12 @@ def get_sentiment_analysis(request):
     return Response(res)
 
 
-def drawing(request):
+def image_analysis(request):
     context = {
         'page_metadata': {
-            'title': 'Drawing'
+            'title': 'Image Analysis'
         },
-        'component_name': 'Drawing'
+        'component_name': 'ImageAnalysis'
     }
 
     return render(request, 'index.html', context)

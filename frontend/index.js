@@ -7,7 +7,7 @@ import ErrorNotFoundComponent from "./components/ErrorNotFoundComponent";
 import ExampleId from "./components/ExampleId";
 import SentimentAnalysis from "./components/SentimentAnalysis";
 import Home from "./components/Home";
-import Drawing from "./components/Drawing";
+import ImageAnalysis from "./components/ImageAnalysis";
 const COMPONENT_PROPS_RAW = document.getElementById("component_props").text;
 const COMPONENT_NAME_RAW = document.getElementById("component_name").text;
 const COMPONENT_PROPS = JSON.parse(COMPONENT_PROPS_RAW);
@@ -18,7 +18,7 @@ const COMPONENTS = {
     ExampleId,
     SentimentAnalysis,
     Home,
-    Drawing
+    ImageAnalysis
 };
 
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];

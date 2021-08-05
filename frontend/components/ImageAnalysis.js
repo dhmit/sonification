@@ -1,11 +1,13 @@
 import React, {useEffect, useState, useRef, useCallback} from "react";
-import STYLES from "./Drawing.module.scss";
+import STYLES from "./ImageAnalysis.module.scss";
 import {getCookie} from "../common";
+import {Tabs, Tab} from "react-bootstrap";
 
-const Drawing = () => {
+const ImageAnalysis = () => {
     const canvasRef = useRef(null);
+    const tabRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
-    const [mode, setMode] = useState("draw");
+    const [mode, setMode] = useState("Brush");
     const [brushSize, setBrushSize] = useState(1);
     const [color, setColor] = useState("#000000");
     const [mouseCoord, setMouseCoord] = useState([]);
@@ -16,9 +18,10 @@ const Drawing = () => {
     const getCoords = (event) => {
         if (!canvasRef.current) return;
         const canvas = canvasRef.current;
+        const canvasCoord = canvas.getBoundingClientRect();
         return {
-            x: event.pageX - canvas.offsetLeft,
-            y: event.pageY - canvas.offsetTop
+            x: event.clientX - canvasCoord.x,
+            y: event.clientY - canvasCoord.y
         };
     };
 
@@ -32,7 +35,7 @@ const Drawing = () => {
             context.lineJoin = "round";
             context.lineCap = "round";
             context.strokeStyle = color;
-            context.globalCompositeOperation = mode === "draw" ? "source-over" : "destination-out";
+            context.globalCompositeOperation = mode === "Brush" ? "source-over" : "destination-out";
             context.moveTo(coords[0].x, coords[0].y);
             let i;
             for (i = 1; i < coords.length - 1; i++) {
@@ -100,7 +103,7 @@ const Drawing = () => {
 
     const switchMode = (event) => {
         event.preventDefault();
-        setMode(prevMode => prevMode === "draw" ? "erase": "draw");
+        setMode(prevMode => prevMode === "Brush" ? "Eraser": "Brush");
     };
 
     const handleBrushSizeInput = (event) => {
@@ -153,27 +156,50 @@ const Drawing = () => {
 
     return (
         <div className="container-fluid">
-            <canvas className={`${STYLES.canvasBorder} ${submitted ? "" : STYLES.activeCanvas}`}
-                ref={canvasRef} width="500" height="500"></canvas>
-            <div className="row">
-                Mode: {mode}
-            </div>
-            <div>
-                Brush Size:
-                <input type="range" id="brush" min="1" max="50"
-                    value={brushSize} step="1" onChange={handleBrushSizeInput}/>
-                <label htmlFor="brush">{brushSize}</label>
-            </div>
-            <div>
-                Brush Color: 
-                <input type="color" value={color} onChange={handleColorInput}/>
-            </div>
-            <button className="btn btn-primary" onClick={switchMode}>Switch Mode</button>
-            <button onClick={handleSubmitDrawing}>Submit Drawing</button>
-            <input type="file" accept="image/jpeg" onChange={handleFileInput}/>
-            <button onClick={handleSubmitFile}>Submit Image File</button>
+            <h1>Image Analysis</h1>
+            <p>Please create a drawing or upload an image to convert into sound.</p>
+            <Tabs defaultActiveKey="drawing">
+                <Tab ref={tabRef} eventKey="drawing" title="Drawing Canvas">
+                    <div className="row">
+                        <div className="col">
+                            <canvas className={`${STYLES.canvasBorder} ${submitted ? "" : STYLES.activeCanvas}`}
+                                ref={canvasRef} width="550" height="550"></canvas>
+                        </div>
+                        <div className="col mt-3">
+                            <p>
+                                Canvas Tool: {mode}
+                                <button className="btn btn-sm btn-outline-dark text-right mx-3" onClick={switchMode}>Toggle Tool</button>
+                            </p>
+                            <p>
+                                Tool Size: {brushSize}
+                                <input className="form-control-range" type="range"
+                                    min="1" max="50" value={brushSize}
+                                    step="1" onChange={handleBrushSizeInput}/>
+                            </p>
+                            {mode === "Brush" &&
+                                <p>
+                                    Brush Color: <input type="color"
+                                        value={color} onChange={handleColorInput}/>
+                                </p>
+                            }
+                            <button className="btn btn-success" disabled={submitted} onClick={handleSubmitDrawing}>Submit Drawing</button>
+                        </div>
+                    </div>
+                </Tab>
+                <Tab eventKey="file" title="Image Upload">
+                    <input className="my-3" type="file" accept="image/jpeg" onChange={handleFileInput}/>
+                    <br/>
+                    {
+                        imageFile &&
+                        <p>
+                            <img className={STYLES.imageFile} src={URL.createObjectURL(imageFile)}></img>
+                        </p>
+                    }
+                    <button className="btn btn-success" onClick={handleSubmitFile}>Submit Image File</button>
+                </Tab>
+            </Tabs>
         </div>
     );
 };
 
-export default Drawing;
+export default ImageAnalysis;

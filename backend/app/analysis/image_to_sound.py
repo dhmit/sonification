@@ -104,12 +104,12 @@ def _get_instrument(im):
 
 def _hist_weighted_average(array):
     total = 0
-    for bin in array:
-        total += bin[0]
+    for single_bin in array:
+        total += single_bin[0]
 
     w_average = 0
-    for idx, bin in enumerate(array):
-        w_average += idx * (bin[0] / total)
+    for idx, single_bin in enumerate(array):
+        w_average += idx * (single_bin[0] / total)
 
     return w_average
 

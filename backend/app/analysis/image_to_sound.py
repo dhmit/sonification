@@ -56,10 +56,10 @@ def _generate_note(frequency, duration, sample_rate):
     len_s = int(s_percentage * total_length)
     len_r = int(r_percentage * total_length)
 
-    a_weights = [peak_weight * (2**(x/len_a) - 1) for x in range(len_a)]
-    d_weights = [sustain_weight + (peak_weight-sustain_weight) * (2**(1-x/len_d) - 1) for x in range(len_d)]
+    a_weights = [peak_weight * (2 ** (x / len_a) - 1) for x in range(len_a)]
+    d_weights = [sustain_weight + (peak_weight - sustain_weight) * (2 ** (1 - x / len_d) - 1) for x in range(len_d)]
     s_weights = [sustain_weight for _ in range(len_s)]
-    r_weights = [final_weight + sustain_weight * (2**(1-x/len_r) - 1) for x in range(len_r)]
+    r_weights = [final_weight + sustain_weight * (2 ** (1 - x / len_r) - 1) for x in range(len_r)]
 
     all_weights = np.array(a_weights + d_weights + s_weights + r_weights)
     time_steps = np.linspace(0, duration, (len_a + len_d + len_s + len_r), False)
@@ -103,6 +103,10 @@ def _get_instrument(im):
 
 
 def _hist_weighted_average(array):
+    """
+    :param an array of arrays/bins that contains the number of pixels that are a certain brightness:
+    :return: the average brightness
+    """
     total = 0
     for single_bin in array:
         total += single_bin[0]
@@ -115,10 +119,20 @@ def _hist_weighted_average(array):
 
 
 def _get_histogram_avg(image_path):
+    """
+    :param image_path: the path to an image we want the brightness of
+    :return:
+    """
     img = cv.imread(image_path)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     gray_hist = cv.calcHist([gray], [0], None, [256], [0, 256])
     return _hist_weighted_average(gray_hist)
+
+
+def brightness_to_freq(brightness):
+    note_freq = 100 + brightness * 3.5
+
+
 
 
 def analyze_image(im):

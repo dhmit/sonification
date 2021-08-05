@@ -10,7 +10,7 @@ const ImageAnalysis = () => {
     const [mode, setMode] = useState("Brush");
     const [brushSize, setBrushSize] = useState(1);
     const [color, setColor] = useState("#000000");
-    const [mouseCoord, setMouseCoord] = useState([]);
+    const [mouseCoords, setmouseCoords] = useState([]);
     const [submitted, setSubmitted] = useState(false);
     const [imageFile, setImageFile] = useState(null);
     const [soundData, setSoundData] = useState(null);
@@ -50,7 +50,7 @@ const ImageAnalysis = () => {
     const beginDrawing = useCallback((event) => {
         const coords = getCoords(event);
         if (coords) {
-            setMouseCoord(prevCoords => [...prevCoords, coords]);
+            setmouseCoords(prevCoords => [...prevCoords, coords]);
             setIsDrawing(true);
         }
     }, []);
@@ -70,11 +70,11 @@ const ImageAnalysis = () => {
         if (isDrawing && !submitted) {
             const newMouseCoord = getCoords(event);
             if (newMouseCoord) {
-                setMouseCoord(prevCoords => [...prevCoords, newMouseCoord]);
-                drawLine(mouseCoord);
+                setmouseCoords(prevCoords => [...prevCoords, newMouseCoord]);
+                drawLine(mouseCoords);
             }
         }
-    }, [isDrawing, mouseCoord]);
+    }, [isDrawing, mouseCoords]);
 
     useEffect(() => {
         if (!canvasRef.current) return;
@@ -87,7 +87,7 @@ const ImageAnalysis = () => {
 
     const endDrawing = useCallback(() => {
         setIsDrawing(false);
-        setMouseCoord([]);
+        setmouseCoords([]);
     }, []);
 
     useEffect(() => {

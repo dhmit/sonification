@@ -133,7 +133,16 @@ def _get_histogram_avg(image_path):
 
 
 def _get_tempo_for_slice(image_slice):
-    pass
+    """
+    :param image_slice: needs to be passed in as a cv.imread('path/to/file.jpg')
+    :return: tempo in beats per minute
+    """
+    canny = cv.Canny(image_slice, 125, 175)
+    total = image_slice.shape[0] * image_slice.shape[1]
+    cv.imshow('Canny', canny)
+    contours, hierarchies = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
+    tempo = 40 + 10000 * (len(contours) / total)
+    return tempo
 
 
 def image_to_note(image_path):

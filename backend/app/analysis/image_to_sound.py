@@ -186,11 +186,10 @@ def _get_tempo_for_image(im, num_slices):
         else:
             end_index = start_index + slice_width + 1
             remainder -= 1
-        print(start_index, end_index)
-        print(count)
         count += 1
-        # tempo.append(_get_tempo_for_slice(im_array[0:num_rows, start_index:end_index]))
+        tempo.append(_get_tempo_for_slice(im_array[0:num_rows, start_index:end_index]))
         start_index = end_index
+    return tempo
 
 
 def brightness_to_freq(brightness):

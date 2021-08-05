@@ -5,7 +5,8 @@ import React, {useState} from "react";
 const SentimentAnalysis = () => {
     const [userInput, setUserInput] = useState("");
     const [submitted, setSubmitted] = useState(false);
-    const [audioData, setAudioData] = useState(null);
+    const [noteData, setNoteData] = useState(null);
+    const [soundData, setSoundData] = useState(null);
 
     const handleInputChange = (event) => {
         setUserInput(event.target.value);
@@ -16,7 +17,8 @@ const SentimentAnalysis = () => {
         fetch(`/api/get_sentiment_analysis?text=${userInput}`)
             .then(response => response.json())
             .then(data =>{
-                setAudioData(data);
+                setNoteData(data.note);
+                setSoundData(data.sound);
             });
         setSubmitted(true);
     };
@@ -24,7 +26,8 @@ const SentimentAnalysis = () => {
     const resetText = (event) => {
         event.preventDefault();
         setUserInput("");
-        setAudioData(null);
+        setSoundData(null);
+        setNoteData(null);
         setSubmitted(false);
     };
 
@@ -50,18 +53,22 @@ const SentimentAnalysis = () => {
                         <p>Here is your submitted text:</p>
                         <p className="mx-3">{userInput}</p>
                         {
-                            audioData
+                            noteData
                                 ? <>
                                     <p><b>Note:</b></p>
                                     <audio controls="controls"
-                                        src={`data:audio/wav;base64, ${audioData.note}`}
-                                        controlsList="nodownload"/>
-                                    <p><b>Sound:</b></p>
-                                    <audio controls="controls"
-                                        src={`data:audio/wav;base64, ${audioData.sound}`}
+                                        src={`data:audio/wav;base64, ${noteData}`}
                                         controlsList="nodownload"/>
                                 </>
-                                : <p>Loading audio...</p>
+                                : <p>Loading note...</p>
+                            soundData
+                                ? <>
+                                    <p><b>Sound:</b></p>
+                                    <audio controls="controls"
+                                        src={`data:audio/wav;base64, ${soundData}`}
+                                        controlsList="nodownload"/>
+                                </>
+                                : <p>Loading sound...</p>
                         }
                     </div>
                     : <div>You have not submitted any response yet.</div>

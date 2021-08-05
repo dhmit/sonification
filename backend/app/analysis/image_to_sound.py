@@ -67,7 +67,7 @@ def _generate_note(frequency, duration, sample_rate):
     all_weights = np.array(a_weights + d_weights + s_weights + r_weights)
     time_steps = np.linspace(0, duration, (len_a + len_d + len_s + len_r), False)
     note = np.sin(frequency * time_steps * 2 * np.pi) * all_weights
-    note *= 32767 / np.max(np.abs(note))
+    # note *= 32767 / np.max(np.abs(note))
 
     return note
 
@@ -85,8 +85,8 @@ def _synthesize_instruments(frequency, duration, sample_rate, overtones):
     for harmonic in overtones.keys():
         fundamental += _generate_note(frequency * harmonic, duration, sample_rate)
 
-    note = fundamental * 32767 / np.max(np.abs(fundamental))
-    return note
+    # note = fundamental * 32767 / np.max(np.abs(fundamental))
+    return fundamental.toList()
 
 
 def _get_instrument(im):
@@ -194,7 +194,7 @@ def analyze_image(im):
     :param im: .jpg image to be analyzed
     :return sound: sound created from this im
     """
-    length_slice = 1  #in seconds
+    length_slice = 1/60  # in minutes
     num_slices = 4
     sample_rate = 44100
 
@@ -202,9 +202,12 @@ def analyze_image(im):
     brightness = _get_histogram_avg(im)
     frequency = brightness_to_freq(brightness)
     tempos = _get_tempo_for_image(im, num_slices)
+    beats_and_durations = [(int(tempo*length_slice), length_slice*60/int(tempo*length_slice)) for tempo in tempos]
 
     full_audio = []
-    # something to generate repeated sounds based off of tempo and length_slice
+    for audio_slice in beats_and_durations:
+        for _ in range(audio_slice[0]):
+            full_audio += _synthesize_instruments(frequency, audio_slice[1], sample_rate, instrument)
 
     # normalize to 16-bit range
     full_audio = np.array(full_audio)

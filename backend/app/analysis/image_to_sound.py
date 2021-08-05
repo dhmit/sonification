@@ -131,6 +131,7 @@ def _get_histogram_avg(image_path):
 
 def brightness_to_freq(brightness):
     note_freq = 100 + brightness * 3.5
+    return note_freq
 
 
 

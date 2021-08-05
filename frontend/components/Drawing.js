@@ -153,8 +153,8 @@ const Drawing = () => {
 
     return (
         <div className="container-fluid">
-            <canvas className={!submitted && STYLES.activeCanvas}
-                ref={canvasRef} id="canvas" width="500" height="500"></canvas>
+            <canvas className={`${STYLES.canvasBorder} ${submitted ? "" : STYLES.activeCanvas}`}
+                ref={canvasRef} width="500" height="500"></canvas>
             <div className="row">
                 Mode: {mode}
             </div>

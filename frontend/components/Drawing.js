@@ -158,13 +158,13 @@ const Drawing = () => {
             <div className="row">
                 Mode: {mode}
             </div>
-            <div className="row">
+            <div>
                 Brush Size:
                 <input type="range" id="brush" min="1" max="50"
                     value={brushSize} step="1" onChange={handleBrushSizeInput}/>
                 <label htmlFor="brush">{brushSize}</label>
             </div>
-            <div className="row">
+            <div>
                 Brush Color: 
                 <input type="color" value={color} onChange={handleColorInput}/>
             </div>

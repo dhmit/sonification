@@ -120,3 +120,18 @@ def get_sentiment_analysis(request):
     }
     return Response(res)
 
+
+def drawing(request):
+    context = {
+        'page_metadata': {
+            'title': 'Drawing'
+        },
+        'component_name': 'Drawing'
+    }
+
+    return render(request, 'index.html', context)
+
+
+@api_view(['POST'])
+def image_to_sound(request):
+    return Response({'file': str(request.data['image'])})

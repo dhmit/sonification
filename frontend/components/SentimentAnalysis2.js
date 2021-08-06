@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 // import * as PropTypes from "prop-types";
-// import STYLES from "./SentimentAnalysis.module.scss";
+// import STYLES from "./SentimentAnalysis2.module.scss";
 
-const SentimentAnalysis = () => {
+const SentimentAnalysis2 = () => {
     const [userInput, setUserInput] = useState("");
     const [submitted, setSubmitted] = useState(false);
     const [noteData, setNoteData] = useState(null);
@@ -79,4 +79,4 @@ const SentimentAnalysis = () => {
     );
 };
 
-export default SentimentAnalysis;
+export default SentimentAnalysis2;

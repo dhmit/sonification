@@ -6,7 +6,6 @@ import {Tabs, Tab} from "react-bootstrap";
 const ImageAnalysis = () => {
     const canvasRef = useRef(null);
     const fileRef = useRef(null);
-    const tabRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [mode, setMode] = useState("Brush");
     const [brushSize, setBrushSize] = useState(1);
@@ -187,7 +186,7 @@ const ImageAnalysis = () => {
             <h1>Image Analysis</h1>
             <p>Please create a drawing or upload an image to convert into sound.</p>
             <Tabs defaultActiveKey="drawing">
-                <Tab ref={tabRef} eventKey="drawing" title="Drawing Canvas">
+                <Tab eventKey="drawing" title="Drawing Canvas">
                     <div className="row">
                         <div className="col-5">
                             <canvas className={`${STYLES.canvas} 

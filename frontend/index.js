@@ -15,7 +15,7 @@ const COMPONENT_NAME = JSON.parse(COMPONENT_NAME_RAW);
 const COMPONENTS = {
     ErrorNotFoundComponent,
     ExampleId,
-    SentimentAnalysis: SentimentAnalysis2
+    SentimentAnalysis2
 };
 
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];

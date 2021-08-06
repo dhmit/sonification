@@ -25,6 +25,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 
+from .analysis.text_to_music import text_to_sound
+from .analysis.text_to_music import text_to_note
+
 
 @api_view(['GET'])
 def get_example(request, example_id):
@@ -87,14 +90,27 @@ def example_id(request, example_id):
 
 def sentiment_analysis_2(request):
     """
-    Sentiment Analysis Page
+    Sentiment Analysis 2 Page
     """
 
     context = {
         'page_metadata': {
-            'title': 'Sentiment Analysis'
+            'title': 'Sentiment Analysis 2'
         },
         'component_name': 'SentimentAnalysis2'
     }
 
     return render(request, 'index.html', context)
+
+
+@api_view(['GET'])
+def get_sentiment_analysis_2(request):
+    """
+    API endpoint for generating audio based on the sentiment analysis of the given text
+    """
+    text = request.query_params.get('text')
+    res = {
+        'note': text_to_note(text),
+        'sound': text_to_sound(text)
+    }
+    return Response(res)

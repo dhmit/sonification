@@ -1,6 +1,4 @@
 import React, {useState} from "react";
-// import * as PropTypes from "prop-types";
-// import STYLES from "./SentimentAnalysis2.module.scss";
 
 const SentimentAnalysis2 = () => {
     const [userInput, setUserInput] = useState("");
@@ -14,7 +12,7 @@ const SentimentAnalysis2 = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        fetch(`/api/get_sentiment_analysis?text=${userInput}`)
+        fetch(`/api/get_sentiment_analysis_2?text=${userInput}`)
             .then(response => response.json())
             .then(data =>{
                 setNoteData(data.note);

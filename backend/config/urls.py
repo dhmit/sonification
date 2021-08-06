@@ -17,8 +17,10 @@ Including another URL configuration
 from django.contrib import admin
 from django.urls import path
 
-from app import views
-
+try:
+    from ..app import views
+except (ImportError, ModuleNotFoundError):
+    from app import views
 
 urlpatterns = [
     # Django admin page
@@ -32,5 +34,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('example', views.example, name='example'),
     path('example/<int:example_id>', views.example_id, name='example_id'),
-    path('sentiment_analysis', views.sentiment_analysis, name='sentiment_analysis')
+    path('sentiment-analysis', views.sentiment_analysis, name='sentiment-analysis')
 ]

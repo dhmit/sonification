@@ -196,7 +196,8 @@ const ImageAnalysis = () => {
                                 <button className="btn btn-sm btn-outline-dark text-right mx-3"
                                     onClick={switchMode}>Toggle Tool</button>
                                 <button className="btn btn-sm btn-outline-primary text-right"
-                                    onClick={resetCanvas}>Clear Drawing</button>
+                                    onClick={resetCanvas} disabled={submitted.drawing}>
+                                    Clear Drawing</button>
                             </p>
                             <p>
                                 Tool Size: {brushSize}

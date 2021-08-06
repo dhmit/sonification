@@ -28,8 +28,8 @@ consonant_ratios = [(1, 2), (2, 3)]
 
 def _analyse_sentiment(text):
     """
-    :param text: a string of text
-    :return score: sentiment analysis of the text
+    :param text: String of text
+    :return score: Dict, sentiment analysis of the text
     """
     # Convert text to lowercase
     lower_case = text.lower()
@@ -40,6 +40,12 @@ def _analyse_sentiment(text):
 
 
 def _generate_note_frequency(score_positive, score_negative, score_neutral):
+    """
+    :param score_positive: positivity score of a sentence
+    :param score_negative: negativity score of a sentence
+    :param score_neutral: neutrality score of a sentence
+    :return: Float, frequency for a note
+    """
     base_frequency = 400
     rounding_frequency = 350
     base_percentage = 1
@@ -50,7 +56,7 @@ def _generate_note_frequency(score_positive, score_negative, score_neutral):
 
 def text_to_note(text):
     """
-    :param text: Takes in a string of text
+    :param text: Takes in a String of text
     :return wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
     """
     score = _analyse_sentiment(text)
@@ -76,6 +82,8 @@ def text_to_note(text):
 
 def _get_ratio(positive_score, neutral_score, negative_score):
     """
+    Returns a list of neutral ratios if the score is mostly neutral, consonant ratios
+    if the score is more positive, and dissonant ratios otherwise
     :param positive_score: positivity score of a sentence
     :param neutral_score: neutrality score of a sentence
     :param negative_score: negativity score of a sentence
@@ -96,8 +104,8 @@ def _get_other_freq(positive_score, neutral_score, negative_score, current_freq)
     :param positive_score: positivity score of a sentence
     :param neutral_score: neutrality score of a sentence
     :param negative_score: negativity score of a sentence
-    :param current_freq: the frequency of a given note
-    :return other_freq: frequency for another note found from current_freq and a randomized ratio
+    :param current_freq: Float, frequency of a given note
+    :return other_freq: Float, frequency for another note found from current_freq and a randomized ratio
     """
     ratios = _get_ratio(positive_score, neutral_score, negative_score)
 
@@ -108,8 +116,8 @@ def _get_other_freq(positive_score, neutral_score, negative_score, current_freq)
 
 def _get_notes(text):
     """
-    :param text: a string of input text
-    :return notes: a string of notes chosen randomly from musical characters in text
+    :param text: String of input text
+    :return notes: String of notes chosen randomly from musical characters in text
     """
     notes = ""
     output_length = 4 if (len(text) > 30) else 2
@@ -130,8 +138,8 @@ def _get_notes(text):
 
 def _get_durations(notes):
     """
-    :param notes: a list of notes
-    :return output: a list with corresponding durations for each note in notes
+    :param notes: List of notes
+    :return output: List with corresponding durations for each note in notes
     """
     output = [random.uniform(0.2, 0.8) for _ in notes]
     return output
@@ -139,9 +147,9 @@ def _get_durations(notes):
 
 def _sonify_sentence(text, sample_rate):
     """
-    :param text: string of a sentence
-    :param sample_rate: integer, the sampling rate
-    :return audio: list of samples for this sentence
+    :param text: String of a sentence
+    :param sample_rate: Integer, the sampling rate
+    :return audio: List of samples for this sentence
     """
     quieter_note_loudness = 0.6
     notes = _get_notes(text)
@@ -166,7 +174,7 @@ def _sonify_sentence(text, sample_rate):
 
 def text_to_sound(text):
     """
-    :param text: a string of text
+    :param text: String of text
     :return wav_to_base64(full_audio, sample_rate): base64 encoding of a sonification of text
     """
 

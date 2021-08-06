@@ -145,6 +145,6 @@ def get_sentiment_analysis_2(request):
     text = request.query_params.get('text')
     res = {
         'note': text_to_note(text),
-        'sound': text_to_sound(text)
+        'sound': sonify_text(text)
     }
     return Response(res)

@@ -203,14 +203,16 @@ def analyze_image(im):
     :return sound: sound created from this im
     """
     length_slice = 1/60  # in minutes
-    num_slices = 4
+    num_slices = 5
     sample_rate = 44100
 
     instrument = _get_instrument(im)
     brightness = _get_histogram_avg(im)
     frequency = brightness_to_freq(brightness)
     tempos = _get_tempo_for_image(im, num_slices)
-    beats_and_durations = [(int(tempo*length_slice), length_slice*60/round(tempo*length_slice)) for tempo in tempos]
+    print(tempos)
+    beats_and_durations = [(max(1, round(tempo*length_slice)), length_slice*60/round(tempo*length_slice)) for tempo in tempos]
+    print(beats_and_durations)
 
     full_audio = []
     for audio_slice in beats_and_durations:

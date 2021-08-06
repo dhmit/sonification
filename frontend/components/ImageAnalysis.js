@@ -5,6 +5,7 @@ import {Tabs, Tab} from "react-bootstrap";
 
 const ImageAnalysis = () => {
     const canvasRef = useRef(null);
+    const fileRef = useRef(null);
     const tabRef = useRef(null);
     const [isDrawing, setIsDrawing] = useState(false);
     const [mode, setMode] = useState("Brush");
@@ -173,6 +174,8 @@ const ImageAnalysis = () => {
 
     const handleNewFile = (event) => {
         event.preventDefault();
+        const file = fileRef.current;
+        file.value = null;
         setSubmitted(prevSubmitted => ({...prevSubmitted, "file": false}));
         setImageFile(null);
         setSoundData(prevSoundData => ({...prevSoundData, "file": null}));
@@ -227,7 +230,7 @@ const ImageAnalysis = () => {
                     </div>
                 </Tab>
                 <Tab eventKey="file" title="Image Upload">
-                    <input className="my-3" type="file"
+                    <input className="my-3" type="file" ref={fileRef}
                         accept="image/jpeg" onChange={handleFileInput}/>
                     <br/>
                     {

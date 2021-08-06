@@ -8,7 +8,7 @@ const Base = ({children}) => {
         <>
             <Nav />
             <div className={STYLES.body}>
-                <main>{children}</main>
+                <main role={"main"}>{children}</main>
             </div>
         </>
     );

@@ -121,7 +121,7 @@ const ImageAnalysis = () => {
 
     const handleSubmitDrawing = (event) => {
         event.preventDefault();
-        setSubmitted(prevSubmitted => ({...prevSubmitted,drawing: true}));
+        setSubmitted(prevSubmitted => ({...prevSubmitted,"drawing": true}));
         const canvas = canvasRef.current;
         canvas.toBlob((blob)=> {
             submitFileToAPI(blob, "drawing");
@@ -135,6 +135,7 @@ const ImageAnalysis = () => {
     const handleSubmitFile = (event) => {
         event.preventDefault();
         if (imageFile) {
+            setSubmitted(prevSubmitted => ({...prevSubmitted,"file": true}));
             submitFileToAPI(imageFile, "file");
         } else {
             alert("Please upload a JPEG file first.");
@@ -219,6 +220,9 @@ const ImageAnalysis = () => {
                             <button className="btn btn-secondary"
                                 onClick={handleNewDrawing}>New Drawing</button>
                             {
+                                submitted.drawing && !soundData.drawing && <p>Loading audio...</p>
+                            }
+                            {
                                 soundData.drawing && <p>
                                     Sound:
                                     <audio controls="controls"
@@ -230,28 +234,37 @@ const ImageAnalysis = () => {
                     </div>
                 </Tab>
                 <Tab eventKey="file" title="Image Upload">
-                    <input className="my-3" type="file" ref={fileRef}
-                        accept="image/jpeg" onChange={handleFileInput}/>
-                    <br/>
-                    {
-                        imageFile &&
-                        <p>
-                            <img className={STYLES.imageFile}
-                                src={URL.createObjectURL(imageFile)}></img>
-                        </p>
-                    }
-                    <button className="btn btn-primary mr-3" disabled={submitted.file}
-                        onClick={handleSubmitFile}>Submit Image File</button>
-                    <button className="btn btn-secondary"
-                        onClick={handleNewFile}>New File Upload</button>
-                    {
-                        soundData.file && <p>
-                            Sound:
-                            <audio controls="controls"
-                                src={`data:audio/wav;base64, ${soundData.file}`}
-                                controlsList="nodownload"/>
-                        </p>
-                    }
+                    <div className="row">
+                        <div className="col">
+                            <input className="my-3" type="file" ref={fileRef}
+                                accept="image/jpeg" onChange={handleFileInput}/>
+                            <br/>
+                            {
+                                imageFile &&
+                                <p>
+                                    <img className={STYLES.imageFile}
+                                        src={URL.createObjectURL(imageFile)}></img>
+                                </p>
+                            }
+                            <button className="btn btn-primary mr-3" disabled={submitted.file}
+                                onClick={handleSubmitFile}>Submit Image File</button>
+                            <button className="btn btn-secondary"
+                                onClick={handleNewFile}>New File Upload</button>
+                        </div>
+                        <div className="col">
+                            {
+                                submitted.file && !soundData.file && <p>Loading audio...</p>
+                            }
+                            {
+                                soundData.file && <p>
+                                    Sound:
+                                    <audio controls="controls"
+                                        src={`data:audio/wav;base64, ${soundData.file}`}
+                                        controlsList="nodownload"/>
+                                </p>
+                            }
+                        </div>
+                    </div>
                 </Tab>
             </Tabs>
         </div>

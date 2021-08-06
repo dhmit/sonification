@@ -92,7 +92,7 @@ def _synthesize_instruments(frequency, duration, sample_rate, overtones):
 def _get_instrument(im):
     """
     Chooses an instrument to synthesize based off of the dominant color in the image
-    :param im: image
+    :param im: image object
     :return: Dict instance that contains harmonics and relative amplitudes
     """
     color_thief_obj = ColorThief(im)
@@ -121,12 +121,11 @@ def _hist_weighted_average(array):
     return w_average
 
 
-def _get_histogram_avg(image_path):
+def _get_histogram_avg(img):
     """
-    :param image_path: the path to an image we want the brightness of
+    :param img: the loaded image
     :return:
     """
-    img = cv.imread(image_path)
     gray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
     gray_hist = cv.calcHist([gray], [0], None, [256], [0, 256])
     return _hist_weighted_average(gray_hist)
@@ -134,23 +133,22 @@ def _get_histogram_avg(image_path):
 
 def _get_tempo_for_slice(image_slice):
     """
-    :param image_slice: needs to be passed in as a cv.imread('path/to/file.jpg')
+    :param image_slice: a slice of the image
     :return: tempo in beats per minute
     """
     canny = cv.Canny(image_slice, 125, 175)
     total = image_slice.shape[0] * image_slice.shape[1]
-    cv.imshow('Canny', canny)
     contours, hierarchies = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
     tempo = 40 + 10000 * (len(contours) / total)
     return tempo
 
 
-def image_to_note(image_path):
+def image_to_note(image):
     """
-    :param image_path:
+    :param image:
     :return _wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
     """
-    note_freq = brightness_to_freq(_get_histogram_avg(image_path))
+    note_freq = brightness_to_freq(_get_histogram_avg(image))
 
     # get time steps for the sample
     sample_rate = 44100
@@ -169,7 +167,7 @@ def image_to_note(image_path):
 
 
 def _get_tempo_for_image(im, num_slices):
-    im_array = cv.imread(im)
+    im_array = im
     num_rows = im_array.shape[0]
     num_cols = im_array.shape[1]
     if num_slices > num_cols:
@@ -205,14 +203,12 @@ def analyze_image(im):
     length_slice = 1/60  # in minutes
     num_slices = 5
     sample_rate = 44100
-
+    opencv_im = cv.imdecode(np.frombuffer(im.read(), np.uint8), cv.IMREAD_UNCHANGED)
     instrument = _get_instrument(im)
-    brightness = _get_histogram_avg(im)
+    brightness = _get_histogram_avg(opencv_im)
     frequency = brightness_to_freq(brightness)
-    tempos = _get_tempo_for_image(im, num_slices)
-    print(tempos)
+    tempos = _get_tempo_for_image(opencv_im, num_slices)
     beats_and_durations = [(max(1, round(tempo*length_slice)), length_slice*60/round(tempo*length_slice)) for tempo in tempos]
-    print(beats_and_durations)
 
     full_audio = []
     for audio_slice in beats_and_durations:

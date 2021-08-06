@@ -1,11 +1,9 @@
 import string
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import numpy as np
-from scipy.io import wavfile
-import io
-import base64
 from nltk.tokenize import sent_tokenize
 import random
+from ..common import wav_to_base64
 
 musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
 mc_list = list(musical_chars)
@@ -53,7 +51,7 @@ def _generate_note_frequency(score_positive, score_negative, score_neutral):
 def text_to_note(text):
     """
     :param text: Takes in a string of text
-    :return _wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
+    :return wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
     """
     score = _analyse_sentiment(text)
     note_freq = _generate_note_frequency(score["pos"], score["neg"], score["neu"])
@@ -73,7 +71,7 @@ def text_to_note(text):
     # convert to 16-bit data
     audio = audio.astype(np.int16)
 
-    return _wav_to_base64(audio, sample_rate)
+    return wav_to_base64(audio, sample_rate)
 
 
 def _get_other_freq(positive_score, neutral_score, negative_score, current_freq):
@@ -157,7 +155,7 @@ def _sonify_sentence(text, sample_rate):
 def text_to_sound(text):
     """
     :param text: a string of text
-    :return _wav_to_base64(full_audio, sample_rate): base64 encoding of a sonification of text
+    :return wav_to_base64(full_audio, sample_rate): base64 encoding of a sonification of text
     """
 
     sample_rate = 44100
@@ -173,18 +171,4 @@ def text_to_sound(text):
     # convert to 16-bit data
     full_audio = full_audio.astype(np.int16)
 
-    return _wav_to_base64(full_audio, sample_rate)
-
-
-def _wav_to_base64(byte_array, sample_rate):
-    """
-    Encode the WAV byte array with base64
-    :param byte_array: int16 numpy array
-    :param sample_rate: integer, the sampling rate
-    :return audio_data: base64 encoding of the given array
-    """
-    byte_io = io.BytesIO(bytes())
-    wavfile.write(byte_io, sample_rate, byte_array)
-    wav_bytes = byte_io.read()
-    audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
-    return audio_data
+    return wav_to_base64(full_audio, sample_rate)

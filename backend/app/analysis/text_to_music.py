@@ -76,6 +76,23 @@ def text_to_note(text):
     return _wav_to_base64(audio, sample_rate)
 
 
+def _get_ratio(positive_score, neutral_score, negative_score):
+    """
+    :param positive_score: positivity score of a sentence
+    :param neutral_score: neutrality score of a sentence
+    :param negative_score: negativity score of a sentence
+    :return ratios: List containing neutral, consonant, or dissonant ratios
+    """
+    if neutral_score > positive_score and neutral_score > negative_score:
+        ratios = neutral_ratios
+    elif positive_score > negative_score:
+        ratios = consonant_ratios
+    else:
+        ratios = dissonant_ratios
+
+    return ratios
+
+
 def _get_other_freq(positive_score, neutral_score, negative_score, current_freq):
     """
     :param positive_score: positivity score of a sentence
@@ -84,12 +101,7 @@ def _get_other_freq(positive_score, neutral_score, negative_score, current_freq)
     :param current_freq: the frequency of a given note
     :return other_freq: frequency for another note found from current_freq and a randomized ratio
     """
-    if neutral_score > positive_score and neutral_score > negative_score:
-        ratios = neutral_ratios
-    elif positive_score > negative_score:
-        ratios = consonant_ratios
-    else:
-        ratios = dissonant_ratios
+    ratios = _get_ratio(positive_score, neutral_score, negative_score)
 
     ratio = random.choices(ratios)[0]
     other_freq = current_freq * ratio[0] / ratio[1]

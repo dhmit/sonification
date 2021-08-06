@@ -172,7 +172,7 @@ def _sonify_sentence(text, sample_rate):
     return audio
 
 
-def text_to_sound(text):
+def sonify_text(text):
     """
     :param text: String of text
     :return wav_to_base64(full_audio, sample_rate): base64 encoding of a sonification of text

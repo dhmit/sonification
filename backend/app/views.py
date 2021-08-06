@@ -20,13 +20,13 @@ context = {
     'component_name': 'ExampleId'
 }
 """
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 
-from .analysis.text_to_music import text_to_sound
-from .analysis.text_to_music import text_to_note
+from .common import wav_to_base64
+from .analysis.sentiment_analysis import text_to_sound
+from .analysis.text_to_music import (text_to_note, sonify_text)
 
 
 @api_view(['GET'])
@@ -51,6 +51,7 @@ def index(request):
         'page_metadata': {
             'title': 'Home page'
         },
+        'component_name': 'Home'
     }
 
     return render(request, 'index.html', context)
@@ -88,9 +89,24 @@ def example_id(request, example_id):
     return render(request, 'index.html', context)
 
 
+def sentiment_analysis(request):
+    """
+    Sentiment Analysis Page
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Sentiment Analysis'
+        },
+        'component_name': 'SentimentAnalysis'
+    }
+
+    return render(request, 'index.html', context)
+
+
 def sentiment_analysis_2(request):
     """
-    Sentiment Analysis 2 Page
+    Sentiment Analysis Page
     """
 
     context = {
@@ -101,6 +117,24 @@ def sentiment_analysis_2(request):
     }
 
     return render(request, 'index.html', context)
+
+
+@api_view(['GET'])
+def get_sentiment_analysis(request):
+    """
+    API endpoint for generating audio based on the sentiment analysis of the given text
+    """
+    text = request.query_params.get('text')
+    audio_metadata = text_to_sound(text)
+
+    audio = audio_metadata['audio_samples']
+    sample_rate = audio_metadata['sample_rate']
+    encoded_audio = wav_to_base64(audio, sample_rate)
+
+    res = {
+        'sound': encoded_audio
+    }
+    return Response(res)
 
 
 @api_view(['GET'])

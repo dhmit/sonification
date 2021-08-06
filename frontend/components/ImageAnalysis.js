@@ -235,7 +235,7 @@ const ImageAnalysis = () => {
                 </Tab>
                 <Tab eventKey="file" title="Image Upload">
                     <div className="row">
-                        <div className="col">
+                        <div className="col-auto">
                             <input className="my-3" type="file" ref={fileRef}
                                 accept="image/jpeg" onChange={handleFileInput}/>
                             <br/>

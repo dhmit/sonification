@@ -130,8 +130,3 @@ def image_analysis(request):
     }
 
     return render(request, 'index.html', context)
-
-
-@api_view(['POST'])
-def image_to_sound(request):
-    return Response({'file': str(request.data['image'])})

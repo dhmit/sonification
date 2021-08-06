@@ -2,13 +2,19 @@
   cursor: crosshair;
 }
 
-.canvasBorder {
+.brushRange {
+  max-width: 20vw;
+}
+
+.canvas {
   border: 1px solid black;
+  width: 100%;
+  height: auto;
 }
 
 .imageFile {
-  max-height:500px;
-  max-width:500px;
+  max-height:60vh;
+  max-width:60vw;
   height:auto;
   width:auto;
 }

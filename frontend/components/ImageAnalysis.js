@@ -10,18 +10,22 @@ const ImageAnalysis = () => {
     const [mode, setMode] = useState("Brush");
     const [brushSize, setBrushSize] = useState(1);
     const [color, setColor] = useState("#000000");
-    const [mouseCoords, setmouseCoords] = useState([]);
-    const [submitted, setSubmitted] = useState(false);
+    const [mouseCoords, setMouseCoords] = useState([]);
+    const [submitted, setSubmitted] = useState({"drawing": false, "file": false});
     const [imageFile, setImageFile] = useState(null);
-    const [soundData, setSoundData] = useState(null);
+    const [soundData, setSoundData] = useState({"drawing": null, "file": null});
 
     const getCoords = (event) => {
         if (!canvasRef.current) return;
         const canvas = canvasRef.current;
-        const canvasCoord = canvas.getBoundingClientRect();
+        const rect = canvas.getBoundingClientRect();
+        const scale = {
+            x: canvas.width / rect.width,
+            y: canvas.height / rect.height
+        };
         return {
-            x: event.clientX - canvasCoord.x,
-            y: event.clientY - canvasCoord.y
+            x: (event.clientX - rect.left) * scale.x,
+            y: (event.clientY - rect.top) * scale.y
         };
     };
 
@@ -50,7 +54,7 @@ const ImageAnalysis = () => {
     const beginDrawing = useCallback((event) => {
         const coords = getCoords(event);
         if (coords) {
-            setmouseCoords(prevCoords => [...prevCoords, coords]);
+            setMouseCoords(prevCoords => [...prevCoords, coords]);
             setIsDrawing(true);
         }
     }, []);
@@ -67,10 +71,10 @@ const ImageAnalysis = () => {
     }, [beginDrawing]);
 
     const draw = useCallback((event) => {
-        if (isDrawing && !submitted) {
+        if (isDrawing && !submitted.drawing) {
             const newMouseCoord = getCoords(event);
             if (newMouseCoord) {
-                setmouseCoords(prevCoords => [...prevCoords, newMouseCoord]);
+                setMouseCoords(prevCoords => [...prevCoords, newMouseCoord]);
                 drawLine(mouseCoords);
             }
         }
@@ -87,7 +91,7 @@ const ImageAnalysis = () => {
 
     const endDrawing = useCallback(() => {
         setIsDrawing(false);
-        setmouseCoords([]);
+        setMouseCoords([]);
     }, []);
 
     useEffect(() => {
@@ -116,10 +120,10 @@ const ImageAnalysis = () => {
 
     const handleSubmitDrawing = (event) => {
         event.preventDefault();
-        setSubmitted(true);
+        setSubmitted(prevSubmitted => ({...prevSubmitted,drawing: true}));
         const canvas = canvasRef.current;
         canvas.toBlob((blob)=> {
-            submitFileToAPI(blob);
+            submitFileToAPI(blob, "drawing");
         }, "image/jpeg");
     };
 
@@ -130,13 +134,13 @@ const ImageAnalysis = () => {
     const handleSubmitFile = (event) => {
         event.preventDefault();
         if (imageFile) {
-            submitFileToAPI(imageFile);
+            submitFileToAPI(imageFile, "file");
         } else {
             alert("Please upload a JPEG file first.");
         }
     };
 
-    const submitFileToAPI = (file) => {
+    const submitFileToAPI = (file, inputType) => {
         const formData = new FormData();
         formData.append("image", file, "image.jpg");
         const csrftoken = getCookie("csrftoken");
@@ -150,8 +154,27 @@ const ImageAnalysis = () => {
         fetch("/api/image_to_sound", requestOptions)
             .then(response => response.json())
             .then(data => {
-                setSoundData(data);
+                setSoundData(prevSoundData => ({...prevSoundData, [inputType]: data}));
             });
+    };
+
+    const resetCanvas = (event) => {
+        event.preventDefault();
+        const canvas = canvasRef.current;
+        const context = canvas.getContext("2d");
+        context.clearRect(0, 0, canvas.width, canvas.height);
+    };
+
+    const handleNewDrawing = (event) => {
+        resetCanvas(event);
+        setSubmitted(prevSubmitted => ({...prevSubmitted, "drawing": false}));
+        setSoundData(null);
+    };
+
+    const handleNewFile = (event) => {
+        event.preventDefault();
+        setSubmitted(prevSubmitted => ({...prevSubmitted, "file": false}));
+        setImageFile(null);
     };
 
     return (
@@ -161,19 +184,23 @@ const ImageAnalysis = () => {
             <Tabs defaultActiveKey="drawing">
                 <Tab ref={tabRef} eventKey="drawing" title="Drawing Canvas">
                     <div className="row">
-                        <div className="col">
-                            <canvas className={`${STYLES.canvasBorder} ${submitted ? "" : STYLES.activeCanvas}`}
-                                ref={canvasRef} width="550" height="550"></canvas>
+                        <div className="col-5">
+                            <canvas className={`${STYLES.canvas} 
+                                ${submitted.drawing ? "" : STYLES.activeCanvas}`}
+                            ref={canvasRef} width="500" height="500"></canvas>
                         </div>
                         <div className="col mt-3">
                             <p>
                                 Canvas Tool: {mode}
-                                <button className="btn btn-sm btn-outline-dark text-right mx-3" onClick={switchMode}>Toggle Tool</button>
+                                <button className="btn btn-sm btn-outline-dark text-right mx-3"
+                                    onClick={switchMode}>Toggle Tool</button>
+                                <button className="btn btn-sm btn-outline-primary text-right"
+                                    onClick={resetCanvas}>Clear Drawing</button>
                             </p>
                             <p>
                                 Tool Size: {brushSize}
-                                <input className="form-control-range" type="range"
-                                    min="1" max="50" value={brushSize}
+                                <input className={`form-control-range ${STYLES.brushRange}`}
+                                    type="range" min="1" max="50" value={brushSize}
                                     step="1" onChange={handleBrushSizeInput}/>
                             </p>
                             {mode === "Brush" &&
@@ -182,20 +209,44 @@ const ImageAnalysis = () => {
                                         value={color} onChange={handleColorInput}/>
                                 </p>
                             }
-                            <button className="btn btn-success" disabled={submitted} onClick={handleSubmitDrawing}>Submit Drawing</button>
+                            <button className="btn btn-primary mr-3" disabled={submitted.drawing}
+                                onClick={handleSubmitDrawing}>Submit Drawing</button>
+                            <button className="btn btn-secondary"
+                                onClick={handleNewDrawing}>New Drawing</button>
+                            {
+                                soundData.drawing && <p>
+                                    Sound:
+                                    <audio controls="controls"
+                                        src={`data:audio/wav;base64, ${soundData.drawing}`}
+                                        controlsList="nodownload"/>
+                                </p>
+                            }
                         </div>
                     </div>
                 </Tab>
                 <Tab eventKey="file" title="Image Upload">
-                    <input className="my-3" type="file" accept="image/jpeg" onChange={handleFileInput}/>
+                    <input className="my-3" type="file"
+                        accept="image/jpeg" onChange={handleFileInput}/>
                     <br/>
                     {
                         imageFile &&
                         <p>
-                            <img className={STYLES.imageFile} src={URL.createObjectURL(imageFile)}></img>
+                            <img className={STYLES.imageFile}
+                                src={URL.createObjectURL(imageFile)}></img>
                         </p>
                     }
-                    <button className="btn btn-success" onClick={handleSubmitFile}>Submit Image File</button>
+                    <button className="btn btn-primary mr-3" disabled={submitted.file}
+                        onClick={handleSubmitFile}>Submit Image File</button>
+                    <button className="btn btn-secondary"
+                        onClick={handleNewFile}>New File Upload</button>
+                    {
+                        soundData.file && <p>
+                            Sound:
+                            <audio controls="controls"
+                                src={`data:audio/wav;base64, ${soundData.file}`}
+                                controlsList="nodownload"/>
+                        </p>
+                    }
                 </Tab>
             </Tabs>
         </div>

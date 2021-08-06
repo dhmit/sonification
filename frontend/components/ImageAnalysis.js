@@ -155,7 +155,7 @@ const ImageAnalysis = () => {
         fetch("/api/image_to_sound", requestOptions)
             .then(response => response.json())
             .then(data => {
-                setSoundData(prevSoundData => ({...prevSoundData, [inputType]: data}));
+                setSoundData(prevSoundData => ({...prevSoundData, [inputType]: data.sound}));
             });
     };
 

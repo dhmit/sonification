@@ -64,12 +64,6 @@ class TextToMusicTestCase(TestCase):
         self.assertEqual(text_to_music._get_ratio(pos_score_3, neu_score_3, neg_score_3),
                          text_to_music.dissonant_ratios)
 
-    def test_sonify_sentence(self):
-        """
-        Tests the function _sonify_sentence from text_to_music.py
-        """
-        pass
-
 
 class SentimentAnalysisAPITests(APITestCase):
 

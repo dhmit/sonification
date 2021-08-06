@@ -42,7 +42,7 @@ const ImageAnalysis = () => {
             context.globalCompositeOperation = mode === "Brush" ? "source-over" : "destination-out";
             context.moveTo(coords[0].x, coords[0].y);
             let i;
-            for (i = 1; i < coords.length - 1; i++) {
+            for (i = 0; i < coords.length - 1; i++) {
                 const c = (coords[i].x + coords[i + 1].x) / 2;
                 const d = (coords[i].y + coords[i + 1].y) / 2;
                 context.quadraticCurveTo(coords[i].x, coords[i].y, c, d);
@@ -168,13 +168,14 @@ const ImageAnalysis = () => {
     const handleNewDrawing = (event) => {
         resetCanvas(event);
         setSubmitted(prevSubmitted => ({...prevSubmitted, "drawing": false}));
-        setSoundData(null);
+        setSoundData(prevSoundData => ({...prevSoundData, "drawing": null}));
     };
 
     const handleNewFile = (event) => {
         event.preventDefault();
         setSubmitted(prevSubmitted => ({...prevSubmitted, "file": false}));
         setImageFile(null);
+        setSoundData(prevSoundData => ({...prevSoundData, "file": null}));
     };
 
     return (

@@ -1,15 +1,13 @@
 """
 Various filtering functions to apply to audio objects (represented as dict containing a 16 bit numpy samples
 array, sample rate, and notes array)
-
-NOTE: At the moment, these filters only work under a narrow set of assumptions. These assume the incoming audio array
-contain 16-bit integers, where each note consists of a pure sine wave (which may or may not be periodic in the duration
-of the note). While these may serve as examples or models to start, these filters definitely need to accommodate more
-general cases (e.g., other data types, more complicated waveforms, chords, speech, etc).
 """
 from copy import deepcopy
 import numpy as np
-
+# helper functions:
+# to apply the filter (pass in a filter(function), a sin wave, and maybe a **kwargs dictionary?)
+# to find the notes/chords in a wave (pass in a wave, output something that helps us take the right slices of audio)
+# each filter: input a note(tuple), output a new note (maybe with some extra kwargs)
 
 def change_volume(audio_metadata, amplitude):
     """

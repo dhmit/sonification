@@ -41,6 +41,12 @@ class TextToMusicTestCase(TestCase):
         """
         pass
 
+    def test_sonify_sentence(self):
+        """
+        Tests the function _sonify_sentence from text_to_music.py
+        """
+        pass
+
 
 class SentimentAnalysisAPITests(APITestCase):
 

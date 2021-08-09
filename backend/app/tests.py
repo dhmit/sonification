@@ -7,9 +7,11 @@ import numpy as np
 from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
+from scipy.io import wavfile
 
 from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
+from .analysis import filters
 
 
 class MainTests(TestCase):
@@ -31,6 +33,9 @@ class MainTests(TestCase):
 
 
 class SentimentAnalysisAPITests(APITestCase):
+    """
+    TestCase for the API endpoint use to send a `.wav` file from `sentiment_analysis` to the frontend.
+    """
 
     def test_API_status(self):
         response = self.client.get('/api/get_sentiment_analysis?text=good%20morning%20america')
@@ -45,7 +50,6 @@ class WavToBase64TestCase(TestCase):
     """
 
     def test_wav_to_base64(self):
-
         one_byte_per_sample = np.array([0, 1, 15, 255], dtype=np.int8)
         self.assertEqual(bytes(one_byte_per_sample), b'\x00\x01\x0f\xff')
         self.assertEqual(bytes(np.array([256], dtype=np.int8)), bytes([0]))
@@ -108,3 +112,19 @@ class TextToSoundTestCase(TestCase):
         self.assertEqual(len(audio_samples), 88200)
         self.assertEqual(type(audio_samples), np.ndarray)
         self.assertEqual(audio_samples.dtype, 'int16')
+
+
+class FiltersTestCase(TestCase):
+    """
+    TestCase for the filters in `filters.py`
+    """
+
+    def test_get_notes(self):
+        sample_rate, audio_samples = wavfile.read('../assets/c4_arpeggio.wav')
+        self.assertEqual(sample_rate, 44100)
+        self.assertEqual(audio_samples.size, 44100*8)
+        expected = [0, 44100, 88200, 132300, 176400]
+        self.assertEqual(filters.get_notes((audio_samples, sample_rate)), expected)
+
+    # def test_tb1(self):
+    #     pass

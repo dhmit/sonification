@@ -38,5 +38,4 @@ def text_to_sound(user_text):
     audio *= 32767 / np.max(np.abs(audio))
     audio = audio.astype(np.int16)
 
-
     return audio, sample_rate

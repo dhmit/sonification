@@ -120,11 +120,8 @@ class FiltersTestCase(TestCase):
     """
 
     def test_get_notes(self):
-        sample_rate, audio_samples = wavfile.read('../assets/c4_arpeggio.wav')
+        audio_samples, sample_rate = text_to_sound('Good. Bad. Neutral.')
         self.assertEqual(sample_rate, 44100)
-        self.assertEqual(audio_samples.size, 44100*8)
-        expected = [0, 44100, 88200, 132300, 176400]
+        self.assertEqual(audio_samples.size, 44100*3)
+        expected = [0, 44100, 88200]
         self.assertEqual(filters.get_notes((audio_samples, sample_rate)), expected)
-
-    # def test_tb1(self):
-    #     pass

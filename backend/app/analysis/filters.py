@@ -1,5 +1,7 @@
 """
 Various filtering functions to apply to audio represented as a 1D NumPy array with a sample_rate
+
+All filters assume mono tracks (vs stereo) for audio input.
 """
 import numpy as np
 from scipy.signal import stft
@@ -39,17 +41,24 @@ def _spectral_difference(X):
     # length-N signal -> length-N fft (another signal)
     all_sd_values = []
 
+    breakpoint()
+
     H = lambda x: (x + abs(x)) / 2
 
     for i in range(len(X)):
         sd = 0
         for k in range(len(X[0])):
             if i == 0:
-                sd += H(abs(X[i][k])) ** 2
+                try:
+                    sd += H(abs(X[i][k])) ** 2
+                except TypeError:
+                    breakpoint()
+                    raise
             else:
                 sd += H(abs(X[i][k]) - abs(X[i - 1][k])) ** 2
 
         all_sd_values.append(sd)
+    print("all good in sd func...")
 
     return all_sd_values
 
@@ -68,7 +77,11 @@ def _find_peaks(x, threshold, min_spacing):
     input_x = x[:]
 
     while True:
-        max_x = max(input_x)
+        try:
+            max_x = max(input_x)
+        except ValueError:
+            breakpoint()
+            raise
         max_index = input_x.index(max_x)
         if max_x <= threshold:
             return sorted(all_peaks_indices)
@@ -77,6 +90,7 @@ def _find_peaks(x, threshold, min_spacing):
         end = min(max_index + min_spacing + 1, len(input_x))
         for i in range(start, end):
             input_x[i] = 0
+        print("all good in peaks func...")
 
         all_peaks_indices.append(max_index)
 
@@ -88,21 +102,24 @@ def get_notes(audio):
     :param audio: A tuple containing a 1D NumPy array (of samples) and a sample rate (in Hz)
     :return: A list of sample indices that correspond to note onsets
     """
+    audio_samples, sample_rate = audio
+
     # Default arguments for stft function:
     # window = 'hann'
-    # nperseg = 256
-    # noverlap = nperseg // 2
+    nperseg = 256
+    noverlap = nperseg // 2
 
-    nperseg = 128
-    noverlap = nperseg // 4
+    # nperseg = 128
+    # noverlap = nperseg // 4
+
+    breakpoint()
 
     samp_freqs, samp_times, stft_signal = stft(
-        *audio,
-        window='hann',
-        nperseg=nperseg,
-        noverlap=noverlap,
+        audio_samples,
+        sample_rate,
+        window='boxcar',
     )
-    sd_values = _spectral_difference(stft_signal.tolist())
+    sd_values = _spectral_difference(stft_signal)
     window_indices = _find_peaks(sd_values, 5, 4)
 
     sample_indices = []
@@ -110,7 +127,6 @@ def get_notes(audio):
     for i in window_indices:
         sample_indices.append(i * (nperseg - noverlap))
 
-    print("sample_indices",sample_indices)
     return sample_indices
 
 def k_at_time(X, m):
@@ -144,7 +160,7 @@ def change_volume(audio_samples, amplitude):
 
 def change_speed(audio_samples, speed_factor):
     """
-    :param audio_samples: A 1D NumPy array of audio_samples
+    :param audio_samples: A 1D NumPy array of audio_samples representing a single note
     :param speed_factor: A positive float representing the new relative speed of playback for the output audio
         (e.g., an output audio that plays twice as fast would require an input of `2`)
 
@@ -173,7 +189,7 @@ def change_speed(audio_samples, speed_factor):
 
 def change_pitch(audio_samples, pitch_factor):
     """
-    :param audio_samples: A 1D NumPy array
+    :param audio_samples: A 1D NumPy array representing a single note
     :param pitch_factor: An unsigned float representing the factor increase or decrease in a note's frequency
 
     :return: A dict instance containing audio samples list, sample rate, and notes array with frequency modifications
@@ -218,7 +234,7 @@ def change_pitch(audio_samples, pitch_factor):
 
 def add_chords(audio_samples):
     """
-    :param audio_samples: A 1D NumPy array
+    :param audio_samples: A 1D NumPy array representing a single note
 
     :return: A new NumPy array
     """

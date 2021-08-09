@@ -24,7 +24,6 @@ def text_to_sound(user_text):
     all_sentences = nltk.sent_tokenize(user_text)
 
     sin_waves = []
-    all_notes = []
 
     for each_sentence in all_sentences:
         # the compound score ranges from -1 to 1, this shifts the score so that there is no negative score
@@ -34,16 +33,10 @@ def text_to_sound(user_text):
         # the score is the nth key starting from key 0 being A0
         frequency = A4 * (2 ** ((score + 1 - 49) / 12))
         sin_waves.append(np.sin(2 * np.pi * frequency * t))
-        all_notes.append((frequency, duration, score))
 
     audio = np.hstack(sin_waves)
     audio *= 32767 / np.max(np.abs(audio))
     audio = audio.astype(np.int16)
 
-    audio_metadata = {
-        'audio_samples': audio,
-        'sample_rate': sample_rate,
-        'notes': all_notes
-    }
 
-    return audio_metadata
+    return audio, sample_rate

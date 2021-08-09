@@ -28,6 +28,7 @@ from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
 from .analysis import filters
 
+
 @api_view(['GET'])
 def get_example(request, example_id):
     """
@@ -109,14 +110,11 @@ def get_sentiment_analysis(request):
     API endpoint for generating audio based on the sentiment analysis of the given text
     """
     text = request.query_params.get('text')
-    audio_metadata = text_to_sound(text)
+    audio_data = text_to_sound(text)
 
-    audio_metadata = filters.change_speed(audio_metadata, .5)
+    # audio_metadata = filters.change_speed(audio_metadata, .5)
 
-    audio = audio_metadata['audio_samples']
-
-    sample_rate = audio_metadata['sample_rate']
-    encoded_audio = wav_to_base64(audio, sample_rate)
+    encoded_audio = wav_to_base64(*audio_data)
 
     res = {
         'sound': encoded_audio

@@ -2,6 +2,7 @@
 Various filtering functions to apply to audio represented as a 1D NumPy array with a sample_rate
 """
 import numpy as np
+from scipy.signal import stft
 
 
 # helper functions:
@@ -17,7 +18,7 @@ def apply_filter(audio, filter_function, **kwargs):
     """
     samples, sample_rate = audio
 
-    note_indices = _get_notes(audio)
+    note_indices = get_notes(audio)
     new_samples = np.array([], dtype=samples.dtype)
 
     for i in range(len(note_indices) - 1):
@@ -28,12 +29,95 @@ def apply_filter(audio, filter_function, **kwargs):
     return new_samples, sample_rate
 
 
-def _get_notes(audio):
-    samples, sample_rate = audio
-    note_indices = []
-    # function SD??
-    raise NotImplementedError
+def _spectral_difference(X):
+    """
+    Helper function to compute the spectral difference between windows of an STFT.
+    :param X: A 2D NumPy array representing the STFT of some 1D signal
+    :return: a list of spectral difference values, one for each STFT window
+    """
+    # [fft[0], fft[1], fft[2]]
+    # length-N signal -> length-N fft (another signal)
+    all_sd_values = []
 
+    H = lambda x: (x + abs(x)) / 2
+
+    for i in range(len(X)):
+        sd = 0
+        for k in range(len(X[0])):
+            if i == 0:
+                sd += H(abs(X[i][k])) ** 2
+            else:
+                sd += H(abs(X[i][k]) - abs(X[i - 1][k])) ** 2
+
+        all_sd_values.append(sd)
+
+    return all_sd_values
+
+
+def _find_peaks(x, threshold, min_spacing):
+    """
+    Helper function for detecting peak values in a list of samples to help detect note onsets
+    :param x: A 1D list of floats representing the spectral difference of some audio signal
+    :param threshold: A float (we'll only consider values to be peaks if they are above this value)
+    :param min_spacing: A float (we'll only consider peaks to be separate if they are at least this many discrete time
+        values apart)
+    :return: A list of ints representing the indices of peak values in x
+        (these should represent the windows in the original audio signal that contain note onsets)
+    """
+    all_peaks_indices = []
+    input_x = x[:]
+
+    while True:
+        max_x = max(input_x)
+        max_index = input_x.index(max_x)
+        if max_x <= threshold:
+            return sorted(all_peaks_indices)
+
+        start = max(0, max_index - min_spacing)
+        end = min(max_index + min_spacing + 1, len(input_x))
+        for i in range(start, end):
+            input_x[i] = 0
+
+        all_peaks_indices.append(max_index)
+
+
+def get_notes(audio):
+    """
+    Find the sample indices that represent note onsets. This method was inspired from lab 9 of MIT's 6.003 as taught
+    in the spring 2021 semester: https://sigproc.mit.edu/spring21/psets/09/resynthesis
+    :param audio: A tuple containing a 1D NumPy array (of samples) and a sample rate (in Hz)
+    :return: A list of sample indices that correspond to note onsets
+    """
+    # Default arguments for stft function:
+    # window = 'hann'
+    # nperseg = 256
+    # noverlap = nperseg // 2
+
+    nperseg = 128
+    noverlap = nperseg // 4
+
+    samp_freqs, samp_times, stft_signal = stft(
+        *audio,
+        window='hann',
+        nperseg=nperseg,
+        noverlap=noverlap,
+    )
+    sd_values = _spectral_difference(stft_signal.tolist())
+    window_indices = _find_peaks(sd_values, 5, 4)
+
+    sample_indices = []
+
+    for i in window_indices:
+        sample_indices.append(i * (nperseg - noverlap))
+
+    print("sample_indices",sample_indices)
+    return sample_indices
+
+def k_at_time(X, m):
+    pass
+
+def k_for_note(X, m_start, m_stop):
+    pass
 
 def _get_frequency(audio_samples):
     """
@@ -155,7 +239,7 @@ def add_chords(audio_samples):
     # generate notes to stack on top of first note
     second_note = change_pitch(audio_samples, second_freq_factor)
     third_note = change_pitch(audio_samples, third_freq_factor)
-    
+
     # concatenate notes via element-wise addition -- these must all have the same number of samples!
     new_audio_samples += second_note
     new_audio_samples += third_note

@@ -7,7 +7,6 @@ import numpy as np
 from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
-from scipy.io import wavfile
 
 from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
@@ -121,6 +120,7 @@ class FiltersTestCase(TestCase):
 
     def test_get_notes(self):
         audio_samples, sample_rate = text_to_sound('Good. Bad. Neutral.')
+        # encoded = wav_to_base64(audio_samples, sample_rate)
         self.assertEqual(sample_rate, 44100)
         self.assertEqual(audio_samples.size, 44100*3)
         expected = [0, 44100, 88200]

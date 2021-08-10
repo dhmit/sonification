@@ -34,32 +34,87 @@ def apply_filter(audio, filter_function, **kwargs):
 
 def _spectral_difference(X):
     """
-    Helper function to compute the spectral difference between windows of an STFT.
-    :param X: A 2D NumPy array representing the STFT of some 1D signal
-    :return: a list of spectral difference values, one for each STFT window
+    A detection function meant to reduce the input audio signal to a version more suitable for detecting note onsets.
+    Uses the principle that the spectral content of an audio signal increases in amplitude and varies drastically with
+    the onset of a new note. Works best when there is some "musical envelope" of a note, such as
+    attack-sustain-decay-release (ASDR). Approach outlined in part III, section A2 of this paper:
+    https://drive.google.com/file/d/0B2SQvWn0_78BNHhaOGx1dmpxQlE/view?resourcekey=0-N4pDrco3dEPZzA6hJ1Giqg
+
+    :param X: A 2D (NumPy array / Python list) representing the STFT of some 1D signal
+    :return: A 1D (NumPy array / Python list) of spectral difference values, one for each STFT window
     """
     # [fft[0], fft[1], fft[2]]
     # length-N signal -> length-N fft (another signal)
-    all_sd_values = []
+    all_sd_values = np.array([])
 
-    H = lambda x: (x + abs(x)) / 2
+    H = lambda x: (x + np.absolute(x)) / 2
 
-    for i in range(len(X)):
+    window_size, num_windows = X.shape
+
+    for n in range(num_windows):
         sd = 0
-        for k in range(len(X[0])):
-            if i == 0:
+        for k in range(window_size):
+            if n == 0:
                 try:
-                    sd += H(abs(X[i][k])) ** 2
+                    # with/without H of ...
+                    sd += H(np.absolute(X[k, n])) ** 2
                 except TypeError:
                     breakpoint()
                     raise
             else:
-                sd += H(abs(X[i][k]) - abs(X[i - 1][k])) ** 2
+                sd += H(np.absolute(X[k, n]) - np.absolute(X[k, n - 1])) ** 2
 
-        all_sd_values.append(sd)
+        all_sd_values = np.append(all_sd_values, sd)
     print("all good in sd func...")
 
     return all_sd_values
+
+
+def _phase_deviation(X):
+    """
+    A detection function meant to reduce the input audio signal to a version more suitable for detecting note onsets.
+    Uses the principle that the phase between two audio waves changes drastically between notes (even if the same note
+    if played repeatedly). Approach outlined in part III, section A3 of this paper:
+    https://drive.google.com/file/d/0B2SQvWn0_78BNHhaOGx1dmpxQlE/view?resourcekey=0-N4pDrco3dEPZzA6hJ1Giqg
+
+    :param X: A 2D (NumPy array / Python list) representing the STFT of some 1D signal
+    :return: A 1D (NumPy array / Python list) representing the mean absolute phase deviation of a signal
+    """
+    # complex number = Me**(j*omega*t), M=magnitude, omega*t = phase
+    # a + bj, M = (a^2 + b^2)**.5 , phase = arctan(b/a), .real, .imag, math.arctan(x.imag / x.real)
+    # equivalent 2D numpy array (or Python list) where phi[n][k] was the phase of STFT[n][k], we could use that
+
+    # unwrapped phase (in radians) of each coefficient in the STFT 2D list/array
+    phase = np.angle(X, deg=False)
+
+    def phi(k, n):
+        """
+        Compute the second difference of the phase of some STFT coefficient by window (time index).
+        Returns the first difference if n == 1, the phase itself if n == 0.
+
+        :param k: The frequency bin of the STFT (int).
+        :param n: The time/window index of the STFT (int).
+        :return: A float representing the second difference of the phase.
+        """
+        if n == 0:
+            return phase[k, n]
+        if n == 1:
+            return phase[k, n] - phase[k, n - 1]
+
+        return phase[k, n] - 2 * phase[k, n - 1] + phase[k, n - 2]
+
+    deviations = np.array([])
+
+    window_size, num_windows = X.shape
+
+    for n in range(num_windows):
+        dev = 0
+        for k in range(window_size):
+            dev += np.absolute(phi(k, n))
+
+        deviations = np.append(deviations, dev / window_size)
+
+    return deviations
 
 
 def _find_peaks(x, threshold, min_spacing):
@@ -85,13 +140,13 @@ def _find_peaks(x, threshold, min_spacing):
         if max_x <= threshold:
             return sorted(all_peaks_indices)
 
+        all_peaks_indices.append(max_index)
+
         start = max(0, max_index - min_spacing)
         end = min(max_index + min_spacing + 1, len(input_x))
         for i in range(start, end):
             input_x[i] = 0
         print("all good in peaks func...")
-
-        all_peaks_indices.append(max_index)
 
 
 def get_notes(audio):
@@ -105,22 +160,36 @@ def get_notes(audio):
 
     # Default arguments for stft function:
     # window = 'hann'
-    nperseg = 256
-    noverlap = nperseg // 2
+    # nperseg = 256
+    # noverlap = nperseg // 2
 
-    # nperseg = 128
-    # noverlap = nperseg // 4
+    plt.figure()
+    plt.plot(audio_samples)
+    plt.xlabel('Sample index')
+    plt.ylabel('Value')
+    plt.title(f'Audio signal ($f_s={sample_rate}$ Hz')
+    plt.show()
+
+    nperseg = 100
+    noverlap = nperseg // 3
 
     samp_freqs, samp_times, stft_signal = stft(
         audio_samples,
         sample_rate,
         window='hann',
+        nperseg=nperseg,
+        noverlap=noverlap,
+        return_onesided=False
     )
     samp_freqs_spec, samp_times_spec, spec = spectrogram(
         audio_samples,
         sample_rate,
-        window='hann'
+        window='hann',
+        nperseg=nperseg,
+        noverlap=noverlap
     )
+
+    # breakpoint()
 
     # Plot the spectrogram ( = |STFT|**2 )
     plt.figure()
@@ -132,12 +201,20 @@ def get_notes(audio):
     sd_values = _spectral_difference(stft_signal)
 
     plt.figure()
-    plt.stem(sd_values)
-    plt.xlabel('Window')
+    plt.plot(sd_values)
+    plt.xlabel('Window index')
     plt.ylabel('Spectral difference')
     plt.show()
 
-    window_indices = _find_peaks(sd_values, 5, 4)
+    mean_abs_phase_deviation = _phase_deviation(stft_signal)
+
+    plt.figure()
+    plt.plot(mean_abs_phase_deviation)
+    plt.xlabel('Window index')
+    plt.ylabel('Mean absolute phase deviation')
+    plt.show()
+
+    window_indices = _find_peaks(sd_values.tolist(), 5, 4)
 
     sample_indices = []
 
@@ -182,7 +259,7 @@ def change_speed(audio_samples, speed_factor):
     """
     :param audio_samples: A 1D NumPy array of audio_samples representing a single note
     :param speed_factor: A positive float representing the new relative speed of playback for the output audio
-        (e.g., an output audio that plays twice as fast would require an input of `2`)
+        (e.g., an output audio that plays twice as fast would require an input of `2`, enter `.5` for half as fast, etc)
 
     :return: A new NumPy array
     """

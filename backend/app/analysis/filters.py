@@ -129,11 +129,14 @@ def get_notes(audio):
 
     return sample_indices
 
+
 def k_at_time(X, m):
     pass
 
+
 def k_for_note(X, m_start, m_stop):
     pass
+
 
 def _get_frequency(audio_samples):
     """
@@ -238,10 +241,12 @@ def add_chords(audio_samples):
 
     :return: A new NumPy array
     """
+    A4 = 440
+    F4 = A4 * (2 ** (-4 / 12))
     new_audio_samples = audio_samples.copy()
 
     fund_freq = _get_frequency(audio_samples)
-    if fund_freq < 440:
+    if fund_freq < F4:
         # minor chord
         # ratio of third note from fundamental frequency divided by fundamental frequency
         second_freq_factor = 1.19

@@ -4,7 +4,8 @@ Various filtering functions to apply to audio represented as a 1D NumPy array wi
 All filters assume mono tracks (vs stereo) for audio input.
 """
 import numpy as np
-from scipy.signal import stft
+import matplotlib.pyplot as plt
+from scipy.signal import stft, spectrogram
 
 
 # helper functions:
@@ -41,8 +42,6 @@ def _spectral_difference(X):
     # length-N signal -> length-N fft (another signal)
     all_sd_values = []
 
-    breakpoint()
-
     H = lambda x: (x + abs(x)) / 2
 
     for i in range(len(X)):
@@ -71,7 +70,7 @@ def _find_peaks(x, threshold, min_spacing):
     :param min_spacing: A float (we'll only consider peaks to be separate if they are at least this many discrete time
         values apart)
     :return: A list of ints representing the indices of peak values in x
-        (these should represent the windows in the original audio signal that contain note onsets)
+        (these should represent the windows in the original audio signal that contain note onsets) ??
     """
     all_peaks_indices = []
     input_x = x[:]
@@ -112,14 +111,32 @@ def get_notes(audio):
     # nperseg = 128
     # noverlap = nperseg // 4
 
-    breakpoint()
-
     samp_freqs, samp_times, stft_signal = stft(
         audio_samples,
         sample_rate,
-        window='boxcar',
+        window='hann',
     )
+    samp_freqs_spec, samp_times_spec, spec = spectrogram(
+        audio_samples,
+        sample_rate,
+        window='hann'
+    )
+
+    # Plot the spectrogram ( = |STFT|**2 )
+    plt.figure()
+    plt.pcolormesh(samp_times_spec, samp_freqs_spec, spec, shading='gouraud')
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [sec]')
+    plt.show()
+
     sd_values = _spectral_difference(stft_signal)
+
+    plt.figure()
+    plt.stem(sd_values)
+    plt.xlabel('Window')
+    plt.ylabel('Spectral difference')
+    plt.show()
+
     window_indices = _find_peaks(sd_values, 5, 4)
 
     sample_indices = []

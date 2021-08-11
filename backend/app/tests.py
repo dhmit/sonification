@@ -64,35 +64,37 @@ class WavToBase64TestCase(TestCase):
         data_bytes = b'\x01\x00\x02\x00\x03\x00\x04\x00\xff\x00\x00\x01\x05\x00'
         self.assertEqual(bytes(data_1), data_bytes)
 
-        sample_rate = 10
-        bits_per_sample = 16
-        num_channels = 1
-        constant = (sample_rate * bits_per_sample * num_channels) // 8
+        sample_rate_1 = 10
+        bits_per_sample_1 = 16
+        num_channels_1 = 1
+        constant_1 = (sample_rate_1 * bits_per_sample_1 * num_channels_1) // 8
 
-        results_1 = wav_to_base64(data_1, sample_rate)
+        results_1 = wav_to_base64(data_1, sample_rate_1)
         self.assertTrue(isinstance(results_1, str))
         encoded_data = base64.b64decode(results_1.encode('UTF-8'))
         self.assertTrue(isinstance(encoded_data, bytes))
 
-        self.assertEqual(encoded_data[22:24], bytes([num_channels, 0]))
-        self.assertEqual(encoded_data[24:28], bytes([sample_rate, 0, 0, 0]))
-        self.assertEqual(encoded_data[28:32], bytes([constant, 0, 0, 0]))
+        self.assertEqual(encoded_data[22:24], bytes([num_channels_1, 0]))
+        self.assertEqual(encoded_data[24:28], bytes([sample_rate_1, 0, 0, 0]))
+        self.assertEqual(encoded_data[28:32], bytes([constant_1, 0, 0, 0]))
         self.assertEqual(encoded_data[34:36], bytes([16, 0]))
         self.assertEqual(encoded_data[44:], data_bytes)
 
         data_2 = np.array([], dtype=np.int8)
 
-        sample_rate = 44100
-        bits_per_sample = 8
-        constant = (sample_rate * bits_per_sample * num_channels) // 8
+        sample_rate_2 = 44100
+        bits_per_sample_2 = 8
+        num_channels_2 = 1
+        constant_2 = (sample_rate_2 * bits_per_sample_2 * num_channels_2) // 8
+        self.assertEqual(constant_2, sample_rate_2)
 
-        results_2 = wav_to_base64(data_2, sample_rate)
+        results_2 = wav_to_base64(data_2, sample_rate_2)
         self.assertTrue(isinstance(results_2, str))
         encoded_data_2 = base64.b64decode(results_2.encode('UTF-8'))
         self.assertTrue(isinstance(encoded_data_2, bytes))
 
         self.assertEqual(encoded_data_2[22:24], bytes([1, 0]))
-        self.assertEqual(encoded_data_2[24:28], bytes(np.array([sample_rate], dtype=np.int32)))
+        self.assertEqual(encoded_data_2[24:28], bytes(np.array([sample_rate_2], dtype=np.int32)))
         self.assertEqual(encoded_data_2[28:32], encoded_data_2[24:28])
         self.assertEqual(encoded_data_2[34:36], bytes([8, 0]))
         self.assertEqual(encoded_data_2[44:], bytes(data_2))
@@ -106,48 +108,86 @@ class TextToSoundTestCase(TestCase):
     def test_text_to_sound(self):
         text = 'This is good. This is bad.'
         result = text_to_sound(text)
-        audio_samples = result['audio_samples']
-        self.assertEqual(type(result), dict)
+        audio_samples, sample_rate = result
+        self.assertEqual(type(result), tuple)
         self.assertEqual(len(audio_samples), 88200)
         self.assertEqual(type(audio_samples), np.ndarray)
         self.assertEqual(audio_samples.dtype, 'int16')
+        self.assertEqual(sample_rate, 44100)
 
 
 class FiltersTestCase(TestCase):
     """
     TestCase for the filters in `filters.py`
     """
+    def setUp(self):
+        # Note frequencies are calculated from the formula used in the text_to_sound function.
+        # See the following table for a fuller list of note frequencies: <https://pages.mtu.edu/~suits/notefreqs.html>
+        self.F3 = 174.614
+        self.F4 = 349.228
+        self.C5 = 523.251
 
     def test_get_notes(self):
         audio_samples_1, sample_rate_1 = text_to_sound('Good. Bad. Neutral.')
         # encoded = wav_to_base64(audio_samples, sample_rate)
         self.assertEqual(sample_rate_1, 44100)
-        self.assertEqual(audio_samples_1.size, 44100*3)
+        self.assertEqual(audio_samples_1.size, 44100 * 3)
 
-        expected = [0, 44100, 88200]
-        res = filters.get_notes((audio_samples_1, sample_rate_1))[1]
+        expected_samples_1 = [0, 44100, 88200]
+        expected_frequencies_1 = [self.C5, self.F3, self.F4]
+        _, res_samples_1, res_frequencies_1 = filters.get_notes((audio_samples_1, sample_rate_1))
 
-        self.assertEqual(len(res), len(expected))
-        for i, j in zip(res, expected):
+        self.assertEqual(len(res_samples_1), len(expected_samples_1))
+        for i, j in zip(res_samples_1, expected_samples_1):
             self.assertLessEqual(abs(i - j), 100)
+
+        self.assertEqual(len(res_frequencies_1), len(expected_frequencies_1))
+        # should fail -- want to see how off the frequencies are
+        self.assertEqual(res_frequencies_1, expected_frequencies_1)
 
         audio_samples_2, sample_rate_2 = text_to_sound('Neutral.')
         self.assertEqual(audio_samples_2.size, 44100)
 
-        expected = [0]
-        res = filters.get_notes((audio_samples_2, sample_rate_2))[1]
+        expected_samples_2 = [0]
+        expected_frequencies_2 = [self.F4]
+        _, res_samples_2, res_frequencies_2 = filters.get_notes((audio_samples_2, sample_rate_2))
 
-        self.assertEqual(res, expected)
+        self.assertEqual(res_samples_2, expected_samples_2)
+        # should fail
+        self.assertEqual(res_frequencies_2, expected_frequencies_2)
 
         audio_samples_3, sample_rate_3 = text_to_sound('Neutral. Neutral.')
-        self.assertEqual(audio_samples_3.size, 88200)
+        self.assertEqual(audio_samples_3.size, 44100 * 2)
 
-        expected = [0, 44100]
-        res = filters.get_notes((audio_samples_3, sample_rate_3))[1]
-        self.assertEqual(len(res), len(expected))
-        for i, j in zip(res, expected):
+        expected_samples_3 = [0, 44100]
+        expected_frequencies_3 = [self.F4, self.F4]
+        _, res_samples_3, res_frequencies_3 = filters.get_notes((audio_samples_3, sample_rate_3))
+        self.assertEqual(len(res_samples_3), len(expected_samples_3))
+
+        for i, j in zip(res_samples_3, expected_samples_3):
             self.assertLessEqual(abs(i - j), 100)
 
+        self.assertEqual(len(res_frequencies_3), len(expected_frequencies_3))
+        # should also fail
+        self.assertEqual(res_frequencies_3, expected_frequencies_3)
 
-    def test_get_frequency(self):
-        self.assertEqual(2,2)
+    def test_change_speed(self):
+        audio_samples_1, sample_rate_1 = text_to_sound('This is good. This is bad. This is neutral.')
+        self.assertEqual(sample_rate_1, 44100)
+
+        res_slow = filters.change_speed(audio_samples_1, 0.5)
+        self.assertGreaterEqual(res_slow.size, audio_samples_1.size)
+
+        res_fast = filters.change_speed(audio_samples_1, 2)
+        self.assertLessEqual(res_fast.size, audio_samples_1.size)
+
+        audio_samples_2, sample_rate_2 = text_to_sound(
+            'This is an awesome experience. This is perhaps suited for another day. This is just plain bad.'
+        )
+        self.assertEqual(sample_rate_2, 44100)
+
+        res_slow_1 = filters.change_speed(audio_samples_2, 0.7)
+        self.assertGreaterEqual(res_slow_1.size, audio_samples_2.size)
+
+        res_fast_1 = filters.change_speed(audio_samples_2, 3)
+        self.assertLessEqual(res_fast_1.size, audio_samples_2.size)

@@ -25,7 +25,7 @@ def apply_filter(audio, filter_function, **kwargs):
     """
     samples, sample_rate = audio
 
-    window_indices, sample_indices = get_notes(audio)
+    window_indices, sample_indices, note_frequencies = get_notes(audio)
 
     if filter_function == overlap_notes:
         new_samples = overlap_notes((samples, sample_indices), **kwargs)
@@ -59,15 +59,16 @@ def get_notes(audio):
     # nperseg = 256
     # noverlap = nperseg // 2
 
-    plt.figure()
-    plt.plot(audio_samples)
-    plt.xlabel('Sample index')
-    plt.ylabel('Value')
-    plt.title(f'Audio signal ($f_s={sample_rate}$ Hz)')
-    plt.show()
+    # Code to plot the audio samples:
+    # plt.figure()
+    # plt.plot(audio_samples)
+    # plt.xlabel('Sample index')
+    # plt.ylabel('Value')
+    # plt.title(f'Audio signal ($f_s={sample_rate}$ Hz)')
+    # plt.show()
 
-    nperseg = 256
-    noverlap = nperseg // 8
+    nperseg = 1024
+    noverlap = 32
 
     samp_freqs, samp_times, stft_signal = stft(
         audio_samples,
@@ -77,6 +78,10 @@ def get_notes(audio):
         noverlap=noverlap,
         return_onesided=False
     )
+    window_size, num_windows = stft_signal.shape
+
+    # Code to create a spectrogram, the squared magnitude of the STFT (for plotting):
+    # With the exception of return_onesided, the parameters in the stft and spectrogram functions should match up!
     samp_freqs_spec, samp_times_spec, spec = spectrogram(
         audio_samples,
         sample_rate,
@@ -85,9 +90,7 @@ def get_notes(audio):
         noverlap=noverlap
     )
 
-    # breakpoint()
-
-    # Plot the spectrogram ( = |STFT|**2 )
+    # Code to plot the spectrogram:
     plt.figure()
     plt.pcolormesh(samp_times_spec, samp_freqs_spec, spec, shading='gouraud')
     plt.ylabel('Frequency [Hz]')
@@ -96,36 +99,43 @@ def get_notes(audio):
 
     sd_values = _spectral_difference(stft_signal)
 
+    # Code to plot the spectral difference:
     plt.figure()
-    plt.plot(sd_values)
+    plt.stem(sd_values)
     plt.xlabel('Window index')
     plt.ylabel('Spectral difference')
     plt.show()
 
-    # This detection function is an alternative to the spectral_difference function that looks at the phase instead of
-    # magnitude of each complex coefficient in the STFT. The results here do vary drastically at each note onset but in
-    # a very different way (see graph). Such a difference requires its own "peak-finding" function! See the paper
-    # attached in the docstring for other approaches (some include probabilistic methods!).
-
+    # An alternative to the spectral difference--see the function's docstring.
     # mean_abs_phase_deviation = _phase_deviation(stft_signal)
 
+    # Code to plot the mean absolute phase deviation:
     # plt.figure()
     # plt.plot(mean_abs_phase_deviation)
     # plt.xlabel('Window index')
     # plt.ylabel('Mean absolute phase deviation')
     # plt.show()
 
-    # The threshold and min_spacing values were determined experimentally by examining the spectral_difference graphs
-    # approach before mean: threshold was 3e8, but this failed for the same note played repeatedly!
-    threshold = np.percentile(sd_values, 99.5)
-    window_indices = _find_peaks(sd_values.tolist(), threshold, 10)
+    threshold = np.percentile(sd_values, 97)
+    min_spacing = num_windows // 10
+    window_indices = _find_peaks(sd_values.tolist(), threshold, min_spacing)
+    breakpoint()
 
     sample_indices = []
-
     for i in window_indices:
         sample_indices.append(i * (nperseg - noverlap))
 
-    return window_indices, sample_indices
+    note_frequencies = []
+    for i in range(len(window_indices) - 1):
+        n_start = window_indices[i]
+        n_end = window_indices[i + 1]
+
+        fundamental_freq = _freq_for_note(stft_signal, sample_rate, n_start, n_end)
+        note_frequencies.append(fundamental_freq)
+
+    note_frequencies.append(_freq_for_note(stft_signal, sample_rate, window_indices[-1], num_windows))
+
+    return window_indices, sample_indices, note_frequencies
 
 
 def _spectral_difference(X):
@@ -167,6 +177,11 @@ def _phase_deviation(X):
     Uses the principle that the phase between two audio waves changes drastically between notes (even if the same note
     if played repeatedly). Approach outlined in part III, section A3 of this paper:
     <https://drive.google.com/file/d/0B2SQvWn0_78BNHhaOGx1dmpxQlE/view?resourcekey=0-N4pDrco3dEPZzA6hJ1Giqg>.
+
+    This function presents an alternative to the _spectral_difference function that looks at the phase instead of
+    magnitude of each complex coefficient in the STFT. The results here do vary drastically at each note onset but in
+    a very different way (see graph). Such a difference requires its own "peak-finding" function! See the paper
+    attached in the docstring for other approaches (including some probabilistic methods!).
 
     :param X: A 2D NumPy array representing the STFT of some 1D signal.
 
@@ -237,94 +252,55 @@ def _find_peaks(sd, threshold, min_spacing):
             input_sd[i] = 0
 
 
-# ----
-
-def get_frequency(audio_samples):
+def _freq_for_note(X, sample_rate, n_start, n_stop):
     """
-    Given some audio that represents a note, return the fundamental frequency of that note in Hz.
+    Find the fundamental frequency of a given note
 
-    :param audio_samples: A 1D NumPy array representing a single note.
-    :return: A positive float representing the frequency of the note in Hz.
+    :param X: A 2D NumPy array representing the STFT of some 1D signal
+    :param sample_rate: An int representing the sampling rate corresponding to the STFT, recorded in Hz
+    :param n_start: An int representing the starting window index for a particular note
+    :param n_stop: A float representing the ending window index (exclusive) for a particular note
+    :return: An float representing the fundamental frequency of the note in Hz
     """
+    window_size = X.shape[0]
+    freq_resolution = sample_rate / window_size
 
-    # for a singular note
-    notes_indices = get_notes(audio_samples)
-    # which note 'window' to pick...?
-    n_start = notes_indices[0]
-    n_end = notes_indices[1]
-    fundamental_frequency = _k_for_note(notes_indices, n_start, n_end)
+    k_candidates = np.array([])
 
-    # for all frequencies of an audio
-    notes_indices = get_notes(audio_samples)
-    audio_frequencies = np.array([])
-    for each_index in range(len(notes_indices) - 1):
-        n_start = notes_indices[each_index]
-        n_end = notes_indices[each_index + 1]
-        audio_frequencies = audio_frequencies.append(audio_frequencies, _k_for_note(notes_indices, n_start, n_end))
+    for n in range(n_start, n_stop):
+        k_candidates = np.append(k_candidates, _k_at_window(X, n))
 
-    # return fundamental_frequency
-    # OR
-    return audio_frequencies
+    k_winners, _ = mode(k_candidates)
+
+    freq_bin = k_winners[0]
+
+    breakpoint()
+    assert 0 <= freq_bin < window_size, f'Window size is {window_size}, but k={freq_bin}!'
+
+    return freq_resolution * freq_bin
 
 
-def _k_at_time(X, n):
+def _k_at_window(X, n):
     """
-    Determine the value of k that has the most energy at a given discrete time n
+    Determine the value of k that has the most energy at a given window index n
 
     :param X: A 2D NumPy array representing the STFT of some 1D signal
     :param n: An int representing a window (time) index
+
     :return: An int representing the frequency bin k that has the most energy in a particular window of the STFT
     """
 
-    N = len(X[n])
+    window_size = X.shape[0]
 
     all_k_values = np.array([])
 
-    # Get all the X_n[k] values
-    for ik in range(N):
-        all_k_values = all_k_values.append(all_k_values, np.absolute(X[n][ik]) ** 2)
+    for ik in range(window_size):
+        all_k_values = np.append(all_k_values, np.absolute(X[ik, n]) ** 2)
 
-    # find the maximum X_n[k] value(or values if the maximum occurs more than once)
-    max_k_or_ks = np.amax(all_k_values, axis=-1)
+    max_energy = np.amax(all_k_values)
+    max_k_index = all_k_values.tolist().index(max_energy)
 
-    # if there are multiple of the same maximum value, take the first one
-    if isinstance(max_k_or_ks, np.ndarray):
-        max_k = max_k_or_ks[0]
-    else:
-        max_k = max_k_or_ks
-
-    # find the index of the max X_n[k] value (the singular argmax of the X_n[k] squared values)
-    # max_k_index = np.where(all_k_values == max_k)
-
-    # we want the best k value at a singular time
-    return max_k
-
-
-def _k_for_note(X, n_start, n_stop):
-    """
-    Find the k value that is most prominent across the entire duration of a particular note
-
-    :param X: A 2D NumPy array representing the STFT of some 1D signal
-    :param n_start: An int representing the starting window index for a particular note
-    :param n_stop: A float representing the ending window index (exclusive) for a particular note
-    :return: An int representing the fundamental frequency bin k of the note
-    """
-
-    all_k_values_across_note = np.array([])
-
-    # Going through the duration of a note
-    for time_i in range(n_start, n_stop):
-        # For each time, get the best k value at this SINGULAR time in the note's duration
-        all_k_values_across_note = all_k_values_across_note.append(all_k_values_across_note, _k_at_time(X, time_i))
-
-    # The mode of the best k values across each time in the note's duration is assumed to be the fundamental frequency
-    modes, counts = mode(all_k_values_across_note)
-
-    # We want the actual number of the mode
-    # Modes is an array of arrays for modes of each axis of a numpy array
-    return modes[0][0]
-
-# ----
+    return max_k_index
 
 
 def change_volume(audio_samples, amplitude):
@@ -385,18 +361,18 @@ def change_pitch(audio_samples, pitch_factor):
     """
 
     pitch_factor = abs(pitch_factor)
-    original_audio_frequencies = get_frequency(audio_samples)
+    _, _, frequencies = get_notes(audio_samples)
     new_audio_samples = np.array([], dtype=audio_samples.dtype)
 
     # for a singular note...
     # ...
 
-    # for the entire audio...
-    # Go through each fundamental frequency for each note
-    for each_f in original_audio_frequencies:
-        new_freq = each_f * pitch_factor
-
-        # change each old freq to new frequency and update a samples array to return
+    #  for the entire audio...
+    #  Go through each fundamental frequency for each note
+    # for each_f in original_audio_frequencies:
+    #     new_freq = each_f * pitch_factor
+    #
+    #     # change each old freq to new frequency and update a samples array to return
 
     return new_audio_samples
 
@@ -452,7 +428,7 @@ def add_chords(audio_samples):
     F4 = A4 * (2 ** (-4 / 12))
     new_audio_samples = audio_samples.copy()
 
-    fund_freq = get_frequency(audio_samples)
+    _, _, fund_freq = get_notes(audio_samples)
     if fund_freq < F4:
         # minor chord
         # ratio of third note from fundamental frequency divided by fundamental frequency

@@ -479,8 +479,10 @@ def overlap_notes(audio, overlap_factor):
     """
     A filter designed to overlap notes within an audio signal.
 
-    :param audio: A tuple containing a 1D NumPy array (of samples) and a Python list of indices
-    :param overlap_factor: A float between 0 and 1 representing the percentage of overlap between notes in the audio
+    :param audio: A tuple containing a 1D NumPy array (of samples) and a Python list of sample indices
+    :param overlap_factor: A float between 0 and 1 representing the percentage of overlap between notes in the audio,
+        relative to the duration of each note (e.g., pass an overlap_factor of `.25` to overlap the last
+        25% of each note's duration with the subsequent note (??)
 
     :return: A new NumPy array reflecting audio with overlapping notes.
     """

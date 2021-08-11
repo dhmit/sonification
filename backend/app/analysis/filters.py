@@ -254,6 +254,7 @@ def k_at_time(X, n):
     # we want the best k value at a singular time
     return max_k
 
+#@deprecated
 # def mode(all_k_values_across_note):
 #     """
 #     Utility function for getting the mode of a numpy array
@@ -294,8 +295,25 @@ def _get_frequency(audio_samples):
     :param audio_samples: A 1D NumPy array
     :return: a positive float representing the frequency of the note in Hz
     """
-    raise NotImplementedError
 
+    # for a singular note
+    notes_indices = get_notes(audio_samples)
+    # which note 'window' to pick...?
+    n_start = notes_indices[0]
+    n_end = notes_indices[1]
+    fundamental_frequency = k_for_note(notes_indices, n_start, n_end)
+
+    # for all frequencies of an audio
+    notes_indices = get_notes(audio_samples)
+    audio_frequencies = np.array([])
+    for each_index in range(len(notes_indices)-1):
+        n_start = notes_indices[each_index]
+        n_end = notes_indices[each_index + 1]
+        audio_frequencies = audio_frequencies.append(audio_frequencies, k_for_note(notes_indices, n_start, n_end))
+
+    return fundamental_frequency
+    # OR
+    return audio_frequencies
 
 def change_volume(audio_samples, amplitude):
     """

@@ -125,7 +125,7 @@ class FiltersTestCase(TestCase):
         self.assertEqual(audio_samples_1.size, 44100*3)
 
         expected = [0, 44100, 88200]
-        res = filters.get_notes((audio_samples_1, sample_rate_1))
+        res = filters.get_notes((audio_samples_1, sample_rate_1))[1]
 
         self.assertEqual(len(res), len(expected))
         for i, j in zip(res, expected):
@@ -135,7 +135,7 @@ class FiltersTestCase(TestCase):
         self.assertEqual(audio_samples_2.size, 44100)
 
         expected = [0]
-        res = filters.get_notes((audio_samples_2, sample_rate_2))
+        res = filters.get_notes((audio_samples_2, sample_rate_2))[1]
 
         self.assertEqual(res, expected)
 
@@ -143,7 +143,7 @@ class FiltersTestCase(TestCase):
         self.assertEqual(audio_samples_3.size, 88200)
 
         expected = [0, 44100]
-        res = filters.get_notes((audio_samples_3, sample_rate_3))
+        res = filters.get_notes((audio_samples_3, sample_rate_3))[1]
         self.assertEqual(len(res), len(expected))
         for i, j in zip(res, expected):
             self.assertLessEqual(abs(i - j), 100)

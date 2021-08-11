@@ -117,8 +117,8 @@ def get_notes(audio):
 
     # The threshold and min_spacing values were determined experimentally by examining the spectral_difference graphs
     # approach before mean: threshold was 3e8, but this failed for the same note played repeatedly!
-    mean = np.mean(sd_values)
-    window_indices = _find_peaks(sd_values.tolist(), mean, 10)
+    threshold = np.percentile(sd_values, 99.5)
+    window_indices = _find_peaks(sd_values.tolist(), threshold, 10)
 
     sample_indices = []
 

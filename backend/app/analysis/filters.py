@@ -6,6 +6,7 @@ All filters assume mono tracks (vs stereo) for audio input.
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import stft, spectrogram
+from scipy.stats import mode
 
 
 # helper functions:
@@ -253,8 +254,14 @@ def k_at_time(X, n):
     # we want the best k value at a singular time
     return max_k
 
-def mode(all_k_values_across_note):
-    pass
+# def mode(all_k_values_across_note):
+#     """
+#     Utility function for getting the mode of a numpy array
+#
+#     :param all_k_values_across_note: A 1D numpy array of floats representing the most prominent frequencies of a note
+#     :return: the most frequently occurring frequency (the fundamental frequency)
+#     """
+
 
 def k_for_note(X, n_start, n_stop):
     """
@@ -274,8 +281,11 @@ def k_for_note(X, n_start, n_stop):
         all_k_values_across_note = all_k_values_across_note.append(all_k_values_across_note, k_at_time(X, time_i))
 
     # The mode of the best k values across each time in the note's duration is assumed to be the fundamental frequency
-    return mode(all_k_values_across_note)
+    modes, counts = mode(all_k_values_across_note)
 
+    # We want the actual number of the mode
+    # Modes is an array of arrays for modes of each axis of a numpy array
+    return modes[0][0]
 
 # for pure tones and piano notes...
 def _get_frequency(audio_samples):

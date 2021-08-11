@@ -7,27 +7,26 @@ import numpy as np
 from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
+import cv2 as cv
 
 from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
+from .analysis.image_to_sound import _brightness_to_freq, _get_histogram_avg
 
 
 class MainTests(TestCase):
-    """
-    Backend TestCase
-    """
 
-    # def setUp(self):
-    #     super().setUp()
-    #     do any setup here
+    def test_white_brightness(self):
+        image = cv.imread('app/analysis/test_photos/white.jpg')
+        note_freq = _brightness_to_freq(_get_histogram_avg(image))
+        self.assertEqual(note_freq, 992.5)
 
-    def test_sample(self):
-        """
-        Remove me once we have real tests here.
-        """
-        two = 2
-        another_two = 2
-        self.assertEqual(two + another_two, 4)
+    def test_dark_brightness(self):
+        image = cv.imread('app/analysis/test_photos/black.jpg')
+        note_freq = _brightness_to_freq(_get_histogram_avg(image))
+        self.assertEqual(note_freq, 100)
+
+
 
 
 class SentimentAnalysisAPITests(APITestCase):
@@ -45,7 +44,6 @@ class WavToBase64TestCase(TestCase):
     """
 
     def test_wav_to_base64(self):
-
         one_byte_per_sample = np.array([0, 1, 15, 255], dtype=np.int8)
         self.assertEqual(bytes(one_byte_per_sample), b'\x00\x01\x0f\xff')
         self.assertEqual(bytes(np.array([256], dtype=np.int8)), bytes([0]))

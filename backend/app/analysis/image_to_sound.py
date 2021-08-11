@@ -148,7 +148,7 @@ def image_to_note(image):
     :param image:
     :return _wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
     """
-    note_freq = brightness_to_freq(_get_histogram_avg(image))
+    note_freq = _brightness_to_freq(_get_histogram_avg(image))
 
     # get time steps for the sample
     sample_rate = 44100
@@ -190,7 +190,7 @@ def _get_tempo_for_image(im, num_slices):
     return tempo
 
 
-def brightness_to_freq(brightness):
+def _brightness_to_freq(brightness):
     note_freq = 100 + brightness * 3.5
     return note_freq
 
@@ -206,7 +206,7 @@ def analyze_image(im):
     opencv_im = cv.imdecode(np.frombuffer(im.read(), np.uint8), cv.IMREAD_UNCHANGED)
     instrument = _get_instrument(im)
     brightness = _get_histogram_avg(opencv_im)
-    frequency = brightness_to_freq(brightness)
+    frequency = _brightness_to_freq(brightness)
     tempos = _get_tempo_for_image(opencv_im, num_slices)
     beats_and_durations = [(max(1, round(tempo*length_slice)), length_slice*60/round(tempo*length_slice)) for tempo in tempos]
 

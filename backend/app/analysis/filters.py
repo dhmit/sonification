@@ -223,7 +223,8 @@ def get_notes(audio):
 
 def k_at_time(X, n):
     """
-    Determines the value of k that has the most energy at a given discrete time n
+    Determine the value of k that has the most energy at a given discrete time n
+
     :param X: A list of ints representing the indices of peak values in the signal(?) [result from peak finding(?)]
     :param n: A float(?) representing a discrete time
     :return: A float representing the value of k that has the most energy at a particular singular time n
@@ -252,10 +253,29 @@ def k_at_time(X, n):
     # we want the best k value at a singular time
     return max_k
 
-
-
-def k_for_note(X, m_start, m_stop):
+def mode(all_k_values_across_note):
     pass
+
+def k_for_note(X, n_start, n_stop):
+    """
+    Find the k value that is most prominent across the entire duration of a particular note
+
+    :param X: A list of ints representing the indices of peak values in the signal(?) [result from peak finding(?)]
+    :param n_start: A float representing the starting time for a particular note
+    :param n_stop: A float representing the ending time for a particular note
+    :return: A float representing the fundamental frequency of a particular note
+    """
+
+    all_k_values_across_note = np.array([])
+
+    # Going through the duration of a note
+    for time_i in range(n_start, n_stop):
+        # For each time, get the best k value at this SINGULAR time in the note's duration
+        all_k_values_across_note = all_k_values_across_note.append(all_k_values_across_note, k_at_time(X, time_i))
+
+    # The mode of the best k values across each time in the note's duration is assumed to be the fundamental frequency
+    return mode(all_k_values_across_note)
+
 
 # for pure tones and piano notes...
 def _get_frequency(audio_samples):

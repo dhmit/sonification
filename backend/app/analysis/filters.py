@@ -89,8 +89,8 @@ def _phase_deviation(X):
 
     def phi(k, n):
         """
-        Compute the second difference of the phase of some STFT coefficient by window (time index).
-        Returns the first difference if n == 1, the phase itself if n == 0.
+        Compute the first difference of the phase of some STFT coefficient by window (time index).
+        Return the phase itself if n == 0.
 
         :param k: The frequency bin of the STFT (int).
         :param n: The time/window index of the STFT (int).
@@ -98,10 +98,8 @@ def _phase_deviation(X):
         """
         if n == 0:
             return phase[k, n]
-        if n == 1:
-            return phase[k, n] - phase[k, n - 1]
 
-        return phase[k, n] - 2 * phase[k, n - 1] + phase[k, n - 2]
+        return phase[k, n] - phase[k, n - 1]
 
     deviations = np.array([])
 
@@ -119,7 +117,10 @@ def _phase_deviation(X):
 
 def _find_peaks(x, threshold, min_spacing):
     """
-    Helper function for detecting peak values in a list of samples to help detect note onsets
+    Helper function for detecting peak values in a list of samples to help detect note onsets.
+    This peak-finding function was designed for use with the spectral difference detection function; the phase deviation
+    function likely needs a completely different "peak-finding" function (see plots of both to see the difference!).
+
     :param x: A 1D list of floats representing the spectral difference of some audio signal
     :param threshold: A float (we'll only consider values to be peaks if they are above this value)
     :param min_spacing: A float (we'll only consider peaks to be separate if they are at least this many discrete time
@@ -167,11 +168,11 @@ def get_notes(audio):
     plt.plot(audio_samples)
     plt.xlabel('Sample index')
     plt.ylabel('Value')
-    plt.title(f'Audio signal ($f_s={sample_rate}$ Hz')
+    plt.title(f'Audio signal ($f_s={sample_rate}$ Hz)')
     plt.show()
 
-    nperseg = 100
-    noverlap = nperseg // 3
+    nperseg = 256
+    noverlap = nperseg // 8
 
     samp_freqs, samp_times, stft_signal = stft(
         audio_samples,
@@ -205,16 +206,23 @@ def get_notes(audio):
     plt.xlabel('Window index')
     plt.ylabel('Spectral difference')
     plt.show()
+    
+    # This detection function is an alternative to the spectral_difference function that looks at the phase instead of
+    # magnitude of each complex coefficient in the STFT. The results here do vary drastically at each note onset but in
+    # a very different way (see graph). Such a difference requires its own "peak-finding" function! See the paper
+    # attached in the docstring for other approaches (some include probabilistic methods!).
 
-    mean_abs_phase_deviation = _phase_deviation(stft_signal)
+    # mean_abs_phase_deviation = _phase_deviation(stft_signal)
 
-    plt.figure()
-    plt.plot(mean_abs_phase_deviation)
-    plt.xlabel('Window index')
-    plt.ylabel('Mean absolute phase deviation')
-    plt.show()
+    # plt.figure()
+    # plt.plot(mean_abs_phase_deviation)
+    # plt.xlabel('Window index')
+    # plt.ylabel('Mean absolute phase deviation')
+    # plt.show()
 
-    window_indices = _find_peaks(sd_values.tolist(), 5, 4)
+    # The threshold and min_spacing values were determined experimentally by examining the spectral_difference graphs
+    mean = np.mean(sd_values)
+    window_indices = _find_peaks(sd_values.tolist(), mean, 10)
 
     sample_indices = []
 

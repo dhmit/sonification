@@ -119,9 +119,31 @@ class FiltersTestCase(TestCase):
     """
 
     def test_get_notes(self):
-        audio_samples, sample_rate = text_to_sound('Good. Bad. Neutral.')
+        audio_samples_1, sample_rate_1 = text_to_sound('Good. Bad. Neutral.')
         # encoded = wav_to_base64(audio_samples, sample_rate)
-        self.assertEqual(sample_rate, 44100)
-        self.assertEqual(audio_samples.size, 44100*3)
+        self.assertEqual(sample_rate_1, 44100)
+        self.assertEqual(audio_samples_1.size, 44100*3)
+
         expected = [0, 44100, 88200]
-        self.assertEqual(filters.get_notes((audio_samples, sample_rate)), expected)
+        res = filters.get_notes((audio_samples_1, sample_rate_1))
+
+        self.assertEqual(len(res), len(expected))
+        for i, j in zip(res, expected):
+            self.assertLessEqual(abs(i - j), 100)
+
+        audio_samples_2, sample_rate_2 = text_to_sound('Neutral.')
+        self.assertEqual(audio_samples_2.size, 44100)
+
+        expected = [0]
+        res = filters.get_notes((audio_samples_2, sample_rate_2))
+
+        self.assertEqual(res, expected)
+
+        audio_samples_3, sample_rate_3 = text_to_sound('Neutral. Neutral.')
+        self.assertEqual(audio_samples_3.size, 88200)
+
+        expected = [0, 44100]
+        res = filters.get_notes((audio_samples_3, sample_rate_3))
+        self.assertEqual(len(res), len(expected))
+        for i, j in zip(res, expected):
+            self.assertLessEqual(abs(i - j), 100)

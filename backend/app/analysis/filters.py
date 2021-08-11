@@ -222,7 +222,7 @@ def get_notes(audio):
     return sample_indices
 
 
-def k_at_time(X, n):
+def _k_at_time(X, n):
     """
     Determine the value of k that has the most energy at a given discrete time n
 
@@ -254,17 +254,8 @@ def k_at_time(X, n):
     # we want the best k value at a singular time
     return max_k
 
-#@deprecated
-# def mode(all_k_values_across_note):
-#     """
-#     Utility function for getting the mode of a numpy array
-#
-#     :param all_k_values_across_note: A 1D numpy array of floats representing the most prominent frequencies of a note
-#     :return: the most frequently occurring frequency (the fundamental frequency)
-#     """
 
-
-def k_for_note(X, n_start, n_stop):
+def _k_for_note(X, n_start, n_stop):
     """
     Find the k value that is most prominent across the entire duration of a particular note
 
@@ -279,7 +270,7 @@ def k_for_note(X, n_start, n_stop):
     # Going through the duration of a note
     for time_i in range(n_start, n_stop):
         # For each time, get the best k value at this SINGULAR time in the note's duration
-        all_k_values_across_note = all_k_values_across_note.append(all_k_values_across_note, k_at_time(X, time_i))
+        all_k_values_across_note = all_k_values_across_note.append(all_k_values_across_note, _k_at_time(X, time_i))
 
     # The mode of the best k values across each time in the note's duration is assumed to be the fundamental frequency
     modes, counts = mode(all_k_values_across_note)
@@ -301,7 +292,7 @@ def _get_frequency(audio_samples):
     # which note 'window' to pick...?
     n_start = notes_indices[0]
     n_end = notes_indices[1]
-    fundamental_frequency = k_for_note(notes_indices, n_start, n_end)
+    fundamental_frequency = _k_for_note(notes_indices, n_start, n_end)
 
     # for all frequencies of an audio
     notes_indices = get_notes(audio_samples)
@@ -309,9 +300,9 @@ def _get_frequency(audio_samples):
     for each_index in range(len(notes_indices)-1):
         n_start = notes_indices[each_index]
         n_end = notes_indices[each_index + 1]
-        audio_frequencies = audio_frequencies.append(audio_frequencies, k_for_note(notes_indices, n_start, n_end))
+        audio_frequencies = audio_frequencies.append(audio_frequencies, _k_for_note(notes_indices, n_start, n_end))
 
-    return fundamental_frequency
+    # return fundamental_frequency
     # OR
     return audio_frequencies
 
@@ -363,44 +354,64 @@ def change_pitch(audio_samples, pitch_factor):
     :param audio_samples: A 1D NumPy array representing a single note
     :param pitch_factor: An unsigned float representing the factor increase or decrease in a note's frequency
 
-    :return: A dict instance containing audio samples list, sample rate, and notes array with frequency modifications
+    :return: A new NumPy array
     """
+
     pitch_factor = abs(pitch_factor)
-    audio = audio_metadata["audio_samples"]
-    sample_rate = audio_metadata["sample_rate"]
-    new_audio = np.array([], dtype=audio.dtype)
+    original_audio_frequencies = _get_frequency(audio_samples)
+    new_audio_samples = np.array([], dtype=audio_samples.dtype)
 
-    notes = []
-    is_chord = False
-    for note_frequency, note_duration, note_score in audio_metadata["notes"]:
+    # for a singular note...
+    #...
 
-        if type(note_frequency) == tuple:
-            is_chord = True
-            new_frequency = note_frequency[0] * pitch_factor
-        else:
-            new_frequency = note_frequency * pitch_factor
 
-        notes.append((new_frequency, note_duration, note_score))
+    # for the entire audio...
+    # Go through each fundamental frequency for each note
+    for each_f in original_audio_frequencies:
+        new_freq = each_f * pitch_factor
 
-        t = np.linspace(0, note_duration, note_duration * sample_rate)
+        # change each old freq to new frequency and update a samples array to return
 
-        sin_wave = np.sin(2 * np.pi * new_frequency * t)
-        sin_wave = np.array(sin_wave)
-        sin_wave *= 32767 / np.max(np.abs(sin_wave))
-        sin_wave = sin_wave.astype(np.int16)
+    return new_audio_samples
 
-        new_audio = np.append(new_audio, sin_wave)
 
-    new_audio_metadata = {
-        "audio_samples": new_audio,
-        "sample_rate": sample_rate,
-        "notes": notes
-    }
+    # OLD
 
-    if is_chord:
-        return add_chords(new_audio_metadata)
+    # audio = audio_metadata["audio_samples"]
+    # sample_rate = audio_metadata["sample_rate"]
+    # new_audio = np.array([], dtype=audio.dtype)
 
-    return new_audio_metadata
+    # notes = []
+    # is_chord = False
+    # for note_frequency, note_duration, note_score in audio_metadata["notes"]:
+    #
+    #     if type(note_frequency) == tuple:
+    #         is_chord = True
+    #         new_frequency = note_frequency[0] * pitch_factor
+    #     else:
+    #         new_frequency = note_frequency * pitch_factor
+    #
+    #     notes.append((new_frequency, note_duration, note_score))
+    #
+    #     t = np.linspace(0, note_duration, note_duration * sample_rate)
+    #
+    #     sin_wave = np.sin(2 * np.pi * new_frequency * t)
+    #     sin_wave = np.array(sin_wave)
+    #     sin_wave *= 32767 / np.max(np.abs(sin_wave))
+    #     sin_wave = sin_wave.astype(np.int16)
+    #
+    #     new_audio = np.append(new_audio, sin_wave)
+    #
+    # new_audio_metadata = {
+    #     "audio_samples": new_audio,
+    #     "sample_rate": sample_rate,
+    #     "notes": notes
+    # }
+    #
+    # if is_chord:
+    #     return add_chords(new_audio_metadata)
+    #
+    # return new_audio_metadata
 
 
 def add_chords(audio_samples):

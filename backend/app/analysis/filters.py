@@ -224,9 +224,9 @@ def get_notes(audio):
 def k_at_time(X, n):
     """
     Determines the value of k that has the most energy at a given discrete time n
-    :param X:
-    :param n: A float(?) representing a discrete time n
-    :return:
+    :param X: A list of ints representing the indices of peak values in the signal(?) [result from peak finding(?)]
+    :param n: A float(?) representing a discrete time
+    :return: A float representing the value of k that has the most energy at a particular singular time n
     """
 
     N = len(X[n])
@@ -247,10 +247,10 @@ def k_at_time(X, n):
         max_k = max_k_or_ks
 
     # find the index of the max X_n[k] value (the singular argmax of the X_n[k] squared values)
-    max_k_index = np.where(all_k_values == max_k)
+    # max_k_index = np.where(all_k_values == max_k)
 
-    return max_k_index
-
+    # we want the best k value at a singular time
+    return max_k
 
 
 

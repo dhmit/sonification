@@ -147,3 +147,7 @@ class FiltersTestCase(TestCase):
         self.assertEqual(len(res), len(expected))
         for i, j in zip(res, expected):
             self.assertLessEqual(abs(i - j), 100)
+
+
+    def test_get_frequency(self):
+        self.assertEqual(2,2)

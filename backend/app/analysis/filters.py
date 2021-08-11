@@ -55,17 +55,11 @@ def _spectral_difference(X):
         sd = 0
         for k in range(window_size):
             if n == 0:
-                try:
-                    # with/without H of ...
-                    sd += H(np.absolute(X[k, n])) ** 2
-                except TypeError:
-                    breakpoint()
-                    raise
+                sd += H(np.absolute(X[k, n])) ** 2
             else:
                 sd += H(np.absolute(X[k, n]) - np.absolute(X[k, n - 1])) ** 2
 
         all_sd_values = np.append(all_sd_values, sd)
-    print("all good in sd func...")
 
     return all_sd_values
 
@@ -132,11 +126,7 @@ def _find_peaks(x, threshold, min_spacing):
     input_x = x[:]
 
     while True:
-        try:
-            max_x = max(input_x)
-        except ValueError:
-            breakpoint()
-            raise
+        max_x = max(input_x)
         max_index = input_x.index(max_x)
         if max_x <= threshold:
             return sorted(all_peaks_indices)
@@ -147,7 +137,6 @@ def _find_peaks(x, threshold, min_spacing):
         end = min(max_index + min_spacing + 1, len(input_x))
         for i in range(start, end):
             input_x[i] = 0
-        print("all good in peaks func...")
 
 
 def get_notes(audio):
@@ -232,14 +221,43 @@ def get_notes(audio):
     return sample_indices
 
 
-def k_at_time(X, m):
-    pass
+def k_at_time(X, n):
+    """
+    Determines the value of k that has the most energy at a given discrete time n
+    :param X:
+    :param n: A float(?) representing a discrete time n
+    :return:
+    """
+
+    N = len(X[n])
+
+    all_k_values = np.array([])
+
+    # Get all the X_n[k] values
+    for ik in range(N):
+        all_k_values = all_k_values.append(all_k_values, np.absolute(X[n][ik]) ** 2)
+
+    # find the maximum X_n[k] value(or values if the maximum occurs more than once)
+    max_k_or_ks = np.amax(all_k_values, axis=-1)
+
+    # if there are multiple of the same maximum value, take the first one
+    if isinstance(max_k_or_ks, np.ndarray):
+        max_k = max_k_or_ks[0]
+    else:
+        max_k = max_k_or_ks
+
+    # find the index of the max X_n[k] value (the singular argmax of the X_n[k] squared values)
+    max_k_index = np.where(all_k_values == max_k)
+
+    return max_k_index
+
+
 
 
 def k_for_note(X, m_start, m_stop):
     pass
 
-
+# for pure tones and piano notes...
 def _get_frequency(audio_samples):
     """
     Given some audio that represents a note, return the fundamental frequency of that note.

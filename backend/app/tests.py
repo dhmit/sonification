@@ -1,15 +1,16 @@
 """
 Tests for the sonification web app.
 """
-
+import io
 import base64
 import numpy as np
-from django.test import TestCase
+from django.test import TestCase, Client
 from rest_framework.test import APITestCase
 from rest_framework import status
 
 from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
+from PIL import Image
 
 
 class MainTests(TestCase):
@@ -108,3 +109,26 @@ class TextToSoundTestCase(TestCase):
         self.assertEqual(len(audio_samples), 88200)
         self.assertEqual(type(audio_samples), np.ndarray)
         self.assertEqual(audio_samples.dtype, 'int16')
+
+
+class ImageAnalysisAPITests(APITestCase):
+    """
+    Test case for image analysis API endpoints
+    """
+
+    def get_test_image(self):
+        file = io.BytesIO()
+        image = Image.open('app/test_image.jpg')
+        image.save(file, 'jpeg')
+        file.name = 'test.jpeg'
+        file.seek(0)
+        return file
+
+    def test_API_status(self):
+        img = self.get_test_image()
+        response = self.client.post('/api/image_to_sound', {'image': img}, format='multipart')
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+
+    def test_API_result(self):
+        
+

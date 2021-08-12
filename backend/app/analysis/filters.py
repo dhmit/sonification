@@ -320,7 +320,7 @@ def change_volume(audio_samples, amplitude):
     return amplitude * audio_samples
 
 
-def change_speed(audio_samples, speed_factor):
+def stretch_audio(audio_samples, speed_factor):
     """
     A filter designed to change the speed/tempo of a note.
 
@@ -352,17 +352,20 @@ def change_speed(audio_samples, speed_factor):
 
     return np.append(new_audio_samples, audio_samples[:num_remaining_samples])
 
-def _speedx(audio_samples, pitch_factor):
-    '''
+def _change_speed(audio_samples, speed_factor):
+    """
+    A private helper function that changes speed and pitch of a note.
+    :param audio_samples: A 1D NumPy array representing a single note.
+    :param speed_factor: A positive float representing the new speed of playback for the output audio, relative to the
+        original (e.g., pass a speed_factor of `2` to obtain audio that plays twice as fast, pass a speed_factor of `.5`
+        to obtain audio that plays half as fast, etc).
 
-    :param audio_samples:
-    :param pitch_factor:
-    :return:
-    '''
+    :return: A new 1D NumPy array reflecting the change in speed and pitch of a note
+    """
 
-    indices = np.arange(0, len(audio_samples), pitch_factor)
+    indices = np.arange(0, len(audio_samples), speed_factor)
     indices = indices[indices < len(audio_samples)].astype(int)
-    return audio_samples[indices.astype(int)]
+    return audio_samples[indices]
 
 def change_pitch(audio_samples, pitch_factor):
     """
@@ -370,14 +373,16 @@ def change_pitch(audio_samples, pitch_factor):
 
     :param audio_samples: A 1D NumPy array representing a single note.
     :param pitch_factor: An unsigned float representing the factor increase or decrease in a note's frequency.
+    (e.g., pass a pitch_factor of `2` to obtain audio that is one pitch higher, pass a pitch_factor of `.5`
+        to obtain audio that is one pitch lower, etc).
 
     :return: A new 1D NumPy array reflecting the change in pitch.
     """
 
     fraction = 1 / pitch_factor
-    stretched = change_speed(audio_samples, fraction)
+    stretched = stretch_audio(audio_samples, fraction)
 
-    return _speedx(stretched[:], pitch_factor), 44100
+    return _change_speed(stretched[:], pitch_factor)
 
 def add_chords(audio_samples):
     """

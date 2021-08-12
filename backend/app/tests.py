@@ -176,14 +176,14 @@ class FiltersTestCase(TestCase):
         # should also fail
         self.assertEqual(res_frequencies_3, expected_frequencies_3)
 
-    def test_change_speed(self):
+    def test_stretch_audio(self):
         audio_samples_1, sample_rate_1 = text_to_sound('This is good. This is bad. This is neutral.')
         self.assertEqual(sample_rate_1, 44100)
 
-        res_slow = filters.change_speed(audio_samples_1, 0.5)
+        res_slow = filters.stretch_audio(audio_samples_1, 0.5)
         self.assertGreaterEqual(res_slow.size, audio_samples_1.size)
 
-        res_fast = filters.change_speed(audio_samples_1, 2)
+        res_fast = filters.stretch_audio(audio_samples_1, 2)
         self.assertLessEqual(res_fast.size, audio_samples_1.size)
 
         audio_samples_2, sample_rate_2 = text_to_sound(
@@ -191,10 +191,10 @@ class FiltersTestCase(TestCase):
         )
         self.assertEqual(sample_rate_2, 44100)
 
-        res_slow_1 = filters.change_speed(audio_samples_2, 0.7)
+        res_slow_1 = filters.stretch_audio(audio_samples_2, 0.7)
         self.assertGreaterEqual(res_slow_1.size, audio_samples_2.size)
 
-        res_fast_1 = filters.change_speed(audio_samples_2, 3)
+        res_fast_1 = filters.stretch_audio(audio_samples_2, 3)
         self.assertLessEqual(res_fast_1.size, audio_samples_2.size)
 
     def test_add_chords(self):

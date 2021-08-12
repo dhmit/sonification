@@ -178,8 +178,7 @@ class FiltersTestCase(TestCase):
 
     def test_stretch_audio(self):
         audio_samples_1, sample_rate_1 = text_to_sound(
-            'Today is a wonderful day. A wonderful day for eating ice cream. Yesterday was horrible. '
-            'There was a storm '
+            'Today is a wonderful day. A wonderful day for eating ice cream. Yesterday was horrible. There was a storm and my neighborhood got flooded.'
         )
         self.assertEqual(sample_rate_1, 44100)
 
@@ -201,42 +200,42 @@ class FiltersTestCase(TestCase):
         self.assertLessEqual(res_fast_1.size, audio_samples_2.size)
 
     def test_add_chords(self):
-        audio_samples_1, sample_rate_1 = text_to_sound('This is marvelous. This is scary. This is neutral.')
+        audio_samples_1, sample_rate_1 = text_to_sound('This is marvelous day to get some sleep. The start of the new semester brings a dark cloud. It is August.')
         self.assertEqual(sample_rate_1, 44100)
 
         res_1 = filters.add_chords(audio_samples_1,sample_rate_1)
         self.assertGreaterEqual(res_1.size, audio_samples_1.size)
 
 
-        audio_samples_2, sample_rate_2 = text_to_sound('Neutral. Neutral.')
+        audio_samples_2, sample_rate_2 = text_to_sound('I fell and scraped my knee. It hurt a lot. I cried on the way home. My mom bought me ice cream. So I feel better now.')
         self.assertEqual(sample_rate_2, 44100)
 
         res_2 = filters.add_chords(audio_samples_2, sample_rate_2)
         self.assertGreaterEqual(res_2.size, audio_samples_2.size)
 
     def test_change_volume(self):
-        audio_samples_1, sample_rate_1 = text_to_sound('This is great. This is stupid. This is neutral.')
+        audio_samples_1, sample_rate_1 = text_to_sound('This is a great day for watching television. The climate change situation is scary. It is very hot right now.')
         self.assertEqual(sample_rate_1, 44100)
 
         res_1 = filters.change_volume(audio_samples_1, 2)
         self.assertEqual(res_1.size, audio_samples_1.size)
 
 
-        audio_samples_2, sample_rate_2 = text_to_sound('Neutral. Neutral.')
+        audio_samples_2, sample_rate_2 = text_to_sound('I like eating cake. I tried baking cake, but it tasted really bad. I decided to not bake cake anymore. I asked my friend to bake a cake for me. It was really delicious.')
         self.assertEqual(sample_rate_2, 44100)
 
         res_2 = filters.change_volume(audio_samples_2, 0.5)
         self.assertEqual(res_2.size, audio_samples_2.size)
 
     def test_change_pitch(self):
-        audio_samples_1, sample_rate_1 = text_to_sound('This is awesome. This is horrible. This is neutral.')
+        audio_samples_1, sample_rate_1 = text_to_sound('This is a good day for some boating and doing barbeque. The rain is a horrible addition to my boating day. The weather forecase is ok.')
         expected_sample_rate_1 = 44100
         self.assertEqual(sample_rate_1, expected_sample_rate_1)
 
         res_1 = filters.change_pitch(audio_samples_1, 2)
         self.assertEqual(res_1.size, audio_samples_1.size)
 
-        audio_samples_2, sample_rate_2 = text_to_sound('Neutral. Neutral.')
+        audio_samples_2, sample_rate_2 = text_to_sound('On my way home from school, I ran into a wall. I broke my glasses and hurt my head. I was really upset. My mom is mad at me because I have to get new glasses and glasses are expensive. My rich friend decided to pay for my glasses. So my mo' )
         expected_sample_rate_2 = 44100
         self.assertEqual(sample_rate_2, expected_sample_rate_2)
 
@@ -250,7 +249,6 @@ class FiltersTestCase(TestCase):
         res_3 = filters.change_pitch(audio_samples_3, 2)
         _, _, fund_freq = filters.get_notes((res_3, sample_rate_3))
         self.assertLessEqual(abs(fund_freq[0] - 2*self.F4), 50)
-
 
 
 

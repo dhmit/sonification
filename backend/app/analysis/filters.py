@@ -377,7 +377,7 @@ def change_pitch(audio_samples, pitch_factor):
     new_audio_samples *= 32767 / np.max(np.abs(new_audio_samples))
     new_audio_samples = new_audio_samples.astype(np.int16)
 
-    return new_audio_samples,sample_rate
+    return new_audio_samples
 
 
     # OLD

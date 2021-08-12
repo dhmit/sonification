@@ -10,12 +10,6 @@ import matplotlib.pyplot as plt
 from scipy.signal import stft, spectrogram
 from scipy.stats import mode
 
-
-# helper functions:
-# to apply the filter (pass in a filter(function), a sin wave, and maybe a **kwargs dictionary?, return sin wave)
-# to find the notes/chords in a wave (pass in a wave, output something that helps us take the right slices of audio)
-# each filter: input a note(tuple), output a new note (maybe with some extra kwargs)
-
 def apply_filter(audio, filter_function, **kwargs):
     """
     Apply a filter to each note in an audio signal and return the filtered audio.
@@ -123,7 +117,6 @@ def get_notes(audio):
     threshold = np.mean(sd_values)
     min_spacing = num_windows // 10
     window_indices = _find_peaks(sd_values.tolist(), threshold, min_spacing)
-    # breakpoint()
 
     sample_indices = []
     for i in window_indices:
@@ -154,8 +147,6 @@ def _spectral_difference(X):
 
     :return: A 1D NumPy array of spectral difference values, one for each STFT window.
     """
-    # [fft[0], fft[1], fft[2]]
-    # length-N signal -> length-N fft (another signal)
     all_sd_values = np.array([])
 
     H = lambda x: (x + np.absolute(x)) / 2
@@ -278,7 +269,6 @@ def _freq_for_note(X, sample_rate, n_start, n_stop):
 
     freq_bin = k_winners[0]
 
-    # breakpoint()
     assert 0 <= freq_bin < window_size, f'Window size is {window_size}, but k={freq_bin}!'
 
     return freq_resolution * freq_bin
@@ -367,6 +357,7 @@ def _change_speed(audio_samples, speed_factor):
 
     indices = np.arange(0, len(audio_samples), speed_factor)
     indices = indices[indices < len(audio_samples)].astype(int)
+
     return audio_samples[indices]
 
 def change_pitch(audio_samples, pitch_factor):
@@ -411,11 +402,9 @@ def add_chords(audio_samples, sample_rate):
     # ratio of seventh note from fundamental frequency divided by fundamental frequency
     third_freq_factor = 1.5
 
-    # generate notes to stack on top of first note
     second_note = change_pitch(audio_samples, second_freq_factor)
     third_note = change_pitch(audio_samples, third_freq_factor)
 
-    # concatenate notes via element-wise addition -- these must all have the same number of samples!
     new_audio_samples += second_note
     new_audio_samples += third_note
 
@@ -433,65 +422,8 @@ def overlap_notes(audio, overlap_factor):
 
     :return: A new NumPy array reflecting audio with overlapping notes.
     """
+
+    if not (0 <= overlap_factor <= 1):
+        raise ValueError("Invalid overlap factor. Please choose number in the interval [0, 1].")
+
     return np.array([])
-    # if not (0 <= overlap_factor <= 1):
-    #     raise ValueError("Invalid overlap factor. Please choose number in the interval [0, 1].")
-    # if overlap_factor == 0:
-    #     return audio_samples.copy()
-    #
-    # def overlap():
-    #     pass
-    #
-    # new_audio = np.array([], dtype=audio.dtype)
-    #
-    # for n in range(len(notes) - 1, -1, -1):
-    #     new_audio = np.append(new_audio, overlap())
-    # # start = 0
-    # # length_of_note (in samples) = note_duration * sample_rate
-    # # num_samples_before_overlap = int(length_note * (1 - overlap_factor))
-    # # new_audio = np.append(new_audio, audio[start: start + length_of_note]
-    # # normally, saying li[a:b] on Py list returns new list: we want the slice of the original list so we can change it
-    # #   does NumPy have separate methods for these two kinds of slicing?
-    # # assuming we have the slice from the original:
-    #
-    # # new_audio[start + num_samples_before_overlap: start + length_of_note] += audio[start + length_of_note + 1: length of the new audio slice[
-    # # keep going: redefine start, but start would be different for the new audio and audio?
-    #
-    # # notes = []
-    # start_index = 0
-    # for index, (note_frequency, note_duration, note_score) in enumerate(notes):
-    #     full_num_of_note_samples = int(note_duration * sample_rate)
-    #     unchanged_factor = 1 - overlap_factor
-    #
-    #     unchanged_num_of_note_samples = unchanged_factor * full_num_of_note_samples
-    #     # the entire audio (or the first half/group for this note's samples?)?
-    #     original_audio_for_this_note = audio[start_index: start_index + full_num_of_note_samples]
-    #
-    #     # adding entire original audio before changing slices of it later on?
-    #     new_audio = np.append(new_audio, original_audio_for_this_note)
-    #
-    #     # second half/group of this note's full samples (the group of samples that need to be 'reassigned'?)
-    #     changed_slice_starting_index = start_index + unchanged_num_of_note_samples
-    #     changed_slice_ending_index = start_index + full_num_of_note_samples
-    #     changed_slice_new_audio = new_audio[changed_slice_starting_index:changed_slice_ending_index]
-    #
-    #     # the originally second half/group of samples are now reassigned to...
-    #     changed_slice_new_audio = something
-    #
-    #     # move on to the next note's group of full samples
-    #     start_index += unchanged_num_of_note_samples
-    #
-    # return {"audio_samples": audio_metadata["audio_samples"], "sample_rate": sample_rate,
-    #         "notes": notes}
-    #
-    # new_audio = np.array([], dtype=np.int16)
-    #
-    # def overlapped(slice_start, slice_end, note_index):
-    #     audio_slice = audio[slice_start: slice_end]
-    #
-    #     if len(audio_slice) < (slice_end - slice_start):  # base case: end of audio
-    #         return audio_slice
-    #
-    #     return np.append(new_audio, overlapped(next_audio_slice, note_index + 1))
-    #
-    # return overlapped(0, int(notes[0][1] * sample_rate) + 1, 0)

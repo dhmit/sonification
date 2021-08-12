@@ -247,7 +247,7 @@ class FiltersTestCase(TestCase):
                                                        'glasses and hurt my head. I was really upset. My mom is mad '
                                                        'at me because I have to get new glasses and glasses are '
                                                        'expensive. My rich friend decided to pay for my glasses. So '
-                                                       'my mom was happy.' ) 
+                                                       'my mom was happy.')
         expected_sample_rate_2 = 44100
         self.assertEqual(sample_rate_2, expected_sample_rate_2)
 

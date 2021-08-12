@@ -177,7 +177,10 @@ class FiltersTestCase(TestCase):
         self.assertEqual(res_frequencies_3, expected_frequencies_3)
 
     def test_stretch_audio(self):
-        audio_samples_1, sample_rate_1 = text_to_sound('This is good. This is bad. This is neutral.')
+        audio_samples_1, sample_rate_1 = text_to_sound(
+            'Today is a wonderful day. A wonderful day for eating ice cream. Yesterday was horrible. '
+            'There was a storm '
+        )
         self.assertEqual(sample_rate_1, 44100)
 
         res_slow = filters.stretch_audio(audio_samples_1, 0.5)
@@ -198,7 +201,7 @@ class FiltersTestCase(TestCase):
         self.assertLessEqual(res_fast_1.size, audio_samples_2.size)
 
     def test_add_chords(self):
-        audio_samples_1, sample_rate_1 = text_to_sound('This is good. This is bad. This is neutral.')
+        audio_samples_1, sample_rate_1 = text_to_sound('This is marvelous. This is scary. This is neutral.')
         self.assertEqual(sample_rate_1, 44100)
 
         res_1 = filters.add_chords(audio_samples_1,sample_rate_1)
@@ -212,7 +215,7 @@ class FiltersTestCase(TestCase):
         self.assertGreaterEqual(res_2.size, audio_samples_2.size)
 
     def test_change_volume(self):
-        audio_samples_1, sample_rate_1 = text_to_sound('This is good. This is bad. This is neutral.')
+        audio_samples_1, sample_rate_1 = text_to_sound('This is great. This is stupid. This is neutral.')
         self.assertEqual(sample_rate_1, 44100)
 
         res_1 = filters.change_volume(audio_samples_1, 2)
@@ -226,7 +229,7 @@ class FiltersTestCase(TestCase):
         self.assertEqual(res_2.size, audio_samples_2.size)
 
     def test_change_pitch(self):
-        audio_samples_1, sample_rate_1 = text_to_sound('This is good. This is bad. This is neutral.')
+        audio_samples_1, sample_rate_1 = text_to_sound('This is awesome. This is horrible. This is neutral.')
         expected_sample_rate_1 = 44100
         self.assertEqual(sample_rate_1, expected_sample_rate_1)
 
@@ -239,6 +242,17 @@ class FiltersTestCase(TestCase):
 
         res_2 = filters.change_pitch(audio_samples_2, 0.3)
         self.assertEqual(res_2.size, audio_samples_2.size)
+
+        audio_samples_3, sample_rate_3 = text_to_sound('This is neutral.')
+        expected_sample_rate_3 = 44100
+        self.assertEqual(sample_rate_3, expected_sample_rate_3)
+
+        res_3 = filters.change_pitch(audio_samples_3, 2)
+        _, _, fund_freq = filters.get_notes((res_3, sample_rate_3))
+        self.assertLessEqual(abs(fund_freq[0] - 2*self.F4), 50)
+
+
+
 
 
 

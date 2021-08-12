@@ -68,7 +68,8 @@ def get_notes(audio):
     # plt.show()
 
     nperseg = 1024
-    noverlap = 32
+    hop_size = nperseg // 2
+    noverlap = nperseg - hop_size
 
     samp_freqs, samp_times, stft_signal = stft(
         audio_samples,
@@ -116,14 +117,15 @@ def get_notes(audio):
     # plt.ylabel('Mean absolute phase deviation')
     # plt.show()
 
-    threshold = np.percentile(sd_values, 97)
+    # threshold = np.percentile(sd_values, 97)
+    threshold = np.mean(sd_values)
     min_spacing = num_windows // 10
     window_indices = _find_peaks(sd_values.tolist(), threshold, min_spacing)
     breakpoint()
 
     sample_indices = []
     for i in window_indices:
-        sample_indices.append(i * (nperseg - noverlap))
+        sample_indices.append(i * hop_size)
 
     note_frequencies = []
     for i in range(len(window_indices) - 1):

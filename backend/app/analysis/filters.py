@@ -353,6 +353,13 @@ def change_speed(audio_samples, speed_factor):
     return np.append(new_audio_samples, audio_samples[:num_remaining_samples])
 
 def _speedx(audio_samples, pitch_factor):
+    '''
+
+    :param audio_samples:
+    :param pitch_factor:
+    :return:
+    '''
+
     indices = np.arange(0, len(audio_samples), pitch_factor)
     indices = indices[indices < len(audio_samples)].astype(int)
     return audio_samples[indices.astype(int)]
@@ -367,29 +374,10 @@ def change_pitch(audio_samples, pitch_factor):
     :return: A new 1D NumPy array reflecting the change in pitch.
     """
 
-    # Without frequencies
     fraction = 1 / pitch_factor
     stretched = change_speed(audio_samples, fraction)
-    return _speedx(stretched, pitch_factor)
 
-    # With frequencies
-    # pitch_factor = abs(pitch_factor)
-    # _, _, frequencies = get_notes(audio_samples)
-    # sample_rate = 44100
-    # duration = 1
-    # t = np.linspace(0, duration, duration * sample_rate, False)
-    #
-    # sin_waves = []
-    # for each_old_frequency in frequencies:
-    #     new_frequency = each_old_frequency * pitch_factor
-    #     sin_waves.append(np.sin(2 * np.pi * new_frequency * t))
-    #
-    # new_audio_samples = np.hstack(sin_waves)
-    # new_audio_samples *= 32767 / np.max(np.abs(new_audio_samples))
-    # new_audio_samples = new_audio_samples.astype(np.int16)
-    #
-    # return new_audio_samples
-
+    return _speedx(stretched[:], pitch_factor), 44100
 
 def add_chords(audio_samples):
     """

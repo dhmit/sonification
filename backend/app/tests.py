@@ -211,6 +211,20 @@ class FiltersTestCase(TestCase):
         res_2 = filters.add_chords(audio_samples_2)
         self.assertGreaterEqual(res_2.size, audio_samples_2.size)
 
+    def test_change_volume(self):
+        audio_samples_1, sample_rate_1 = text_to_sound('This is good. This is bad. This is neutral.')
+        self.assertEqual(sample_rate_1, 44100)
+
+        res_1 = filters.change_volume(audio_samples_1, 2)
+        self.assertEqual(res_1.size, audio_samples_1.size)
+
+
+        audio_samples_2, sample_rate_2 = text_to_sound('Neutral. Neutral.')
+        self.assertEqual(sample_rate_2, 44100)
+
+        res_2 = filters.change_volume(audio_samples_2, 0.5)
+        self.assertEqual(res_2.size, audio_samples_2.size)
+
 
 
 

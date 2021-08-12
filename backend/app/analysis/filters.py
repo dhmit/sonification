@@ -92,20 +92,20 @@ def get_notes(audio):
     )
 
     # Code to plot the spectrogram:
-    plt.figure()
-    plt.pcolormesh(samp_times_spec, samp_freqs_spec, spec, shading='gouraud')
-    plt.ylabel('Frequency [Hz]')
-    plt.xlabel('Time [sec]')
-    plt.show()
+    # plt.figure()
+    # plt.pcolormesh(samp_times_spec, samp_freqs_spec, spec, shading='gouraud')
+    # plt.ylabel('Frequency [Hz]')
+    # plt.xlabel('Time [sec]')
+    # plt.show()
 
     sd_values = _spectral_difference(stft_signal)
 
     # Code to plot the spectral difference:
-    plt.figure()
-    plt.stem(sd_values)
-    plt.xlabel('Window index')
-    plt.ylabel('Spectral difference')
-    plt.show()
+    # plt.figure()
+    # plt.stem(sd_values)
+    # plt.xlabel('Window index')
+    # plt.ylabel('Spectral difference')
+    # plt.show()
 
     # An alternative to the spectral difference--see the function's docstring.
     # mean_abs_phase_deviation = _phase_deviation(stft_signal)

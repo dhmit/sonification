@@ -121,7 +121,7 @@ def get_notes(audio):
     threshold = np.mean(sd_values)
     min_spacing = num_windows // 10
     window_indices = _find_peaks(sd_values.tolist(), threshold, min_spacing)
-    breakpoint()
+    # breakpoint()
 
     sample_indices = []
     for i in window_indices:
@@ -276,7 +276,7 @@ def _freq_for_note(X, sample_rate, n_start, n_stop):
 
     freq_bin = k_winners[0]
 
-    breakpoint()
+    # breakpoint()
     assert 0 <= freq_bin < window_size, f'Window size is {window_size}, but k={freq_bin}!'
 
     return freq_resolution * freq_bin
@@ -331,6 +331,7 @@ def change_speed(audio_samples, speed_factor):
 
     :return: A new 1D NumPy array reflecting the change in speed.
     """
+
     if speed_factor <= 0:
         raise ValueError("Speed factor must be greater than zero.")
 
@@ -351,6 +352,10 @@ def change_speed(audio_samples, speed_factor):
 
     return np.append(new_audio_samples, audio_samples[:num_remaining_samples])
 
+def _speedx(audio_samples, pitch_factor):
+    indices = np.arange(0, len(audio_samples), pitch_factor)
+    indices = indices[indices < len(audio_samples)].astype(int)
+    return audio_samples[indices.astype(int)]
 
 def change_pitch(audio_samples, pitch_factor):
     """
@@ -362,71 +367,28 @@ def change_pitch(audio_samples, pitch_factor):
     :return: A new 1D NumPy array reflecting the change in pitch.
     """
 
-    pitch_factor = abs(pitch_factor)
-    _, _, frequencies = get_notes(audio_samples)
-    sample_rate = 44100
-    duration = 1
-    t = np.linspace(0, duration, duration * sample_rate, False)
+    # Without frequencies
+    fraction = 1 / pitch_factor
+    stretched = change_speed(audio_samples, fraction)
+    return _speedx(stretched, pitch_factor)
 
-    sin_waves = []
-    for each_old_frequency in frequencies:
-        new_frequency = each_old_frequency * pitch_factor
-        sin_waves.append(np.sin(2 * np.pi * new_frequency * t))
-
-    new_audio_samples = np.hstack(sin_waves)
-    new_audio_samples *= 32767 / np.max(np.abs(new_audio_samples))
-    new_audio_samples = new_audio_samples.astype(np.int16)
-
-    return new_audio_samples
-
-
-    # OLD
-
-    # for a singular note...
-    # ...
-
-    #  for the entire audio...
-    #  Go through each fundamental frequency for each note
-    # for each_f in original_audio_frequencies:
-    #     new_freq = each_f * pitch_factor
+    # With frequencies
+    # pitch_factor = abs(pitch_factor)
+    # _, _, frequencies = get_notes(audio_samples)
+    # sample_rate = 44100
+    # duration = 1
+    # t = np.linspace(0, duration, duration * sample_rate, False)
     #
-    #     # change each old freq to new frequency and update a samples array to return
-
-    # audio = audio_metadata["audio_samples"]
-    # sample_rate = audio_metadata["sample_rate"]
-    # new_audio = np.array([], dtype=audio.dtype)
-
-    # notes = []
-    # is_chord = False
-    # for note_frequency, note_duration, note_score in audio_metadata["notes"]:
+    # sin_waves = []
+    # for each_old_frequency in frequencies:
+    #     new_frequency = each_old_frequency * pitch_factor
+    #     sin_waves.append(np.sin(2 * np.pi * new_frequency * t))
     #
-    #     if type(note_frequency) == tuple:
-    #         is_chord = True
-    #         new_frequency = note_frequency[0] * pitch_factor
-    #     else:
-    #         new_frequency = note_frequency * pitch_factor
+    # new_audio_samples = np.hstack(sin_waves)
+    # new_audio_samples *= 32767 / np.max(np.abs(new_audio_samples))
+    # new_audio_samples = new_audio_samples.astype(np.int16)
     #
-    #     notes.append((new_frequency, note_duration, note_score))
-    #
-    #     t = np.linspace(0, note_duration, note_duration * sample_rate)
-    #
-    #     sin_wave = np.sin(2 * np.pi * new_frequency * t)
-    #     sin_wave = np.array(sin_wave)
-    #     sin_wave *= 32767 / np.max(np.abs(sin_wave))
-    #     sin_wave = sin_wave.astype(np.int16)
-    #
-    #     new_audio = np.append(new_audio, sin_wave)
-    #
-    # new_audio_metadata = {
-    #     "audio_samples": new_audio,
-    #     "sample_rate": sample_rate,
-    #     "notes": notes
-    # }
-    #
-    # if is_chord:
-    #     return add_chords(new_audio_metadata)
-    #
-    # return new_audio_metadata
+    # return new_audio_samples
 
 
 def add_chords(audio_samples):

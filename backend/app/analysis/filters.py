@@ -364,7 +364,23 @@ def change_pitch(audio_samples, pitch_factor):
 
     pitch_factor = abs(pitch_factor)
     _, _, frequencies = get_notes(audio_samples)
-    new_audio_samples = np.array([], dtype=audio_samples.dtype)
+    sample_rate = 44100
+    duration = 1
+    t = np.linspace(0, duration, duration * sample_rate, False)
+
+    sin_waves = []
+    for each_old_frequency in frequencies:
+        new_frequency = each_old_frequency * pitch_factor
+        sin_waves.append(np.sin(2 * np.pi * new_frequency * t))
+
+    new_audio_samples = np.hstack(sin_waves)
+    new_audio_samples *= 32767 / np.max(np.abs(new_audio_samples))
+    new_audio_samples = new_audio_samples.astype(np.int16)
+
+    return new_audio_samples,sample_rate
+
+
+    # OLD
 
     # for a singular note...
     # ...
@@ -375,10 +391,6 @@ def change_pitch(audio_samples, pitch_factor):
     #     new_freq = each_f * pitch_factor
     #
     #     # change each old freq to new frequency and update a samples array to return
-
-    return new_audio_samples
-
-    # OLD
 
     # audio = audio_metadata["audio_samples"]
     # sample_rate = audio_metadata["sample_rate"]

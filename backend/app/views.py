@@ -122,7 +122,7 @@ def get_sentiment_analysis(request):
     return Response(res)
 
 
-@api_view(['GET'])
+@api_view(['POST'])
 def image_to_sound(request):
     """
     API endpoint for generating audio based on the image analysis of the given drawing/photo

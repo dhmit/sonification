@@ -3,6 +3,8 @@ Various filtering functions to apply to audio represented as a 1D NumPy array wi
 
 All filters assume mono tracks (vs stereo) for audio input.
 """
+from copy import deepcopy
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import stft, spectrogram
@@ -384,7 +386,7 @@ def change_pitch(audio_samples, pitch_factor):
 
     return _change_speed(stretched[:], pitch_factor)
 
-def add_chords(audio_samples):
+def add_chords(audio_samples, sample_rate):
     """
     A filter designed to build a chord upon a note, treated as the root of the chord. Chords are either major or minor
     triads depending on the fundamental frequency of the note (the cutoff frequency is F4).
@@ -395,10 +397,10 @@ def add_chords(audio_samples):
     """
     A4 = 440
     F4 = A4 * (2 ** (-4 / 12))
-    new_audio_samples = audio_samples.copy()
+    new_audio_samples = deepcopy(audio_samples)
 
-    _, _, fund_freq = get_notes(audio_samples)
-    if fund_freq < F4:
+    _, _, fund_freq = get_notes((audio_samples, sample_rate))
+    if fund_freq[0] < F4:
         # minor chord
         # ratio of third note from fundamental frequency divided by fundamental frequency
         second_freq_factor = 1.19

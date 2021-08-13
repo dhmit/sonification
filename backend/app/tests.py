@@ -7,27 +7,42 @@ import numpy as np
 from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
+import cv2 as cv
 
+from .analysis.image_to_sound import _brightness_to_freq, _get_histogram_avg, _get_instrument, _get_tempo_for_image
 from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
+from .analysis.image_to_sound import *
 
 
 class MainTests(TestCase):
-    """
-    Backend TestCase
-    """
+    '''
+    Test cases for the brightness, dominant color recognition, and tempo finding private functions
+    '''
 
-    # def setUp(self):
-    #     super().setUp()
-    #     do any setup here
+    def test_white_brightness(self):
+        image = 'app/analysis/test_photos/white.jpg'
+        note_freq = _brightness_to_freq(_get_histogram_avg(image))
+        self.assertEqual(note_freq, 992.5)
 
-    def test_sample(self):
-        """
-        Remove me once we have real tests here.
-        """
-        two = 2
-        another_two = 2
-        self.assertEqual(two + another_two, 4)
+    def test_dark_brightness(self):
+        image = 'app/analysis/test_photos/black.jpg'
+        note_freq = _brightness_to_freq(_get_histogram_avg(image))
+        self.assertEqual(note_freq, 100)
+
+    def test_dominant_color_recognition(self):
+        red_image = 'app/analysis/test_photos/red.jpg'
+        green_image = 'app/analysis/test_photos/green.jpg'
+        blue_image = 'app/analysis/test_photos/blue.jpg'
+        self.assertEqual(_get_instrument(red_image), cello_overtones)
+        self.assertEqual(_get_instrument(green_image), clarinet_overtones)
+        self.assertEqual(_get_instrument(blue_image), trombone_overtones)
+
+    def test_tempo_for_image(self):
+        # The right side of the image is more busy than the rest, so the tempo of that piece should be quicker
+        image = 'app/analysis/test_photos/tempo.jpg'
+        tempos = _get_tempo_for_image(image, 5)
+        self.assertTrue(tempos[-1] > tempos[0])
 
 
 class SentimentAnalysisAPITests(APITestCase):

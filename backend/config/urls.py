@@ -35,5 +35,6 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('example', views.example, name='example'),
     path('example/<int:example_id>', views.example_id, name='example_id'),
-    path('sentiment-analysis', views.sentiment_analysis, name='sentiment-analysis')
+    path('sentiment-analysis', views.sentiment_analysis, name='sentiment-analysis'),
+    path('image-analysis', views.image_analysis, name='image-analysis')
 ]

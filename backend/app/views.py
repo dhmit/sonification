@@ -148,3 +148,14 @@ def get_sentiment_analysis_2(request):
         'sound': sonify_text(text)
     }
     return Response(res)
+
+
+def image_analysis(request):
+    context = {
+        'page_metadata': {
+            'title': 'Image Analysis'
+        },
+        'component_name': 'ImageAnalysis'
+    }
+
+    return render(request, 'index.html', context)

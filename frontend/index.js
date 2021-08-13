@@ -8,6 +8,7 @@ import ExampleId from "./components/ExampleId";
 import SentimentAnalysis from "./components/SentimentAnalysis";
 import SentimentAnalysis2 from "./components/SentimentAnalysis2";
 import Home from "./components/Home";
+import ImageAnalysis from "./components/ImageAnalysis";
 const COMPONENT_PROPS_RAW = document.getElementById("component_props").text;
 const COMPONENT_NAME_RAW = document.getElementById("component_name").text;
 const COMPONENT_PROPS = JSON.parse(COMPONENT_PROPS_RAW);
@@ -18,6 +19,7 @@ const COMPONENTS = {
     ExampleId,
     SentimentAnalysis,
     SentimentAnalysis2,
+    ImageAnalysis,
     Home
 };
 

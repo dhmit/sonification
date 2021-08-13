@@ -63,7 +63,7 @@ def get_notes(audio):
         raise ValueError(f'The sample rate of {sample_rate} Hz must be greater than 0.')
 
     if len(audio_samples) == 0:
-        warnings.warn("The audio signal doesn\'t contain any samples!", stacklevel=2)
+        warnings.warn("This audio signal doesn\'t contain any samples!", stacklevel=2)
         return [], [], []
 
     # Default arguments for stft function:

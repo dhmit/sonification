@@ -25,7 +25,11 @@ from rest_framework.response import Response
 from django.shortcuts import render
 
 from .analysis import filters
-from .analysis.image_to_sound import analyze_image
+
+# Uncomment this import statement once image_to_sound.py is merged in!
+# from .analysis.image_to_sound import analyze_image
+
+
 from .analysis.sentiment_analysis import text_to_sound
 from .analysis.text_to_music import (text_to_note, sonify_text)
 from .common import wav_to_base64

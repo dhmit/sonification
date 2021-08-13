@@ -4,13 +4,13 @@ Tests for the sonification web app.
 import io
 import base64
 import numpy as np
-from django.test import TestCase, Client
+from PIL import Image
+from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
 
 from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
-from PIL import Image
 
 
 class MainTests(TestCase):
@@ -130,5 +130,10 @@ class ImageAnalysisAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_API_result(self):
-        
+        img = self.get_test_image()
+        response = self.client.post('/api/image_to_sound', {'image': img}, format='multipart')
+        self.assertTrue(isinstance(response.data['sound'], str))
+        encoded_data = base64.b64decode(response.data['sound'].encode('UTF-8'))
+        self.assertTrue(isinstance(encoded_data, bytes))
+
 

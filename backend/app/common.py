@@ -127,7 +127,6 @@ def wav_to_base64(byte_array, sample_rate):
     """
     byte_io = io.BytesIO(bytes())
     wavfile.write(byte_io, sample_rate, byte_array)
-    # wavfile.write('test.wav', sample_rate, byte_array)
     wav_bytes = byte_io.read()
     audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
     return audio_data

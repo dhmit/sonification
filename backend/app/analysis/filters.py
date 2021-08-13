@@ -3,8 +3,6 @@ Various filtering functions to apply to audio represented as a 1D NumPy array wi
 
 All filters assume mono tracks (vs stereo) for audio input.
 """
-from copy import deepcopy
-
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import stft, spectrogram
@@ -47,8 +45,9 @@ def apply_filter(audio, filter_function, **kwargs):
 
 def get_notes(audio):
     """
-    Find the window and sample indices that represent note onsets. This method was inspired from lab 9 of MIT's 6.003
-    as taught in the spring 2021 semester: <https://sigproc.mit.edu/spring21/psets/09/resynthesis>.
+    Find the window and sample indices that represent note onsets as well as the corresponding note names.
+    This method was inspired from lab 9 of MIT's 6.003 as taught in the spring 2021 semester:
+    <https://sigproc.mit.edu/spring21/psets/09/resynthesis>.
 
     Convention: The sample indices are computed from the beginning of each window in which a note onset is detected.
 
@@ -122,8 +121,6 @@ def get_notes(audio):
     # plt.ylabel('Mean absolute phase deviation')
     # plt.show()
 
-    # threshold = np.percentile(sd_values, 97)
-    # threshold = np.mean(sd_values)
     min_spacing = num_windows // 10
     window_indices = _find_peaks(sd_values.tolist(), min_spacing)
     # breakpoint()
@@ -196,67 +193,11 @@ def _phase_deviation(X):
     :param X: A 2D NumPy array representing the STFT of some 1D signal.
 
     :return: A 1D NumPy array representing the mean absolute phase deviation of a signal.
-
-    A = [1 2  3  4
-     5 6  7  8
-     9 10 11 12]
-
-    a_11 = 1
-    a_12 = 2
-    a_21 = 5
-    a_34 = 12
-    a_43 = IndexError
-
-    Below:
-    array of arrays (aka matrix) X
-    X[k, n] aka x_kn k =freq_bin, n = window index
-
-    sample_rate / window_size
-    k -> f, f = sample_rate / window_size * k
-    f has magnitude and phase
-
-    x = 3i + 4j
-    f = 3sin(3t + 0) + 4sin(4t + 5) + 5sin(6t + 2)
-    g = 3sin(3t) + 5sin(3t + 2)
-
-    e**(i*theta) = cos(theta) + isin(theta)
-
-    a + bi
-    Me**(i*omega*t + delta)
-    M = (a^2 + b^2)**.5
-
-    f = 5e**(i3t-2)
-
-    window 5
-    100*e**(2*pi/N * k)e**(i*delta) = F4
-    .02*e**(2*pi/N * l)e**(i*delta2) = C3
-    0*e**(2*pi/N * m)e**(i*delta0) = noise (very quiet)
-
-
-    window 6
-    100*e**(2*pi/N * k)e**(i*delta3) = F4
-    .02*e**(2*pi/N * l)e**(i*delta4) = C3
-    .00000000001*e**(2*pi/N * m)e**(i*delta5) = noise (very quiet)
-
-    X[k, n]
-    [k=1
-    x_11
-    x_21
-    x_31, x_32, x_33, ..., x_3n, ...
-    x_41
-    .
-    .
-    .
-    x_k1
-    ]
-
-
     """
 
     # unwrapped phase (in radians) of each coefficient in the STFT 2D list/array
     phase = np.unwrap(
         np.angle(X, deg=False),
-        # discont=2*np.pi,
         axis=-1
     )
 
@@ -292,7 +233,7 @@ def _phase_deviation(X):
 
 def _find_peaks(sd, min_spacing):
     """
-    Helper function for detecting peak values in a list of samples to help detect note onsets.
+    A helper function for detecting peak values in a list of samples to help detect note onsets.
     This peak-finding function was designed for use with the spectral difference detection function; the phase deviation
     function likely needs a completely different "peak-finding" function (see plots of both to see the difference!).
 
@@ -334,12 +275,13 @@ def _find_peaks(sd, min_spacing):
 
 def _freq_for_note(X, sample_rate, n_start, n_stop):
     """
-    Find the fundamental frequency of a given note
+    Find the frequency that most likely corresponds with a note by targeting its fundamental frequency.
 
-    :param X: A 2D NumPy array representing the STFT of some 1D signal
-    :param sample_rate: An int representing the sampling rate corresponding to the STFT, recorded in Hz
-    :param n_start: An int representing the starting window index for a particular note
-    :param n_stop: A float representing the ending window index (exclusive) for a particular note
+    :param X: A 2D NumPy array representing the STFT of some 1D signal.
+    :param sample_rate: An int representing the sampling rate corresponding to the STFT, recorded in Hz.
+    :param n_start: An int representing the starting window index for a particular note.
+    :param n_stop: A float representing the ending window index (exclusive) for a particular note.
+
     :return: An float representing the fundamental frequency of the note in Hz
     """
     window_size = X.shape[0]
@@ -359,12 +301,12 @@ def _freq_for_note(X, sample_rate, n_start, n_stop):
 
 def _k_at_window(X, n):
     """
-    Determine the value of k that has the most energy at a given window index n
+    Determine the frequency bin k of that has the most energy at a given window of an STFT.
 
-    :param X: A 2D NumPy array representing the STFT of some 1D signal
-    :param n: An int representing a window (time) index
+    :param X: A 2D NumPy array representing the STFT of some 1D signal.
+    :param n: An int representing a window (time) index.
 
-    :return: An int representing the frequency bin k that has the most energy in a particular window of the STFT
+    :return: An int representing the frequency bin k that has the most energy in a particular window of the STFT.
     """
 
     window_size = X.shape[0]
@@ -431,6 +373,7 @@ def stretch_audio(audio_samples, speed_factor):
 
     return np.append(new_audio_samples, audio_samples[:num_remaining_samples])
 
+
 def _change_speed(audio_samples, speed_factor):
     """
     A private helper function that changes speed and pitch of a note.
@@ -439,13 +382,14 @@ def _change_speed(audio_samples, speed_factor):
         original (e.g., pass a speed_factor of `2` to obtain audio that plays twice as fast, pass a speed_factor of `.5`
         to obtain audio that plays half as fast, etc).
 
-    :return: A new 1D NumPy array reflecting the change in speed and pitch of a note
+    :return: A new 1D NumPy array reflecting the change in speed and pitch of a note.
     """
 
     indices = np.arange(0, len(audio_samples), speed_factor)
     indices = indices[indices < len(audio_samples)].astype(int)
 
     return audio_samples[indices]
+
 
 def change_pitch(audio_samples, pitch_factor):
     """
@@ -462,15 +406,16 @@ def change_pitch(audio_samples, pitch_factor):
     fraction = 1 / pitch_factor
     stretched = stretch_audio(audio_samples, fraction)
 
-    return _change_speed(stretched[:], pitch_factor)
+    return _change_speed(stretched.copy(), pitch_factor)
 
-def add_chords(audio_samples, sample_rate):
+
+def add_chords(audio_samples, root_note):
     """
     A filter designed to build a chord upon a note, treated as the root of the chord. Chords are either major or minor
     triads depending on the fundamental frequency of the note (the cutoff frequency is F4).
 
-    :param audio_samples: A 1D NumPy array representing a single note
-    :param root_note: A str representing the root note of the audio sample (ex. 'A4').
+    :param audio_samples: A 1D NumPy array representing a single note.
+    :param root_note: A str representing the root note of the audio sample (e.g., 'A4').
 
     :return: A new NumPy array reflecting the constructed chord.
     """
@@ -502,6 +447,7 @@ def add_chords(audio_samples, sample_rate):
 add_chords.uses_freq = True
 
 
+# TODO
 def overlap_notes(audio, overlap_factor):
     """
     A filter designed to overlap notes within an audio signal.

@@ -172,7 +172,7 @@ const ImageAnalysis = () => {
             <Tabs defaultActiveKey="drawing">
                 <Tab eventKey="drawing" title="Drawing Canvas">
                     <div className="row">
-                        <div className="col-5">
+                        <div className="col-12 col-sm-5">
                             <canvas className={`${STYLES.canvas} 
                                 ${submitted.drawing ? "" : STYLES.activeCanvas}`}
                             ref={canvasRef} width="500" height="500"></canvas>

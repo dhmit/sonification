@@ -3,6 +3,8 @@ Various filtering functions to apply to audio represented as a 1D NumPy array wi
 
 All filters assume mono tracks (vs stereo) for audio input.
 """
+import warnings
+
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.signal import stft, spectrogram
@@ -23,6 +25,7 @@ def apply_filter(audio, filter_function, **kwargs):
     samples, sample_rate = audio
 
     window_indices, sample_indices, root_notes = get_notes(audio)
+    print(f'Note slice indices: {sample_indices}', f'Corresponding root notes: {root_notes}', sep='\n')
 
     if filter_function == overlap_notes:
         new_samples = overlap_notes((samples, sample_indices), **kwargs)
@@ -60,6 +63,10 @@ def get_notes(audio):
     if sample_rate <= 0:
         raise ValueError(f'The sample rate of {sample_rate} Hz must be greater than 0.')
 
+    if len(audio_samples) == 0:
+        warnings.warn("The audio signal doesn\'t contain any samples!", stacklevel=2)
+        return [], [], []
+
     # Default arguments for stft function:
     # window = 'hann'
     # nperseg = 256
@@ -74,7 +81,7 @@ def get_notes(audio):
     # plt.show()
 
     nperseg = min(1024, len(audio_samples))
-    hop_size = round(nperseg * .75)
+    hop_size = int(nperseg * .75)
     noverlap = nperseg - hop_size
 
     samp_freqs, samp_times, stft_signal = stft(
@@ -114,7 +121,7 @@ def get_notes(audio):
     # plt.show()
 
     # An alternative to the spectral difference--see the function's docstring.
-    mean_abs_phase_deviation = _phase_deviation(stft_signal)
+    # mean_abs_phase_deviation = _phase_deviation(stft_signal)
 
     # Code to plot the mean absolute phase deviation:
     # plt.figure()
@@ -142,7 +149,6 @@ def get_notes(audio):
     fund_freq = _freq_for_note(stft_signal, sample_rate, window_indices[-1], num_windows)
     root_note = sorted(NOTE_FREQS.keys(), key=lambda note: abs(fund_freq - NOTE_FREQS[note]))[0]
     root_notes.append(root_note)
-
 
     return window_indices, sample_indices, root_notes
 
@@ -238,7 +244,6 @@ def _find_peaks(sd, min_spacing):
     function likely needs a completely different "peak-finding" function (see plots of both to see the difference!).
 
     :param sd: A 1D Python list of floats representing the spectral difference of some audio signal.
-    :param threshold: A float representing the threshold value for what we define to be a "peak".
     :param min_spacing: A float representing the minimum distance in samples between peaks.
 
     :return: A Python list of ints representing the indices of peak values in sd
@@ -467,4 +472,4 @@ def overlap_notes(audio, overlap_factor):
     if not (0 <= overlap_factor <= 1):
         raise ValueError("Invalid overlap factor. Please choose number in the interval [0, 1].")
 
-    return np.array([])
+    return audio.copy()

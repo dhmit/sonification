@@ -8,7 +8,7 @@ from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from .common import wav_to_base64
+from .common import wav_to_base64, NOTE_FREQS
 from .analysis.sentiment_analysis import text_to_sound
 from .analysis import filters
 
@@ -227,11 +227,11 @@ class FiltersTestCase(TestCase):
         self.assertEqual(audio_data_2[1], expected_sample_rate_2)
 
         root_notes_2 = filters.get_notes(audio_data_2)[2]
-        res_2 = filters.apply_filter(audio_data_2, filters.change_pitch, pitch_factor=0.3)
+        res_2 = filters.apply_filter(audio_data_2, filters.change_pitch, pitch_factor=0.4)
         lowered_notes_2 = filters.get_notes(res_2)[2]
-        self.assertEqual(res_2[0].size, audio_data_2[0].size)
+        self.assertLessEqual(abs(res_2[0].size - audio_data_2[0].size), 50)
         for root_note, lowered_note in zip(root_notes_2, lowered_notes_2):
-            self.assertGreater(root_note, lowered_note)
+            self.assertGreater(NOTE_FREQS[root_note], NOTE_FREQS[lowered_note])
 
         audio_data_3 = text_to_sound('This is neutral.')
         expected_sample_rate_3 = 44100
@@ -256,6 +256,7 @@ class FiltersTestCase(TestCase):
 
         res_1 = filters.apply_filter(audio_data_1, filters.change_volume, amplitude=2)
         self.assertEqual(res_1[0].size, audio_data_1[0].size)
+        self.assertGreater(res_1[0].max(), audio_data_1[0].max())
 
         audio_data_2 = text_to_sound('I like eating cake. I tried baking cake, but it tasted really '
                                      'bad. I decided to not bake cake anymore. I asked my friend to'

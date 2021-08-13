@@ -11,7 +11,9 @@ from .analysis.sentiment_analysis import text_to_sound
 from .analysis.image_to_sound import _brightness_to_freq, _get_histogram_avg, _get_instrument, _get_tempo_for_image
 from .common import wav_to_base64
 from .analysis.image_to_sound import *
-
+import io
+import base64
+import numpy as np
 
 class MainTests(TestCase):
     '''

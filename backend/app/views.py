@@ -27,6 +27,7 @@ from django.shortcuts import render
 from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
 from .analysis.text_to_music import (text_to_note, sonify_text)
+from .analysis.image_to_sound import analyze_image
 
 
 @api_view(['GET'])
@@ -159,3 +160,17 @@ def image_analysis(request):
     }
 
     return render(request, 'index.html', context)
+
+
+@api_view(['POST'])
+def image_to_sound(request):
+    """
+    API endpoint for generating audio based on the image analysis of the given drawing/photo
+    """
+    image = request.data['image']
+    audio = analyze_image(image)
+
+    res = {
+        'sound': audio
+    }
+    return Response(res)

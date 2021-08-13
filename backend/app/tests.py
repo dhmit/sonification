@@ -161,20 +161,30 @@ class FiltersTestCase(TestCase):
 
         # Temporal resolution tests
         self.assertEqual(len(res_samples_3), len(expected_samples_3))
+
+        # This is commented out due to the get_notes function's poor performance on
+        # detecting note onsets for repeated notes (i.e., consecutive notes of the same or
+        # very similar frequencies). While it does detect the second note here, it
+        # detects it much later than the actual onset! Thus, the sample index of the second
+        # note varies considerably with the expectation.
+
         # for i, j in zip(res_samples_3, expected_samples_3):
         #     self.assertLessEqual(abs(i - j), 500)
 
         # Frequency resolution tests
         self.assertEqual(res_frequencies_3, expected_frequencies_3)
 
-    def test_change_speed(self):
-        audio_samples_1, sample_rate_1 = text_to_sound('This is good. This is bad. This is neutral.')
+    def test_stretch_audio(self):
+        audio_samples_1, sample_rate_1 = text_to_sound(
+            'Today is a wonderful day. A wonderful day for eating ice cream. Yesterday was horrible. There was a '
+            'storm and my neighborhood got flooded. '
+        )
         self.assertEqual(sample_rate_1, 44100)
 
-        res_slow = filters.change_speed(audio_samples_1, 0.5)
+        res_slow = filters.stretch_audio(audio_samples_1, 0.5)
         self.assertGreaterEqual(res_slow.size, audio_samples_1.size)
 
-        res_fast = filters.change_speed(audio_samples_1, 2)
+        res_fast = filters.stretch_audio(audio_samples_1, 2)
         self.assertLessEqual(res_fast.size, audio_samples_1.size)
 
         audio_samples_2, sample_rate_2 = text_to_sound(
@@ -182,10 +192,10 @@ class FiltersTestCase(TestCase):
         )
         self.assertEqual(sample_rate_2, 44100)
 
-        res_slow_1 = filters.change_speed(audio_samples_2, 0.7)
+        res_slow_1 = filters.stretch_audio(audio_samples_2, 0.7)
         self.assertGreaterEqual(res_slow_1.size, audio_samples_2.size)
 
-        res_fast_1 = filters.change_speed(audio_samples_2, 3)
+        res_fast_1 = filters.stretch_audio(audio_samples_2, 3)
         self.assertLessEqual(res_fast_1.size, audio_samples_2.size)
 
     def test_add_chords(self):
@@ -201,17 +211,72 @@ class FiltersTestCase(TestCase):
         res_2 = filters.apply_filter(audio_data_2, filters.add_chords)
         self.assertGreaterEqual(res_2[0].size, audio_data_2[0].size)
 
+        audio_data_3 = text_to_sound('I fell and scraped my knee. It hurt a lot. I cried on the way '
+                                                       'home. My mom bought me ice cream. So I feel better now.')
+        self.assertEqual(audio_data_3[1], 44100)
+
+        res_3 = filters.add_chords(audio_samples_2, sample_rate_2)
+        self.assertGreaterEqual(res_3[0].size, audio_data_3[0].size)
+
+
+
     def test_change_volume(self):
-        audio_data_1 = text_to_sound('This is good. This is bad. This is neutral.')
+        audio_data_1 = text_to_sound('This is a great day for watching television. The climate '
+                                                       'change situation is scary. It is very hot right now.')
         self.assertEqual(audio_data_1[1], 44100)
 
         res_1 = filters.apply_filter(audio_data_1, filters.change_volume, amplitude=2)
-        self.assertEqual(res_1[0].size, audio_data_1[0].size)
-        self.assertGreater(np.amax(res_1[0]), np.amax(audio_data_1[0]))
+        self.assertEqual(res_1[0].size, audio_samples_1[0].size)
 
-        audio_data_2 = text_to_sound('Neutral. Neutral.')
+
+        audio_data_2 = text_to_sound('I like eating cake. I tried baking cake, but it tasted really '
+                                                       'bad. I decided to not bake cake anymore. I asked my friend to'
+                                                       ' bake a cake for me. It was really delicious.')
         self.assertEqual(audio_data_2[1], 44100)
 
         res_2 = filters.apply_filter(audio_data_2, filters.change_volume, amplitude=0.5)
         self.assertEqual(res_2[0].size, audio_data_2[0].size)
-        self.assertLess(np.amax(res_2[0]), np.amax(audio_data_2[0]))
+
+        audio_data_3 = text_to_sound('This is good. This is bad. This is neutral.')
+        self.assertEqual(audio_data_3[1], 44100)
+
+        res_3 = filters.apply_filter(audio_data_3, filters.change_volume, amplitude=2)
+        self.assertEqual(res_3[0].size, audio_data_3[0].size)
+        self.assertGreater(res_3[0].max(), audio_data_3[0].max())
+
+        audio_data_4 = text_to_sound('Neutral. Neutral.')
+        self.assertEqual(audio_data_4[1], 44100)
+
+        res_4 = filters.apply_filter(audio_data_2, filters.change_volume, amplitude=0.5)
+        self.assertEqual(res_4[0].size, audio_data_4[0].size)
+        self.assertLess(res_4[0].max(), audio_data_4.max())
+
+
+    def test_change_pitch(self):
+        audio_data_1 = text_to_sound('This is a good day for some boating and doing barbeque. The '
+                                                       'rain is a horrible addition to my boating day. The weather '
+                                                       'forecast is ok.')
+        expected_sample_rate_1 = 44100
+        self.assertEqual(audio_data_1[1], expected_sample_rate_1)
+
+        res_1 = filtrs.apply_filter(audio_data_1, filters.change_pitch, pitch_factor=2)
+        self.assertEqual(res_1[0].size, audio_data_1[0].size)
+
+        audio_data_2 = text_to_sound('On my way home from school, I ran into a wall. I broke my '
+                                                       'glasses and hurt my head. I was really upset. My mom is mad '
+                                                       'at me because I have to get new glasses and glasses are '
+                                                       'expensive. My rich friend decided to pay for my glasses. So '
+                                                       'my mom was happy.')
+        expected_sample_rate_2 = 44100
+        self.assertEqual(audio_data_2[1], expected_sample_rate_2)
+
+        res_2 = filtrs.apply_filter(audio_data_1, filters.change_pitch, pitch_factor=0.3)
+        self.assertEqual(res_2[0].size, audio_samples_2[0].size)
+
+        audio_data_3 = text_to_sound('This is neutral.')
+        expected_sample_rate_3 = 44100
+        self.assertEqual(audio_data[1], expected_sample_rate_3)
+
+        res_3 = filtrs.apply_filter(audio_data_3, filters.change_pitch, pitch_factor=2)
+        root_notes_3 = filters.get_notes(res_3)[2]
+        self.assertEqual(root_notes_3, ['F5'])

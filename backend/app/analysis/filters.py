@@ -25,7 +25,9 @@ def apply_filter(audio, filter_function, **kwargs):
     samples, sample_rate = audio
 
     window_indices, sample_indices, root_notes = get_notes(audio)
-    print(f'Note slice indices: {sample_indices}', f'Corresponding root notes: {root_notes}', sep='\n')
+
+    # Uncomment to see detected notes in the terminal
+    # print(f'Note slice indices: {sample_indices}', f'Corresponding root notes: {root_notes}', sep='\n')
 
     new_samples = np.array([], dtype=samples.dtype)
 
@@ -93,29 +95,29 @@ def get_notes(audio):
 
     # Code to create a spectrogram, the squared magnitude of the STFT (for plotting):
     # With the exception of return_onesided, the parameters in the stft and spectrogram functions should match up!
-    samp_freqs_spec, samp_times_spec, spec = spectrogram(
-        audio_samples,
-        sample_rate,
-        window='hann',
-        nperseg=nperseg,
-        noverlap=noverlap
-    )
+    # samp_freqs_spec, samp_times_spec, spec = spectrogram(
+    #     audio_samples,
+    #     sample_rate,
+    #     window='hann',
+    #     nperseg=nperseg,
+    #     noverlap=noverlap
+    # )
 
     # Code to plot the spectrogram:
-    plt.figure()
-    plt.pcolormesh(samp_times_spec, samp_freqs_spec, spec, shading='gouraud')
-    plt.ylabel('Frequency [Hz]')
-    plt.xlabel('Time [sec]')
-    plt.show()
+    # plt.figure()
+    # plt.pcolormesh(samp_times_spec, samp_freqs_spec, spec, shading='gouraud')
+    # plt.ylabel('Frequency [Hz]')
+    # plt.xlabel('Time [sec]')
+    # plt.show()
 
     sd_values = _spectral_difference(stft_signal)
 
     # Code to plot the spectral difference:
-    plt.figure()
-    plt.stem(sd_values)
-    plt.xlabel('Window index')
-    plt.ylabel('Spectral difference')
-    plt.show()
+    # plt.figure()
+    # plt.stem(sd_values)
+    # plt.xlabel('Window index')
+    # plt.ylabel('Spectral difference')
+    # plt.show()
 
     # An alternative to the spectral difference--see the function's docstring.
     # mean_abs_phase_deviation = _phase_deviation(stft_signal)

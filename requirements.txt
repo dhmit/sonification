@@ -14,3 +14,5 @@ scipy==1.7.0
 simpleaudio==1.0.4
 sqlparse==0.4.1
 tqdm==4.61.1
+colorthief==0.2.1
+opencv-python==4.5.3.56

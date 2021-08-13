@@ -1,9 +1,6 @@
 """
 Tests for the sonification web app.
 """
-import io
-import base64
-import numpy as np
 from PIL import Image
 from django.test import TestCase
 from rest_framework.test import APITestCase
@@ -12,6 +9,37 @@ from rest_framework import status
 from .common import wav_to_base64, NOTE_FREQS
 from .analysis.sentiment_analysis import text_to_sound
 from .analysis import filters, text_to_music
+from .analysis.image_to_sound import *
+
+
+class MainTests(TestCase):
+    '''
+    Test cases for the brightness, dominant color recognition, and tempo finding private functions
+    '''
+
+    def test_white_brightness(self):
+        image = cv.imread('app/analysis/test_photos/white.jpg')
+        note_freq = _brightness_to_freq(_get_histogram_avg(image))
+        self.assertEqual(note_freq, 992.5)
+
+    def test_dark_brightness(self):
+        image = cv.imread('app/analysis/test_photos/black.jpg')
+        note_freq = _brightness_to_freq(_get_histogram_avg(image))
+        self.assertEqual(note_freq, 100)
+
+    def test_dominant_color_recognition(self):
+        red_image = 'app/analysis/test_photos/red.jpg'
+        green_image = 'app/analysis/test_photos/green.jpg'
+        blue_image = 'app/analysis/test_photos/blue.jpg'
+        self.assertEqual(_get_instrument(red_image), cello_overtones)
+        self.assertEqual(_get_instrument(green_image), clarinet_overtones)
+        self.assertEqual(_get_instrument(blue_image), trombone_overtones)
+
+    def test_tempo_for_image(self):
+        # The right side of the image is more busy than the rest, so the tempo of that piece should be quicker
+        image = cv.imread('app/analysis/test_photos/tempo.jpg')
+        tempos = _get_tempo_for_image(image, 5)
+        self.assertTrue(tempos[-1] > tempos[0])
 
 
 class TextToMusicTestCase(TestCase):

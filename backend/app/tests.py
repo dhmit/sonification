@@ -144,7 +144,7 @@ class FiltersTestCase(TestCase):
         for i, j in zip(res_samples_1, expected_samples_1):
             self.assertLessEqual(abs(i - j), 500)
 
-        # Frequency resolution tests
+        # Frequency resolution test
         self.assertEqual(res_frequencies_1, expected_frequencies_1)
 
         audio_samples_2, sample_rate_2 = text_to_sound('Neutral.')
@@ -179,7 +179,7 @@ class FiltersTestCase(TestCase):
         # for i, j in zip(res_samples_3, expected_samples_3):
         #     self.assertLessEqual(abs(i - j), 500)
 
-        # Frequency resolution tests
+        # Frequency resolution test
         self.assertEqual(res_frequencies_3, expected_frequencies_3)
 
     def test_add_chords(self):

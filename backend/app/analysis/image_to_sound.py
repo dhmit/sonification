@@ -219,5 +219,5 @@ def analyze_image(im):
     # convert to 16-bit data
     full_audio = full_audio.astype(np.int16)
 
-    return wav_to_base64(full_audio, sample_rate)
+    return full_audio, sample_rate
 

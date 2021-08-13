@@ -172,9 +172,11 @@ def image_to_sound(request):
     API endpoint for generating audio based on the image analysis of the given drawing/photo
     """
     image = request.data['image']
-    audio = analyze_image(image)
+    audio_data = analyze_image(image)
+    audio_data = filters.apply_filter(audio_data, filters.stretch_audio, speed_factor=2)
+    audio_data = filters.apply_filter(audio_data, filters.change_pitch, pitch_factor=0.5)
 
     res = {
-        'sound': audio
+        'sound': wav_to_base64(*audio_data)
     }
     return Response(res)

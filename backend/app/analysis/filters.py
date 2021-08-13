@@ -125,7 +125,6 @@ def get_notes(audio):
 
     min_spacing = num_windows // 10
     window_indices = _find_peaks(sd_values.tolist(), min_spacing)
-    # breakpoint()
 
     sample_indices = []
     for i in window_indices:
@@ -144,7 +143,6 @@ def get_notes(audio):
     root_note = sorted(NOTE_FREQS.keys(), key=lambda note: abs(fund_freq - NOTE_FREQS[note]))[0]
     root_notes.append(root_note)
 
-    # breakpoint()
 
     return window_indices, sample_indices, root_notes
 
@@ -414,8 +412,6 @@ def change_volume(audio_samples, amplitude):
     """
     if amplitude < 0:
         raise ValueError(f'Amplitude \"{amplitude}\" must be a non-negative number.')
-
-    # breakpoint()
 
     return audio_samples * amplitude
 

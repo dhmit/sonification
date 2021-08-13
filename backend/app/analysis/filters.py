@@ -57,6 +57,8 @@ def get_notes(audio):
         note onsets.
     """
     audio_samples, sample_rate = audio
+    if sample_rate <= 0:
+        raise ValueError(f'The sample rate of {sample_rate} Hz must be greater than 0.')
 
     # Default arguments for stft function:
     # window = 'hann'
@@ -71,7 +73,7 @@ def get_notes(audio):
     # plt.title(f'Audio signal ($f_s={sample_rate}$ Hz)')
     # plt.show()
 
-    nperseg = 1024
+    nperseg = min(1024, len(audio_samples))
     hop_size = round(nperseg * .75)
     noverlap = nperseg - hop_size
 
@@ -254,10 +256,12 @@ def _find_peaks(sd, min_spacing):
     highest_peak = 0
 
     for n in range(len_sd):
-        hold = (median_weight * np.median(sd[n - m:n]) +
-                mean_weight * np.mean(sd[n - m:n]) +
-                peak_weight * highest_peak)
-        threshold = hold if n != 0 else 0
+        if n == 0:
+            threshold = 0
+        else:
+            threshold = (median_weight * np.median(sd[n - m:n]) +
+                         mean_weight * np.mean(sd[n - m:n]) +
+                         peak_weight * highest_peak)
 
         if input_sd[n] > threshold:
             all_peaks_indices.append(n)
@@ -322,93 +326,6 @@ def _k_at_window(X, n):
     return max_k_index
 
 
-def change_volume(audio_samples, amplitude):
-    """
-    A filter designed to modify the amplitude of a note.
-    NOTE: There is more to "loudness" to "amplitude" conversion than merely an amplitude factor.
-    We still need to work out this relation to create a filter that's useful to users and developers.
-
-    :param audio_samples: A 1D NumPy array representing a single note.
-    :param amplitude: A float representing the factor increase or decrease in volume.
-
-    :return: A new 1D NumPy array reflecting the change in amplitude.
-    """
-    if amplitude < 0:
-        raise ValueError('Amplitude should be a non-negative number!')
-
-    breakpoint()
-
-    return audio_samples * amplitude
-
-
-def stretch_audio(audio_samples, speed_factor):
-    """
-    A filter designed to change the speed/tempo of a note.
-
-    :param audio_samples: A 1D NumPy array representing a single note.
-    :param speed_factor: A positive float representing the new speed of playback for the output audio, relative to the
-        original (e.g., pass a speed_factor of `2` to obtain audio that plays twice as fast, pass a speed_factor of `.5`
-        to obtain audio that plays half as fast, etc).
-
-    :return: A new 1D NumPy array reflecting the change in speed.
-    """
-
-    if speed_factor <= 0:
-        raise ValueError("Speed factor must be greater than zero.")
-
-    new_audio_samples = np.array([], dtype=audio_samples.dtype)
-    fraction = 1 / speed_factor
-    len_audio = len(audio_samples)
-
-    num_desired_samples = int(len_audio * fraction)
-
-    if fraction <= 1:
-        return audio_samples[:num_desired_samples]
-
-    num_copies = num_desired_samples // len_audio
-    num_remaining_samples = num_desired_samples % len_audio
-
-    for _ in range(num_copies):
-        new_audio_samples = np.append(new_audio_samples, audio_samples.copy())
-
-    return np.append(new_audio_samples, audio_samples[:num_remaining_samples])
-
-
-def _change_speed(audio_samples, speed_factor):
-    """
-    A private helper function that changes speed and pitch of a note.
-    :param audio_samples: A 1D NumPy array representing a single note.
-    :param speed_factor: A positive float representing the new speed of playback for the output audio, relative to the
-        original (e.g., pass a speed_factor of `2` to obtain audio that plays twice as fast, pass a speed_factor of `.5`
-        to obtain audio that plays half as fast, etc).
-
-    :return: A new 1D NumPy array reflecting the change in speed and pitch of a note.
-    """
-
-    indices = np.arange(0, len(audio_samples), speed_factor)
-    indices = indices[indices < len(audio_samples)].astype(int)
-
-    return audio_samples[indices]
-
-
-def change_pitch(audio_samples, pitch_factor):
-    """
-    A filter designed to change the pitch of a note.
-
-    :param audio_samples: A 1D NumPy array representing a single note.
-    :param pitch_factor: An unsigned float representing the factor increase or decrease in a note's frequency.
-    (e.g., pass a pitch_factor of `2` to obtain audio that is one pitch higher, pass a pitch_factor of `.5`
-        to obtain audio that is one pitch lower, etc).
-
-    :return: A new 1D NumPy array reflecting the change in pitch.
-    """
-
-    fraction = 1 / pitch_factor
-    stretched = stretch_audio(audio_samples, fraction)
-
-    return _change_speed(stretched.copy(), pitch_factor)
-
-
 def add_chords(audio_samples, root_note):
     """
     A filter designed to build a chord upon a note, treated as the root of the chord. Chords are either major or minor
@@ -445,6 +362,97 @@ def add_chords(audio_samples, root_note):
 
 
 add_chords.uses_freq = True
+
+
+def change_pitch(audio_samples, pitch_factor):
+    """
+    A filter designed to change the pitch of a note.
+
+    :param audio_samples: A 1D NumPy array representing a single note.
+    :param pitch_factor: A positive float representing the factor increase or decrease in a note's frequency.
+    (e.g., pass a pitch_factor of `2` to obtain audio that is one pitch higher, pass a pitch_factor of `.5`
+        to obtain audio that is one pitch lower, etc).
+
+    :return: A new 1D NumPy array reflecting the change in pitch.
+    """
+    if pitch_factor <= 0:
+        raise ValueError(f'Pitch factor \"{pitch_factor}\" should be greater than 0.')
+
+    fraction = 1 / pitch_factor
+    stretched = stretch_audio(audio_samples, fraction)
+
+    return _change_speed(stretched.copy(), pitch_factor)
+
+
+def _change_speed(audio_samples, speed_factor):
+    """
+    A private helper function that changes speed and pitch of a note.
+    :param audio_samples: A 1D NumPy array representing a single note.
+    :param speed_factor: A positive float representing the new speed of playback for the output audio, relative to the
+        original (e.g., pass a speed_factor of `2` to obtain audio that plays twice as fast, pass a speed_factor of `.5`
+        to obtain audio that plays half as fast, etc).
+
+    :return: A new 1D NumPy array reflecting the change in speed and pitch of a note.
+    """
+
+    indices = np.arange(0, len(audio_samples), speed_factor)
+    indices = indices[indices < len(audio_samples)].astype(int)
+
+    return audio_samples[indices]
+
+
+def change_volume(audio_samples, amplitude):
+    """
+    A filter designed to modify the amplitude of a note.
+    NOTE: There is more to "loudness" to "amplitude" conversion than merely an amplitude factor.
+    We still need to work out this relation to create a filter that's useful to users and developers.
+
+    :param audio_samples: A 1D NumPy array representing a single note.
+    :param amplitude: A float representing the factor increase or decrease in volume.
+
+    :return: A new 1D NumPy array reflecting the change in amplitude.
+    """
+    if amplitude < 0:
+        raise ValueError(f'Amplitude \"{amplitude}\" must be a non-negative number.')
+
+    # breakpoint()
+
+    return audio_samples * amplitude
+
+
+def stretch_audio(audio_samples, speed_factor):
+    """
+    A filter designed to change the speed/tempo of a note.
+
+    :param audio_samples: A 1D NumPy array representing a single note.
+    :param speed_factor: A positive float representing the new speed of playback for the output audio, relative to the
+        original (e.g., pass a speed_factor of `2` to obtain audio that plays twice as fast, pass a speed_factor of `.5`
+        to obtain audio that plays half as fast, etc).
+
+    :return: A new 1D NumPy array reflecting the change in speed.
+    """
+
+    if speed_factor <= 0:
+        raise ValueError(f'Speed factor \"{speed_factor}\" must be greater than zero.')
+
+    new_audio_samples = np.array([], dtype=audio_samples.dtype)
+    fraction = 1 / speed_factor
+    len_audio = len(audio_samples)
+    if len_audio == 0:
+        return audio_samples.copy()
+
+    num_desired_samples = int(len_audio * fraction)
+
+    if fraction <= 1:
+        return audio_samples[:num_desired_samples]
+
+    num_copies = num_desired_samples // len_audio
+    num_remaining_samples = num_desired_samples % len_audio
+
+    for _ in range(num_copies):
+        new_audio_samples = np.append(new_audio_samples, audio_samples.copy())
+
+    return np.append(new_audio_samples, audio_samples[:num_remaining_samples])
 
 
 # TODO

@@ -122,8 +122,16 @@ class FiltersTestCase(TestCase):
     """
 
     def test_get_notes(self):
+        # Edge condition: Empty audio signal
+        has_faulty_sample_rate = {
+            'audio': (np.array([]), 0)
+        }
+        self.assertRaises(ValueError, filters.get_notes, **has_faulty_sample_rate)
+
+        foo_audio_data = (np.array([]), 44100)
+        self.assertEqual(filters.get_notes(foo_audio_data), ([], [], []))
+
         audio_samples_1, sample_rate_1 = text_to_sound('Good. Bad. Neutral.')
-        # encoded = wav_to_base64(audio_samples, sample_rate)
         self.assertEqual(sample_rate_1, 44100)
         self.assertEqual(audio_samples_1.size, 44100 * 3)
 
@@ -174,30 +182,6 @@ class FiltersTestCase(TestCase):
         # Frequency resolution tests
         self.assertEqual(res_frequencies_3, expected_frequencies_3)
 
-    def test_stretch_audio(self):
-        audio_samples_1, sample_rate_1 = text_to_sound(
-            'Today is a wonderful day. A wonderful day for eating ice cream. Yesterday was horrible. There was a '
-            'storm and my neighborhood got flooded. '
-        )
-        self.assertEqual(sample_rate_1, 44100)
-
-        res_slow = filters.stretch_audio(audio_samples_1, 0.5)
-        self.assertGreaterEqual(res_slow.size, audio_samples_1.size)
-
-        res_fast = filters.stretch_audio(audio_samples_1, 2)
-        self.assertLessEqual(res_fast.size, audio_samples_1.size)
-
-        audio_samples_2, sample_rate_2 = text_to_sound(
-            'This is an awesome experience. This is perhaps suited for another day. This is just plain bad.'
-        )
-        self.assertEqual(sample_rate_2, 44100)
-
-        res_slow_1 = filters.stretch_audio(audio_samples_2, 0.7)
-        self.assertGreaterEqual(res_slow_1.size, audio_samples_2.size)
-
-        res_fast_1 = filters.stretch_audio(audio_samples_2, 3)
-        self.assertLessEqual(res_fast_1.size, audio_samples_2.size)
-
     def test_add_chords(self):
         audio_data_1 = text_to_sound('This is good. This is bad. This is neutral.')
         self.assertEqual(audio_data_1[1], 44100)
@@ -212,26 +196,70 @@ class FiltersTestCase(TestCase):
         self.assertGreaterEqual(res_2[0].size, audio_data_2[0].size)
 
         audio_data_3 = text_to_sound('I fell and scraped my knee. It hurt a lot. I cried on the way '
-                                                       'home. My mom bought me ice cream. So I feel better now.')
+                                     'home. My mom bought me ice cream. So I feel better now.')
         self.assertEqual(audio_data_3[1], 44100)
 
-        res_3 = filters.add_chords(audio_samples_2, sample_rate_2)
+        res_3 = filters.apply_filter(audio_data_3, filters.add_chords)
         self.assertGreaterEqual(res_3[0].size, audio_data_3[0].size)
 
+    def test_change_pitch(self):
+        faulty_args = {
+            'audio_samples': np.array([1, 2, 3], dtype=np.int16),
+            'pitch_factor': -1
+        }
+        self.assertRaises(ValueError, filters.change_pitch, **faulty_args)
 
+        audio_data_1 = text_to_sound('This is a good day for some boating and doing barbeque. The '
+                                     'rain is a horrible addition to my boating day. The weather '
+                                     'forecast is ok.')
+        expected_sample_rate_1 = 44100
+        self.assertEqual(audio_data_1[1], expected_sample_rate_1)
+
+        res_1 = filters.apply_filter(audio_data_1, filters.change_pitch, pitch_factor=2)
+        self.assertEqual(res_1[0].size, audio_data_1[0].size)
+
+        audio_data_2 = text_to_sound('On my way home from school, I ran into a wall. I broke my '
+                                     'glasses and hurt my head. I was really upset. My mom is mad '
+                                     'at me because I have to get new glasses and glasses are '
+                                     'expensive. My rich friend decided to pay for my glasses. So '
+                                     'my mom was happy.')
+        expected_sample_rate_2 = 44100
+        self.assertEqual(audio_data_2[1], expected_sample_rate_2)
+
+        root_notes_2 = filters.get_notes(audio_data_2)[2]
+        res_2 = filters.apply_filter(audio_data_2, filters.change_pitch, pitch_factor=0.3)
+        lowered_notes_2 = filters.get_notes(res_2)[2]
+        self.assertEqual(res_2[0].size, audio_data_2[0].size)
+        for root_note, lowered_note in zip(root_notes_2, lowered_notes_2):
+            self.assertGreater(root_note, lowered_note)
+
+        audio_data_3 = text_to_sound('This is neutral.')
+        expected_sample_rate_3 = 44100
+        self.assertEqual(audio_data_3[1], expected_sample_rate_3)
+        root_notes_3 = filters.get_notes(audio_data_3)[2]
+        self.assertEqual(root_notes_3, ['F4'])
+
+        res_3 = filters.apply_filter(audio_data_3, filters.change_pitch, pitch_factor=2)
+        risen_notes_3 = filters.get_notes(res_3)[2]
+        self.assertEqual(root_notes_3, ['F5'])
 
     def test_change_volume(self):
+        faulty_args = {
+            'audio_samples': np.array([1, 2, 3], dtype=np.int16),
+            'amplitude': -1
+        }
+        self.assertRaises(ValueError, filters.change_volume, **faulty_args)
+
         audio_data_1 = text_to_sound('This is a great day for watching television. The climate '
-                                                       'change situation is scary. It is very hot right now.')
+                                     'change situation is scary. It is very hot right now.')
         self.assertEqual(audio_data_1[1], 44100)
 
         res_1 = filters.apply_filter(audio_data_1, filters.change_volume, amplitude=2)
-        self.assertEqual(res_1[0].size, audio_samples_1[0].size)
-
+        self.assertEqual(res_1[0].size, audio_data_1[0].size)
 
         audio_data_2 = text_to_sound('I like eating cake. I tried baking cake, but it tasted really '
-                                                       'bad. I decided to not bake cake anymore. I asked my friend to'
-                                                       ' bake a cake for me. It was really delicious.')
+                                     'bad. I decided to not bake cake anymore. I asked my friend to'
+                                     ' bake a cake for me. It was really delicious.')
         self.assertEqual(audio_data_2[1], 44100)
 
         res_2 = filters.apply_filter(audio_data_2, filters.change_volume, amplitude=0.5)
@@ -251,32 +279,37 @@ class FiltersTestCase(TestCase):
         self.assertEqual(res_4[0].size, audio_data_4[0].size)
         self.assertLess(res_4[0].max(), audio_data_4.max())
 
+    def test_stretch_audio(self):
+        faulty_args = {
+            'audio_samples': np.array([1, 2, 3], dtype=np.int16),
+            'speed_factor': 0
+        }
+        more_faulty_args = {
+            'audio_samples': np.array([1, 2, 3], dtype=np.int16),
+            'speed_factor': -1
+        }
+        self.assertRaises(ValueError, filters.stretch_audio, **faulty_args)
+        self.assertRaises(ValueError, filters.stretch_audio, **more_faulty_args)
 
-    def test_change_pitch(self):
-        audio_data_1 = text_to_sound('This is a good day for some boating and doing barbeque. The '
-                                                       'rain is a horrible addition to my boating day. The weather '
-                                                       'forecast is ok.')
-        expected_sample_rate_1 = 44100
-        self.assertEqual(audio_data_1[1], expected_sample_rate_1)
+        audio_data_1 = text_to_sound(
+            'Today is a wonderful day. A wonderful day for eating ice cream. Yesterday was horrible. There was a '
+            'storm and my neighborhood got flooded. '
+        )
+        self.assertEqual(audio_data_1[1], 44100)
 
-        res_1 = filtrs.apply_filter(audio_data_1, filters.change_pitch, pitch_factor=2)
-        self.assertEqual(res_1[0].size, audio_data_1[0].size)
+        res_slow_1 = filters.apply_filter(audio_data_1, filters.stretch_audio, speed_factor=0.5)
+        self.assertGreaterEqual(res_slow_1[0].size, audio_data_1[0].size)
 
-        audio_data_2 = text_to_sound('On my way home from school, I ran into a wall. I broke my '
-                                                       'glasses and hurt my head. I was really upset. My mom is mad '
-                                                       'at me because I have to get new glasses and glasses are '
-                                                       'expensive. My rich friend decided to pay for my glasses. So '
-                                                       'my mom was happy.')
-        expected_sample_rate_2 = 44100
-        self.assertEqual(audio_data_2[1], expected_sample_rate_2)
+        res_fast_1 = filters.apply_filter(audio_data_1, filters.stretch_audio, speed_factor=2)
+        self.assertLessEqual(res_fast_1[0].size, audio_data_1[0].size)
 
-        res_2 = filtrs.apply_filter(audio_data_1, filters.change_pitch, pitch_factor=0.3)
-        self.assertEqual(res_2[0].size, audio_samples_2[0].size)
+        audio_data_2 = text_to_sound(
+            'This is an awesome experience. This is perhaps suited for another day. This is just plain bad.'
+        )
+        self.assertEqual(audio_data_2[1], 44100)
 
-        audio_data_3 = text_to_sound('This is neutral.')
-        expected_sample_rate_3 = 44100
-        self.assertEqual(audio_data[1], expected_sample_rate_3)
+        res_slow_2 = filters.apply_filter(audio_data_2, filters.stretch_audio, speed_factor=0.7)
+        self.assertGreaterEqual(res_slow_2[0].size, audio_data_2[0].size)
 
-        res_3 = filtrs.apply_filter(audio_data_3, filters.change_pitch, pitch_factor=2)
-        root_notes_3 = filters.get_notes(res_3)[2]
-        self.assertEqual(root_notes_3, ['F5'])
+        res_fast_2 = filters.apply_filter(audio_data_2, filters.stretch_audio, speed_factor=3)
+        self.assertLessEqual(res_fast_2[0].size, audio_data_2[0].size)

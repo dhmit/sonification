@@ -9,9 +9,10 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 import cv2 as cv
 
+from .analysis.image_to_sound import _brightness_to_freq, _get_histogram_avg, _get_instrument
 from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
-from .analysis.image_to_sound import _brightness_to_freq, _get_histogram_avg
+from .analysis.image_to_sound import *
 
 
 class MainTests(TestCase):
@@ -26,6 +27,13 @@ class MainTests(TestCase):
         note_freq = _brightness_to_freq(_get_histogram_avg(image))
         self.assertEqual(note_freq, 100)
 
+    def test_dominant_color_recognition(self):
+        red_image = 'app/analysis/test_photos/red.jpg'
+        green_image = 'app/analysis/test_photos/green.jpg'
+        blue_image = 'app/analysis/test_photos/blue.jpg'
+        self.assertEqual(_get_instrument(red_image), cello_overtones)
+        self.assertEqual(_get_instrument(green_image), clarinet_overtones)
+        self.assertEqual(_get_instrument(blue_image), trombone_overtones)
 
 
 

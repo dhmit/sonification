@@ -59,17 +59,6 @@ const ImageAnalysis = () => {
         }
     }, []);
 
-    useEffect(() => {
-        if (!canvasRef.current) {
-            return;
-        }
-        const canvas = canvasRef.current;
-        canvas.addEventListener("mousedown", beginDrawing);
-        return () => {
-            canvas.removeEventListener("mousedown", beginDrawing);
-        };
-    }, [beginDrawing]);
-
     const draw = useCallback((event) => {
         if (isDrawing && !submitted.drawing) {
             const newMouseCoord = getCoords(event);
@@ -83,27 +72,22 @@ const ImageAnalysis = () => {
     useEffect(() => {
         if (!canvasRef.current) return;
         const canvas = canvasRef.current;
+        canvas.addEventListener("mousedown", beginDrawing);
         canvas.addEventListener("mousemove", draw);
+        canvas.addEventListener("mouseup", endDrawing);
+        canvas.addEventListener("mouseleave", endDrawing);
         return () => {
+            canvas.removeEventListener("mousedown", beginDrawing);
             canvas.removeEventListener("mousemove", draw);
+            canvas.removeEventListener("mouseup", endDrawing);
+            canvas.removeEventListener("mouseleave", endDrawing);
         };
-    }, [draw]);
+    }, [beginDrawing, draw, endDrawing]);
 
     const endDrawing = useCallback(() => {
         setIsDrawing(false);
         setMouseCoords([]);
     }, []);
-
-    useEffect(() => {
-        if (!canvasRef.current) return;
-        const canvas = canvasRef.current;
-        canvas.addEventListener("mouseup", endDrawing);
-        canvas.addEventListener("mouseleave", endDrawing);
-        return () => {
-            canvas.removeEventListener("mouseup", endDrawing);
-            canvas.removeEventListener("mouseleave", endDrawing);
-        };
-    },[endDrawing]);
 
     const switchMode = (event) => {
         event.preventDefault();

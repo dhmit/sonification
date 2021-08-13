@@ -21,12 +21,12 @@ class MainTests(TestCase):
     '''
 
     def test_white_brightness(self):
-        image = 'app/analysis/test_photos/white.jpg'
+        image = cv.imread('app/analysis/test_photos/white.jpg')
         note_freq = _brightness_to_freq(_get_histogram_avg(image))
         self.assertEqual(note_freq, 992.5)
 
     def test_dark_brightness(self):
-        image = 'app/analysis/test_photos/black.jpg'
+        image = cv.imread('app/analysis/test_photos/black.jpg')
         note_freq = _brightness_to_freq(_get_histogram_avg(image))
         self.assertEqual(note_freq, 100)
 
@@ -40,7 +40,7 @@ class MainTests(TestCase):
 
     def test_tempo_for_image(self):
         # The right side of the image is more busy than the rest, so the tempo of that piece should be quicker
-        image = 'app/analysis/test_photos/tempo.jpg'
+        image = cv.imread('app/analysis/test_photos/tempo.jpg')
         tempos = _get_tempo_for_image(image, 5)
         self.assertTrue(tempos[-1] > tempos[0])
 

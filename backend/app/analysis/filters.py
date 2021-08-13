@@ -27,21 +27,18 @@ def apply_filter(audio, filter_function, **kwargs):
     window_indices, sample_indices, root_notes = get_notes(audio)
     print(f'Note slice indices: {sample_indices}', f'Corresponding root notes: {root_notes}', sep='\n')
 
-    if filter_function == overlap_notes:
-        new_samples = overlap_notes((samples, sample_indices), **kwargs)
-    else:
-        new_samples = np.array([], dtype=samples.dtype)
+    new_samples = np.array([], dtype=samples.dtype)
 
-        for i in range(len(sample_indices)):
-            if hasattr(filter_function, 'uses_freq') and filter_function.uses_freq:
-                kwargs['root_note'] = root_notes[i]
+    for i in range(len(sample_indices)):
+        if hasattr(filter_function, 'uses_freq') and filter_function.uses_freq:
+            kwargs['root_note'] = root_notes[i]
 
-            try:
-                note = samples[sample_indices[i]:sample_indices[i + 1]]
-            except IndexError:
-                note = samples[sample_indices[i]:]
-            new_note = filter_function(note, **kwargs)
-            new_samples = np.append(new_samples, new_note)
+        try:
+            note = samples[sample_indices[i]:sample_indices[i + 1]]
+        except IndexError:
+            note = samples[sample_indices[i]:]
+        new_note = filter_function(note, **kwargs)
+        new_samples = np.append(new_samples, new_note)
 
     return new_samples, sample_rate
 
@@ -105,20 +102,20 @@ def get_notes(audio):
     )
 
     # Code to plot the spectrogram:
-    # plt.figure()
-    # plt.pcolormesh(samp_times_spec, samp_freqs_spec, spec, shading='gouraud')
-    # plt.ylabel('Frequency [Hz]')
-    # plt.xlabel('Time [sec]')
-    # plt.show()
+    plt.figure()
+    plt.pcolormesh(samp_times_spec, samp_freqs_spec, spec, shading='gouraud')
+    plt.ylabel('Frequency [Hz]')
+    plt.xlabel('Time [sec]')
+    plt.show()
 
     sd_values = _spectral_difference(stft_signal)
 
     # Code to plot the spectral difference:
-    # plt.figure()
-    # plt.stem(sd_values)
-    # plt.xlabel('Window index')
-    # plt.ylabel('Spectral difference')
-    # plt.show()
+    plt.figure()
+    plt.stem(sd_values)
+    plt.xlabel('Window index')
+    plt.ylabel('Spectral difference')
+    plt.show()
 
     # An alternative to the spectral difference--see the function's docstring.
     # mean_abs_phase_deviation = _phase_deviation(stft_signal)

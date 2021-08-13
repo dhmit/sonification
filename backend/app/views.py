@@ -112,7 +112,10 @@ def get_sentiment_analysis(request):
     text = request.query_params.get('text')
     audio_data = text_to_sound(text)
 
-    # audio_data = filters.change_pitch(audio_data, 3)
+    # audio_data = filters.apply_filter(audio_data, filters.change_pitch, pitch_factor=0.5)
+    # audio_data = filters.apply_filter(audio_data, filters.change_pitch, pitch_factor=2)
+    audio_data = filters.apply_filter(audio_data, filters.add_chords)
+    # audio_data = filters.apply_filter(audio_data, filters.stretch_audio, speed_factor=.5)
 
     encoded_audio = wav_to_base64(*audio_data)
 

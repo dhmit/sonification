@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {getCookie} from "../common";
 
 const SentimentAnalysis = () => {
 

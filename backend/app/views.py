@@ -26,6 +26,7 @@ from django.shortcuts import render
 
 from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
+from .analysis.text_to_music import (text_to_note, sonify_text)
 
 
 @api_view(['GET'])
@@ -103,6 +104,21 @@ def sentiment_analysis(request):
     return render(request, 'index.html', context)
 
 
+def sentiment_analysis_2(request):
+    """
+    Sentiment Analysis Page
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Sentiment Analysis 2'
+        },
+        'component_name': 'SentimentAnalysis2'
+    }
+
+    return render(request, 'index.html', context)
+
+
 @api_view(['GET'])
 def get_sentiment_analysis(request):
     """
@@ -117,6 +133,19 @@ def get_sentiment_analysis(request):
 
     res = {
         'sound': encoded_audio
+    }
+    return Response(res)
+
+
+@api_view(['GET'])
+def get_sentiment_analysis_2(request):
+    """
+    API endpoint for generating audio based on the sentiment analysis of the given text
+    """
+    text = request.query_params.get('text')
+    res = {
+        'note': text_to_note(text),
+        'sound': sonify_text(text)
     }
     return Response(res)
 

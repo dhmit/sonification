@@ -320,14 +320,15 @@ class FiltersTestCase(TestCase):
 
         res_3 = filters.apply_filter(audio_data_3, filters.change_volume, amplitude=2)
         self.assertEqual(res_3[0].size, audio_data_3[0].size)
+        # This test case fails, probably due to some clipping of the audio signal.
         # self.assertGreater(res_3[0].max(), audio_data_3[0].max())
 
         audio_data_4 = text_to_sound('This is Neutral. This is Neutral.')
         self.assertEqual(audio_data_4[1], 44100)
 
         res_4 = filters.apply_filter(audio_data_2, filters.change_volume, amplitude=0.5)
-        # self.assertEqual(res_4[0].size, audio_data_4[0].size)
-        # self.assertLess(res_4[0].max(), audio_data_4.max())
+        self.assertEqual(res_4[0].size, audio_data_4[0].size)
+        self.assertLess(res_4[0].max(), audio_data_4.max())
 
     def test_stretch_audio(self):
         faulty_args = {

@@ -8,11 +8,8 @@ import matplotlib.pyplot as plt
 from scipy.signal import stft, spectrogram
 from scipy.stats import mode
 
+from ..common import NOTE_FREQS
 
-# helper functions:
-# to apply the filter (pass in a filter(function), a sin wave, and maybe a **kwargs dictionary?, return sin wave)
-# to find the notes/chords in a wave (pass in a wave, output something that helps us take the right slices of audio)
-# each filter: input a note(tuple), output a new note (maybe with some extra kwargs)
 
 def apply_filter(audio, filter_function, **kwargs):
     """
@@ -25,15 +22,21 @@ def apply_filter(audio, filter_function, **kwargs):
     """
     samples, sample_rate = audio
 
-    window_indices, sample_indices, note_frequencies = get_notes(audio)
+    window_indices, sample_indices, root_notes = get_notes(audio)
 
     if filter_function == overlap_notes:
         new_samples = overlap_notes((samples, sample_indices), **kwargs)
     else:
         new_samples = np.array([], dtype=samples.dtype)
 
-        for i in range(len(sample_indices) - 1):
-            note = samples[sample_indices[i]:sample_indices[i + 1]]
+        for i in range(len(sample_indices)):
+            if hasattr(filter_function, 'uses_freq') and filter_function.uses_freq:
+                kwargs['root_note'] = root_notes[i]
+
+            try:
+                note = samples[sample_indices[i]:sample_indices[i + 1]]
+            except IndexError:
+                note = samples[sample_indices[i]:]
             new_note = filter_function(note, **kwargs)
             new_samples = np.append(new_samples, new_note)
 
@@ -68,7 +71,7 @@ def get_notes(audio):
     # plt.show()
 
     nperseg = 1024
-    hop_size = nperseg // 2
+    hop_size = round(nperseg * .75)
     noverlap = nperseg - hop_size
 
     samp_freqs, samp_times, stft_signal = stft(
@@ -108,7 +111,7 @@ def get_notes(audio):
     # plt.show()
 
     # An alternative to the spectral difference--see the function's docstring.
-    # mean_abs_phase_deviation = _phase_deviation(stft_signal)
+    mean_abs_phase_deviation = _phase_deviation(stft_signal)
 
     # Code to plot the mean absolute phase deviation:
     # plt.figure()
@@ -118,26 +121,31 @@ def get_notes(audio):
     # plt.show()
 
     # threshold = np.percentile(sd_values, 97)
-    threshold = np.mean(sd_values)
+    # threshold = np.mean(sd_values)
     min_spacing = num_windows // 10
-    window_indices = _find_peaks(sd_values.tolist(), threshold, min_spacing)
-    breakpoint()
+    window_indices = _find_peaks(sd_values.tolist(), min_spacing)
+    # breakpoint()
 
     sample_indices = []
     for i in window_indices:
         sample_indices.append(i * hop_size)
 
-    note_frequencies = []
+    root_notes = []
     for i in range(len(window_indices) - 1):
         n_start = window_indices[i]
         n_end = window_indices[i + 1]
 
-        fundamental_freq = _freq_for_note(stft_signal, sample_rate, n_start, n_end)
-        note_frequencies.append(fundamental_freq)
+        fund_freq = _freq_for_note(stft_signal, sample_rate, n_start, n_end)
+        root_note = sorted(NOTE_FREQS.keys(), key=lambda note: abs(fund_freq - NOTE_FREQS[note]))[0]
+        root_notes.append(root_note)
 
-    note_frequencies.append(_freq_for_note(stft_signal, sample_rate, window_indices[-1], num_windows))
+    fund_freq = _freq_for_note(stft_signal, sample_rate, window_indices[-1], num_windows)
+    root_note = sorted(NOTE_FREQS.keys(), key=lambda note: abs(fund_freq - NOTE_FREQS[note]))[0]
+    root_notes.append(root_note)
 
-    return window_indices, sample_indices, note_frequencies
+    # breakpoint()
+
+    return window_indices, sample_indices, root_notes
 
 
 def _spectral_difference(X):
@@ -188,10 +196,69 @@ def _phase_deviation(X):
     :param X: A 2D NumPy array representing the STFT of some 1D signal.
 
     :return: A 1D NumPy array representing the mean absolute phase deviation of a signal.
+
+    A = [1 2  3  4
+     5 6  7  8
+     9 10 11 12]
+
+    a_11 = 1
+    a_12 = 2
+    a_21 = 5
+    a_34 = 12
+    a_43 = IndexError
+
+    Below:
+    array of arrays (aka matrix) X
+    X[k, n] aka x_kn k =freq_bin, n = window index
+
+    sample_rate / window_size
+    k -> f, f = sample_rate / window_size * k
+    f has magnitude and phase
+
+    x = 3i + 4j
+    f = 3sin(3t + 0) + 4sin(4t + 5) + 5sin(6t + 2)
+    g = 3sin(3t) + 5sin(3t + 2)
+
+    e**(i*theta) = cos(theta) + isin(theta)
+
+    a + bi
+    Me**(i*omega*t + delta)
+    M = (a^2 + b^2)**.5
+
+    f = 5e**(i3t-2)
+
+    window 5
+    100*e**(2*pi/N * k)e**(i*delta) = F4
+    .02*e**(2*pi/N * l)e**(i*delta2) = C3
+    0*e**(2*pi/N * m)e**(i*delta0) = noise (very quiet)
+
+
+    window 6
+    100*e**(2*pi/N * k)e**(i*delta3) = F4
+    .02*e**(2*pi/N * l)e**(i*delta4) = C3
+    .00000000001*e**(2*pi/N * m)e**(i*delta5) = noise (very quiet)
+
+    X[k, n]
+    [k=1
+    x_11
+    x_21
+    x_31, x_32, x_33, ..., x_3n, ...
+    x_41
+    .
+    .
+    .
+    x_k1
+    ]
+
+
     """
 
     # unwrapped phase (in radians) of each coefficient in the STFT 2D list/array
-    phase = np.angle(X, deg=False)
+    phase = np.unwrap(
+        np.angle(X, deg=False),
+        # discont=2*np.pi,
+        axis=-1
+    )
 
     def phi(k, n):
         """
@@ -203,11 +270,11 @@ def _phase_deviation(X):
         :return: A float representing the second difference of the phase.
         """
         if n == 0:
-            return phase[k, n]
+            return np.absolute(phase[k, n])
         if n == 1:
-            return phase[k, n] - phase[k, n - 1]
+            return np.absolute(phase[k, n] - phase[k, n - 1])
 
-        return phase[k, n] - 2 * phase[k, n - 1] + phase[k, n - 2]
+        return np.absolute(phase[k, n] - phase[k, n - 1]) - np.absolute(phase[k, n - 1] - phase[k, n - 2])
 
     deviations = np.array([])
 
@@ -216,14 +283,14 @@ def _phase_deviation(X):
     for n in range(num_windows):
         dev = 0
         for k in range(window_size):
-            dev += np.absolute(phi(k, n))
+            dev += phi(k, n)
 
         deviations = np.append(deviations, dev / window_size)
 
     return deviations
 
 
-def _find_peaks(sd, threshold, min_spacing):
+def _find_peaks(sd, min_spacing):
     """
     Helper function for detecting peak values in a list of samples to help detect note onsets.
     This peak-finding function was designed for use with the spectral difference detection function; the phase deviation
@@ -239,19 +306,30 @@ def _find_peaks(sd, threshold, min_spacing):
     all_peaks_indices = []
     input_sd = sd[:]
     len_sd = len(input_sd)
+    mean_weight = 1
+    median_weight = 1
+    m = 7
+    peak_weight = 0.05
+    highest_peak = 0
 
-    while True:
-        max_sd = max(input_sd)
-        if max_sd <= threshold:
-            return sorted(all_peaks_indices)
+    for n in range(len_sd):
+        hold = (median_weight * np.median(sd[n - m:n]) +
+                mean_weight * np.mean(sd[n - m:n]) +
+                peak_weight * highest_peak)
+        threshold = hold if n != 0 else 0
 
-        max_index = input_sd.index(max_sd)
-        all_peaks_indices.append(max_index)
+        if input_sd[n] > threshold:
+            all_peaks_indices.append(n)
+            if input_sd[n] > highest_peak:
+                highest_peak = input_sd[n]
 
-        start = max(0, max_index - min_spacing)
-        end = min(max_index + min_spacing + 1, len_sd)
-        for i in range(start, end):
-            input_sd[i] = 0
+            start = max(0, n - min_spacing)
+            end = min(n + min_spacing + 1, len_sd)
+
+            for i in range(start, end):
+                input_sd[i] = 0
+
+    return all_peaks_indices
 
 
 def _freq_for_note(X, sample_rate, n_start, n_stop):
@@ -275,9 +353,6 @@ def _freq_for_note(X, sample_rate, n_start, n_stop):
     k_winners, _ = mode(k_candidates)
 
     freq_bin = k_winners[0]
-
-    breakpoint()
-    assert 0 <= freq_bin < window_size, f'Window size is {window_size}, but k={freq_bin}!'
 
     return freq_resolution * freq_bin
 
@@ -312,12 +387,16 @@ def change_volume(audio_samples, amplitude):
     We still need to work out this relation to create a filter that's useful to users and developers.
 
     :param audio_samples: A 1D NumPy array representing a single note.
-    :param amplitude: An int representing the factor increase or decrease in volume.
+    :param amplitude: A float representing the factor increase or decrease in volume.
 
     :return: A new 1D NumPy array reflecting the change in amplitude.
     """
+    if amplitude < 0:
+        raise ValueError('Amplitude should be a non-negative number!')
 
-    return amplitude * audio_samples
+    breakpoint()
+
+    return audio_samples * amplitude
 
 
 def change_speed(audio_samples, speed_factor):
@@ -379,7 +458,6 @@ def change_pitch(audio_samples, pitch_factor):
 
     return new_audio_samples
 
-
     # OLD
 
     # for a singular note...
@@ -429,20 +507,21 @@ def change_pitch(audio_samples, pitch_factor):
     # return new_audio_metadata
 
 
-def add_chords(audio_samples):
+def add_chords(audio_samples, root_note):
     """
     A filter designed to build a chord upon a note, treated as the root of the chord. Chords are either major or minor
     triads depending on the fundamental frequency of the note (the cutoff frequency is F4).
 
     :param audio_samples: A 1D NumPy array representing a single note
+    :param root_note: A str representing the root note of the audio sample (ex. 'A4').
 
     :return: A new NumPy array reflecting the constructed chord.
     """
-    A4 = 440
-    F4 = A4 * (2 ** (-4 / 12))
+    F4 = NOTE_FREQS['F4']
     new_audio_samples = audio_samples.copy()
 
-    _, _, fund_freq = get_notes(audio_samples)
+    fund_freq = NOTE_FREQS[root_note]
+
     if fund_freq < F4:
         # minor chord
         # ratio of third note from fundamental frequency divided by fundamental frequency
@@ -463,6 +542,9 @@ def add_chords(audio_samples):
     new_audio_samples += third_note
 
     return new_audio_samples
+
+
+add_chords.uses_freq = True
 
 
 def overlap_notes(audio, overlap_factor):

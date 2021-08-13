@@ -1,0 +1,20 @@
+.activeCanvas {
+  cursor: crosshair;
+}
+
+.brushRange {
+  max-width: 20vw;
+}
+
+.canvas {
+  border: 1px solid black;
+  width: 100%;
+  height: auto;
+}
+
+.imageFile {
+  max-height:60vh;
+  max-width:60vw;
+  height:auto;
+  width:auto;
+}

@@ -119,3 +119,14 @@ def get_sentiment_analysis(request):
         'sound': encoded_audio
     }
     return Response(res)
+
+
+def image_analysis(request):
+    context = {
+        'page_metadata': {
+            'title': 'Image Analysis'
+        },
+        'component_name': 'ImageAnalysis'
+    }
+
+    return render(request, 'index.html', context)

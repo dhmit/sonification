@@ -9,13 +9,16 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 import cv2 as cv
 
-from .analysis.image_to_sound import _brightness_to_freq, _get_histogram_avg, _get_instrument
+from .analysis.image_to_sound import _brightness_to_freq, _get_histogram_avg, _get_instrument, _get_tempo_for_image
 from .common import wav_to_base64
 from .analysis.sentiment_analysis import text_to_sound
 from .analysis.image_to_sound import *
 
 
 class MainTests(TestCase):
+    '''
+    Test cases for the brightness, dominant color recognition, and tempo finding private functions
+    '''
 
     def test_white_brightness(self):
         image = cv.imread('app/analysis/test_photos/white.jpg')
@@ -35,6 +38,11 @@ class MainTests(TestCase):
         self.assertEqual(_get_instrument(green_image), clarinet_overtones)
         self.assertEqual(_get_instrument(blue_image), trombone_overtones)
 
+    def test_tempo_for_image(self):
+        # The right side of the image is more busy than the rest, so the tempo of that piece should be quicker
+        image = cv.imread('app/analysis/test_photos/tempo.jpg')
+        tempos = _get_tempo_for_image(image, 5)
+        self.assertTrue(tempos[-1] > tempos[0])
 
 
 class SentimentAnalysisAPITests(APITestCase):

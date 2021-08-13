@@ -1,10 +1,7 @@
 import numpy as np
-import simpleaudio as sa
 from colorthief import ColorThief
 import cv2 as cv
-from scipy.io import wavfile
-import io
-import base64
+from ..common import wav_to_base64
 
 # Found from https://www.vobarian.com/celloanly/
 cello_overtones = {
@@ -222,18 +219,5 @@ def analyze_image(im):
     # convert to 16-bit data
     full_audio = full_audio.astype(np.int16)
 
-    return _wav_to_base64(full_audio, sample_rate)
+    return wav_to_base64(full_audio, sample_rate)
 
-
-def _wav_to_base64(byte_array, sample_rate):
-    """
-    Encode the WAV byte array with base64
-    :param byte_array: int16 numpy array
-    :param sample_rate: integer, the sampling rate
-    :return audio_data: base64 encoding of the given array
-    """
-    byte_io = io.BytesIO(bytes())
-    wavfile.write(byte_io, sample_rate, byte_array)
-    wav_bytes = byte_io.read()
-    audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
-    return audio_data

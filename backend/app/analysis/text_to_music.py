@@ -3,7 +3,6 @@ from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import numpy as np
 from nltk.tokenize import sent_tokenize
 import random
-from ..common import wav_to_base64
 
 musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
 mc_list = list(musical_chars)
@@ -56,8 +55,9 @@ def _generate_note_frequency(score_positive, score_negative, score_neutral):
 
 def text_to_note(text):
     """
+    Sonify a text into a note.
     :param text: Takes in a String of text
-    :return wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
+    :return: A tuple with a 1D NumPy array and a positive number representing a sonification of text
     """
     score = _analyse_sentiment(text)
     note_freq = _generate_note_frequency(score["pos"], score["neg"], score["neu"])
@@ -77,7 +77,7 @@ def text_to_note(text):
     # convert to 16-bit data
     audio = audio.astype(np.int16)
 
-    return wav_to_base64(audio, sample_rate)
+    return audio, sample_rate
 
 
 def _get_ratio(positive_score, neutral_score, negative_score):
@@ -174,8 +174,10 @@ def _sonify_sentence(text, sample_rate):
 
 def sonify_text(text):
     """
+    An alternative method for turning text into sound based on note intervals.
+
     :param text: String of text
-    :return wav_to_base64(full_audio, sample_rate): base64 encoding of a sonification of text
+    :return: A tuple with a 1D NumPy array and a positive number representing a sonification of text
     """
 
     sample_rate = 44100
@@ -191,4 +193,4 @@ def sonify_text(text):
     # convert to 16-bit data
     full_audio = full_audio.astype(np.int16)
 
-    return wav_to_base64(full_audio, sample_rate)
+    return full_audio, sample_rate

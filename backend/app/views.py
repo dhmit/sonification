@@ -24,10 +24,15 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 
-from .common import wav_to_base64
+from .analysis import filters
+
+# Uncomment this import statement once image_to_sound.py is merged in!
+# from .analysis.image_to_sound import analyze_image
+
+
 from .analysis.sentiment_analysis import text_to_sound
 from .analysis.text_to_music import (text_to_note, sonify_text)
-from .analysis.image_to_sound import analyze_image
+from .common import wav_to_base64
 
 
 @api_view(['GET'])
@@ -126,11 +131,15 @@ def get_sentiment_analysis(request):
     API endpoint for generating audio based on the sentiment analysis of the given text
     """
     text = request.query_params.get('text')
-    audio_metadata = text_to_sound(text)
+    audio_data = text_to_sound(text)
 
-    audio = audio_metadata['audio_samples']
-    sample_rate = audio_metadata['sample_rate']
-    encoded_audio = wav_to_base64(audio, sample_rate)
+    # Filtering examples (can chain results!)
+    # audio_data = filters.apply_filter(audio_data, filters.change_pitch, pitch_factor=0.5)
+    # audio_data = filters.apply_filter(audio_data, filters.change_pitch, pitch_factor=2)
+    # audio_data = filters.apply_filter(audio_data, filters.add_chords)
+    # audio_data = filters.apply_filter(audio_data, filters.stretch_audio, speed_factor=.5)
+
+    encoded_audio = wav_to_base64(*audio_data)
 
     res = {
         'sound': encoded_audio
@@ -144,9 +153,11 @@ def get_sentiment_analysis_2(request):
     API endpoint for generating audio based on the sentiment analysis of the given text
     """
     text = request.query_params.get('text')
+    note = text_to_note(text)
+    sound = sonify_text(text)
     res = {
-        'note': text_to_note(text),
-        'sound': sonify_text(text)
+        'note': wav_to_base64(*note),
+        'sound': wav_to_base64(*sound)
     }
     return Response(res)
 
@@ -168,9 +179,9 @@ def image_to_sound(request):
     API endpoint for generating audio based on the image analysis of the given drawing/photo
     """
     image = request.data['image']
-    audio = analyze_image(image)
+    audio_data = analyze_image(image)
 
     res = {
-        'sound': audio
+        'sound': wav_to_base64(*audio_data)
     }
     return Response(res)

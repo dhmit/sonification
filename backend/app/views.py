@@ -27,7 +27,7 @@ from django.shortcuts import render
 from .analysis import filters
 
 # Uncomment this import statement once image_to_sound.py is merged in!
-# from .analysis.image_to_sound import analyze_image
+from .analysis.image_to_sound import analyze_image
 
 
 from .analysis.sentiment_analysis import text_to_sound
@@ -179,9 +179,8 @@ def image_to_sound(request):
     API endpoint for generating audio based on the image analysis of the given drawing/photo
     """
     image = request.data['image']
-    audio_data = analyze_image(image)
-
+    audio = analyze_image(image)
     res = {
-        'sound': wav_to_base64(*audio_data)
+        'sound': audio
     }
     return Response(res)

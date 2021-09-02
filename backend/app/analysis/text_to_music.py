@@ -1,8 +1,10 @@
+import random
 import string
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import numpy as np
 from nltk.tokenize import sent_tokenize
-import random
+
+from ..common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE
 
 musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
 mc_list = list(musical_chars)
@@ -63,7 +65,7 @@ def text_to_note(text):
     note_freq = _generate_note_frequency(score["pos"], score["neg"], score["neu"])
 
     # get time steps for the sample
-    sample_rate = 44100
+    sample_rate = DEFAULT_SAMPLE_RATE
     note_duration = 1
     time_steps = np.linspace(0, note_duration, note_duration * sample_rate, False)
 
@@ -73,7 +75,7 @@ def text_to_note(text):
     # concatenate notes
     audio = note
     # normalize to 16-bit range
-    audio *= 32767 / np.max(np.abs(audio))
+    audio *= SAMPLE_CONVERSION_VAL / np.max(np.abs(audio))
     # convert to 16-bit data
     audio = audio.astype(np.int16)
 
@@ -180,7 +182,7 @@ def sonify_text(text):
     :return: A tuple with a 1D NumPy array and a positive number representing a sonification of text
     """
 
-    sample_rate = 44100
+    sample_rate = DEFAULT_SAMPLE_RATE
     full_audio = []
     sentences = sent_tokenize(text)
     for sentence in sentences:
@@ -188,7 +190,7 @@ def sonify_text(text):
 
     # normalize to 16-bit range
     full_audio = np.array(full_audio)
-    full_audio *= 32767 / np.max(np.abs(full_audio))
+    full_audio *= SAMPLE_CONVERSION_VAL / np.max(np.abs(full_audio))
 
     # convert to 16-bit data
     full_audio = full_audio.astype(np.int16)

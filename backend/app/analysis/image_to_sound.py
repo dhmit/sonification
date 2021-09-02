@@ -1,7 +1,6 @@
 import numpy as np
 from colorthief import ColorThief
 import cv2 as cv
-from ..common import wav_to_base64
 
 # Found from https://www.vobarian.com/celloanly/
 cello_overtones = {
@@ -138,6 +137,7 @@ def _get_tempo_for_slice(image_slice):
     contours, hierarchies = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
     tempo = 40 + 10000 * (len(contours) / total)
     return tempo
+from ..common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE, wav_to_base64
 
 
 def image_to_note(image):
@@ -148,7 +148,7 @@ def image_to_note(image):
     note_freq = _brightness_to_freq(_get_histogram_avg(image))
 
     # get time steps for the sample
-    sample_rate = 44100
+    sample_rate = DEFAULT_SAMPLE_RATE
     note_duration = 1
     time_steps = np.linspace(0, note_duration, note_duration * sample_rate, False)
 
@@ -158,7 +158,7 @@ def image_to_note(image):
     # concatenate notes
     audio = note
     # normalize to 16-bit range
-    audio *= 32767 / np.max(np.abs(audio))
+    audio *= SAMPLE_CONVERSION_VAL / np.max(np.abs(audio))
     # convert to 16-bit data
     audio = audio.astype(np.int16)
 
@@ -199,7 +199,7 @@ def analyze_image(im):
     """
     length_slice = 1/60  # in minutes
     num_slices = 5
-    sample_rate = 44100
+    sample_rate = DEFAULT_SAMPLE_RATE
     opencv_im = cv.imdecode(np.frombuffer(im.read(), np.uint8), cv.IMREAD_UNCHANGED)
     instrument = _get_instrument(im)
     brightness = _get_histogram_avg(opencv_im)
@@ -214,7 +214,7 @@ def analyze_image(im):
 
     # normalize to 16-bit range
     full_audio = np.array(full_audio)
-    full_audio *= 32767 / np.max(np.abs(full_audio))
+    full_audio *= SAMPLE_CONVERSION_VAL / np.max(np.abs(full_audio))
 
     # convert to 16-bit data
     full_audio = full_audio.astype(np.int16)

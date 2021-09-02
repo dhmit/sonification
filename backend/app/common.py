@@ -6,6 +6,10 @@ import io
 from scipy.io import wavfile
 from textwrap import dedent
 
+# reference: https://wiki.hydrogenaud.io/index.php?title=Sampling_rate
+SAMPLE_CONVERSION_VAL = 32767
+DEFAULT_SAMPLE_RATE = 44100
+
 # Dictionary copied from the table in this web page: <https://pages.mtu.edu/~suits/notefreqs.html>
 NOTE_FREQS = {
     'C0': 16.35,

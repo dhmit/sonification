@@ -4,10 +4,10 @@ import STYLES from "./Base.module.scss";
 import * as PropTypes from "prop-types";
 
 const Base = ({children}) => {
-    return(
+    return (
         <>
-            <Nav />
-            <div className={STYLES.body}>
+            <Nav/>
+            <div className={STYLES.body} id={"main-container"}>
                 <main role={"main"}>{children}</main>
             </div>
         </>

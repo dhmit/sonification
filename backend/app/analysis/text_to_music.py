@@ -36,7 +36,6 @@ def text_to_note(text):
     return audio, sample_rate
 
 
-
 def sonify_text(text):
     """
     An alternative method for turning text into sound based on note intervals.

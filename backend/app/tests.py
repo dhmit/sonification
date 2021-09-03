@@ -8,12 +8,12 @@ from rest_framework import status
 
 from .analysis import filters, text_to_music
 from .analysis.sentiment_analysis import text_to_sound
-from .analysis.image_to_sound import _brightness_to_freq, _get_histogram_avg, _get_instrument, _get_tempo_for_image
-from .common import wav_to_base64, NOTE_FREQS
-from .analysis.image_to_sound import *
+from .common import NOTE_FREQS
+from .analysis.image_to_music import *
 import io
 import base64
 import numpy as np
+
 
 class MainTests(TestCase):
     '''
@@ -415,12 +415,12 @@ class ImageAnalysisAPITests(APITestCase):
 
     def test_API_status(self):
         img = self.get_test_image()
-        response = self.client.post('/api/image_to_sound', {'image': img}, format='multipart')
+        response = self.client.post('/api/image_to_music', {'image': img}, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     def test_API_result(self):
         img = self.get_test_image()
-        response = self.client.post('/api/image_to_sound', {'image': img}, format='multipart')
+        response = self.client.post('/api/image_to_music', {'image': img}, format='multipart')
         self.assertTrue(isinstance(response.data['sound'], str))
         encoded_data = base64.b64decode(response.data['sound'].encode('UTF-8'))
         self.assertTrue(isinstance(encoded_data, bytes))

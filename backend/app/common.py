@@ -3,6 +3,7 @@ Miscellaneous utility functions useful throughout the system
 """
 import base64
 import io
+import string
 from scipy.io import wavfile
 from textwrap import dedent
 
@@ -165,3 +166,10 @@ def print_header(header_str):
         ################################################################################
         # {header_str}
         ################################################################################'''))
+
+
+def clean_text(text):
+    # Lowercase, remove punctuation
+    lower_case = text.lower()
+    cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
+    return cleaned_text

@@ -2,10 +2,9 @@ import random
 import numpy as np
 from nltk.tokenize import sent_tokenize
 
-from ..common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE
+from ..common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE, clean_text
 from ..analysis import encoders as encode
 from ..analysis import synthesizers as synths
-from ..analysis import helpers
 
 
 def text_to_note(text):
@@ -14,7 +13,7 @@ def text_to_note(text):
     :param text: Takes in a String of text
     :return: A tuple with a 1D NumPy array and a positive number representing a sonification of text
     """
-    cleaned_text = helpers.clean_text(text)
+    cleaned_text = clean_text(text)
     sentiment = encode.get_sentiment(cleaned_text)
     note_freq = encode.get_note_freq_from_sentiment(sentiment)
 

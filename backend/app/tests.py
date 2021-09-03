@@ -6,22 +6,21 @@ from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
 
-from .analysis import filters, text_to_music
+from .analysis import filters
 from .analysis.sentiment_analysis import text_to_sound
-from .common import NOTE_FREQS
+from .common import NOTE_FREQS, clean_text
 from .analysis.image_to_music import *
 from .analysis import encoders as encode
 from .analysis import synthesizers as synths
-from .analysis import helpers
 import io
 import base64
 import numpy as np
 
 
 class MainTests(TestCase):
-    '''
+    """
     Test cases for the brightness, dominant color recognition, and tempo finding private functions
-    '''
+    """
 
     def test_white_brightness(self):
         image = cv.imread('app/analysis/test_photos/white.jpg')
@@ -64,10 +63,10 @@ class TextToMusicTestCase(TestCase):
         sentence3 = "This ice cream tastes bad and I am disappointed."
         sentiment3 = {'neg': 0.524, 'neu': 0.476, 'pos': 0.0, 'compound': -0.765}
         sentence4 = "This ice ;cream taSt,,es bad AN.d I am ,,,     disappointed."
-        self.assertEqual(encode.get_sentiment(helpers.clean_text(sentence1)), sentiment1)
-        self.assertEqual(encode.get_sentiment(helpers.clean_text(sentence2)), sentiment2)
-        self.assertEqual(encode.get_sentiment(helpers.clean_text(sentence3)), sentiment3)
-        self.assertEqual(encode.get_sentiment(helpers.clean_text(sentence4)), sentiment3)
+        self.assertEqual(encode.get_sentiment(clean_text(sentence1)), sentiment1)
+        self.assertEqual(encode.get_sentiment(clean_text(sentence2)), sentiment2)
+        self.assertEqual(encode.get_sentiment(clean_text(sentence3)), sentiment3)
+        self.assertEqual(encode.get_sentiment(clean_text(sentence4)), sentiment3)
 
     def test_generate_note_frequency(self):
         """

@@ -52,7 +52,7 @@ def get_tempo_for_image(im, num_slices):
     slice_width = num_cols // num_slices
     remainder = num_cols - (slice_width * num_slices)
 
-    tempo = []  # keeping track of the output from the get_tempo_for_slice function
+    tempo = []  # keeping track of the output from the get_tempo_for_image_slice function
     start_index = 0
     count = 1
     while start_index < num_cols - slice_width + 1:

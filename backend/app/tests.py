@@ -10,6 +10,9 @@ from .analysis import filters, text_to_music
 from .analysis.sentiment_analysis import text_to_sound
 from .common import NOTE_FREQS
 from .analysis.image_to_music import *
+from .analysis import encoders as encode
+from .analysis import synthesizers as synths
+from .analysis import helpers
 import io
 import base64
 import numpy as np
@@ -22,26 +25,26 @@ class MainTests(TestCase):
 
     def test_white_brightness(self):
         image = cv.imread('app/analysis/test_photos/white.jpg')
-        note_freq = _brightness_to_freq(_get_histogram_avg(image))
+        note_freq = encode.brightness_to_freq(encode.get_histogram_avg(image))
         self.assertEqual(note_freq, 992.5)
 
     def test_dark_brightness(self):
         image = cv.imread('app/analysis/test_photos/black.jpg')
-        note_freq = _brightness_to_freq(_get_histogram_avg(image))
+        note_freq = encode.brightness_to_freq(encode.get_histogram_avg(image))
         self.assertEqual(note_freq, 100)
 
     def test_dominant_color_recognition(self):
         red_image = 'app/analysis/test_photos/red.jpg'
         green_image = 'app/analysis/test_photos/green.jpg'
         blue_image = 'app/analysis/test_photos/blue.jpg'
-        self.assertEqual(_get_instrument(red_image), cello_overtones)
-        self.assertEqual(_get_instrument(green_image), clarinet_overtones)
-        self.assertEqual(_get_instrument(blue_image), trombone_overtones)
+        self.assertEqual(synths.get_instrument(red_image), synths.cello_overtones)
+        self.assertEqual(synths.get_instrument(green_image), synths.clarinet_overtones)
+        self.assertEqual(synths.get_instrument(blue_image), synths.trombone_overtones)
 
     def test_tempo_for_image(self):
         # The right side of the image is more busy than the rest, so the tempo of that piece should be quicker
         image = cv.imread('app/analysis/test_photos/tempo.jpg')
-        tempos = _get_tempo_for_image(image, 5)
+        tempos = encode.get_tempo_for_image(image, 5)
         self.assertTrue(tempos[-1] > tempos[0])
 
 
@@ -52,19 +55,19 @@ class TextToMusicTestCase(TestCase):
 
     def test_analyse_sentiment(self):
         """
-        Tests the function _analyse_sentiment from text_to_music.py
+        Tests the function get_sentiment from encoders.py
         """
         sentence1 = "This ice cream tastes delicious and I am happy."
-        score1 = {'neg': 0.0, 'neu': 0.448, 'pos': 0.552, 'compound': 0.8126}
+        sentiment1 = {'neg': 0.0, 'neu': 0.448, 'pos': 0.552, 'compound': 0.8126}
         sentence2 = "This ice cream tastes fine and I am feeling okay."
-        score2 = {'neg': 0.0, 'neu': 0.536, 'pos': 0.464, 'compound': 0.4939}
+        sentiment2 = {'neg': 0.0, 'neu': 0.536, 'pos': 0.464, 'compound': 0.4939}
         sentence3 = "This ice cream tastes bad and I am disappointed."
-        score3 = {'neg': 0.524, 'neu': 0.476, 'pos': 0.0, 'compound': -0.765}
+        sentiment3 = {'neg': 0.524, 'neu': 0.476, 'pos': 0.0, 'compound': -0.765}
         sentence4 = "This ice ;cream taSt,,es bad AN.d I am ,,,     disappointed."
-        self.assertEqual(text_to_music._analyse_sentiment(sentence1), score1)
-        self.assertEqual(text_to_music._analyse_sentiment(sentence2), score2)
-        self.assertEqual(text_to_music._analyse_sentiment(sentence3), score3)
-        self.assertEqual(text_to_music._analyse_sentiment(sentence4), score3)
+        self.assertEqual(encode.get_sentiment(helpers.clean_text(sentence1)), sentiment1)
+        self.assertEqual(encode.get_sentiment(helpers.clean_text(sentence2)), sentiment2)
+        self.assertEqual(encode.get_sentiment(helpers.clean_text(sentence3)), sentiment3)
+        self.assertEqual(encode.get_sentiment(helpers.clean_text(sentence4)), sentiment3)
 
     def test_generate_note_frequency(self):
         """
@@ -73,28 +76,32 @@ class TextToMusicTestCase(TestCase):
         pos_score = 0.3
         neu_score = 0.5
         neg_score = 0.2
+        sentiment = {'pos': pos_score, 'neg': neg_score, 'neu': neu_score}
         frequency = 452.5
-        self.assertEqual(text_to_music._generate_note_frequency(pos_score, neg_score, neu_score), frequency)
+        self.assertEqual(encode.get_note_freq_from_sentiment(sentiment), frequency)
 
-    def test_get_ratio(self):
+    def test_get_ratios_from_sentiment(self):
         """
-        Tests the function _get_ratio from text_to_music.py
+        Tests the function get_ratios_from_sentiment from synthesizers.py
         """
-        pos_score_1 = 0.8
-        neu_score_1 = 0.1
-        neg_score_1 = 0.1
-        self.assertEqual(text_to_music._get_ratio(pos_score_1, neu_score_1, neg_score_1),
-                         text_to_music.consonant_ratios)
-        pos_score_2 = 0.2
-        neu_score_2 = 0.7
-        neg_score_2 = 0.1
-        self.assertEqual(text_to_music._get_ratio(pos_score_2, neu_score_2, neg_score_2),
-                         text_to_music.neutral_ratios)
-        pos_score_3 = 0.2
-        neu_score_3 = 0.2
-        neg_score_3 = 0.6
-        self.assertEqual(text_to_music._get_ratio(pos_score_3, neu_score_3, neg_score_3),
-                         text_to_music.dissonant_ratios)
+        pos_score = 0.8
+        neu_score = 0.1
+        neg_score = 0.1
+        sentiment = {'pos': pos_score, 'neg': neg_score, 'neu': neu_score}
+        self.assertEqual(synths.get_ratios_from_sentiment(sentiment),
+                         synths.CONSONANT_RATIOS)
+        pos_score = 0.2
+        neu_score = 0.7
+        neg_score = 0.1
+        sentiment = {'pos': pos_score, 'neg': neg_score, 'neu': neu_score}
+        self.assertEqual(synths.get_ratios_from_sentiment(sentiment),
+                         synths.NEUTRAL_RATIOS)
+        pos_score = 0.2
+        neu_score = 0.2
+        neg_score = 0.6
+        sentiment = {'pos': pos_score, 'neg': neg_score, 'neu': neu_score}
+        self.assertEqual(synths.get_ratios_from_sentiment(sentiment),
+                         synths.DISSONANT_RATIOS)
 
 
 class SentimentAnalysisAPITests(APITestCase):

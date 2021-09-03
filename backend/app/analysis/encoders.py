@@ -1,11 +1,10 @@
-import numpy as np
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import cv2 as cv
-
 
 
 def hist_weighted_average(array):
     """
-    :param an array of arrays/bins that contains the number of pixels that are a certain brightness:
+    :param array: an array of arrays/bins that contains the number of pixels that are a certain brightness:
     :return: the average brightness
     """
     total = 0
@@ -68,3 +67,27 @@ def get_tempo_for_image(im, num_slices):
 def brightness_to_freq(brightness):
     note_freq = 100 + brightness * 3.5
     return note_freq
+
+
+def get_sentiment(text):
+    """
+    Using sentiment analysis from NLTK's "VADER" model:
+     https://www.programcreek.com/python/example/100005/nltk.sentiment.vader.SentimentIntensityAnalyzer
+    :param text: String of text
+    :return score: Dict, sentiment analysis of the text.
+        {'neg': 0.0, 'neu': 0.448, 'pos': 0.552, 'compound': 0.5719}
+    """
+    return SentimentIntensityAnalyzer().polarity_scores(text)
+
+
+def get_note_freq_from_sentiment(sentiment):
+    """
+    :param sentiment: Dict of negative, positive, neutral, and compound values
+    :return: Float, frequency for a note
+    """
+    base_frequency = 400
+    rounding_frequency = 350
+    base_percentage = 1
+    positivity_differential = sentiment["pos"] - sentiment["neg"]
+    rounded_neutral_score = base_percentage + sentiment["neu"]
+    return base_frequency + positivity_differential * rounding_frequency * rounded_neutral_score

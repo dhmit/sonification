@@ -9,6 +9,14 @@ from textwrap import dedent
 # reference: https://wiki.hydrogenaud.io/index.php?title=Sampling_rate
 SAMPLE_CONVERSION_VAL = 32767
 DEFAULT_SAMPLE_RATE = 44100
+MUSICAL_CHARS = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
+
+# Ratios found from Wikipedia
+# (https://en.wikipedia.org/wiki/Consonance_and_dissonance#/media/File:Dyadic_harmonic_entropy_graph_(optimized_for_low_resolution).png)
+DISSONANT_RATIOS = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
+NEUTRAL_RATIOS = [(3, 4), (3, 5), (4, 5)]
+CONSONANT_RATIOS = [(1, 2), (2, 3)]
+
 
 # Dictionary copied from the table in this web page: <https://pages.mtu.edu/~suits/notefreqs.html>
 NOTE_FREQS = {

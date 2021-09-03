@@ -1,58 +1,24 @@
 import random
-import string
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
 import numpy as np
 from nltk.tokenize import sent_tokenize
 
-from ..common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE
-
-musical_chars = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
-mc_list = list(musical_chars)
+from ..common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE, MUSICAL_CHARS, NOTE_FREQS, DISSONANT_RATIOS, \
+    NEUTRAL_RATIOS, CONSONANT_RATIOS
+from ..analysis import encoders as encode
+from ..analysis import synthesizers as synths
+from ..analysis import helpers
 
 # frequencies found from https://pages.mtu.edu/~suits/notefreqs.html
+# using our common dictionary
 note_freqs = {
-    'a': 440,
-    'b': 494,
-    'c': 523,
-    'd': 587,
-    'e': 330,
-    'f': 349,
-    'g': 392
+    'a': NOTE_FREQS['A4'],
+    'b': NOTE_FREQS['B4'],
+    'c': NOTE_FREQS['C5'],
+    'd': NOTE_FREQS['D5'],
+    'e': NOTE_FREQS['E4'],
+    'f': NOTE_FREQS['F4'],
+    'g': NOTE_FREQS['G4']
 }
-
-# Ratios found from Wikipedia
-# (https://en.wikipedia.org/wiki/Consonance_and_dissonance#/media/File:Dyadic_harmonic_entropy_graph_(optimized_for_low_resolution).png)
-dissonant_ratios = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
-neutral_ratios = [(3, 4), (3, 5), (4, 5)]
-consonant_ratios = [(1, 2), (2, 3)]
-
-
-def _analyse_sentiment(text):
-    """
-    :param text: String of text
-    :return score: Dict, sentiment analysis of the text
-    """
-    # Convert text to lowercase
-    lower_case = text.lower()
-    # Removing punctuations
-    cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
-    score = SentimentIntensityAnalyzer().polarity_scores(cleaned_text)
-    return score
-
-
-def _generate_note_frequency(score_positive, score_negative, score_neutral):
-    """
-    :param score_positive: positivity score of a sentence
-    :param score_negative: negativity score of a sentence
-    :param score_neutral: neutrality score of a sentence
-    :return: Float, frequency for a note
-    """
-    base_frequency = 400
-    rounding_frequency = 350
-    base_percentage = 1
-    positivity_differential = score_positive - score_negative
-    rounded_neutral_score = base_percentage + score_neutral
-    return base_frequency + positivity_differential * rounding_frequency * rounded_neutral_score
 
 
 def text_to_note(text):
@@ -61,8 +27,9 @@ def text_to_note(text):
     :param text: Takes in a String of text
     :return: A tuple with a 1D NumPy array and a positive number representing a sonification of text
     """
-    score = _analyse_sentiment(text)
-    note_freq = _generate_note_frequency(score["pos"], score["neg"], score["neu"])
+    cleaned_text = helpers.clean_text(text)
+    sentiment = encode.get_sentiment(cleaned_text)
+    note_freq = encode.get_note_freq_from_sentiment(sentiment)
 
     # get time steps for the sample
     sample_rate = DEFAULT_SAMPLE_RATE
@@ -92,11 +59,11 @@ def _get_ratio(positive_score, neutral_score, negative_score):
     :return ratios: List containing neutral, consonant, or dissonant ratios
     """
     if neutral_score > positive_score and neutral_score > negative_score:
-        ratios = neutral_ratios
+        ratios = NEUTRAL_RATIOS
     elif positive_score > negative_score:
-        ratios = consonant_ratios
+        ratios = CONSONANT_RATIOS
     else:
-        ratios = dissonant_ratios
+        ratios = DISSONANT_RATIOS
 
     return ratios
 
@@ -116,28 +83,6 @@ def _get_other_freq(positive_score, neutral_score, negative_score, current_freq)
     return other_freq
 
 
-def _get_notes(text):
-    """
-    :param text: String of input text
-    :return notes: String of notes chosen randomly from musical characters in text
-    """
-    notes = ""
-    output_length = 4 if (len(text) > 30) else 2
-
-    lower_case = text.lower()
-    stripped_text = [char for char in lower_case if char in musical_chars]
-
-    if len(stripped_text) == 0:
-        notes = notes.join(random.choices(mc_list, k=output_length))
-    elif len(stripped_text) < output_length:
-        notes = notes.join(random.choices(mc_list, k=output_length - len(stripped_text))) + "".join(stripped_text)
-    else:
-        start = random.randint(0, len(stripped_text) - output_length)
-        notes = notes.join(stripped_text[start:start + output_length])
-
-    return notes
-
-
 def _get_durations(notes):
     """
     :param notes: List of notes
@@ -154,12 +99,11 @@ def _sonify_sentence(text, sample_rate):
     :return audio: List of samples for this sentence
     """
     quieter_note_loudness = 0.6
-    notes = _get_notes(text)
+    notes = synths.get_notes_from_text(text)
     durations = _get_durations(notes)
-    score = _analyse_sentiment(text)
+    score = encode.get_sentiment(text)
 
     audio = []
-
     for index in range(len(notes)):
         duration = durations[index]
         louder_note_freq = note_freqs[notes[index]]

@@ -1,5 +1,9 @@
+import random
 import numpy as np
 from colorthief import ColorThief
+from ..common import MUSICAL_CHARS
+
+mc_list = list(MUSICAL_CHARS)
 
 # Found from https://www.vobarian.com/celloanly/
 cello_overtones = {
@@ -82,3 +86,27 @@ def generate_note(frequency, duration, sample_rate):
     # note *= 32767 / np.max(np.abs(note))
 
     return note
+
+
+def get_notes_from_text(text):
+    """
+    :param text: String of input text
+    :return notes: String of notes chosen randomly from musical characters in text
+    """
+    notes = ""
+
+    # TODO: explain the following
+    output_length = 4 if (len(text) > 30) else 2
+
+    lower_case = text.lower()
+    stripped_text = [char for char in lower_case if char in MUSICAL_CHARS]
+
+    if len(stripped_text) == 0:
+        notes = notes.join(random.choices(mc_list, k=output_length))
+    elif len(stripped_text) < output_length:
+        notes = notes.join(random.choices(mc_list, k=output_length - len(stripped_text))) + "".join(stripped_text)
+    else:
+        start = random.randint(0, len(stripped_text) - output_length)
+        notes = notes.join(stripped_text[start:start + output_length])
+
+    return notes

@@ -1,7 +1,7 @@
 import random
 import numpy as np
 from colorthief import ColorThief
-from ..common import MUSICAL_CHARS
+from ..common import MUSICAL_CHARS, NOTE_FREQ_SIMPLE, DISSONANT_RATIOS, NEUTRAL_RATIOS, CONSONANT_RATIOS
 
 mc_list = list(MUSICAL_CHARS)
 
@@ -51,6 +51,21 @@ def get_instrument(im):
         return trombone_overtones
 
 
+def get_ratios_from_sentiment(sentiment):
+    """
+    Returns a list of neutral ratios if the score is mostly neutral, consonant ratios
+    if the score is more positive, and dissonant ratios otherwise
+    :param sentiment: Dict of negative, positive, neutral, and compound values
+    :return ratios: List containing neutral, consonant, or dissonant ratios
+    """
+    if sentiment["neu"] > sentiment["pos"] and sentiment["neu"] > sentiment["neg"]:
+        return NEUTRAL_RATIOS
+    elif sentiment["pos"] > sentiment["neg"]:
+        return CONSONANT_RATIOS
+    else:
+        return DISSONANT_RATIOS
+
+
 def generate_note(frequency, duration, sample_rate):
     """
     Uses the ADSR (Attack, Decay, Sustain, Release) envelope to
@@ -88,6 +103,24 @@ def generate_note(frequency, duration, sample_rate):
     return note
 
 
+def get_note_frequency(sentiment=None, note_or_freq=None):
+    """
+    :param sentiment: Either None or dict of negative, positive, neutral, and compound values
+    :param note_or_freq: Either a note like 'd' or a float, frequency of a given note
+    :return return a frequency found either from note_freq dict or frequency passed in  and a randomized ratio
+    """
+    # if letter, it should exist in our NOTE_FREQ_SIMPLE dict
+    if str(note_or_freq).isalpha():
+        return NOTE_FREQ_SIMPLE[note_or_freq]
+
+    # otherwise, we expect it to be a float. We want to create a new frequency.
+    ratios = get_ratios_from_sentiment(sentiment)
+
+    ratio = random.choices(ratios)[0]
+    frequency = note_or_freq * ratio[0] / ratio[1]
+    return frequency
+
+
 def get_notes_from_text(text):
     """
     :param text: String of input text
@@ -110,3 +143,29 @@ def get_notes_from_text(text):
         notes = notes.join(stripped_text[start:start + output_length])
 
     return notes
+
+
+def sonify(notes, durations, sentiment, sample_rate):
+    """
+    Takes in list of notes, durations, and sentiment, and returns audio
+    :param notes: List of floats
+    :param durations: Corresponding list of durations for notes
+    :param sentiment: Dict of sentiment values
+    :param sample_rate: Integer, the sampling rate
+    :return audio: List of samples for collection of notes
+    """
+    quieter_note_loudness = 0.6
+    audio = []
+
+    for index in range(len(notes)):
+        duration = durations[index]
+        louder_note_freq = get_note_frequency(note_or_freq=notes[index])
+        quieter_note_freq = get_note_frequency(sentiment=sentiment, note_or_freq=louder_note_freq)
+
+        time_steps = np.linspace(0, duration, int(duration * sample_rate), False)
+        louder_note = np.sin(louder_note_freq * time_steps * 2 * np.pi).tolist()
+        quieter_note = np.sin(quieter_note_freq * time_steps * 2 * np.pi).tolist()
+
+        audio += [louder_note[ind] + quieter_note_loudness * quieter_note[ind] for ind in range(len(time_steps))]
+
+    return audio

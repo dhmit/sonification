@@ -1,5 +1,8 @@
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
+import random
 import cv2 as cv
+from nltk.sentiment.vader import SentimentIntensityAnalyzer
+
+from ..common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION
 
 
 def hist_weighted_average(array):
@@ -91,3 +94,13 @@ def get_note_freq_from_sentiment(sentiment):
     positivity_differential = sentiment["pos"] - sentiment["neg"]
     rounded_neutral_score = base_percentage + sentiment["neu"]
     return base_frequency + positivity_differential * rounding_frequency * rounded_neutral_score
+
+
+def get_durations_of_notes(notes):
+    """
+    :param notes: List of notes
+    :return List with corresponding randomly chosen durations for each note in notes
+    """
+    return [random.uniform(SHORT_NOTE_DURATION, LONG_NOTE_DURATION) for _ in notes]
+
+

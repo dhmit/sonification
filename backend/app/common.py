@@ -17,6 +17,8 @@ DISSONANT_RATIOS = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
 NEUTRAL_RATIOS = [(3, 4), (3, 5), (4, 5)]
 CONSONANT_RATIOS = [(1, 2), (2, 3)]
 
+SHORT_NOTE_DURATION = 0.2
+LONG_NOTE_DURATION = 0.8
 
 # Dictionary copied from the table in this web page: <https://pages.mtu.edu/~suits/notefreqs.html>
 NOTE_FREQS = {
@@ -127,6 +129,17 @@ NOTE_FREQS = {
     'A8': 7040.00,
     'A#8/Bb8': 7458.62,
     'B8': 7902.13
+}
+
+# a simplified dict using our above complex dictionary
+NOTE_FREQ_SIMPLE = {
+    'a': NOTE_FREQS['A4'],
+    'b': NOTE_FREQS['B4'],
+    'c': NOTE_FREQS['C5'],
+    'd': NOTE_FREQS['D5'],
+    'e': NOTE_FREQS['E4'],
+    'f': NOTE_FREQS['F4'],
+    'g': NOTE_FREQS['G4']
 }
 
 

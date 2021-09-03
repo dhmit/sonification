@@ -31,7 +31,7 @@ def get_histogram_avg(img):
     return hist_weighted_average(gray_hist)
 
 
-def get_tempo_for_slice(image_slice):
+def get_tempo_for_image_slice(image_slice):
     """
     :param image_slice: a slice of the image
     :return: tempo in beats per minute
@@ -62,7 +62,7 @@ def get_tempo_for_image(im, num_slices):
             end_index = start_index + slice_width + 1
             remainder -= 1
         count += 1
-        tempo.append(get_tempo_for_slice(im_array[0:num_rows, start_index:end_index]))
+        tempo.append(get_tempo_for_image_slice(im_array[0:num_rows, start_index:end_index]))
         start_index = end_index
     return tempo
 

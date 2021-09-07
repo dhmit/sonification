@@ -57,7 +57,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
-          node-version: '10.x'
+          node-version: '14.17'
       - name: Install frontend deps and eslint
         run: |
           npm ci
@@ -70,7 +70,7 @@ jobs:
       - uses: actions/checkout@v1
       - uses: actions/setup-node@v1
         with:
-          node-version: '10.x'
+          node-version: '14.17'
       - name: Install frontend deps
         run: |
           npm ci

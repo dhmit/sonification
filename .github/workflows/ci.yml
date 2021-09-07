@@ -1,0 +1,80 @@
+name: CI
+
+on:
+  push:
+    branches:
+      - master
+      - '*_CI'  # run on branches suffixed with _CI
+  pull_request:
+    branches:
+      - '*'
+
+jobs:
+  ##############################################################################
+  # Python jobs
+  ##############################################################################
+  backend_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+          architecture: 'x64'
+      - name: Install Python packages and Ubuntu dependencies
+        run: |
+          sudo apt-get install libasound2-dev
+          pip install -r requirements.txt
+      - name: Run Django tests
+        run: |
+          cd backend
+          python manage.py migrate
+          python manage.py test
+  python_linters:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-python@v1
+        with:
+          python-version: '3.9'
+          architecture: 'x64'
+      - name: Install Python packages
+        run: |
+          sudo apt-get install libasound2-dev
+          pip install -r requirements.txt
+          pip install pylint
+      - name: Run pylint on backend/
+        run: pylint backend/
+
+
+  ##############################################################################
+  # JS jobs
+  ##############################################################################
+
+  js_linters:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.17'
+      - name: Install frontend deps and eslint
+        run: |
+          npm ci
+      - name: Run eslint on frontend/src
+        run: |
+          ./node_modules/.bin/eslint --max-warnings 0 frontend/**/*.js
+  frontend_tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions/setup-node@v1
+        with:
+          node-version: '14.17'
+      - name: Install frontend deps
+        run: |
+          npm ci
+#      - name: Run frontend tests
+#        run: |
+#          cd frontend
+#          CI=true npm run test

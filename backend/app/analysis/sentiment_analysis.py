@@ -3,6 +3,8 @@ from nltk.sentiment import SentimentIntensityAnalyzer
 import numpy as np
 
 nltk.download('punkt')
+nltk.download('vader_lexicon')
+
 
 def text_to_sound(user_text):
     """

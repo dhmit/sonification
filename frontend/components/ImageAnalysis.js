@@ -220,7 +220,8 @@ const ImageAnalysis = () => {
                     <div className="row">
                         <div className="col-auto">
                             <input className="my-3" type="file" ref={fileRef}
-                                accept="image/jpeg" disabled={submitted.file} onChange={handleFileInput}/>
+                                accept="image/jpeg" disabled={submitted.file}
+                                onChange={handleFileInput}/>
                             <br/>
                             {
                                 imageFile &&

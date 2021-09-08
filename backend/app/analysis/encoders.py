@@ -1,8 +1,14 @@
 import random
 import cv2 as cv
-from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION
+from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION, DEFAULT_SAMPLE_RATE, \
+    NUM_OF_PIANO_KEYS
+import nltk
+from nltk.sentiment import SentimentIntensityAnalyzer
+import numpy as np
+
+nltk.download('punkt')
+nltk.download('vader_lexicon')
 
 
 def hist_weighted_average(array):
@@ -104,3 +110,19 @@ def get_durations_of_notes(notes):
     return [random.uniform(SHORT_NOTE_DURATION, LONG_NOTE_DURATION) for _ in notes]
 
 
+def get_tokenized_sentences(user_text):
+    """
+    Tokenize sentences using nltk's tokenizer
+    """
+    return nltk.sent_tokenize(user_text)
+
+
+def convert_sentiment_to_piano_key_num(sentiment_value):
+    """
+    sentiment scores from nltk's sentiment analyzer range from -1 to 1.
+    This method shifts the number so that there is no negative, multiplies by 44,
+     and rounds to an int from 0 to 88 (keys on a piano)
+    :param sentiment_value: a value from -1 to 1
+    :return: a number from 0 to 88
+    """
+    return round((sentiment_value + 1) * NUM_OF_PIANO_KEYS / 2)

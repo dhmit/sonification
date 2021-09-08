@@ -13,7 +13,7 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 from app.analysis import filters
-from app.analysis.sentiment_analysis import text_to_sound
+from app.analysis.text_to_music import sonify_text_2
 from app.common import NOTE_FREQS, clean_text, wav_to_base64
 from app.analysis import encoders as encode
 from app.analysis import synthesizers as synths
@@ -178,12 +178,12 @@ class WavToBase64TestCase(TestCase):
 
 class TextToSoundTestCase(TestCase):
     """
-    Test case for text_to_sound function.
+    Test case for sonify_text_2 function.
     """
 
-    def test_text_to_sound(self):
+    def test_sonify_text_2(self):
         text = 'This is good. This is bad.'
-        result = text_to_sound(text)
+        result = sonify_text_2(text)
         audio_samples, sample_rate = result
         self.assertEqual(type(result), tuple)
         self.assertEqual(len(audio_samples), 88200)
@@ -207,7 +207,7 @@ class FiltersTestCase(TestCase):
         foo_audio_data = (np.array([]), 44100)
         self.assertEqual(filters.get_notes(foo_audio_data), ([], [], []))
 
-        audio_samples, sample_rate = text_to_sound('Good. Bad. Neutral.')
+        audio_samples, sample_rate = sonify_text_2('Good. Bad. Neutral.')
         self.assertEqual(sample_rate, 44100)
         self.assertEqual(audio_samples.size, 44100 * 3)
 
@@ -223,7 +223,7 @@ class FiltersTestCase(TestCase):
         # Frequency resolution test
         self.assertEqual(res_frequencies, expected_frequencies)
 
-        audio_samples, sample_rate = text_to_sound('Neutral.')
+        audio_samples, sample_rate = sonify_text_2('Neutral.')
         self.assertEqual(audio_samples.size, 44100)
 
         expected_samples = [0]
@@ -236,7 +236,7 @@ class FiltersTestCase(TestCase):
         # Frequency resolution test
         self.assertEqual(res_frequencies, expected_frequencies)
 
-        audio_samples, sample_rate = text_to_sound('Neutral. Neutral.')
+        audio_samples, sample_rate = sonify_text_2('Neutral. Neutral.')
         self.assertEqual(audio_samples.size, 44100 * 2)
 
         expected_samples = [0, 44100]
@@ -259,19 +259,19 @@ class FiltersTestCase(TestCase):
         self.assertEqual(res_frequencies, expected_frequencies)
 
     def test_add_chords(self):
-        audio_data = text_to_sound('This is good. This is bad. This is neutral.')
+        audio_data = sonify_text_2('This is good. This is bad. This is neutral.')
         self.assertEqual(audio_data[1], 44100)
 
         res = filters.apply_filter(audio_data, filters.add_chords)
         self.assertGreaterEqual(res[0].size, audio_data[0].size)
 
-        audio_data = text_to_sound('Neutral. Neutral.')
+        audio_data = sonify_text_2('Neutral. Neutral.')
         self.assertEqual(audio_data[1], 44100)
 
         res = filters.apply_filter(audio_data, filters.add_chords)
         self.assertGreaterEqual(res[0].size, audio_data[0].size)
 
-        audio_data = text_to_sound(
+        audio_data = sonify_text_2(
             'I fell and scraped my knee. It hurt a lot. I cried on the way '
             'home. My mom bought me ice cream. So I feel better now.')
         self.assertEqual(audio_data[1], 44100)
@@ -286,9 +286,9 @@ class FiltersTestCase(TestCase):
         }
         self.assertRaises(ValueError, filters.change_pitch, **faulty_args)
 
-        audio_data = text_to_sound('This is a good day for some boating and doing barbeque. The '
-                                     'rain is a horrible addition to my boating day. The weather '
-                                     'forecast is ok.')
+        audio_data = sonify_text_2('This is a good day for some boating and doing barbeque. The '
+                                   'rain is a horrible addition to my boating day. The weather '
+                                   'forecast is ok.')
         expected_sample_rate = 44100
         self.assertEqual(audio_data[1], expected_sample_rate)
         root_notes = filters.get_notes(audio_data)[2]
@@ -303,11 +303,11 @@ class FiltersTestCase(TestCase):
         # for root_note, risen_note in zip(root_notes, risen_notes):
         #     self.assertLess(NOTE_FREQS[root_note], NOTE_FREQS[risen_note])
 
-        audio_data = text_to_sound('On my way home from school, I ran into a wall. I broke my '
-                                     'glasses and hurt my head. I was really upset. My mom is mad '
-                                     'at me because I have to get new glasses and glasses are '
-                                     'expensive. My rich friend decided to pay for my glasses. So '
-                                     'my mom was happy.')
+        audio_data = sonify_text_2('On my way home from school, I ran into a wall. I broke my '
+                                   'glasses and hurt my head. I was really upset. My mom is mad '
+                                   'at me because I have to get new glasses and glasses are '
+                                   'expensive. My rich friend decided to pay for my glasses. So '
+                                   'my mom was happy.')
         expected_sample_rate = 44100
         self.assertEqual(audio_data[1], expected_sample_rate)
 
@@ -318,7 +318,7 @@ class FiltersTestCase(TestCase):
         for root_note, lowered_note in zip(root_notes, lowered_notes):
             self.assertGreater(NOTE_FREQS[root_note], NOTE_FREQS[lowered_note])
 
-        audio_data = text_to_sound('This is neutral.')
+        audio_data = sonify_text_2('This is neutral.')
         expected_sample_rate = 44100
         self.assertEqual(audio_data[1], expected_sample_rate)
         root_notes = filters.get_notes(audio_data)[2]
@@ -342,8 +342,8 @@ class FiltersTestCase(TestCase):
         }
         self.assertRaises(ValueError, filters.change_volume, **faulty_args)
 
-        audio_data = text_to_sound('This is a great day for watching television. The climate '
-                                     'change situation is scary. It is very hot right now.')
+        audio_data = sonify_text_2('This is a great day for watching television. The climate '
+                                   'change situation is scary. It is very hot right now.')
         self.assertEqual(audio_data[1], 44100)
 
         res = filters.apply_filter(audio_data, filters.change_volume, amplitude=2)
@@ -352,7 +352,7 @@ class FiltersTestCase(TestCase):
         # This test case fails, probably due to some clipping of the audio signal.
         # self.assertGreater(res[0].max(), audio_data[0].max())
 
-        audio_data = text_to_sound(
+        audio_data = sonify_text_2(
             'I like eating cake. I tried baking cake, but it tasted really '
             'bad. I decided to not bake cake anymore. I asked my friend to'
             ' bake a cake for me. It was really delicious.')
@@ -361,7 +361,7 @@ class FiltersTestCase(TestCase):
         res = filters.apply_filter(audio_data, filters.change_volume, amplitude=0.5)
         self.assertEqual(res[0].size, audio_data[0].size)
 
-        audio_data = text_to_sound('This is good. This is bad. This is neutral.')
+        audio_data = sonify_text_2('This is good. This is bad. This is neutral.')
         self.assertEqual(audio_data[1], 44100)
 
         res = filters.apply_filter(audio_data, filters.change_volume, amplitude=2)
@@ -369,7 +369,7 @@ class FiltersTestCase(TestCase):
         # This test case fails, probably due to some clipping of the audio signal.
         # self.assertGreater(res[0].max(), audio_data[0].max())
 
-        audio_data = text_to_sound('This is Neutral. This is Neutral.')
+        audio_data = sonify_text_2('This is Neutral. This is Neutral.')
         self.assertEqual(audio_data[1], 44100)
 
         res = filters.apply_filter(audio_data, filters.change_volume, amplitude=0.5)
@@ -390,7 +390,7 @@ class FiltersTestCase(TestCase):
         self.assertRaises(ValueError, filters.stretch_audio, **faulty_args)
         self.assertRaises(ValueError, filters.stretch_audio, **more_faulty_args)
 
-        audio_data = text_to_sound(
+        audio_data = sonify_text_2(
             'Today is a wonderful day. A wonderful day for eating ice cream. '
             'Yesterday was horrible. There was a storm and my neighborhood got flooded. '
         )
@@ -402,7 +402,7 @@ class FiltersTestCase(TestCase):
         res_fast = filters.apply_filter(audio_data, filters.stretch_audio, speed_factor=2)
         self.assertLessEqual(res_fast[0].size, audio_data[0].size)
 
-        audio_data = text_to_sound(
+        audio_data = sonify_text_2(
             'This is an awesome experience. '
             'This is perhaps suited for another day. '
             'This is just plain bad.'

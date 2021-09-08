@@ -31,8 +31,7 @@ from django.shortcuts import render
 
 from app.analysis.image_to_music import analyze_image
 
-from app.analysis.sentiment_analysis import text_to_sound
-from app.analysis.text_to_music import text_to_note, sonify_text
+from app.analysis.text_to_music import text_to_note, sonify_text, sonify_text_2
 from app.common import wav_to_base64
 
 
@@ -132,7 +131,7 @@ def get_sentiment_analysis(request):
     API endpoint for generating audio based on the sentiment analysis of the given text
     """
     text = request.query_params.get('text')
-    audio_data = text_to_sound(text)
+    audio_data = sonify_text_2(text)
 
     # Filtering examples (can chain results!)
     # audio_data = filters.apply_filter(audio_data, filters.change_pitch, pitch_factor=0.5)

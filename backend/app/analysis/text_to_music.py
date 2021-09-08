@@ -60,3 +60,25 @@ def sonify_text(text):
     full_audio = full_audio.astype(np.int16)
 
     return full_audio, sample_rate
+
+
+def sonify_text_2(text):
+    """
+    Takes text, runs NLTK's sentiment analyzer, and then returns a sound object.
+    The formula used to generate a note frequency is based off of this article:
+    <https://towardsdatascience.com/music-in-python-2f054deb41f4>.
+
+    :param text: A str representing some input text
+    :return: A tuple of audio data containing an int16 NumPy array of samples
+    and a sample rate in Hz (int).
+    """
+    sentences = encode.get_tokenized_sentences(text)
+    sin_waves_list = []
+    for sentence in sentences:
+        sentiment = encode.get_sentiment(sentence)
+        piano_key = encode.convert_sentiment_to_piano_key_num(sentiment['compound'])
+        sin_wave, sample_rate = synths.convert_piano_key_num_to_sin_wave(piano_key)
+        sin_waves_list.append(sin_wave)
+
+    audio = synths.convert_sin_waves_to_audio(sin_waves_list)
+    return audio, sample_rate

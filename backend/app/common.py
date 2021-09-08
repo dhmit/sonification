@@ -20,6 +20,8 @@ CONSONANT_RATIOS = [(1, 2), (2, 3)]
 SHORT_NOTE_DURATION = 0.2
 LONG_NOTE_DURATION = 0.8
 
+NUM_OF_PIANO_KEYS = 88
+
 # Dictionary copied from the table in this web page:
 # <https://pages.mtu.edu/~suits/notefreqs.html>
 NOTE_FREQS = {

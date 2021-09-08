@@ -1,7 +1,8 @@
 import random
 import numpy as np
 from colorthief import ColorThief
-from ..common import MUSICAL_CHARS, NOTE_FREQ_SIMPLE, DISSONANT_RATIOS, NEUTRAL_RATIOS, CONSONANT_RATIOS
+from app.common import MUSICAL_CHARS, NOTE_FREQ_SIMPLE, DISSONANT_RATIOS, NEUTRAL_RATIOS, \
+    CONSONANT_RATIOS, DEFAULT_SAMPLE_RATE, SAMPLE_CONVERSION_VAL
 
 mc_list = list(MUSICAL_CHARS)
 
@@ -174,5 +175,35 @@ def sonify(notes, durations, sentiment, sample_rate):
     return audio
 
 
+def convert_piano_key_num_to_sin_wave(piano_key):
+    """
+    formula calculates the frequency of a musical note using A4 as the base note
+    the score is the nth key starting from key 0 being A0 (hence the extra +1)
+    the exact middle of the piano is between key 43 (E4) and 44 (F4) if A0 is the zeroth note
+    thus, a neutral score should generate an F4 note
+
+    The formula used to generate a note frequency is based off of this article:
+    <https://towardsdatascience.com/music-in-python-2f054deb41f4>.
+
+    :param piano_key: integer from 0 to 88
+    :return sin_wave, sample_rate
+    """
+    a4_note = NOTE_FREQ_SIMPLE['a']
+    duration = 1
+    sample_rate = DEFAULT_SAMPLE_RATE
+    time_axis = np.linspace(0, duration, duration * sample_rate, False)
+    frequency = a4_note * (2 ** ((piano_key + 1 - 49) / 12))
+    sin_wave = np.sin(2 * np.pi * frequency * time_axis)
+    return sin_wave, sample_rate
+
+
+def convert_sin_waves_to_audio(sin_waves):
+    """
+    :param sin_waves: a list of sin waves
+    :return audio
+    """
+    audio = np.hstack(sin_waves)
+    audio *= SAMPLE_CONVERSION_VAL / np.max(np.abs(audio))
+    audio = audio.astype(np.int16)
 
     return audio

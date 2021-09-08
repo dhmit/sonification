@@ -7,7 +7,8 @@ from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION
 
 def hist_weighted_average(array):
     """
-    :param array: an array of arrays/bins that contains the number of pixels that are a certain brightness:
+    :param array: an array of arrays/bins
+        that contains the number of pixels that are a certain brightness:
     :return: the average brightness
     """
     total = 0
@@ -38,15 +39,14 @@ def get_tempo_for_image_slice(image_slice):
     """
     canny = cv.Canny(image_slice, 125, 175)
     total = image_slice.shape[0] * image_slice.shape[1]
-    contours, hierarchies = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
+    contours, _ = cv.findContours(canny, cv.RETR_LIST, cv.CHAIN_APPROX_SIMPLE)
     tempo = 40 + 10000 * (len(contours) / total)
     return tempo
 
 
-def get_tempo_for_image(im, num_slices):
-    im_array = im
-    num_rows = im_array.shape[0]
-    num_cols = im_array.shape[1]
+def get_tempo_for_image(img_array, num_slices):
+    num_rows = img_array.shape[0]
+    num_cols = img_array.shape[1]
     if num_slices > num_cols:
         num_slices = num_cols
     slice_width = num_cols // num_slices
@@ -62,7 +62,7 @@ def get_tempo_for_image(im, num_slices):
             end_index = start_index + slice_width + 1
             remainder -= 1
         count += 1
-        tempo.append(get_tempo_for_image_slice(im_array[0:num_rows, start_index:end_index]))
+        tempo.append(get_tempo_for_image_slice(img_array[0:num_rows, start_index:end_index]))
         start_index = end_index
     return tempo
 

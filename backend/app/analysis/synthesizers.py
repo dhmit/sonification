@@ -91,7 +91,8 @@ def generate_note(frequency, duration, sample_rate):
     len_r = int(r_percentage * total_length)
 
     a_weights = [peak_weight * (2 ** (x / len_a) - 1) for x in range(len_a)]
-    d_weights = [sustain_weight + (peak_weight - sustain_weight) * (2 ** (1 - x / len_d) - 1) for x in range(len_d)]
+    d_weights = [sustain_weight + (peak_weight - sustain_weight) * (2 ** (1 - x / len_d) - 1) for x
+                 in range(len_d)]
     s_weights = [sustain_weight for _ in range(len_s)]
     r_weights = [final_weight + sustain_weight * (2 ** (1 - x / len_r) - 1) for x in range(len_r)]
 
@@ -137,7 +138,8 @@ def get_notes_from_text(text):
     if len(stripped_text) == 0:
         notes = notes.join(random.choices(mc_list, k=output_length))
     elif len(stripped_text) < output_length:
-        notes = notes.join(random.choices(mc_list, k=output_length - len(stripped_text))) + "".join(stripped_text)
+        notes = notes.join(random.choices(mc_list, k=output_length - len(stripped_text))) + "".join(
+            stripped_text)
     else:
         start = random.randint(0, len(stripped_text) - output_length)
         notes = notes.join(stripped_text[start:start + output_length])
@@ -166,6 +168,11 @@ def sonify(notes, durations, sentiment, sample_rate):
         louder_note = np.sin(louder_note_freq * time_steps * 2 * np.pi).tolist()
         quieter_note = np.sin(quieter_note_freq * time_steps * 2 * np.pi).tolist()
 
-        audio += [louder_note[ind] + quieter_note_loudness * quieter_note[ind] for ind in range(len(time_steps))]
+        audio += [louder_note[ind] + quieter_note_loudness * quieter_note[ind] for ind in
+                  range(len(time_steps))]
+
+    return audio
+
+
 
     return audio

@@ -23,14 +23,15 @@ def apply_filter(audio, filter_function, **kwargs):
     """
     samples, sample_rate = audio
 
-    window_indices, sample_indices, root_notes = get_notes(audio)
+    _, sample_indices, root_notes = get_notes(audio)
 
     # Uncomment to see detected notes in the terminal
-    # print(f'Note slice indices: {sample_indices}', f'Corresponding root notes: {root_notes}', sep='\n')
+    # print(f'Note slice indices: {sample_indices}',
+    #       f'Corresponding root notes: {root_notes}', sep='\n')
 
     new_samples = np.array([], dtype=samples.dtype)
 
-    for i in range(len(sample_indices)):
+    for i, _ in enumerate(sample_indices):
         if hasattr(filter_function, 'uses_freq') and filter_function.uses_freq:
             kwargs['root_note'] = root_notes[i]
 
@@ -83,7 +84,7 @@ def get_notes(audio):
     hop_size = int(nperseg * .75)
     noverlap = nperseg - hop_size
 
-    samp_freqs, samp_times, stft_signal = stft(
+    _, _, stft_signal = stft(
         audio_samples,
         sample_rate,
         window='hann',
@@ -91,7 +92,7 @@ def get_notes(audio):
         noverlap=noverlap,
         return_onesided=False
     )
-    window_size, num_windows = stft_signal.shape
+    _, num_windows = stft_signal.shape
 
     # Code to create a spectrogram, the squared magnitude of the STFT (for plotting):
     # With the exception of return_onesided, the parameters in the stft
@@ -170,13 +171,13 @@ def _spectral_difference(X):
 
     window_size, num_windows = X.shape
 
-    for n in range(num_windows):
+    for window in range(num_windows):
         sd = 0
         for k in range(window_size):
-            if n == 0:
-                sd += H(np.absolute(X[k, n])) ** 2
+            if window == 0:
+                sd += H(np.absolute(X[k, window])) ** 2
             else:
-                sd += H(np.absolute(X[k, n]) - np.absolute(X[k, n - 1])) ** 2
+                sd += H(np.absolute(X[k, window]) - np.absolute(X[k, window - 1])) ** 2
 
         all_sd_values = np.append(all_sd_values, sd)
 
@@ -185,9 +186,10 @@ def _spectral_difference(X):
 
 def _phase_deviation(X):
     """
-    A detection function meant to reduce the input audio signal to a version more suitable for detecting note onsets.
-    Uses the principle that the phase between two audio waves changes drastically between notes (even if the same note
-    if played repeatedly). Approach outlined in part III, section A3 of this paper:
+    A detection function meant to reduce the input audio signal to a version more suitable for
+    detecting note onsets. Uses the principle that the phase between two audio waves changes
+    drastically between notes (even if the same note if played repeatedly). Approach outlined in
+    part III, section A3 of this paper:
     drive.google.com/file/d/0B2SQvWn0_78BNHhaOGx1dmpxQlE/view?resourcekey=0-N4pDrco3dEPZzA6hJ1Giqg
 
     This function presents an alternative to the _spectral_difference function that looks
@@ -310,23 +312,23 @@ def _freq_for_note(X, sample_rate, n_start, n_stop):
     return freq_resolution * freq_bin
 
 
-def _k_at_window(X, n):
+def _k_at_window(stft, idx):
     """
     Determine the frequency bin k of that has the most energy at a given window of an STFT.
 
-    :param X: A 2D NumPy array representing the STFT of some 1D signal.
-    :param n: An int representing a window (time) index.
+    :param stft: A 2D NumPy array representing the STFT of some 1D signal.
+    :param idx: An int representing a window (time) index.
 
     :return: An int representing the frequency bin k that has the most energy in a particular
     window of the STFT.
     """
 
-    window_size = X.shape[0]
+    window_size = stft.shape[0]
 
     all_k_values = np.array([])
 
-    for ik in range(window_size):
-        all_k_values = np.append(all_k_values, np.absolute(X[ik, n]) ** 2)
+    for window in range(window_size):
+        all_k_values = np.append(all_k_values, np.absolute(stft[window, idx]) ** 2)
 
     max_energy = np.amax(all_k_values)
     max_k_index = all_k_values.tolist().index(max_energy)
@@ -345,12 +347,12 @@ def add_chords(audio_samples, root_note):
 
     :return: A new NumPy array reflecting the constructed chord.
     """
-    F4 = NOTE_FREQS['F4']
+    f4_note = NOTE_FREQS['F4']
     new_audio_samples = audio_samples.copy()
 
     fund_freq = NOTE_FREQS[root_note]
 
-    if fund_freq < F4:
+    if fund_freq < f4_note:
         # minor chord
         # ratio of third note from fundamental frequency divided by fundamental frequency
         second_freq_factor = 1.19

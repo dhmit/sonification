@@ -1,6 +1,8 @@
 """
 Tests for the sonification web app.
 """
+# pylint: disable-msg=C0116
+# ignoring pylint's `missing-function-docstring` errors
 import io
 import base64
 import cv2 as cv

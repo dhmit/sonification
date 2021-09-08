@@ -4,16 +4,15 @@ Miscellaneous utility functions useful throughout the system
 import base64
 import io
 import string
-from scipy.io import wavfile
 from textwrap import dedent
+from scipy.io import wavfile
 
 # reference: https://wiki.hydrogenaud.io/index.php?title=Sampling_rate
 SAMPLE_CONVERSION_VAL = 32767
 DEFAULT_SAMPLE_RATE = 44100
 MUSICAL_CHARS = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
 
-# Ratios found from Wikipedia
-# (https://en.wikipedia.org/wiki/Consonance_and_dissonance#/media/File:Dyadic_harmonic_entropy_graph_(optimized_for_low_resolution).png)
+# Ratios found from Wikipedia https://tinyurl.com/56cj5rh5 (wiki link that's too long)
 DISSONANT_RATIOS = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
 NEUTRAL_RATIOS = [(3, 4), (3, 5), (4, 5)]
 CONSONANT_RATIOS = [(1, 2), (2, 3)]
@@ -21,7 +20,8 @@ CONSONANT_RATIOS = [(1, 2), (2, 3)]
 SHORT_NOTE_DURATION = 0.2
 LONG_NOTE_DURATION = 0.8
 
-# Dictionary copied from the table in this web page: <https://pages.mtu.edu/~suits/notefreqs.html>
+# Dictionary copied from the table in this web page:
+# <https://pages.mtu.edu/~suits/notefreqs.html>
 NOTE_FREQS = {
     'C0': 16.35,
     'C#0/Db0': 17.32,
@@ -147,7 +147,7 @@ NOTE_FREQ_SIMPLE = {
 def wav_to_base64(byte_array, sample_rate):
     """
     Encode the WAV byte array with base64
-    :param byte_array: NumPy array representing the list of samples (usually int16: 2 bytes per sample)
+    :param byte_array: NumPy array representing the list of samples (usually int16: 2 bytes/sample)
     :param sample_rate: int, the sampling rate in Hz
     :return: base64 encoding of the given array as a str
     """
@@ -169,7 +169,7 @@ def print_header(header_str):
 
 
 def clean_text(text):
-    # Lowercase, remove punctuation
+    """Lowercase, remove punctuation"""
     lower_case = text.lower()
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
     return cleaned_text

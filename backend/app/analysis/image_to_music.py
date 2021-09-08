@@ -1,14 +1,19 @@
+"""
+Methods for taking an image and returning music
+"""
+
 import numpy as np
 import cv2 as cv
-from ..common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE, wav_to_base64
-from ..analysis import encoders as encode
-from ..analysis import synthesizers as synths
+from app.common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE, wav_to_base64
+from app.analysis import encoders as encode
+from app.analysis import synthesizers as synths
 
 
 def image_to_note(image):
     """
     :param image:
-    :return _wav_to_base64(audio, sample_rate): base64 encoding of a sound based on how negative or positive the text is
+    :return _wav_to_base64(audio, sample_rate):
+        base64 encoding of a sound based on how negative or positive the text is
     """
     note_freq = encode.brightness_to_freq(encode.get_histogram_avg(image))
 
@@ -29,27 +34,27 @@ def image_to_note(image):
     return audio
 
 
-def analyze_image(im):
+def analyze_image(img):
     """
-    :param im: .jpg image to be analyzed
+    :param img: .jpg image to be analyzed
     :return sound: sound created from this im
     """
     length_slice = 1 / 60  # in minutes
     num_slices = 5
     sample_rate = DEFAULT_SAMPLE_RATE
-    opencv_im = cv.imdecode(np.frombuffer(im.read(), np.uint8), cv.IMREAD_UNCHANGED)
-    instrument = synths.get_instrument(im)
+    opencv_im = cv.imdecode(np.frombuffer(img.read(), np.uint8), cv.IMREAD_UNCHANGED)
+    instrument = synths.get_instrument(img)
     brightness = encode.get_histogram_avg(opencv_im)
     frequency = encode.brightness_to_freq(brightness)
     tempos = encode.get_tempo_for_image(opencv_im, num_slices)
-    beats_and_durations = [(max(1, round(tempo * length_slice)), length_slice * 60 / round(tempo * length_slice)) for
-                           tempo in tempos]
+    beats_and_durations = [(max(1, round(tempo * length_slice)),
+                            length_slice * 60 / round(tempo * length_slice)) for tempo in tempos]
 
     full_audio = []
     for audio_slice in beats_and_durations:
         for _ in range(audio_slice[0]):
             notes = synths.generate_note(frequency, audio_slice[1], sample_rate)
-            for harmonic in instrument.keys():
+            for harmonic in instrument:
                 notes += synths.generate_note(frequency * harmonic, audio_slice[1], sample_rate)
 
             full_audio += notes.tolist()

@@ -1,10 +1,9 @@
-import random
 import numpy as np
 from nltk.tokenize import sent_tokenize
 
-from ..common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE, clean_text
-from ..analysis import encoders as encode
-from ..analysis import synthesizers as synths
+from app.common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE, clean_text
+from app.analysis import encoders as encode
+from app.analysis import synthesizers as synths
 
 
 def text_to_note(text):

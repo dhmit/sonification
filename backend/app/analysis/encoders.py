@@ -2,7 +2,7 @@ import random
 import cv2 as cv
 from nltk.sentiment.vader import SentimentIntensityAnalyzer
 
-from ..common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION
+from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION
 
 
 def hist_weighted_average(array):

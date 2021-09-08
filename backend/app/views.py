@@ -1,13 +1,16 @@
 """
 These view functions and classes implement both standard GET routes and API endpoints.
 
-GET routes produce largely empty HTML pages that expect a React component to attach to them and handle most view
-concerns. You can supply a few pieces of data in the render function's context argument to support this expectation.
+GET routes produce largely empty HTML pages that expect a React component to attach to them and
+handle most view concerns. You can supply a few pieces of data in the render function's context
+argument to support this expectation.
 
 Of particular use are the properties: page_metadata, component_props, and component_name:
-page_metadata: these values will be included in the page's <head> element. Currently, only the `title` property is used.
-component_props: these can be any properties you wish to pass into your React components as its highest-level props.
-component_name: this should reference the exact name of the React component you intend to load onto the page.
+page_metadata: these values will be included in the page's <head> element.
+Currently, only the `title` property is used. component_props: these can be any properties you
+wish to pass into your React components as its highest-level props.
+component_name: this should reference the exact name of the React component
+you intend to load onto the page.
 
 Example:
 context = {
@@ -24,26 +27,24 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 
-from .analysis import filters
+# from .analysis import filters
 
-# Uncomment this import statement once image_to_music.py is merged in!
-from .analysis.image_to_music import analyze_image
+from app.analysis.image_to_music import analyze_image
 
-
-from .analysis.sentiment_analysis import text_to_sound
-from .analysis.text_to_music import (text_to_note, sonify_text)
-from .common import wav_to_base64
+from app.analysis.sentiment_analysis import text_to_sound
+from app.analysis.text_to_music import text_to_note, sonify_text
+from app.common import wav_to_base64
 
 
 @api_view(['GET'])
-def get_example(request, example_id):
+def get_example(request, ex_id):
     """
     API example endpoint.
     """
 
     data = {
         'name': 'Example',
-        'id': example_id,
+        'id': ex_id,
     }
     return Response(data)
 
@@ -77,7 +78,7 @@ def example(request):
     return render(request, 'index.html', context)
 
 
-def example_id(request, example_id):
+def example_id(request, ex_id):
     """
     Example ID page
     """
@@ -87,7 +88,7 @@ def example_id(request, example_id):
             'title': 'Example ID page'
         },
         'component_props': {
-            'id': example_id
+            'id': ex_id
         },
         'component_name': 'ExampleId'
     }
@@ -163,6 +164,9 @@ def get_sentiment_analysis_2(request):
 
 
 def image_analysis(request):
+    """
+    API endpoint for image analysis
+    """
     context = {
         'page_metadata': {
             'title': 'Image Analysis'

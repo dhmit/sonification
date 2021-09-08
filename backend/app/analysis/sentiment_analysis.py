@@ -13,7 +13,8 @@ def text_to_sound(user_text):
     <https://towardsdatascience.com/music-in-python-2f054deb41f4>.
 
     :param user_text: A str representing some input text
-    :return: A tuple of audio data containing an int16 NumPy array of samples and a sample rate in Hz (int).
+    :return: A tuple of audio data containing an int16 NumPy array of samples
+    and a sample rate in Hz (int).
     """
     A4 = 440
     sample_rate = 44100
@@ -26,8 +27,9 @@ def text_to_sound(user_text):
     sin_waves = []
 
     for each_sentence in all_sentences:
-        # the compound score ranges from -1 to 1, this shifts the score so that there is no negative score
-        # multiplying by 44 and rounding the score gives us a range of keys from 0 to 88
+        # the compound score ranges from -1 to 1, this shifts the score
+        # so that there is no negative score multiplying by 44 and rounding the score gives us
+        # a range of keys from 0 to 88
         score = round((nltk_analyzer.polarity_scores(each_sentence)['compound'] + 1) * 44)
 
         # formula calculates the frequency of a musical note using A4 as the base note

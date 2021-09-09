@@ -154,7 +154,7 @@ def get_notes(audio):
     return window_indices, sample_indices, root_notes
 
 
-def _spectral_difference(X):
+def _spectral_difference(stft_arr):
     """
     A detection function meant to reduce the input audio signal to a version more suitable
     for detecting note onsets. Uses the principle that the spectral content of an audio signal
@@ -162,29 +162,29 @@ def _spectral_difference(X):
     there is some "musical envelope" of a note, such as attack-sustain-decay-release (ASDR).
     Approach outlined in part III, section A2 of this paper:
     drive.google.com/file/d/0B2SQvWn0_78BNHhaOGx1dmpxQlE/view?resourcekey=0-N4pDrco3dEPZzA6hJ1Giqg
-    :param X: A 2D NumPy array representing the STFT of some 1D signal.
+    :param stft_arr: A 2D NumPy array representing the STFT of some 1D signal.
     :return: A 1D NumPy array of spectral difference values, one for each STFT window.
     """
     all_sd_values = np.array([])
 
-    H = lambda x: (x + np.absolute(x)) / 2
+    h_val = lambda x: (x + np.absolute(x)) / 2
 
-    window_size, num_windows = X.shape
+    window_size, num_windows = stft_arr.shape
 
     for window in range(num_windows):
-        sd = 0
+        sd_val = 0
         for k in range(window_size):
             if window == 0:
-                sd += H(np.absolute(X[k, window])) ** 2
+                sd_val += h_val(np.absolute(stft_arr[k, window])) ** 2
             else:
-                sd += H(np.absolute(X[k, window]) - np.absolute(X[k, window - 1])) ** 2
+                sd_val += h_val(
+                    np.absolute(stft_arr[k, window]) - np.absolute(stft_arr[k, window - 1])) ** 2
 
-        all_sd_values = np.append(all_sd_values, sd)
-
+        all_sd_values = np.append(all_sd_values, sd_val)
     return all_sd_values
 
 
-def _phase_deviation(X):
+def _phase_deviation(stft_arr):
     """
     A detection function meant to reduce the input audio signal to a version more suitable for
     detecting note onsets. Uses the principle that the phase between two audio waves changes
@@ -198,85 +198,86 @@ def _phase_deviation(X):
     Such a difference requires its own "peak-finding" function! See the paper attached in the
     docstring for other approaches (including some probabilistic methods!).
 
-    :param X: A 2D NumPy array representing the STFT of some 1D signal.
+    :param stft_arr: A 2D NumPy array representing the STFT of some 1D signal.
 
     :return: A 1D NumPy array representing the mean absolute phase deviation of a signal.
     """
 
     # unwrapped phase (in radians) of each coefficient in the STFT 2D list/array
     phase = np.unwrap(
-        np.angle(X, deg=False),
+        np.angle(stft_arr, deg=False),
         axis=-1
     )
 
-    def phi(k, n):
+    def phi(k_int, n_int):
         """
         Compute the second difference of the phase of some STFT coefficient by window (time index).
         Return the phase itself if n == 0.
 
-        :param k: An int representing the frequency bin of the STFT.
-        :param n: And int representing the window (time) index of the STFT.
+        :param k_int: An int representing the frequency bin of the STFT.
+        :param n_int: And int representing the window (time) index of the STFT.
         :return: A float representing the second difference of the phase.
         """
-        if n == 0:
-            return np.absolute(phase[k, n])
-        if n == 1:
-            return np.absolute(phase[k, n] - phase[k, n - 1])
+        if n_int == 0:
+            return np.absolute(phase[k_int, n_int])
+        if n_int == 1:
+            return np.absolute(phase[k_int, n_int] - phase[k_int, n_int - 1])
 
-        return np.absolute(phase[k, n] - phase[k, n - 1]) - np.absolute(
-            phase[k, n - 1] - phase[k, n - 2])
+        return np.absolute(phase[k_int, n_int] - phase[k_int, n_int - 1]) - np.absolute(
+            phase[k_int, n_int - 1] - phase[k_int, n_int - 2])
 
     deviations = np.array([])
 
-    window_size, num_windows = X.shape
+    window_size, num_windows = stft_arr.shape
 
-    for n in range(num_windows):
+    for window in range(num_windows):
         dev = 0
-        for k in range(window_size):
-            dev += phi(k, n)
+        for size in range(window_size):
+            dev += phi(size, window)
 
         deviations = np.append(deviations, dev / window_size)
 
     return deviations
 
 
-def _find_peaks(sd, min_spacing):
+def _find_peaks(sd_list, min_spacing):
     """
     A helper function for detecting peak values in a list of samples to help detect note onsets.
     This peak-finding function was designed for use with the spectral difference detection function;
     the phase deviation function likely needs a completely different "peak-finding" function
     (see plots of both to see the difference!).
 
-    :param sd: A 1D Python list of floats representing the spectral difference of some audio signal.
+    :param sd_list: A 1D Python list of floats representing the spectral difference of some audio
+    signal.
     :param min_spacing: A float representing the minimum distance in samples between peaks.
 
     :return: A Python list of ints representing the indices of peak values in sd
         (these should represent the windows in the original audio signal that contain note onsets).
     """
     all_peaks_indices = []
-    input_sd = sd[:]
+    input_sd = sd_list[:]
     len_sd = len(input_sd)
     mean_weight = 1
     median_weight = 1
-    m = 7
+    m_int = 7
     peak_weight = 0.05
     highest_peak = 0
 
-    for n in range(len_sd):
-        if n == 0:
+    for n_int in range(len_sd):
+        if n_int == 0:
             threshold = 0
         else:
-            threshold = (median_weight * np.median(sd[n - m:n]) +
-                         mean_weight * np.mean(sd[n - m:n]) +
+            threshold = (median_weight * np.median(sd_list[n_int - m_int:n_int]) +
+                         mean_weight * np.mean(sd_list[n_int - m_int:n_int]) +
                          peak_weight * highest_peak)
 
-        if input_sd[n] > threshold:
-            all_peaks_indices.append(n)
-            if input_sd[n] > highest_peak:
-                highest_peak = input_sd[n]
+        if input_sd[n_int] > threshold:
+            all_peaks_indices.append(n_int)
+            if input_sd[n_int] > highest_peak:
+                highest_peak = input_sd[n_int]
 
-            start = max(0, n - min_spacing)
-            end = min(n + min_spacing + 1, len_sd)
+            start = max(0, n_int - min_spacing)
+            end = min(n_int + min_spacing + 1, len_sd)
 
             for i in range(start, end):
                 input_sd[i] = 0
@@ -284,12 +285,12 @@ def _find_peaks(sd, min_spacing):
     return all_peaks_indices
 
 
-def _freq_for_note(X, sample_rate, n_start, n_stop):
+def _freq_for_note(stft_arr, sample_rate, n_start, n_stop):
     """
     Find the frequency that most likely corresponds with a note by targeting its fundamental
     frequency.
 
-    :param X: A 2D NumPy array representing the STFT of some 1D signal.
+    :param stft_arr: A 2D NumPy array representing the STFT of some 1D signal.
     :param sample_rate: An int representing the sampling rate corresponding to the STFT,
     recorded in Hz.
     :param n_start: An int representing the starting window index for a particular note.
@@ -297,13 +298,13 @@ def _freq_for_note(X, sample_rate, n_start, n_stop):
 
     :return: An float representing the fundamental frequency of the note in Hz
     """
-    window_size = X.shape[0]
+    window_size = stft_arr.shape[0]
     freq_resolution = sample_rate / window_size
 
     k_candidates = np.array([])
 
-    for n in range(n_start, n_stop):
-        k_candidates = np.append(k_candidates, _k_at_window(X, n))
+    for n_curr in range(n_start, n_stop):
+        k_candidates = np.append(k_candidates, _k_at_window(stft_arr, n_curr))
 
     k_winners, _ = mode(k_candidates)
 
@@ -312,23 +313,23 @@ def _freq_for_note(X, sample_rate, n_start, n_stop):
     return freq_resolution * freq_bin
 
 
-def _k_at_window(stft, idx):
+def _k_at_window(stft_arr, idx):
     """
     Determine the frequency bin k of that has the most energy at a given window of an STFT.
 
-    :param stft: A 2D NumPy array representing the STFT of some 1D signal.
+    :param stft_arr: A 2D NumPy array representing the STFT of some 1D signal.
     :param idx: An int representing a window (time) index.
 
     :return: An int representing the frequency bin k that has the most energy in a particular
     window of the STFT.
     """
 
-    window_size = stft.shape[0]
+    window_size = stft_arr.shape[0]
 
     all_k_values = np.array([])
 
     for window in range(window_size):
-        all_k_values = np.append(all_k_values, np.absolute(stft[window, idx]) ** 2)
+        all_k_values = np.append(all_k_values, np.absolute(stft_arr[window, idx]) ** 2)
 
     max_energy = np.amax(all_k_values)
     max_k_index = all_k_values.tolist().index(max_energy)

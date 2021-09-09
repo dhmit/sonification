@@ -1,8 +1,8 @@
 import random
 import cv2 as cv
 
-from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION, DEFAULT_SAMPLE_RATE, \
-    NUM_OF_PIANO_KEYS, hack_add_one
+from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION, \
+    NUM_OF_PIANO_KEYS
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 
@@ -52,8 +52,7 @@ def get_tempo_for_image_slice(image_slice):
 def get_tempo_for_image(img_array, num_slices):
     num_rows = img_array.shape[0]
     num_cols = img_array.shape[1]
-    if num_slices > num_cols:
-        num_slices = num_cols
+    num_slices = min(num_slices, num_cols)
     slice_width = num_cols // num_slices
     remainder = num_cols - (slice_width * num_slices)
 

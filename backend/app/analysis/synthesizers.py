@@ -35,13 +35,13 @@ trombone_overtones = {
 }
 
 
-def get_instrument(im):
+def get_instrument(img):
     """
     Chooses an instrument to synthesize based off of the dominant color in the image
-    :param im: image object
+    :param img: image object
     :return: Dict instance that contains harmonics and relative amplitudes
     """
-    color_thief_obj = ColorThief(im)
+    color_thief_obj = ColorThief(img)
     rgb_tuple = color_thief_obj.get_color(quality=2)
 
     if max(rgb_tuple) == rgb_tuple[0]:
@@ -81,6 +81,7 @@ def calculate_note_frequency(base_frequency, rounding_frequency, positivity_diff
 
 
 def generate_note(frequency, duration, sample_rate):
+    # pylint: disable-msg=R0914
     """
     Uses the ADSR (Attack, Decay, Sustain, Release) envelope to
     generate a note that fades in and out realistically
@@ -177,7 +178,7 @@ def sonify(notes, durations, sentiment, sample_rate):
     quieter_note_loudness = 0.6
     audio = []
 
-    for index in range(len(notes)):
+    for index, _ in enumerate(notes):
         duration = durations[index]
         louder_note_freq = lookup_note_frequency(notes[index])
         quieter_note_freq = get_note_frequency(sentiment, louder_note_freq)

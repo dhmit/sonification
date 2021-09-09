@@ -6,7 +6,7 @@ Under no circumstances run the server with these settings in production!
 
 """
 
-from .base import *  # pylint: disable=unused-wildcard-import, wildcard-import
+from config.settings.base import *  # pylint: disable=unused-wildcard-import, wildcard-import
 
 
 # SECURITY WARNING: keep the secret key used in production secret!

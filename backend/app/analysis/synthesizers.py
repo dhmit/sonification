@@ -1,3 +1,7 @@
+"""
+Methods for turning data into sound!
+"""
+
 import random
 import numpy as np
 from colorthief import ColorThief

@@ -1,3 +1,6 @@
+"""
+Transform text to sound
+"""
 import numpy as np
 from nltk.tokenize import sent_tokenize
 

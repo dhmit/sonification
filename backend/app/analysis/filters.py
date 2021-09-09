@@ -46,6 +46,8 @@ def apply_filter(audio, filter_function, **kwargs):
 
 
 def get_notes(audio):
+    # pylint: disable-msg=R0914
+    # TODO: refactor, add comments, remove above warning
     """
     Find the window and sample indices that represent note onsets and the corresponding note names.
     This method was inspired from lab 9 of MIT's 6.003 as taught in the spring 2021 semester:
@@ -139,12 +141,16 @@ def get_notes(audio):
         sample_indices.append(i * hop_size)
 
     root_notes = []
+
+    def abs_diff(fund_freq_var):
+        return lambda note: abs(fund_freq_var - NOTE_FREQS[note])
+
     for i in range(len(window_indices) - 1):
         n_start = window_indices[i]
         n_end = window_indices[i + 1]
 
         fund_freq = _freq_for_note(stft_signal, sample_rate, n_start, n_end)
-        root_note = sorted(NOTE_FREQS.keys(), key=lambda note: abs(fund_freq - NOTE_FREQS[note]))[0]
+        root_note = sorted(NOTE_FREQS.keys(), key=abs_diff(fund_freq))[0]
         root_notes.append(root_note)
 
     fund_freq = _freq_for_note(stft_signal, sample_rate, window_indices[-1], num_windows)

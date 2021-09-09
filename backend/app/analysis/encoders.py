@@ -1,3 +1,6 @@
+"""
+Methods for encoding inputted media (image, text)
+"""
 import random
 import cv2 as cv
 
@@ -50,6 +53,11 @@ def get_tempo_for_image_slice(image_slice):
 
 
 def get_tempo_for_image(img_array, num_slices):
+    """
+    :param img_array:
+    :param num_slices:
+    :return:
+    """
     num_rows = img_array.shape[0]
     num_cols = img_array.shape[1]
     num_slices = min(num_slices, num_cols)

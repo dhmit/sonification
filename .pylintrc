@@ -72,7 +72,8 @@ disable=
     consider-using-get,
     chained-comparison,
     unnecessary-pass,
-
+    C0103, # variable names too short
+    C0114, # missing module docstring
 
 [REPORTS]
 

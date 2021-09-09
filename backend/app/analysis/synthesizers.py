@@ -67,6 +67,19 @@ def get_ratios_from_sentiment(sentiment):
         return DISSONANT_RATIOS
 
 
+def calculate_note_frequency(base_frequency, rounding_frequency, positivity_differential,
+                             neutral_score):
+    """
+    TODO: define function string
+    :param base_frequency:
+    :param rounding_frequency:
+    :param positivity_differential:
+    :param neutral_score:
+    :return:
+    """
+    return base_frequency + positivity_differential * rounding_frequency * neutral_score
+
+
 def generate_note(frequency, duration, sample_rate):
     """
     Uses the ADSR (Attack, Decay, Sustain, Release) envelope to
@@ -105,22 +118,37 @@ def generate_note(frequency, duration, sample_rate):
     return note
 
 
-def get_note_frequency(sentiment=None, note_or_freq=None):
+def lookup_note_frequency(note):
+    """
+    :param note: letter (a-g)
+    :return: float
+    """
+    if note in NOTE_FREQ_SIMPLE:
+        return NOTE_FREQ_SIMPLE[note]
+    else:
+        raise Exception(f"Error: {note} not found in {set(NOTE_FREQ_SIMPLE.keys())}")
+
+
+def get_note_frequency(sentiment=None, frequency=None):
     """
     :param sentiment: Either None or dict of negative, positive, neutral, and compound values
-    :param note_or_freq: Either a note like 'd' or a float, frequency of a given note
-    :return return a frequency found either from note_freq dict or frequency passed in  and a randomized ratio
+    :param frequency: a float
+    :return return a new frequency modified by a ratio (which is based on sentiment)
     """
-    # if letter, it should exist in our NOTE_FREQ_SIMPLE dict
-    if str(note_or_freq).isalpha():
-        return NOTE_FREQ_SIMPLE[note_or_freq]
-
-    # otherwise, we expect it to be a float. We want to create a new frequency.
     ratios = get_ratios_from_sentiment(sentiment)
 
     ratio = random.choices(ratios)[0]
-    frequency = note_or_freq * ratio[0] / ratio[1]
-    return frequency
+    new_frequency = apply_ratio_to_frequency(ratio, frequency)
+    return new_frequency
+
+
+def apply_ratio_to_frequency(ratio, frequency):
+    """
+    :param ratio: tuple
+    :param frequency: float
+    :return: new frequency
+    """
+    return frequency * ratio[0] / ratio[1]
 
 
 def get_notes_from_text(text):
@@ -162,8 +190,8 @@ def sonify(notes, durations, sentiment, sample_rate):
 
     for index in range(len(notes)):
         duration = durations[index]
-        louder_note_freq = get_note_frequency(note_or_freq=notes[index])
-        quieter_note_freq = get_note_frequency(sentiment=sentiment, note_or_freq=louder_note_freq)
+        louder_note_freq = lookup_note_frequency(notes[index])
+        quieter_note_freq = get_note_frequency(sentiment=sentiment, frequency=louder_note_freq)
 
         time_steps = np.linspace(0, duration, int(duration * sample_rate), False)
         louder_note = np.sin(louder_note_freq * time_steps * 2 * np.pi).tolist()

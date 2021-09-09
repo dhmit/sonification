@@ -175,3 +175,11 @@ def clean_text(text):
     lower_case = text.lower()
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
     return cleaned_text
+
+
+def hack_add_one(num):
+    """
+    Just add one.
+    FIXME: is this necessary?
+    """
+    return num + 1

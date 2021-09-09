@@ -1,7 +1,7 @@
 import numpy as np
 from nltk.tokenize import sent_tokenize
 
-from app.common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE, clean_text
+from app.common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE, clean_text, hack_add_one
 from app.analysis import encoders as encode
 from app.analysis import synthesizers as synths
 
@@ -14,7 +14,14 @@ def text_to_note(text):
     """
     cleaned_text = clean_text(text)
     sentiment = encode.get_sentiment(cleaned_text)
-    note_freq = encode.get_note_freq_from_sentiment(sentiment)
+
+    pos_diff = encode.get_pos_diff_from_sentiment(sentiment)
+    updated_neutral = hack_add_one(sentiment["neu"])
+    base_frequency = 400
+    rounding_frequency = 350
+
+    note_frequency = synths.calculate_note_frequency(base_frequency, rounding_frequency, pos_diff,
+                                               updated_neutral)
 
     # get time steps for the sample
     sample_rate = DEFAULT_SAMPLE_RATE
@@ -22,7 +29,7 @@ def text_to_note(text):
     time_steps = np.linspace(0, note_duration, note_duration * sample_rate, False)
 
     # generate sine wave notes
-    note = np.sin(note_freq * time_steps * 2 * np.pi)
+    note = np.sin(note_frequency * time_steps * 2 * np.pi)
 
     # concatenate notes
     audio = note

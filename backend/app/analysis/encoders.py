@@ -2,10 +2,9 @@ import random
 import cv2 as cv
 
 from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION, DEFAULT_SAMPLE_RATE, \
-    NUM_OF_PIANO_KEYS
+    NUM_OF_PIANO_KEYS, hack_add_one
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
-import numpy as np
 
 nltk.download('punkt')
 nltk.download('vader_lexicon')
@@ -89,17 +88,12 @@ def get_sentiment(text):
     return SentimentIntensityAnalyzer().polarity_scores(text)
 
 
-def get_note_freq_from_sentiment(sentiment):
+def get_pos_diff_from_sentiment(sentiment):
     """
-    :param sentiment: Dict of negative, positive, neutral, and compound values
-    :return: Float, frequency for a note
+    :param sentiment: dict of negative, positive, neutral, and compound values
+    :return: pos minus neg float
     """
-    base_frequency = 400
-    rounding_frequency = 350
-    base_percentage = 1
-    positivity_differential = sentiment["pos"] - sentiment["neg"]
-    rounded_neutral_score = base_percentage + sentiment["neu"]
-    return base_frequency + positivity_differential * rounding_frequency * rounded_neutral_score
+    return sentiment["pos"] - sentiment["neg"]
 
 
 def get_durations_of_notes(notes):

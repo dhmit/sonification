@@ -2,7 +2,7 @@ import random
 import numpy as np
 from colorthief import ColorThief
 from app.common import MUSICAL_CHARS, NOTE_FREQ_SIMPLE, DISSONANT_RATIOS, NEUTRAL_RATIOS, \
-    CONSONANT_RATIOS, DEFAULT_SAMPLE_RATE, SAMPLE_CONVERSION_VAL
+    CONSONANT_RATIOS, DEFAULT_SAMPLE_RATE, SAMPLE_CONVERSION_VAL, lookup_note_frequency
 
 mc_list = list(MUSICAL_CHARS)
 
@@ -118,18 +118,7 @@ def generate_note(frequency, duration, sample_rate):
     return note
 
 
-def lookup_note_frequency(note):
-    """
-    :param note: letter (a-g)
-    :return: float
-    """
-    if note in NOTE_FREQ_SIMPLE:
-        return NOTE_FREQ_SIMPLE[note]
-    else:
-        raise Exception(f"Error: {note} not found in {set(NOTE_FREQ_SIMPLE.keys())}")
-
-
-def get_note_frequency(sentiment=None, frequency=None):
+def get_note_frequency(sentiment, frequency):
     """
     :param sentiment: Either None or dict of negative, positive, neutral, and compound values
     :param frequency: a float
@@ -191,7 +180,7 @@ def sonify(notes, durations, sentiment, sample_rate):
     for index in range(len(notes)):
         duration = durations[index]
         louder_note_freq = lookup_note_frequency(notes[index])
-        quieter_note_freq = get_note_frequency(sentiment=sentiment, frequency=louder_note_freq)
+        quieter_note_freq = get_note_frequency(sentiment, louder_note_freq)
 
         time_steps = np.linspace(0, duration, int(duration * sample_rate), False)
         louder_note = np.sin(louder_note_freq * time_steps * 2 * np.pi).tolist()

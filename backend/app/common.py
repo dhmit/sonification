@@ -183,3 +183,14 @@ def hack_add_one(num):
     FIXME: is this necessary?
     """
     return num + 1
+
+
+def lookup_note_frequency(note):
+    """
+    :param note: letter (a-g)
+    :return: float
+    """
+    if note in NOTE_FREQ_SIMPLE:
+        return NOTE_FREQ_SIMPLE[note]
+    else:
+        raise Exception(f"Error: {note} not found in note dict")

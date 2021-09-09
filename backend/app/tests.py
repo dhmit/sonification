@@ -12,9 +12,9 @@ from django.test import TestCase
 from rest_framework.test import APITestCase
 from rest_framework import status
 
+from app import common
 from app.analysis import filters
 from app.analysis.text_to_music import sonify_text_2
-from app.common import NOTE_FREQS, clean_text, wav_to_base64
 from app.analysis import encoders as encode
 from app.analysis import synthesizers as synths
 
@@ -66,21 +66,21 @@ class TextToMusicTestCase(TestCase):
         sentence3 = "This ice cream tastes bad and I am disappointed."
         sentiment3 = {'neg': 0.524, 'neu': 0.476, 'pos': 0.0, 'compound': -0.765}
         sentence4 = "This ice ;cream taSt,,es bad AN.d I am ,,,     disappointed."
-        self.assertEqual(encode.get_sentiment(clean_text(sentence1)), sentiment1)
-        self.assertEqual(encode.get_sentiment(clean_text(sentence2)), sentiment2)
-        self.assertEqual(encode.get_sentiment(clean_text(sentence3)), sentiment3)
-        self.assertEqual(encode.get_sentiment(clean_text(sentence4)), sentiment3)
+        self.assertEqual(encode.get_sentiment(common.clean_text(sentence1)), sentiment1)
+        self.assertEqual(encode.get_sentiment(common.clean_text(sentence2)), sentiment2)
+        self.assertEqual(encode.get_sentiment(common.clean_text(sentence3)), sentiment3)
+        self.assertEqual(encode.get_sentiment(common.clean_text(sentence4)), sentiment3)
 
-    def test_generate_note_frequency(self):
+    def test_get_note_frequency(self):
         """
-        Tests the function _generate_note_frequency from text_to_music.py
+        Tests the function get_note_frequency from synthesizers.py
         """
         pos_score = 0.3
         neu_score = 0.5
         neg_score = 0.2
         sentiment = {'pos': pos_score, 'neg': neg_score, 'neu': neu_score}
         frequency = 452.5
-        self.assertEqual(encode.get_note_freq_from_sentiment(sentiment), frequency)
+        self.assertTrue(isinstance(synths.get_note_frequency(sentiment, frequency), float))
 
     def test_get_ratios_from_sentiment(self):
         """
@@ -145,7 +145,7 @@ class WavToBase64TestCase(TestCase):
         num_channels = 1
         constant = (sample_rate * bits_per_sample * num_channels) // 8
 
-        results = wav_to_base64(data, sample_rate)
+        results = common.wav_to_base64(data, sample_rate)
         self.assertTrue(isinstance(results, str))
         encoded_data = base64.b64decode(results.encode('UTF-8'))
         self.assertTrue(isinstance(encoded_data, bytes))
@@ -164,7 +164,7 @@ class WavToBase64TestCase(TestCase):
         constant = (sample_rate * bits_per_sample * num_channels) // 8
         self.assertEqual(constant, sample_rate)
 
-        results = wav_to_base64(data, sample_rate)
+        results = common.wav_to_base64(data, sample_rate)
         self.assertTrue(isinstance(results, str))
         encoded_data = base64.b64decode(results.encode('UTF-8'))
         self.assertTrue(isinstance(encoded_data, bytes))
@@ -301,7 +301,7 @@ class FiltersTestCase(TestCase):
         # and transposed audio, thus leading to a different ordering of note frequencies.
         # The `change_pitch` function demands a second look!
         # for root_note, risen_note in zip(root_notes, risen_notes):
-        #     self.assertLess(NOTE_FREQS[root_note], NOTE_FREQS[risen_note])
+        #     self.assertLess(common.NOTE_FREQS[root_note], common.NOTE_FREQS[risen_note])
 
         audio_data = sonify_text_2('On my way home from school, I ran into a wall. I broke my '
                                    'glasses and hurt my head. I was really upset. My mom is mad '
@@ -316,7 +316,7 @@ class FiltersTestCase(TestCase):
         lowered_notes = filters.get_notes(res)[2]
         self.assertLessEqual(abs(res[0].size - audio_data[0].size), 50)
         for root_note, lowered_note in zip(root_notes, lowered_notes):
-            self.assertGreater(NOTE_FREQS[root_note], NOTE_FREQS[lowered_note])
+            self.assertGreater(common.NOTE_FREQS[root_note], common.NOTE_FREQS[lowered_note])
 
         audio_data = sonify_text_2('This is neutral.')
         expected_sample_rate = 44100
@@ -441,3 +441,23 @@ class ImageAnalysisAPITests(APITestCase):
         self.assertTrue(isinstance(response.data['sound'], str))
         encoded_data = base64.b64decode(response.data['sound'].encode('UTF-8'))
         self.assertTrue(isinstance(encoded_data, bytes))
+
+
+class CommonTestCase(TestCase):
+    """Test case for common methods"""
+
+    def test_clean_text(self):
+        text = "Hello!!!! How was your day?!"
+        self.assertEqual(common.clean_text(text), "hello how was your day")
+        text = "......ooOOOoooOOOOoooo......"
+        self.assertEqual(common.clean_text(text), "oooooooooooooooo")
+
+    def test_hack_add_one(self):
+        num = 1
+        self.assertEqual(common.hack_add_one(num), 2)
+        num = 2
+        self.assertEqual(common.hack_add_one(num), 3)
+
+    def test_lookup_note_frequency(self):
+        note = 'a'
+        self.assertEqual(common.lookup_note_frequency(note), 440.00)

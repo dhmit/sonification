@@ -3,7 +3,7 @@ name: CI
 on:
   push:
     branches:
-      - master
+      - main
       - '*_CI'  # run on branches suffixed with _CI
   pull_request:
     branches:

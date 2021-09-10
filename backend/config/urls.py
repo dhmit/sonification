@@ -27,7 +27,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API endpoints
-    path('api/example/<int:example_id>', views.get_example),
+    path('api/example/<int:api_example_id>', views.get_example),
     path('api/get_sentiment_analysis', views.get_sentiment_analysis),
     path('api/get_sentiment_analysis_2', views.get_sentiment_analysis_2),
     path('api/image_to_music', views.image_to_music),

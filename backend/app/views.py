@@ -36,14 +36,14 @@ from app.common import wav_to_base64
 
 
 @api_view(['GET'])
-def get_example(request, ex_id):
+def get_example(request, example_id):
     """
     API example endpoint.
     """
 
     data = {
         'name': 'Example',
-        'id': ex_id,
+        'id': example_id,
     }
     return Response(data)
 

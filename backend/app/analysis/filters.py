@@ -6,8 +6,7 @@ All filters assume mono tracks (vs stereo) for audio input.
 import warnings
 
 import numpy as np
-import matplotlib.pyplot as plt
-from scipy.signal import stft, spectrogram
+from scipy.signal import stft
 from scipy.stats import mode
 
 from ..common import NOTE_FREQS
@@ -24,14 +23,15 @@ def apply_filter(audio, filter_function, **kwargs):
     """
     samples, sample_rate = audio
 
-    window_indices, sample_indices, root_notes = get_notes(audio)
+    _, sample_indices, root_notes = get_notes(audio)
 
     # Uncomment to see detected notes in the terminal
-    # print(f'Note slice indices: {sample_indices}', f'Corresponding root notes: {root_notes}', sep='\n')
+    # print(f'Note slice indices: {sample_indices}',
+    #       f'Corresponding root notes: {root_notes}', sep='\n')
 
     new_samples = np.array([], dtype=samples.dtype)
 
-    for i in range(len(sample_indices)):
+    for i, _ in enumerate(sample_indices):
         if hasattr(filter_function, 'uses_freq') and filter_function.uses_freq:
             kwargs['root_note'] = root_notes[i]
 
@@ -46,17 +46,20 @@ def apply_filter(audio, filter_function, **kwargs):
 
 
 def get_notes(audio):
+    # pylint: disable-msg=R0914
+    # TODO: refactor, add comments, remove above warning
     """
-    Find the window and sample indices that represent note onsets as well as the corresponding note names.
+    Find the window and sample indices that represent note onsets and the corresponding note names.
     This method was inspired from lab 9 of MIT's 6.003 as taught in the spring 2021 semester:
     <https://sigproc.mit.edu/spring21/psets/09/resynthesis>.
 
-    Convention: The sample indices are computed from the beginning of each window in which a note onset is detected.
+    Convention: The sample indices are computed from the beginning
+    of each window in which a note onset is detected.
 
     :param audio: A tuple containing a 1D NumPy array (of samples) and a sample rate (in Hz).
 
-    :return: A tuple of two lists, one of window indices and one of sample indices, both of which correspond to
-        note onsets.
+    :return: A tuple of two lists, one of window indices and one of sample indices,
+        both of which correspond to note onsets.
     """
     audio_samples, sample_rate = audio
     if sample_rate <= 0:
@@ -83,7 +86,7 @@ def get_notes(audio):
     hop_size = int(nperseg * .75)
     noverlap = nperseg - hop_size
 
-    samp_freqs, samp_times, stft_signal = stft(
+    _, _, stft_signal = stft(
         audio_samples,
         sample_rate,
         window='hann',
@@ -91,10 +94,11 @@ def get_notes(audio):
         noverlap=noverlap,
         return_onesided=False
     )
-    window_size, num_windows = stft_signal.shape
+    _, num_windows = stft_signal.shape
 
     # Code to create a spectrogram, the squared magnitude of the STFT (for plotting):
-    # With the exception of return_onesided, the parameters in the stft and spectrogram functions should match up!
+    # With the exception of return_onesided, the parameters in the stft
+    # and spectrogram functions should match up!
     # samp_freqs_spec, samp_times_spec, spec = spectrogram(
     #     audio_samples,
     #     sample_rate,
@@ -137,12 +141,16 @@ def get_notes(audio):
         sample_indices.append(i * hop_size)
 
     root_notes = []
+
+    def abs_diff(fund_freq_var):
+        return lambda note: abs(fund_freq_var - NOTE_FREQS[note])
+
     for i in range(len(window_indices) - 1):
         n_start = window_indices[i]
         n_end = window_indices[i + 1]
 
         fund_freq = _freq_for_note(stft_signal, sample_rate, n_start, n_end)
-        root_note = sorted(NOTE_FREQS.keys(), key=lambda note: abs(fund_freq - NOTE_FREQS[note]))[0]
+        root_note = sorted(NOTE_FREQS.keys(), key=abs_diff(fund_freq))[0]
         root_notes.append(root_note)
 
     fund_freq = _freq_for_note(stft_signal, sample_rate, window_indices[-1], num_windows)
@@ -152,126 +160,130 @@ def get_notes(audio):
     return window_indices, sample_indices, root_notes
 
 
-def _spectral_difference(X):
+def _spectral_difference(stft_arr):
     """
-    A detection function meant to reduce the input audio signal to a version more suitable for detecting note onsets.
-    Uses the principle that the spectral content of an audio signal increases in amplitude and varies drastically with
-    the onset of a new note. Works best when there is some "musical envelope" of a note, such as
-    attack-sustain-decay-release (ASDR). Approach outlined in part III, section A2 of this paper:
-    https://drive.google.com/file/d/0B2SQvWn0_78BNHhaOGx1dmpxQlE/view?resourcekey=0-N4pDrco3dEPZzA6hJ1Giqg
-
-    :param X: A 2D NumPy array representing the STFT of some 1D signal.
-
+    A detection function meant to reduce the input audio signal to a version more suitable
+    for detecting note onsets. Uses the principle that the spectral content of an audio signal
+    increases in amplitude and varies drastically with the onset of a new note. Works best when
+    there is some "musical envelope" of a note, such as attack-sustain-decay-release (ASDR).
+    Approach outlined in part III, section A2 of this paper:
+    drive.google.com/file/d/0B2SQvWn0_78BNHhaOGx1dmpxQlE/view?resourcekey=0-N4pDrco3dEPZzA6hJ1Giqg
+    :param stft_arr: A 2D NumPy array representing the STFT of some 1D signal.
     :return: A 1D NumPy array of spectral difference values, one for each STFT window.
     """
     all_sd_values = np.array([])
 
-    H = lambda x: (x + np.absolute(x)) / 2
+    h_val = lambda x: (x + np.absolute(x)) / 2
 
-    window_size, num_windows = X.shape
+    window_size, num_windows = stft_arr.shape
 
-    for n in range(num_windows):
-        sd = 0
+    for window in range(num_windows):
+        sd_val = 0
         for k in range(window_size):
-            if n == 0:
-                sd += H(np.absolute(X[k, n])) ** 2
+            if window == 0:
+                sd_val += h_val(np.absolute(stft_arr[k, window])) ** 2
             else:
-                sd += H(np.absolute(X[k, n]) - np.absolute(X[k, n - 1])) ** 2
+                sd_val += h_val(
+                    np.absolute(stft_arr[k, window]) - np.absolute(stft_arr[k, window - 1])) ** 2
 
-        all_sd_values = np.append(all_sd_values, sd)
-
+        all_sd_values = np.append(all_sd_values, sd_val)
     return all_sd_values
 
 
-def _phase_deviation(X):
+def _phase_deviation(stft_arr):
     """
-    A detection function meant to reduce the input audio signal to a version more suitable for detecting note onsets.
-    Uses the principle that the phase between two audio waves changes drastically between notes (even if the same note
-    if played repeatedly). Approach outlined in part III, section A3 of this paper:
-    <https://drive.google.com/file/d/0B2SQvWn0_78BNHhaOGx1dmpxQlE/view?resourcekey=0-N4pDrco3dEPZzA6hJ1Giqg>.
+    A detection function meant to reduce the input audio signal to a version more suitable for
+    detecting note onsets. Uses the principle that the phase between two audio waves changes
+    drastically between notes (even if the same note if played repeatedly). Approach outlined in
+    part III, section A3 of this paper:
+    drive.google.com/file/d/0B2SQvWn0_78BNHhaOGx1dmpxQlE/view?resourcekey=0-N4pDrco3dEPZzA6hJ1Giqg
 
-    This function presents an alternative to the _spectral_difference function that looks at the phase instead of
-    magnitude of each complex coefficient in the STFT. The results here do vary drastically at each note onset but in
-    a very different way (see graph). Such a difference requires its own "peak-finding" function! See the paper
-    attached in the docstring for other approaches (including some probabilistic methods!).
+    This function presents an alternative to the _spectral_difference function that looks
+    at the phase instead of magnitude of each complex coefficient in the STFT. The results here
+    do vary drastically at each note onset but in a very different way (see graph).
+    Such a difference requires its own "peak-finding" function! See the paper attached in the
+    docstring for other approaches (including some probabilistic methods!).
 
-    :param X: A 2D NumPy array representing the STFT of some 1D signal.
+    :param stft_arr: A 2D NumPy array representing the STFT of some 1D signal.
 
     :return: A 1D NumPy array representing the mean absolute phase deviation of a signal.
     """
 
     # unwrapped phase (in radians) of each coefficient in the STFT 2D list/array
     phase = np.unwrap(
-        np.angle(X, deg=False),
+        np.angle(stft_arr, deg=False),
         axis=-1
     )
 
-    def phi(k, n):
+    def phi(k_int, n_int):
         """
         Compute the second difference of the phase of some STFT coefficient by window (time index).
         Return the phase itself if n == 0.
 
-        :param k: An int representing the frequency bin of the STFT.
-        :param n: And int representing the window (time) index of the STFT.
+        :param k_int: An int representing the frequency bin of the STFT.
+        :param n_int: And int representing the window (time) index of the STFT.
         :return: A float representing the second difference of the phase.
         """
-        if n == 0:
-            return np.absolute(phase[k, n])
-        if n == 1:
-            return np.absolute(phase[k, n] - phase[k, n - 1])
+        if n_int == 0:
+            return np.absolute(phase[k_int, n_int])
+        if n_int == 1:
+            return np.absolute(phase[k_int, n_int] - phase[k_int, n_int - 1])
 
-        return np.absolute(phase[k, n] - phase[k, n - 1]) - np.absolute(phase[k, n - 1] - phase[k, n - 2])
+        return np.absolute(phase[k_int, n_int] - phase[k_int, n_int - 1]) - np.absolute(
+            phase[k_int, n_int - 1] - phase[k_int, n_int - 2])
 
     deviations = np.array([])
 
-    window_size, num_windows = X.shape
+    window_size, num_windows = stft_arr.shape
 
-    for n in range(num_windows):
+    for window in range(num_windows):
         dev = 0
-        for k in range(window_size):
-            dev += phi(k, n)
+        for size in range(window_size):
+            dev += phi(size, window)
 
         deviations = np.append(deviations, dev / window_size)
 
     return deviations
 
 
-def _find_peaks(sd, min_spacing):
+def _find_peaks(sd_list, min_spacing):
     """
     A helper function for detecting peak values in a list of samples to help detect note onsets.
-    This peak-finding function was designed for use with the spectral difference detection function; the phase deviation
-    function likely needs a completely different "peak-finding" function (see plots of both to see the difference!).
+    This peak-finding function was designed for use with the spectral difference detection function;
+    the phase deviation function likely needs a completely different "peak-finding" function
+    (see plots of both to see the difference!).
 
-    :param sd: A 1D Python list of floats representing the spectral difference of some audio signal.
+    :param sd_list: A 1D Python list of floats representing the spectral difference of some audio
+    signal.
     :param min_spacing: A float representing the minimum distance in samples between peaks.
 
     :return: A Python list of ints representing the indices of peak values in sd
         (these should represent the windows in the original audio signal that contain note onsets).
     """
     all_peaks_indices = []
-    input_sd = sd[:]
+    input_sd = sd_list[:]
     len_sd = len(input_sd)
     mean_weight = 1
     median_weight = 1
-    m = 7
+    m_int = 7
     peak_weight = 0.05
     highest_peak = 0
 
-    for n in range(len_sd):
-        if n == 0:
+    for n_int in range(len_sd):
+        if n_int == 0:
             threshold = 0
         else:
-            threshold = (median_weight * np.median(sd[n - m:n]) +
-                         mean_weight * np.mean(sd[n - m:n]) +
+            threshold = (median_weight * np.median(sd_list[n_int - m_int:n_int]) +
+                         mean_weight * np.mean(sd_list[n_int - m_int:n_int]) +
                          peak_weight * highest_peak)
 
-        if input_sd[n] > threshold:
-            all_peaks_indices.append(n)
-            if input_sd[n] > highest_peak:
-                highest_peak = input_sd[n]
+        if input_sd[n_int] > threshold:
+            all_peaks_indices.append(n_int)
+            if input_sd[n_int] > highest_peak:
+                highest_peak = input_sd[n_int]
 
-            start = max(0, n - min_spacing)
-            end = min(n + min_spacing + 1, len_sd)
+            start = max(0, n_int - min_spacing)
+            end = min(n_int + min_spacing + 1, len_sd)
 
             for i in range(start, end):
                 input_sd[i] = 0
@@ -279,24 +291,26 @@ def _find_peaks(sd, min_spacing):
     return all_peaks_indices
 
 
-def _freq_for_note(X, sample_rate, n_start, n_stop):
+def _freq_for_note(stft_arr, sample_rate, n_start, n_stop):
     """
-    Find the frequency that most likely corresponds with a note by targeting its fundamental frequency.
+    Find the frequency that most likely corresponds with a note by targeting its fundamental
+    frequency.
 
-    :param X: A 2D NumPy array representing the STFT of some 1D signal.
-    :param sample_rate: An int representing the sampling rate corresponding to the STFT, recorded in Hz.
+    :param stft_arr: A 2D NumPy array representing the STFT of some 1D signal.
+    :param sample_rate: An int representing the sampling rate corresponding to the STFT,
+    recorded in Hz.
     :param n_start: An int representing the starting window index for a particular note.
     :param n_stop: A float representing the ending window index (exclusive) for a particular note.
 
     :return: An float representing the fundamental frequency of the note in Hz
     """
-    window_size = X.shape[0]
+    window_size = stft_arr.shape[0]
     freq_resolution = sample_rate / window_size
 
     k_candidates = np.array([])
 
-    for n in range(n_start, n_stop):
-        k_candidates = np.append(k_candidates, _k_at_window(X, n))
+    for n_curr in range(n_start, n_stop):
+        k_candidates = np.append(k_candidates, _k_at_window(stft_arr, n_curr))
 
     k_winners, _ = mode(k_candidates)
 
@@ -305,22 +319,23 @@ def _freq_for_note(X, sample_rate, n_start, n_stop):
     return freq_resolution * freq_bin
 
 
-def _k_at_window(X, n):
+def _k_at_window(stft_arr, idx):
     """
     Determine the frequency bin k of that has the most energy at a given window of an STFT.
 
-    :param X: A 2D NumPy array representing the STFT of some 1D signal.
-    :param n: An int representing a window (time) index.
+    :param stft_arr: A 2D NumPy array representing the STFT of some 1D signal.
+    :param idx: An int representing a window (time) index.
 
-    :return: An int representing the frequency bin k that has the most energy in a particular window of the STFT.
+    :return: An int representing the frequency bin k that has the most energy in a particular
+    window of the STFT.
     """
 
-    window_size = X.shape[0]
+    window_size = stft_arr.shape[0]
 
     all_k_values = np.array([])
 
-    for ik in range(window_size):
-        all_k_values = np.append(all_k_values, np.absolute(X[ik, n]) ** 2)
+    for window in range(window_size):
+        all_k_values = np.append(all_k_values, np.absolute(stft_arr[window, idx]) ** 2)
 
     max_energy = np.amax(all_k_values)
     max_k_index = all_k_values.tolist().index(max_energy)
@@ -330,7 +345,8 @@ def _k_at_window(X, n):
 
 def add_chords(audio_samples, root_note):
     """
-    A filter designed to build a chord upon a note, treated as the root of the chord. Chords are either major or minor
+    A filter designed to build a chord upon a note, treated as the root of the chord.
+    Chords are either major or minor
     triads depending on the fundamental frequency of the note (the cutoff frequency is F4).
 
     :param audio_samples: A 1D NumPy array representing a single note.
@@ -338,12 +354,12 @@ def add_chords(audio_samples, root_note):
 
     :return: A new NumPy array reflecting the constructed chord.
     """
-    F4 = NOTE_FREQS['F4']
+    f4_note = NOTE_FREQS['F4']
     new_audio_samples = audio_samples.copy()
 
     fund_freq = NOTE_FREQS[root_note]
 
-    if fund_freq < F4:
+    if fund_freq < f4_note:
         # minor chord
         # ratio of third note from fundamental frequency divided by fundamental frequency
         second_freq_factor = 1.19
@@ -371,9 +387,10 @@ def change_pitch(audio_samples, pitch_factor):
     A filter designed to change the pitch of a note.
 
     :param audio_samples: A 1D NumPy array representing a single note.
-    :param pitch_factor: A positive float representing the factor increase or decrease in a note's frequency.
-    (e.g., pass a pitch_factor of `2` to obtain audio that is one pitch higher, pass a pitch_factor of `.5`
-        to obtain audio that is one pitch lower, etc).
+    :param pitch_factor: A positive float representing the factor increase or decrease in a
+    note's frequency.
+    (e.g., pass a pitch_factor of `2` to obtain audio that is one pitch higher,
+    pass a pitch_factor of `.5` to obtain audio that is one pitch lower, etc).
 
     :return: A new 1D NumPy array reflecting the change in pitch.
     """
@@ -390,9 +407,9 @@ def _change_speed(audio_samples, speed_factor):
     """
     A private helper function that changes speed and pitch of a note.
     :param audio_samples: A 1D NumPy array representing a single note.
-    :param speed_factor: A positive float representing the new speed of playback for the output audio, relative to the
-        original (e.g., pass a speed_factor of `2` to obtain audio that plays twice as fast, pass a speed_factor of `.5`
-        to obtain audio that plays half as fast, etc).
+    :param speed_factor: A positive float representing the new speed of playback for the output
+    audio, relative to the original (e.g., pass a speed_factor of `2` to obtain audio that plays
+    twice as fast, pass a speed_factor of `.5` to obtain audio that plays half as fast, etc).
 
     :return: A new 1D NumPy array reflecting the change in speed and pitch of a note.
     """
@@ -407,7 +424,7 @@ def change_volume(audio_samples, amplitude):
     """
     A filter designed to modify the amplitude of a note.
     NOTE: There is more to "loudness" to "amplitude" conversion than merely an amplitude factor.
-    We still need to work out this relation to create a filter that's useful to users and developers.
+    We still need to work out this relation to create a filter that's useful to users and developers
 
     :param audio_samples: A 1D NumPy array representing a single note.
     :param amplitude: A float representing the factor increase or decrease in volume.
@@ -425,9 +442,9 @@ def stretch_audio(audio_samples, speed_factor):
     A filter designed to change the speed/tempo of a note.
 
     :param audio_samples: A 1D NumPy array representing a single note.
-    :param speed_factor: A positive float representing the new speed of playback for the output audio, relative to the
-        original (e.g., pass a speed_factor of `2` to obtain audio that plays twice as fast, pass a speed_factor of `.5`
-        to obtain audio that plays half as fast, etc).
+    :param speed_factor: A positive float representing the new speed of playback for the output
+    audio, relative to the original (e.g., pass a speed_factor of `2` to obtain audio that plays
+    twice as fast, pass a speed_factor of `.5` to obtain audio that plays half as fast, etc).
 
     :return: A new 1D NumPy array reflecting the change in speed.
     """
@@ -460,10 +477,11 @@ def overlap_notes(audio, overlap_factor):
     """
     A filter designed to overlap notes within an audio signal.
 
-    :param audio: A tuple containing a 1D NumPy array (of samples) and a Python list of sample indices
-    :param overlap_factor: A float between 0 and 1 representing the percentage of overlap between notes in the audio,
-        relative to the duration of each note (e.g., pass an overlap_factor of `.25` to overlap the last
-        25% of each note's duration with the subsequent note (??)
+    :param audio: A tuple containing a 1D NumPy array (of samples) & a Python list of sample indices
+    :param overlap_factor:
+    A float between 0 and 1 representing the percentage of overlap between notes in the audio,
+        relative to the duration of each note (e.g., pass an overlap_factor of `.25` to overlap
+        the last 25% of each note's duration with the subsequent note (??)
 
     :return: A new NumPy array reflecting audio with overlapping notes.
     """

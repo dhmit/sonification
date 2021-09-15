@@ -4,7 +4,7 @@ Transform text to sound
 import numpy as np
 from nltk.tokenize import sent_tokenize
 
-from app.common import WAV_MAX_SAMPLE_AMPLITUDE, WAV_SAMPLE_RATE, clean_text, hack_add_one
+from app.common import WAV_SAMPLE_RATE, clean_text, normalize_audio_to_16_bit_range
 from app.analysis import encoders as encode
 from app.analysis import synthesizers as synths
 
@@ -19,7 +19,7 @@ def text_to_note(text):
     sentiment = encode.get_sentiment(cleaned_text)
 
     pos_diff = encode.get_pos_diff_from_sentiment(sentiment)
-    updated_neutral = hack_add_one(sentiment["neu"])
+    updated_neutral = sentiment["neu"] + 1
     base_frequency = 400
     rounding_frequency = 350
 
@@ -32,16 +32,8 @@ def text_to_note(text):
     time_steps = np.linspace(0, note_duration, note_duration * WAV_SAMPLE_RATE, False)
 
     # generate sine wave notes
-    note = np.sin(note_frequency * time_steps * 2 * np.pi)
-
-    # concatenate notes
-    audio = note
-    # normalize to 16-bit range
-    audio *= WAV_MAX_SAMPLE_AMPLITUDE / np.max(np.abs(audio))
-    # convert to 16-bit data
-    audio = audio.astype(np.int16)
-
-    return audio
+    audio = np.sin(note_frequency * time_steps * 2 * np.pi)
+    return normalize_audio_to_16_bit_range(audio)
 
 
 def sonify_text(text):
@@ -51,7 +43,6 @@ def sonify_text(text):
     :param text: String of text
     :return: A tuple with a 1D NumPy array and a positive number representing a sonification of text
     """
-
     full_audio = []
     sentences = sent_tokenize(text)
     for sentence in sentences:
@@ -61,14 +52,7 @@ def sonify_text(text):
 
         full_audio += synths.sonify(notes, durations, sentiment)
 
-    # normalize to 16-bit range
-    full_audio = np.array(full_audio)
-    full_audio *= WAV_MAX_SAMPLE_AMPLITUDE / np.max(np.abs(full_audio))
-
-    # convert to 16-bit data
-    full_audio = full_audio.astype(np.int16)
-
-    return full_audio
+    return normalize_audio_to_16_bit_range(full_audio)
 
 
 def sonify_text_2(text):
@@ -90,4 +74,4 @@ def sonify_text_2(text):
         sin_waves_list.append(sin_wave)
 
     audio = synths.convert_sin_waves_to_audio(sin_waves_list)
-    return audio, WAV_SAMPLE_RATE
+    return audio

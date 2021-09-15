@@ -118,7 +118,6 @@ def generate_note(frequency, duration):
     all_weights = np.array(a_weights + d_weights + s_weights + r_weights)
     time_steps = np.linspace(0, duration, (len_a + len_d + len_s + len_r), False)
     note = np.sin(frequency * time_steps * 2 * np.pi) * all_weights
-    # note *= 32767 / np.max(np.abs(note))
 
     return note
 

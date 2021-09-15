@@ -5,7 +5,7 @@ Methods for taking an image and returning music
 import numpy as np
 import cv2 as cv
 
-from app.common import WAV_MAX_SAMPLE_AMPLITUDE, WAV_SAMPLE_RATE, wav_to_base64
+from app.common import WAV_SAMPLE_RATE, wav_samples_to_base64, normalize_audio_to_16_bit_range
 from app.analysis import encoders as encode
 from app.analysis import synthesizers as synths
 
@@ -13,7 +13,7 @@ from app.analysis import synthesizers as synths
 def image_to_note(image):
     """
     :param image:
-    :return _wav_to_base64(audio, sample_rate):
+    :return audio: audio samples
         base64 encoding of a sound based on how negative or positive the text is
     """
     note_freq = encode.brightness_to_freq(encode.get_histogram_avg(image))
@@ -23,15 +23,9 @@ def image_to_note(image):
     time_steps = np.linspace(0, note_duration, note_duration * WAV_SAMPLE_RATE, False)
 
     # generate sine wave notes
-    note = np.sin(note_freq * time_steps * 2 * np.pi)
+    audio = np.sin(note_freq * time_steps * 2 * np.pi)
 
-    # concatenate notes
-    audio = note
-    # normalize to 16-bit range
-    audio *= WAV_MAX_SAMPLE_AMPLITUDE / np.max(np.abs(audio))
-    # convert to 16-bit data
-    audio = audio.astype(np.int16)
-    return audio
+    return normalize_audio_to_16_bit_range(audio)
 
 
 def analyze_image(img):
@@ -58,11 +52,5 @@ def analyze_image(img):
 
             full_audio += notes.tolist()
 
-    # normalize to 16-bit range
-    full_audio = np.array(full_audio)
-    full_audio *= WAV_MAX_SAMPLE_AMPLITUDE / np.max(np.abs(full_audio))
-
-    # convert to 16-bit data
-    full_audio = full_audio.astype(np.int16)
-
-    return wav_to_base64(full_audio)
+    # normalize and base64 encode
+    return wav_samples_to_base64(normalize_audio_to_16_bit_range(full_audio))

@@ -3,6 +3,7 @@ Miscellaneous utility functions useful throughout the system
 """
 import base64
 import io
+import numpy as np
 import string
 from textwrap import dedent
 from scipy.io import wavfile
@@ -19,6 +20,56 @@ WAV_SAMPLE_RATE = 44100
 WAV_MAX_SAMPLE_AMPLITUDE = 32767
 # See https://wiki.hydrogenaud.io/index.php?title=Sampling_rate for a nice visualization
 # of how a WAV file represents a sound wave.
+# See also https://docs.fileformat.com/audio/wav/ for the anatomy of a WAV file
+
+
+def wav_samples_to_base64(audio):
+    """
+    This is the public interface to _wav_samples_to_base64, which does the actual work of base64 encoding
+    our WAV samples. This function adds the assumption that we're using our default,
+    44.1 kHz sample rate.
+
+    :param audio: 1D NumPy array representing the list of samples
+    """
+    return _wav_samples_to_base64(audio, WAV_SAMPLE_RATE)
+
+
+def _wav_samples_to_base64(audio, sample_rate):
+    """
+    Encode the WAV byte array into a base64 encoded WAV file that we can send to the frontend.
+
+    NOTE(ra): We have this private version of this function where we take the sample rate
+              as an argument, rather than assuming 44.1 kHz in order to be able
+              to write human-readable, sensible tests. (See tests.WavToBase64TestCase)
+
+              The public interface to this is the above function wav_samples_to_base64, which
+              assumes 44.1 kHz sampling.
+
+    :param audio: NumPy array representing the list of samples (usually int16: 2 bytes/sample)
+    :param sample_rate: int, the sampling rate in Hz
+    :return: base64 encoding of the given array as a str
+    """
+    byte_io = io.BytesIO(bytes())  # bytes buffer to write into
+    wavfile.write(byte_io, sample_rate, audio)  # write audio into this buffer in WAV format
+    wav_bytes = byte_io.read()  # read the buffer
+    base64_wav = base64.b64encode(wav_bytes)  # base64 encode the wav file
+    utf8_base64_wav = base64_wav.decode('UTF-8')  # UTF-8 decode the base64 encoded wav file
+    return utf8_base64_wav
+
+
+def normalize_audio_to_16_bit_range(audio):
+    # normalize 0 to 1
+    normalized_audio = audio / np.max(np.abs(audio))
+
+    # Normalize to 16-bit WAV sample range
+    normalized_audio *= WAV_MAX_SAMPLE_AMPLITUDE
+
+    # Let numpy know that this is 16-bit integer data
+    normalized_audio = normalized_audio.astype(np.int16)
+
+    return normalized_audio
+
+
 
 
 MUSICAL_CHARS = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
@@ -157,19 +208,6 @@ NOTE_FREQ_SIMPLE = {
 }
 
 
-def wav_to_base64(byte_array):
-    """
-    Encode the WAV byte array with base64
-    :param byte_array: NumPy array representing the list of samples (usually int16: 2 bytes/sample)
-    :param sample_rate: int, the sampling rate in Hz
-    :return: base64 encoding of the given array as a str
-    """
-    byte_io = io.BytesIO(bytes())
-    wavfile.write(byte_io, WAV_SAMPLE_RATE, byte_array)
-    wav_bytes = byte_io.read()
-    audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
-    return audio_data
-
 
 def print_header(header_str):
     """
@@ -186,14 +224,6 @@ def clean_text(text):
     lower_case = text.lower()
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
     return cleaned_text
-
-
-def hack_add_one(num):
-    """
-    Just add one.
-    FIXME: is this necessary?
-    """
-    return num + 1
 
 
 def lookup_note_frequency(note):

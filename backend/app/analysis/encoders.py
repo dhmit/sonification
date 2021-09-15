@@ -4,8 +4,7 @@ Methods for encoding inputted media (image, text)
 import random
 import cv2 as cv
 
-from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION, \
-    NUM_OF_PIANO_KEYS
+from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION, NUM_OF_PIANO_KEYS
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 

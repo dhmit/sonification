@@ -5,8 +5,13 @@ Methods for turning data into sound!
 import random
 import numpy as np
 from colorthief import ColorThief
-from app.common import MUSICAL_CHARS, NOTE_FREQ_SIMPLE, DISSONANT_RATIOS, NEUTRAL_RATIOS, \
-    CONSONANT_RATIOS, WAV_SAMPLE_RATE, WAV_MAX_SAMPLE_AMPLITUDE, lookup_note_frequency
+from app.common import (
+    MUSICAL_CHARS, NOTE_FREQ_SIMPLE, DISSONANT_RATIOS, NEUTRAL_RATIOS,
+    CONSONANT_RATIOS, lookup_note_frequency
+)
+
+from app.audio_encoding import WAV_SAMPLE_RATE, WAV_MAX_SAMPLE_AMPLITUDE
+
 
 mc_list = list(MUSICAL_CHARS)
 
@@ -214,14 +219,3 @@ def convert_piano_key_num_to_sin_wave(piano_key):
     frequency = a4_note * (2 ** ((piano_key + 1 - 49) / 12))
     sin_wave = np.sin(2 * np.pi * frequency * time_axis)
     return sin_wave
-
-
-def convert_sin_waves_to_audio(sin_waves):
-    """
-    :param sin_waves: a list of sin waves
-    :return audio
-    """
-    audio = np.hstack(sin_waves)
-    audio *= WAV_MAX_SAMPLE_AMPLITUDE / np.max(np.abs(audio))
-    audio = audio.astype(np.int16)
-    return audio

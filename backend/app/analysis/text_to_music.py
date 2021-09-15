@@ -4,7 +4,8 @@ Transform text to sound
 import numpy as np
 from nltk.tokenize import sent_tokenize
 
-from app.common import WAV_SAMPLE_RATE, clean_text, normalize_audio_to_16_bit_range
+from app.common import clean_text
+from app.audio_encoding import WAV_SAMPLE_RATE
 from app.analysis import encoders as encode
 from app.analysis import synthesizers as synths
 
@@ -33,7 +34,7 @@ def text_to_note(text):
 
     # generate sine wave notes
     audio = np.sin(note_frequency * time_steps * 2 * np.pi)
-    return normalize_audio_to_16_bit_range(audio)
+    return audio
 
 
 def sonify_text(text):
@@ -52,7 +53,7 @@ def sonify_text(text):
 
         full_audio += synths.sonify(notes, durations, sentiment)
 
-    return normalize_audio_to_16_bit_range(full_audio)
+    return full_audio
 
 
 def sonify_text_2(text):
@@ -73,5 +74,5 @@ def sonify_text_2(text):
         sin_wave = synths.convert_piano_key_num_to_sin_wave(piano_key)
         sin_waves_list.append(sin_wave)
 
-    audio = synths.convert_sin_waves_to_audio(sin_waves_list)
+    audio = np.hstack(sin_waves_list)
     return audio

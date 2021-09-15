@@ -17,10 +17,7 @@ Including another URL configuration
 from django.contrib import admin
 from django.urls import path
 
-try:
-    from ..app import views
-except (ImportError, ModuleNotFoundError):
-    from app import views
+from app import views
 
 urlpatterns = [
     # Django admin page

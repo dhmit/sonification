@@ -5,7 +5,7 @@ Methods for taking an image and returning music
 import numpy as np
 import cv2 as cv
 
-from app.common import WAV_SAMPLE_RATE, wav_samples_to_base64, normalize_audio_to_16_bit_range
+from app.audio_encoding import WAV_SAMPLE_RATE, audio_samples_to_wav_base64
 from app.analysis import encoders as encode
 from app.analysis import synthesizers as synths
 
@@ -25,7 +25,7 @@ def image_to_note(image):
     # generate sine wave notes
     audio = np.sin(note_freq * time_steps * 2 * np.pi)
 
-    return normalize_audio_to_16_bit_range(audio)
+    return audio
 
 
 def analyze_image(img):
@@ -52,5 +52,4 @@ def analyze_image(img):
 
             full_audio += notes.tolist()
 
-    # normalize and base64 encode
-    return wav_samples_to_base64(normalize_audio_to_16_bit_range(full_audio))
+    return full_audio

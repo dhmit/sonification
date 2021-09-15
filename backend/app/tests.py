@@ -13,9 +13,10 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 from app import common
+from app.audio_encoding import _audio_samples_to_wav_base64
 from app.analysis import filters
 from app.analysis.text_to_music import sonify_text_2
-from app.analysis import encoders as encode
+from app.analysis import encoders
 from app.analysis import synthesizers as synths
 
 
@@ -23,15 +24,14 @@ class MainTests(TestCase):
     """
     Test cases for the brightness, dominant color recognition, and tempo finding private functions
     """
-
     def test_white_brightness(self):
         image = cv.imread('app/analysis/test_photos/white.jpg')
-        note_freq = encode.brightness_to_freq(encode.get_histogram_avg(image))
+        note_freq = encoders.brightness_to_freq(encoders.get_histogram_avg(image))
         self.assertEqual(note_freq, 992.5)
 
     def test_dark_brightness(self):
         image = cv.imread('app/analysis/test_photos/black.jpg')
-        note_freq = encode.brightness_to_freq(encode.get_histogram_avg(image))
+        note_freq = encoders.brightness_to_freq(encoders.get_histogram_avg(image))
         self.assertEqual(note_freq, 100)
 
     def test_dominant_color_recognition(self):
@@ -46,7 +46,7 @@ class MainTests(TestCase):
         # The right side of the image is more busy than the rest
         # so the tempo of that piece should be quicker
         image = cv.imread('app/analysis/test_photos/tempo.jpg')
-        tempos = encode.get_tempo_for_image(image, 5)
+        tempos = encoders.get_tempo_for_image(image, 5)
         self.assertTrue(tempos[-1] > tempos[0])
 
 
@@ -54,7 +54,6 @@ class TextToMusicTestCase(TestCase):
     """
     Test cases for text_to_music.py
     """
-
     def test_analyse_sentiment(self):
         """
         Tests the function get_sentiment from encoders.py
@@ -66,10 +65,10 @@ class TextToMusicTestCase(TestCase):
         sentence3 = "This ice cream tastes bad and I am disappointed."
         sentiment3 = {'neg': 0.524, 'neu': 0.476, 'pos': 0.0, 'compound': -0.765}
         sentence4 = "This ice ;cream taSt,,es bad AN.d I am ,,,     disappointed."
-        self.assertEqual(encode.get_sentiment(common.clean_text(sentence1)), sentiment1)
-        self.assertEqual(encode.get_sentiment(common.clean_text(sentence2)), sentiment2)
-        self.assertEqual(encode.get_sentiment(common.clean_text(sentence3)), sentiment3)
-        self.assertEqual(encode.get_sentiment(common.clean_text(sentence4)), sentiment3)
+        self.assertEqual(encoders.get_sentiment(common.clean_text(sentence1)), sentiment1)
+        self.assertEqual(encoders.get_sentiment(common.clean_text(sentence2)), sentiment2)
+        self.assertEqual(encoders.get_sentiment(common.clean_text(sentence3)), sentiment3)
+        self.assertEqual(encoders.get_sentiment(common.clean_text(sentence4)), sentiment3)
 
     def test_get_note_frequency(self):
         """
@@ -111,7 +110,6 @@ class SentimentAnalysisAPITests(APITestCase):
     TestCase for the API endpoint use to send a `.wav` file
     from `sentiment_analysis` to the frontend.
     """
-
     def test_API_status(self):
         response = self.client.get('/api/get_sentiment_analysis?text=good%20morning%20america')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -121,7 +119,6 @@ class WavToBase64TestCase(TestCase):
     """
     TestCase for the `wav_samples_to_base64` function.
     """
-
     def test_wav_samples_to_base64(self):
         """
         NOTE(RA): here we test the private function _wav_samples_to_base64
@@ -148,7 +145,7 @@ class WavToBase64TestCase(TestCase):
         num_channels = 1
         constant = (sample_rate * bits_per_sample * num_channels) // 8
 
-        results = common._wav_samples_to_base64(data, sample_rate)
+        results = _audio_samples_to_wav_base64(data, sample_rate)
         self.assertTrue(isinstance(results, str))
         encoded_data = base64.b64decode(results.encode('UTF-8'))
         self.assertTrue(isinstance(encoded_data, bytes))
@@ -166,7 +163,7 @@ class WavToBase64TestCase(TestCase):
         constant = (sample_rate * bits_per_sample * num_channels) // 8
         self.assertEqual(constant, sample_rate)
 
-        results = common._wav_samples_to_base64(data, sample_rate)
+        results = _audio_samples_to_wav_base64(data, sample_rate)
         self.assertTrue(isinstance(results, str))
         encoded_data = base64.b64decode(results.encode('UTF-8'))
         self.assertTrue(isinstance(encoded_data, bytes))
@@ -182,20 +179,17 @@ class TextToSoundTestCase(TestCase):
     """
     Test case for sonify_text_2 function.
     """
-
     def test_sonify_text_2(self):
         text = 'This is good. This is bad.'
         audio_samples = sonify_text_2(text)
         self.assertEqual(len(audio_samples), 88200)
         self.assertEqual(type(audio_samples), np.ndarray)
-        self.assertEqual(audio_samples.dtype, 'int16')
 
 
 class FiltersTestCase(TestCase):
     """
     TestCase for the filters in `filters.py`
     """
-
     def test_get_notes(self):
         # Edge condition: Empty audio signal
         empty_audio_samples = np.array([])
@@ -388,8 +382,8 @@ class ImageAnalysisAPITests(APITestCase):
     """
     Test case for image analysis API endpoints
     """
-
-    def get_test_image(self):
+    @staticmethod
+    def _get_test_image():
         file = io.BytesIO()
         image = Image.open('app/test_image.jpg')
         image.save(file, 'jpeg')
@@ -398,13 +392,13 @@ class ImageAnalysisAPITests(APITestCase):
         return file
 
     def test_API_status(self):
-        img = self.get_test_image()
+        img = self._get_test_image()
         response = self.client.post('/api/image_to_music', {'image': img}, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     # pylint: disable=invalid-name
     def test_API_result(self):
-        img = self.get_test_image()
+        img = self._get_test_image()
         response = self.client.post('/api/image_to_music', {'image': img}, format='multipart')
         self.assertTrue(isinstance(response.data['sound'], str))
         encoded_data = base64.b64decode(response.data['sound'].encode('UTF-8'))
@@ -413,7 +407,6 @@ class ImageAnalysisAPITests(APITestCase):
 
 class CommonTestCase(TestCase):
     """Test case for common methods"""
-
     def test_clean_text(self):
         text = "Hello!!!! How was your day?!"
         self.assertEqual(common.clean_text(text), "hello how was your day")

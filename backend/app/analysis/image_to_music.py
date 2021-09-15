@@ -5,7 +5,7 @@ Methods for taking an image and returning music
 import numpy as np
 import cv2 as cv
 
-from app.audio_encoding import WAV_SAMPLE_RATE, audio_samples_to_wav_base64
+from app.audio_encoding import WAV_SAMPLE_RATE
 from app.analysis import encoders as encode
 from app.analysis import synthesizers as synths
 

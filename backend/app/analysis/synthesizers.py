@@ -10,7 +10,7 @@ from app.common import (
     CONSONANT_RATIOS, lookup_note_frequency
 )
 
-from app.audio_encoding import WAV_SAMPLE_RATE, WAV_MAX_SAMPLE_AMPLITUDE
+from app.audio_encoding import WAV_SAMPLE_RATE
 
 
 mc_list = list(MUSICAL_CHARS)

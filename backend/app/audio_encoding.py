@@ -30,10 +30,16 @@ WAV_SAMPLE_RATE = 44100
 WAV_MAX_SAMPLE_AMPLITUDE = 32767
 
 
-def normalize_audio_samples_to_16_bit_range(audio):
+def normalize_audio_samples_to_16_bit_range(audio_samples):
+    """
+    Normalizes the input audio samples to the 16-bit range for WAV file output.
+
+    :param audio_samples: 1D numpy array of audio samples
+    :return: normalized_audio: 1D numpy array of audio samples in 16-bit range
+    """
     # TODO(ra): test me!
-    normalized_audio = audio / np.max(np.abs(audio))      # normalize samples from 0 to 1
-    normalized_audio *= WAV_MAX_SAMPLE_AMPLITUDE          # Normalize to 16-bit WAV sample range
+    normalized_audio = audio_samples / np.max(np.abs(audio_samples))  # normalize from 0 to 1
+    normalized_audio *= WAV_MAX_SAMPLE_AMPLITUDE  # Normalize to 16-bit WAV sample range
     normalized_audio = normalized_audio.astype(np.int16)  # tell numpy that this is 16-bit int data
     return normalized_audio
 

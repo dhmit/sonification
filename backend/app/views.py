@@ -23,6 +23,7 @@ context = {
     'component_name': 'ExampleId'
 }
 """
+from io import BytesIO
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
@@ -32,6 +33,7 @@ from django.shortcuts import render
 from app.analysis.image_to_music import analyze_image
 
 from app.analysis.text_to_music import text_to_note, sonify_text, sonify_text_2
+from app.analysis import encoders
 from app.common import wav_to_base64
 
 
@@ -187,3 +189,10 @@ def image_to_music(request):
         'sound': audio
     }
     return Response(res)
+
+
+@api_view(['POST'])
+def csv_upload(request):
+    tempfile = request.FILES.get('tempfile')
+    csvdata = encoders.parse_csv_upload(tempfile)
+    return Response(csvdata)

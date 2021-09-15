@@ -31,6 +31,7 @@ urlpatterns = [
     path('api/get_sentiment_analysis', views.get_sentiment_analysis),
     path('api/get_sentiment_analysis_2', views.get_sentiment_analysis_2),
     path('api/image_to_music', views.image_to_music),
+    path('api/upload-structured-data', views.csv_upload),
 
     # View paths
     path('', views.index, name='index'),

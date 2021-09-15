@@ -206,4 +206,7 @@ def change_settings(request):
     """
     Handling settings changes from frontend
     """
+    print("type:", request.data.get('type'),
+          "id:", request.data.get('id'),
+          "value:", int(request.data.get('value')))
     return Response(request.data)

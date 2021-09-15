@@ -131,6 +131,10 @@ def convert_sentiment_to_piano_key_num(sentiment_value):
 
 
 def parse_csv_upload(csv_upload):
+    """
+    :param csv_upload: client-submitted tempfile
+    :return: a list of dictionaries -- settings for using on the back or frontend
+    """
     csv_str = csv_upload.read().decode('utf-8')
     reader = csv.DictReader(io.StringIO(csv_str))
     settings = []

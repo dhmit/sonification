@@ -15,7 +15,6 @@ const UploadButton = () => {
 
     const handleFileInput = (event) => {
         setTempFile(event.target.files[0]);
-        console.log("handleFileInput", tempFile);
     };
 
     const clearFile = (event) => {
@@ -38,8 +37,8 @@ const UploadButton = () => {
         fetch("/api/upload-structured-data", requestOptions)
             .then(response => response.json())
             .then(data => {
-                console.log("file received", data, inputType);
                 setUplodedData(data);
+                console.log('uploaded data:', data, inputType);
             });
     };
 
@@ -66,11 +65,6 @@ const UploadButton = () => {
                 </button>
                 }
             </form>
-            {uploadedData && <ul className="">
-                {uploadedData.map((line) => {
-                    <li key={line}>{line}</li>;
-                })}
-            </ul>}
         </>
     );
 };

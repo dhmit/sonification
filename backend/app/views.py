@@ -193,6 +193,17 @@ def image_to_music(request):
 
 @api_view(['POST'])
 def csv_upload(request):
+    """
+    Handling extracting data from user-inputted CSV file
+    """
     tempfile = request.FILES.get('tempfile')
     csvdata = encoders.parse_csv_upload(tempfile)
     return Response(csvdata)
+
+
+@api_view(['POST'])
+def change_settings(request):
+    """
+    Handling settings changes from frontend
+    """
+    return Response(request.data)

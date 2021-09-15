@@ -4,7 +4,8 @@ Methods for taking an image and returning music
 
 import numpy as np
 import cv2 as cv
-from app.common import SAMPLE_CONVERSION_VAL, DEFAULT_SAMPLE_RATE, wav_to_base64
+
+from app.common import WAV_MAX_SAMPLE_AMPLITUDE, WAV_SAMPLE_RATE, wav_to_base64
 from app.analysis import encoders as encode
 from app.analysis import synthesizers as synths
 
@@ -18,9 +19,8 @@ def image_to_note(image):
     note_freq = encode.brightness_to_freq(encode.get_histogram_avg(image))
 
     # get time steps for the sample
-    sample_rate = DEFAULT_SAMPLE_RATE
     note_duration = 1
-    time_steps = np.linspace(0, note_duration, note_duration * sample_rate, False)
+    time_steps = np.linspace(0, note_duration, note_duration * WAV_SAMPLE_RATE, False)
 
     # generate sine wave notes
     note = np.sin(note_freq * time_steps * 2 * np.pi)
@@ -28,7 +28,7 @@ def image_to_note(image):
     # concatenate notes
     audio = note
     # normalize to 16-bit range
-    audio *= SAMPLE_CONVERSION_VAL / np.max(np.abs(audio))
+    audio *= WAV_MAX_SAMPLE_AMPLITUDE / np.max(np.abs(audio))
     # convert to 16-bit data
     audio = audio.astype(np.int16)
     return audio
@@ -41,7 +41,6 @@ def analyze_image(img):
     """
     length_slice = 1 / 60  # in minutes
     num_slices = 5
-    sample_rate = DEFAULT_SAMPLE_RATE
     opencv_im = cv.imdecode(np.frombuffer(img.read(), np.uint8), cv.IMREAD_UNCHANGED)
     instrument = synths.get_instrument(img)
     brightness = encode.get_histogram_avg(opencv_im)
@@ -53,17 +52,17 @@ def analyze_image(img):
     full_audio = []
     for audio_slice in beats_and_durations:
         for _ in range(audio_slice[0]):
-            notes = synths.generate_note(frequency, audio_slice[1], sample_rate)
+            notes = synths.generate_note(frequency, audio_slice[1])
             for harmonic in instrument:
-                notes += synths.generate_note(frequency * harmonic, audio_slice[1], sample_rate)
+                notes += synths.generate_note(frequency * harmonic, audio_slice[1])
 
             full_audio += notes.tolist()
 
     # normalize to 16-bit range
     full_audio = np.array(full_audio)
-    full_audio *= SAMPLE_CONVERSION_VAL / np.max(np.abs(full_audio))
+    full_audio *= WAV_MAX_SAMPLE_AMPLITUDE / np.max(np.abs(full_audio))
 
     # convert to 16-bit data
     full_audio = full_audio.astype(np.int16)
 
-    return wav_to_base64(full_audio, sample_rate)
+    return wav_to_base64(full_audio)

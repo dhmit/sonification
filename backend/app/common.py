@@ -7,9 +7,20 @@ import string
 from textwrap import dedent
 from scipy.io import wavfile
 
-# reference: https://wiki.hydrogenaud.io/index.php?title=Sampling_rate
-SAMPLE_CONVERSION_VAL = 32767
-DEFAULT_SAMPLE_RATE = 44100
+
+################################################################################
+# WAV file values
+################################################################################
+# We assume 44100 samples per second throughout our project,
+# which is the standard sample rate for CD audio.
+WAV_SAMPLE_RATE = 44100
+# 16-bit audio has a max amplitude of 32767 per sample,
+# which is the maximum value of a 16-bit signed integer
+WAV_MAX_SAMPLE_AMPLITUDE = 32767
+# See https://wiki.hydrogenaud.io/index.php?title=Sampling_rate for a nice visualization
+# of how a WAV file represents a sound wave.
+
+
 MUSICAL_CHARS = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
 
 # Ratios found from Wikipedia https://tinyurl.com/56cj5rh5 (wiki link that's too long)
@@ -146,7 +157,7 @@ NOTE_FREQ_SIMPLE = {
 }
 
 
-def wav_to_base64(byte_array, sample_rate):
+def wav_to_base64(byte_array):
     """
     Encode the WAV byte array with base64
     :param byte_array: NumPy array representing the list of samples (usually int16: 2 bytes/sample)
@@ -154,7 +165,7 @@ def wav_to_base64(byte_array, sample_rate):
     :return: base64 encoding of the given array as a str
     """
     byte_io = io.BytesIO(bytes())
-    wavfile.write(byte_io, sample_rate, byte_array)
+    wavfile.write(byte_io, WAV_SAMPLE_RATE, byte_array)
     wav_bytes = byte_io.read()
     audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
     return audio_data

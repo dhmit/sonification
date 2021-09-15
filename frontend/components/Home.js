@@ -1,5 +1,5 @@
 import React from "react";
-import UploadButton from "./UploadButton";
+import UploadFileInput from "./UploadFileInput";
 import VerticalSlider from "./VerticalSlider";
 
 const Home = () => {
@@ -15,7 +15,7 @@ const Home = () => {
         <>
             <h2>Welcome to our Sonification toolkit!</h2>
 
-            <UploadButton/>
+            <UploadFileInput id={0}/>
             <ul className="list-inline">{verticalSlidersList}</ul>
         </>
     );

@@ -141,4 +141,3 @@ def parse_csv_upload(csv_upload):
     for row in reader:
         settings.append(row)
     return settings
-

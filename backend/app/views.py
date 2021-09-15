@@ -23,7 +23,6 @@ context = {
     'component_name': 'ExampleId'
 }
 """
-from io import BytesIO
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
@@ -196,7 +195,7 @@ def csv_upload(request):
     """
     Handling extracting data from user-inputted CSV file
     """
-    tempfile = request.FILES.get('tempfile')
+    tempfile = request.FILES.get('value')
     csvdata = encoders.parse_csv_upload(tempfile)
     return Response(csvdata)
 

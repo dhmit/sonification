@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React from "react";
 import {getCookie, debounce} from "../common";
 import PropTypes from "prop-types";
 

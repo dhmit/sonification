@@ -30,6 +30,8 @@ from django.shortcuts import render
 from app.analysis.image_to_music import analyze_image
 from app.analysis.text_to_music import text_to_note, sonify_text, sonify_text_2
 from app.audio_encoding import audio_samples_to_wav_base64
+from app.analysis import encoders
+
 
 @api_view(['GET'])
 def get_example(request, api_example_id):
@@ -181,3 +183,24 @@ def image_to_music(request):
         'sound': audio_samples_to_wav_base64(audio)
     }
     return Response(res)
+
+
+@api_view(['POST'])
+def csv_upload(request):
+    """
+    Handling extracting data from user-inputted CSV file
+    """
+    tempfile = request.FILES.get('value')
+    csvdata = encoders.parse_csv_upload(tempfile)
+    return Response(csvdata)
+
+
+@api_view(['POST'])
+def change_settings(request):
+    """
+    Handling settings changes from frontend
+    """
+    print("type:", request.data.get('type'),
+          "id:", request.data.get('id'),
+          "value:", int(request.data.get('value')))
+    return Response(request.data)

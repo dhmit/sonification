@@ -3,7 +3,6 @@
  */
 
 
-
 /**
  * Get the value of a cookie, given its name
  * Adapted from https://docs.djangoproject.com/en/2.2/ref/csrf/#ajax
@@ -23,4 +22,19 @@ export function getCookie(name) {
         }
     }
     return cookieValue;
+}
+
+/**
+ * Delays a function invocation (used when lots of changes are happening very quickly,
+ * but we don't want to be super reactionary)
+ * taken from https://www.freecodecamp.org/news/javascript-debounce-example/
+ * */
+export function debounce(func, timeout = 300) {
+    let timer;
+    return (...args) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func.apply(this, args);
+        }, timeout);
+    };
 }

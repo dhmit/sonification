@@ -1,10 +1,14 @@
 """
 Methods for encoding inputted media (image, text)
 """
+import io
+import csv
 import random
 import cv2 as cv
 
-from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION, NUM_OF_PIANO_KEYS
+from app.common import SHORT_NOTE_DURATION, LONG_NOTE_DURATION, \
+    NUM_OF_PIANO_KEYS
+
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 
@@ -126,3 +130,16 @@ def convert_sentiment_to_piano_key_num(sentiment_value):
     :return: a number from 0 to 88
     """
     return round((sentiment_value + 1) * NUM_OF_PIANO_KEYS / 2)
+
+
+def parse_csv_upload(csv_upload):
+    """
+    :param csv_upload: client-submitted tempfile
+    :return: a list of dictionaries -- settings for using on the back or frontend
+    """
+    csv_str = csv_upload.read().decode('utf-8')
+    reader = csv.DictReader(io.StringIO(csv_str))
+    settings = []
+    for row in reader:
+        settings.append(row)
+    return settings

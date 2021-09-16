@@ -1,15 +1,12 @@
 """
 Miscellaneous utility functions useful throughout the system
 """
-import base64
-import io
 import string
 from textwrap import dedent
-from scipy.io import wavfile
 
-# reference: https://wiki.hydrogenaud.io/index.php?title=Sampling_rate
-SAMPLE_CONVERSION_VAL = 32767
-DEFAULT_SAMPLE_RATE = 44100
+
+
+
 MUSICAL_CHARS = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
 
 # Ratios found from Wikipedia https://tinyurl.com/56cj5rh5 (wiki link that's too long)
@@ -146,19 +143,6 @@ NOTE_FREQ_SIMPLE = {
 }
 
 
-def wav_to_base64(byte_array, sample_rate):
-    """
-    Encode the WAV byte array with base64
-    :param byte_array: NumPy array representing the list of samples (usually int16: 2 bytes/sample)
-    :param sample_rate: int, the sampling rate in Hz
-    :return: base64 encoding of the given array as a str
-    """
-    byte_io = io.BytesIO(bytes())
-    wavfile.write(byte_io, sample_rate, byte_array)
-    wav_bytes = byte_io.read()
-    audio_data = base64.b64encode(wav_bytes).decode('UTF-8')
-    return audio_data
-
 
 def print_header(header_str):
     """
@@ -175,14 +159,6 @@ def clean_text(text):
     lower_case = text.lower()
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
     return cleaned_text
-
-
-def hack_add_one(num):
-    """
-    Just add one.
-    FIXME: is this necessary?
-    """
-    return num + 1
 
 
 def lookup_note_frequency(note):

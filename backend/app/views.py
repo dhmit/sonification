@@ -27,13 +27,10 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 
-# from .analysis import filters
-
 from app.analysis.image_to_music import analyze_image
-
 from app.analysis.text_to_music import text_to_note, sonify_text, sonify_text_2
+from app.audio_encoding import audio_samples_to_wav_base64
 from app.analysis import encoders
-from app.common import wav_to_base64
 
 
 @api_view(['GET'])
@@ -140,10 +137,8 @@ def get_sentiment_analysis(request):
     # audio_data = filters.apply_filter(audio_data, filters.add_chords)
     # audio_data = filters.apply_filter(audio_data, filters.stretch_audio, speed_factor=.5)
 
-    encoded_audio = wav_to_base64(*audio_data)
-
     res = {
-        'sound': encoded_audio
+        'sound': audio_samples_to_wav_base64(audio_data)
     }
     return Response(res)
 
@@ -157,8 +152,8 @@ def get_sentiment_analysis_2(request):
     note = text_to_note(text)
     sound = sonify_text(text)
     res = {
-        'note': wav_to_base64(*note),
-        'sound': wav_to_base64(*sound)
+        'note': audio_samples_to_wav_base64(note),
+        'sound': audio_samples_to_wav_base64(sound)
     }
     return Response(res)
 
@@ -185,7 +180,7 @@ def image_to_music(request):
     image = request.data['image']
     audio = analyze_image(image)
     res = {
-        'sound': audio
+        'sound': audio_samples_to_wav_base64(audio)
     }
     return Response(res)
 

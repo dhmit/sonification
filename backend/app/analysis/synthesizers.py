@@ -5,8 +5,13 @@ Methods for turning data into sound!
 import random
 import numpy as np
 from colorthief import ColorThief
-from app.common import MUSICAL_CHARS, NOTE_FREQ_SIMPLE, DISSONANT_RATIOS, NEUTRAL_RATIOS, \
-    CONSONANT_RATIOS, DEFAULT_SAMPLE_RATE, SAMPLE_CONVERSION_VAL, lookup_note_frequency
+from app.common import (
+    MUSICAL_CHARS, NOTE_FREQ_SIMPLE, DISSONANT_RATIOS, NEUTRAL_RATIOS,
+    CONSONANT_RATIOS, lookup_note_frequency
+)
+
+from app.audio_encoding import WAV_SAMPLE_RATE
+
 
 mc_list = list(MUSICAL_CHARS)
 
@@ -84,7 +89,7 @@ def calculate_note_frequency(base_frequency, rounding_frequency, positivity_diff
     return base_frequency + positivity_differential * rounding_frequency * neutral_score
 
 
-def generate_note(frequency, duration, sample_rate):
+def generate_note(frequency, duration):
     # pylint: disable-msg=R0914
     """
     Uses the ADSR (Attack, Decay, Sustain, Release) envelope to
@@ -92,18 +97,18 @@ def generate_note(frequency, duration, sample_rate):
     Adapted from example in https://towardsdatascience.com/music-in-python-2f054deb41f4
     :param frequency: frequency of the note
     :param duration: duration in seconds
-    :param sample_rate: sampling rate
     :return note: list of samples for the note
     """
-    a_percentage = 0.1
-    d_percentage = 0.1
-    s_percentage = 0.1
-    r_percentage = 0.7
+    # TODO(ra): these should all be params that we can modify in a call
+    a_percentage = 0.1  # attack
+    d_percentage = 0.1  # decay
+    s_percentage = 0.1  # sustain
+    r_percentage = 0.7  # release
     peak_weight = 1
     sustain_weight = 0.7
     final_weight = 0
 
-    total_length = duration * sample_rate
+    total_length = duration * WAV_SAMPLE_RATE
     len_a = int(a_percentage * total_length)
     len_d = int(d_percentage * total_length)
     len_s = int(s_percentage * total_length)
@@ -118,7 +123,6 @@ def generate_note(frequency, duration, sample_rate):
     all_weights = np.array(a_weights + d_weights + s_weights + r_weights)
     time_steps = np.linspace(0, duration, (len_a + len_d + len_s + len_r), False)
     note = np.sin(frequency * time_steps * 2 * np.pi) * all_weights
-    # note *= 32767 / np.max(np.abs(note))
 
     return note
 
@@ -170,13 +174,12 @@ def get_notes_from_text(text):
     return notes
 
 
-def sonify(notes, durations, sentiment, sample_rate):
+def sonify(notes, durations, sentiment):
     """
     Takes in list of notes, durations, and sentiment, and returns audio
     :param notes: List of floats
     :param durations: Corresponding list of durations for notes
     :param sentiment: Dict of sentiment values
-    :param sample_rate: Integer, the sampling rate
     :return audio: List of samples for collection of notes
     """
     quieter_note_loudness = 0.6
@@ -187,7 +190,7 @@ def sonify(notes, durations, sentiment, sample_rate):
         louder_note_freq = lookup_note_frequency(notes[index])
         quieter_note_freq = get_note_frequency(sentiment, louder_note_freq)
 
-        time_steps = np.linspace(0, duration, int(duration * sample_rate), False)
+        time_steps = np.linspace(0, duration, int(duration * WAV_SAMPLE_RATE), False)
         louder_note = np.sin(louder_note_freq * time_steps * 2 * np.pi).tolist()
         quieter_note = np.sin(quieter_note_freq * time_steps * 2 * np.pi).tolist()
 
@@ -212,20 +215,7 @@ def convert_piano_key_num_to_sin_wave(piano_key):
     """
     a4_note = NOTE_FREQ_SIMPLE['a']
     duration = 1
-    sample_rate = DEFAULT_SAMPLE_RATE
-    time_axis = np.linspace(0, duration, duration * sample_rate, False)
+    time_axis = np.linspace(0, duration, duration * WAV_SAMPLE_RATE, False)
     frequency = a4_note * (2 ** ((piano_key + 1 - 49) / 12))
     sin_wave = np.sin(2 * np.pi * frequency * time_axis)
-    return sin_wave, sample_rate
-
-
-def convert_sin_waves_to_audio(sin_waves):
-    """
-    :param sin_waves: a list of sin waves
-    :return audio
-    """
-    audio = np.hstack(sin_waves)
-    audio *= SAMPLE_CONVERSION_VAL / np.max(np.abs(audio))
-    audio = audio.astype(np.int16)
-
-    return audio
+    return sin_wave

@@ -1,51 +1,52 @@
 """
-Various filtering functions to apply to audio represented as a 1D NumPy array with a sample_rate
+Various filtering functions to apply to audio represented as a 1D NumPy array
 
 All filters assume mono tracks (vs stereo) for audio input.
 """
 import warnings
 
 import numpy as np
-from scipy.signal import stft
+from scipy.signal import stft  # short time fourier transform
 from scipy.stats import mode
 
-from ..common import NOTE_FREQS
+from app.common import NOTE_FREQS
+from app.audio_encoding import WAV_SAMPLE_RATE
 
 
-def apply_filter(audio, filter_function, **kwargs):
+def apply_filter(audio_samples, filter_function, **kwargs):
     """
     Apply a filter to each note in an audio signal and return the filtered audio.
+    TODO(ra): remove assumption that the signal consists of discrete pitch classes
 
-    :param audio: A tuple containing a 1D NumPy array (of samples) and a sample rate (in Hz).
+    :param audio_samples: 1D NumPy array of samples at 44100 samples/second and 16-bit normalization
     :param filter_function: A function that takes in a 1D NumPy array and extra **kwargs.
 
-    :return: A new NumPy array and the sample rate representing the filtered audio.
+    :return: A new 1D NumPy array representing the output of the filter
     """
-    samples, sample_rate = audio
-
-    _, sample_indices, root_notes = get_notes(audio)
+    _, sample_indices, root_notes = get_notes(audio_samples)
 
     # Uncomment to see detected notes in the terminal
     # print(f'Note slice indices: {sample_indices}',
     #       f'Corresponding root notes: {root_notes}', sep='\n')
 
-    new_samples = np.array([], dtype=samples.dtype)
+    # create an empty buffer for the new audio samples
+    new_audio_samples = np.array([], dtype=audio_samples.dtype)
 
     for i, _ in enumerate(sample_indices):
         if hasattr(filter_function, 'uses_freq') and filter_function.uses_freq:
             kwargs['root_note'] = root_notes[i]
 
         try:
-            note = samples[sample_indices[i]:sample_indices[i + 1]]
+            note = audio_samples[sample_indices[i]:sample_indices[i + 1]]
         except IndexError:
-            note = samples[sample_indices[i]:]
+            note = audio_samples[sample_indices[i]:]
         new_note = filter_function(note, **kwargs)
-        new_samples = np.append(new_samples, new_note)
+        new_audio_samples = np.append(new_audio_samples, new_note)
 
-    return new_samples, sample_rate
+    return new_audio_samples
 
 
-def get_notes(audio):
+def get_notes(audio_samples):
     # pylint: disable-msg=R0914
     # TODO: refactor, add comments, remove above warning
     """
@@ -61,10 +62,6 @@ def get_notes(audio):
     :return: A tuple of two lists, one of window indices and one of sample indices,
         both of which correspond to note onsets.
     """
-    audio_samples, sample_rate = audio
-    if sample_rate <= 0:
-        raise ValueError(f'The sample rate of {sample_rate} Hz must be greater than 0.')
-
     if len(audio_samples) == 0:
         warnings.warn("This audio signal doesn\'t contain any samples!", stacklevel=2)
         return [], [], []
@@ -88,7 +85,7 @@ def get_notes(audio):
 
     _, _, stft_signal = stft(
         audio_samples,
-        sample_rate,
+        WAV_SAMPLE_RATE,
         window='hann',
         nperseg=nperseg,
         noverlap=noverlap,
@@ -100,7 +97,7 @@ def get_notes(audio):
     # With the exception of return_onesided, the parameters in the stft
     # and spectrogram functions should match up!
     # samp_freqs_spec, samp_times_spec, spec = spectrogram(
-    #     audio_samples,
+    #     audio,
     #     sample_rate,
     #     window='hann',
     #     nperseg=nperseg,
@@ -149,11 +146,11 @@ def get_notes(audio):
         n_start = window_indices[i]
         n_end = window_indices[i + 1]
 
-        fund_freq = _freq_for_note(stft_signal, sample_rate, n_start, n_end)
+        fund_freq = _freq_for_note(stft_signal, n_start, n_end)
         root_note = sorted(NOTE_FREQS.keys(), key=abs_diff(fund_freq))[0]
         root_notes.append(root_note)
 
-    fund_freq = _freq_for_note(stft_signal, sample_rate, window_indices[-1], num_windows)
+    fund_freq = _freq_for_note(stft_signal, window_indices[-1], num_windows)
     root_note = sorted(NOTE_FREQS.keys(), key=lambda note: abs(fund_freq - NOTE_FREQS[note]))[0]
     root_notes.append(root_note)
 
@@ -291,13 +288,12 @@ def _find_peaks(sd_list, min_spacing):
     return all_peaks_indices
 
 
-def _freq_for_note(stft_arr, sample_rate, n_start, n_stop):
+def _freq_for_note(stft_arr, n_start, n_stop):
     """
     Find the frequency that most likely corresponds with a note by targeting its fundamental
     frequency.
 
     :param stft_arr: A 2D NumPy array representing the STFT of some 1D signal.
-    :param sample_rate: An int representing the sampling rate corresponding to the STFT,
     recorded in Hz.
     :param n_start: An int representing the starting window index for a particular note.
     :param n_stop: A float representing the ending window index (exclusive) for a particular note.
@@ -305,7 +301,7 @@ def _freq_for_note(stft_arr, sample_rate, n_start, n_stop):
     :return: An float representing the fundamental frequency of the note in Hz
     """
     window_size = stft_arr.shape[0]
-    freq_resolution = sample_rate / window_size
+    freq_resolution = WAV_SAMPLE_RATE / window_size
 
     k_candidates = np.array([])
 
@@ -454,17 +450,17 @@ def stretch_audio(audio_samples, speed_factor):
 
     new_audio_samples = np.array([], dtype=audio_samples.dtype)
     fraction = 1 / speed_factor
-    len_audio = len(audio_samples)
-    if len_audio == 0:
+    num_audio_samples = len(audio_samples)
+    if num_audio_samples == 0:
         return audio_samples.copy()
 
-    num_desired_samples = int(len_audio * fraction)
+    num_desired_samples = int(num_audio_samples * fraction)
 
     if fraction <= 1:
         return audio_samples[:num_desired_samples]
 
-    num_copies = num_desired_samples // len_audio
-    num_remaining_samples = num_desired_samples % len_audio
+    num_copies = num_desired_samples // num_audio_samples
+    num_remaining_samples = num_desired_samples % num_audio_samples
 
     for _ in range(num_copies):
         new_audio_samples = np.append(new_audio_samples, audio_samples.copy())
@@ -472,12 +468,13 @@ def stretch_audio(audio_samples, speed_factor):
     return np.append(new_audio_samples, audio_samples[:num_remaining_samples])
 
 
-# TODO
-def overlap_notes(audio, overlap_factor):
+# TODO(ra): this isn't  yet implemented
+def overlap_notes(audio_samples, overlap_factor):
     """
     A filter designed to overlap notes within an audio signal.
 
-    :param audio: A tuple containing a 1D NumPy array (of samples) & a Python list of sample indices
+    :param audio_samples: A tuple containing a 1D NumPy array (of samples)
+                          & a Python list of sample indices
     :param overlap_factor:
     A float between 0 and 1 representing the percentage of overlap between notes in the audio,
         relative to the duration of each note (e.g., pass an overlap_factor of `.25` to overlap
@@ -489,4 +486,4 @@ def overlap_notes(audio, overlap_factor):
     if not (0 <= overlap_factor <= 1):
         raise ValueError("Invalid overlap factor. Please choose number in the interval [0, 1].")
 
-    return audio.copy()
+    return audio_samples.copy()

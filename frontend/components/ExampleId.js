@@ -28,7 +28,7 @@ const ExampleId = ({id}) => {
 };
 
 ExampleId.propTypes = {
-    id: PropTypes.number
+    id: PropTypes.number,
 };
 
 export default ExampleId;

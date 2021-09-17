@@ -3,10 +3,9 @@ import {getCookie} from "../common";
 import PropTypes from "prop-types";
 
 
-const UploadFileInput = (props) => {
+const UploadFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
     const [submitted, setSubmitted] = useState({"file": false});
     const [tempFile, setTempFile] = useState(null);
-    // const [uploadedData, setUplodedData] = useState(null);
     const fileRef = useRef(null);
     const handleSubmitFile = (event) => {
         event.preventDefault();
@@ -24,25 +23,23 @@ const UploadFileInput = (props) => {
         setTempFile(null);
         setSubmitted(prevSubmitted => ({...prevSubmitted, "file": false}));
     };
-    const submitFileToAPI = (file, inputType) => {
+
+    const submitFileToAPI = (file) => {
         const formData = new FormData();
         formData.append("type", "file");
-        formData.append("id", props.id);
+        formData.append("id", id);
         formData.append("value", file, "tempfile.csv");
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
             method: "POST",
             headers: {
-                "X-CSRFToken": csrftoken
+                "X-CSRFToken": csrftoken,
             },
-            body: formData
+            body: formData,
         };
-        fetch("/api/upload-structured-data", requestOptions)
+        fetch(apiEndpoint, requestOptions)
             .then(response => response.json())
-            .then(data => {
-                // setUplodedData(data);
-                console.log("uploaded data:", data, inputType);
-            });
+            .then(data => uploadSuccessfulCallback(data));
     };
 
     return (
@@ -73,7 +70,9 @@ const UploadFileInput = (props) => {
 };
 
 UploadFileInput.propTypes = {
-    id: PropTypes.number
+    id: PropTypes.number,
+    uploadSuccessfulCallback: PropTypes.func,
+    apiEndpoint: PropTypes.string,
 };
 
 

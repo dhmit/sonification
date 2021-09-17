@@ -21,11 +21,11 @@ const ImageAnalysis = () => {
         const rect = canvas.getBoundingClientRect();
         const scale = {
             x: canvas.width / rect.width,
-            y: canvas.height / rect.height
+            y: canvas.height / rect.height,
         };
         return {
             x: (event.clientX - rect.left) * scale.x,
-            y: (event.clientY - rect.top) * scale.y
+            y: (event.clientY - rect.top) * scale.y,
         };
     };
 
@@ -132,9 +132,9 @@ const ImageAnalysis = () => {
         const requestOptions = {
             method: "POST",
             headers: {
-                "X-CSRFToken": csrftoken
+                "X-CSRFToken": csrftoken,
             },
-            body: formData
+            body: formData,
         };
         fetch("/api/image_to_music", requestOptions)
             .then(response => response.json())
@@ -173,7 +173,7 @@ const ImageAnalysis = () => {
                 <Tab eventKey="drawing" title="Drawing Canvas">
                     <div className="row">
                         <div className="col-12 col-sm-5">
-                            <canvas className={`${STYLES.canvas} 
+                            <canvas className={`${STYLES.canvas}
                                 ${submitted.drawing ? "" : STYLES.activeCanvas}`}
                             ref={canvasRef} width="500" height="500"></canvas>
                         </div>

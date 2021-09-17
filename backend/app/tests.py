@@ -111,7 +111,7 @@ class SentimentAnalysisAPITests(APITestCase):
     from `sentiment_analysis` to the frontend.
     """
     def test_API_status(self):
-        response = self.client.get('/api/get_sentiment_analysis?text=good%20morning%20america')
+        response = self.client.get('/api/get_sentiment_analysis/?text=good%20morning%20america')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 
@@ -393,13 +393,13 @@ class ImageAnalysisAPITests(APITestCase):
 
     def test_API_status(self):
         img = self._get_test_image()
-        response = self.client.post('/api/image_to_music', {'image': img}, format='multipart')
+        response = self.client.post('/api/image_to_music/', {'image': img}, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     # pylint: disable=invalid-name
     def test_API_result(self):
         img = self._get_test_image()
-        response = self.client.post('/api/image_to_music', {'image': img}, format='multipart')
+        response = self.client.post('/api/image_to_music/', {'image': img}, format='multipart')
         self.assertTrue(isinstance(response.data['sound'], str))
         encoded_data = base64.b64decode(response.data['sound'].encode('UTF-8'))
         self.assertTrue(isinstance(encoded_data, bytes))

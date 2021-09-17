@@ -111,7 +111,7 @@ class SentimentAnalysisAPITests(APITestCase):
     from `sentiment_analysis` to the frontend.
     """
     def test_API_status(self):
-        response = self.client.get('/api/get_sentiment_analysis?text=good%20morning%20america')
+        response = self.client.get('/api/get_sentiment_analysis/?text=good%20morning%20america')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
 

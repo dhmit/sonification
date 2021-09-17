@@ -17,7 +17,7 @@
     "rules": {
         "arrow-body-style": ["off"],
         "class-methods-use-this": ["off"],
-        "comma-dangle": ["warn"],
+        "comma-dangle": ["warn", "always-multiline"],
         "dot-notation": ["off"],
         "eqeqeq": ["error", "always"],
         "import/extensions": ["off"],
@@ -40,7 +40,7 @@
         "prefer-destructuring": ["off"],
         "prefer-template": ["off"],
         "quote-props": ["error", "consistent"],
-        "quotes": ["warn"],
+
         "radix": ["off"],
         "react/no-unescaped-entities": [ "error", { "forbid": [">", "}"] }],
         "semi": ["error", "always"]

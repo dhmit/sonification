@@ -32,6 +32,8 @@ from app.analysis.text_to_music import text_to_note, sonify_text, sonify_text_2
 from app.audio_encoding import audio_samples_to_wav_base64
 from app.analysis import encoders
 
+from app.analysis import synthesizers as synths
+
 
 @api_view(['GET'])
 def get_example(request, api_example_id):
@@ -186,21 +188,24 @@ def image_to_music(request):
 
 
 @api_view(['POST'])
-def csv_upload(request):
+def generate_instrument(request):
     """
-    Handling extracting data from user-inputted CSV file
+    Takes a 1-D CSV with the 'ratio' header and constructs samples based on those
+    ratios.
     """
-    tempfile = request.FILES.get('value')
-    csvdata = encoders.parse_csv_upload(tempfile)
-    return Response(csvdata)
+    temp_file = request.FILES.get('value')
+    csv_data = encoders.parse_csv_upload(temp_file)
+    ratios = [float(row['ratio']) for row in csv_data]
 
+    base_frequency = 220
+    wav_files = []
+    for ratio in ratios:
+        freq_to_generate = base_frequency * ratio
+        audio_samples = synths.generate_note(
+            frequency=freq_to_generate,
+            duration=1
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
 
-@api_view(['POST'])
-def change_settings(request):
-    """
-    Handling settings changes from frontend
-    """
-    print("type:", request.data.get('type'),
-          "id:", request.data.get('id'),
-          "value:", int(request.data.get('value')))
-    return Response(request.data)
+    return Response(wav_files)

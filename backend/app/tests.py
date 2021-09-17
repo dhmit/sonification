@@ -393,13 +393,13 @@ class ImageAnalysisAPITests(APITestCase):
 
     def test_API_status(self):
         img = self._get_test_image()
-        response = self.client.post('/api/image_to_music', {'image': img}, format='multipart')
+        response = self.client.post('/api/image_to_music/', {'image': img}, format='multipart')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
 
     # pylint: disable=invalid-name
     def test_API_result(self):
         img = self._get_test_image()
-        response = self.client.post('/api/image_to_music', {'image': img}, format='multipart')
+        response = self.client.post('/api/image_to_music/', {'image': img}, format='multipart')
         self.assertTrue(isinstance(response.data['sound'], str))
         encoded_data = base64.b64decode(response.data['sound'].encode('UTF-8'))
         self.assertTrue(isinstance(encoded_data, bytes))

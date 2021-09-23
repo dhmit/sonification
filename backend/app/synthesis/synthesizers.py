@@ -2,28 +2,10 @@
 Methods for creating sound!
 """
 
-import random
 import numpy as np
-from app.common import (
-    MUSICAL_CHARS, NOTE_FREQ_SIMPLE, DISSONANT_RATIOS, NEUTRAL_RATIOS,
-    CONSONANT_RATIOS, lookup_note_frequency
-)
 
-from .audio_encoding import WAV_SAMPLE_RATE
-
-
-
-def calculate_note_frequency(base_frequency, rounding_frequency, positivity_differential,
-                             neutral_score):
-    """
-    TODO: define function string
-    :param base_frequency:
-    :param rounding_frequency:
-    :param positivity_differential:
-    :param neutral_score:
-    :return:
-    """
-    return base_frequency + positivity_differential * rounding_frequency * neutral_score
+from app.common import NOTE_FREQ_SIMPLE
+from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
 def generate_note(frequency, duration):
@@ -64,15 +46,9 @@ def generate_note(frequency, duration):
     return note
 
 
-
-
 def convert_piano_key_num_to_sin_wave(piano_key):
     """
-    formula calculates the frequency of a musical note using A4 as the base note
-    the score is the nth key starting from key 0 being A0 (hence the extra +1)
-    the exact middle of the piano is between key 43 (E4) and 44 (F4) if A0 is the zeroth note
-    thus, a neutral score should generate an F4 note
-
+    Calculates the frequency of a musical note using A4 (440 Hz) as the base note
     The formula used to generate a note frequency is based off of this article:
     <https://towardsdatascience.com/music-in-python-2f054deb41f4>.
 

@@ -8,7 +8,7 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 
-from . import (
+from app.summer_2021_prototypes import (
     image_to_music as summer_2021_image_to_music,
     text_to_music as summer_2021_text_to_music,
 )

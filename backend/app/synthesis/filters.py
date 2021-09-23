@@ -10,7 +10,7 @@ from scipy.signal import stft  # short time fourier transform
 from scipy.stats import mode
 
 from app.common import NOTE_FREQS
-from .audio_encoding import WAV_SAMPLE_RATE
+from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
 def apply_filter(audio_samples, filter_function, **kwargs):

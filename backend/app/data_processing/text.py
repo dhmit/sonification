@@ -1,8 +1,18 @@
+"""
+
+This module contains functions for transforming textual input data into quantities
+that we can plug into the parameters of our synthesis modules.
+
+"""
+
 import string
 
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
 
+# These functions run when the system imports this module: i.e,. when you start the application
+# by running the backend. Normally, don't put code that executes at import time into a module!
+# This kind of setup code is the rare exception.
 nltk.download('punkt')
 nltk.download('vader_lexicon')
 
@@ -38,6 +48,3 @@ def clean_text(text):
     lower_case = text.lower()
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
     return cleaned_text
-
-
-

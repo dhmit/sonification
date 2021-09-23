@@ -13,11 +13,10 @@ from rest_framework.test import APITestCase
 from rest_framework import status
 
 from app import common
-from app.audio_encoding import _audio_samples_to_wav_base64
-from app.analysis import filters
-from app.analysis.text_to_music import sonify_text_2
-from app.analysis import encoders
-from app.analysis import synthesizers as synths
+from app.synthesis.audio_encoding import _audio_samples_to_wav_base64
+from app.synthesis import filters
+from app.summer_2021_prototypes.text_to_music import sonify_text_2
+from app.synthesis import synthesizers as synths
 
 
 class MainTests(TestCase):

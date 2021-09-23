@@ -44,5 +44,3 @@ def get_example(_request, api_example_id):
         'id': api_example_id,
     }
     return Response(data)
-
-

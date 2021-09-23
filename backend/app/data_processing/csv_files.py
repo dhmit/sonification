@@ -1,3 +1,10 @@
+"""
+
+This module contains functions for transforming CSV file data into quantities
+that we can plug into the parameters of our synthesis modules.
+
+"""
+
 import csv
 import io
 

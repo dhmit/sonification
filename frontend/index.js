@@ -20,7 +20,7 @@ const COMPONENTS = {
     SentimentAnalysis,
     SentimentAnalysis2,
     ImageAnalysis,
-    Home
+    Home,
 };
 
 // Here, we take the data for our components specified by Django in our views.py file,

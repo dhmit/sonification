@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import PropTypes from "prop-types";
 import Slider from "../inputs/Slider";
-
+//test
 const SliderInstrument = ({samples}) => {
     if (samples === null) { return ('Waiting to load data to create an instrument.'); }
 

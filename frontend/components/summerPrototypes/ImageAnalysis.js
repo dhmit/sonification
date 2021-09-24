@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef, useCallback} from "react";
 import STYLES from "./ImageAnalysis.module.scss";
-import {getCookie} from "../common";
+import {getCookie} from "../../common";
 import {Tabs, Tab} from "react-bootstrap";
 
 const ImageAnalysis = () => {
@@ -69,6 +69,11 @@ const ImageAnalysis = () => {
         }
     }, [isDrawing, mouseCoords]);
 
+    const endDrawing = useCallback(() => {
+        setIsDrawing(false);
+        setMouseCoords([]);
+    }, []);
+
     useEffect(() => {
         if (!canvasRef.current) return;
         const canvas = canvasRef.current;
@@ -83,11 +88,6 @@ const ImageAnalysis = () => {
             canvas.removeEventListener("mouseleave", endDrawing);
         };
     }, [beginDrawing, draw, endDrawing]);
-
-    const endDrawing = useCallback(() => {
-        setIsDrawing(false);
-        setMouseCoords([]);
-    }, []);
 
     const switchMode = (event) => {
         event.preventDefault();
@@ -136,7 +136,7 @@ const ImageAnalysis = () => {
             },
             body: formData,
         };
-        fetch("/api/image_to_music", requestOptions)
+        fetch("/api/image_to_music/", requestOptions)
             .then(response => response.json())
             .then(data => {
                 setSoundData(prevSoundData => ({...prevSoundData, [inputType]: data.sound}));
@@ -168,14 +168,22 @@ const ImageAnalysis = () => {
     return (
         <div className="container-fluid">
             <h1>Image Analysis</h1>
+            <p>
+                Add descriptive text here.
+            </p>
             <p>Please create a drawing or upload an image to convert into sound.</p>
             <Tabs defaultActiveKey="drawing">
                 <Tab eventKey="drawing" title="Drawing Canvas">
                     <div className="row">
                         <div className="col-12 col-sm-5">
-                            <canvas className={`${STYLES.canvas}
-                                ${submitted.drawing ? "" : STYLES.activeCanvas}`}
-                            ref={canvasRef} width="500" height="500"></canvas>
+                            <canvas
+                                className={`
+                                    ${STYLES.canvas}
+                                    ${submitted.drawing ? "" : STYLES.activeCanvas}
+                                `}
+                                ref={canvasRef}
+                                width="500" height="500"
+                            />
                         </div>
                         <div className="col mt-3">
                             <p>
@@ -226,8 +234,11 @@ const ImageAnalysis = () => {
                             {
                                 imageFile &&
                                 <p>
-                                    <img className={STYLES.imageFile}
-                                        src={URL.createObjectURL(imageFile)}></img>
+                                    <img
+                                        alt="User uploaded image"
+                                        className={STYLES.imageFile}
+                                        src={URL.createObjectURL(imageFile)}
+                                    />
                                 </p>
                             }
                             <button className="btn btn-primary mr-3" disabled={submitted.file}

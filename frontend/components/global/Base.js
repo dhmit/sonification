@@ -15,7 +15,7 @@ const Base = ({children}) => {
 };
 
 Base.propTypes = {
-    children: PropTypes.object
+    children: PropTypes.object,
 };
 
 

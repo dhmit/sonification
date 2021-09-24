@@ -12,7 +12,7 @@ const SentimentAnalysis = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         setResults("");
-        fetch(`api/get_sentiment_analysis?text=${text}`)
+        fetch(`/api/get_sentiment_analysis/?text=${text}`)
             .then(response => response.json())
             .then(data => {
                 setResults(data["sound"]);
@@ -21,8 +21,11 @@ const SentimentAnalysis = () => {
     };
 
     return (
-        <>
-            <h2>Sentiment Analysis</h2>
+        <div className="container-fluid">
+            <h1>Text Sentiment Analysis</h1>
+            <p>
+                Add descriptive text here.
+            </p>
             <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
                     <h3><label htmlFor="text" className="col-2 col-form-label">Text</label></h3>
@@ -37,11 +40,13 @@ const SentimentAnalysis = () => {
                 </div>
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
-            <h3>Play Audio:</h3>
-            {results && <audio controls controlsList={"nodownload"}>
-                <source src={`data:audio/wav;base64,${results}`} type={"audio/wav"}/>
-            </audio>}
-        </>
+            {results && (<>
+                <h3>Play Audio:</h3>
+                <audio controls controlsList={"nodownload"}>
+                    <source src={`data:audio/wav;base64,${results}`} type={"audio/wav"}/>
+                </audio>
+            </>)}
+        </div>
     );
 };
 

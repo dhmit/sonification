@@ -1,26 +1,14 @@
 """
 Miscellaneous utility functions useful throughout the system
 """
-import string
+from pathlib import Path
 from textwrap import dedent
 
+from django.conf import settings
 
+TEST_DATA_DIR = Path(settings.BACKEND_DIR, 'app', 'test_data')
 
-
-MUSICAL_CHARS = {'a', 'b', 'c', 'd', 'e', 'f', 'g'}
-
-# Ratios found from Wikipedia https://tinyurl.com/56cj5rh5 (wiki link that's too long)
-DISSONANT_RATIOS = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
-NEUTRAL_RATIOS = [(3, 4), (3, 5), (4, 5)]
-CONSONANT_RATIOS = [(1, 2), (2, 3)]
-
-SHORT_NOTE_DURATION = 0.2
-LONG_NOTE_DURATION = 0.8
-
-NUM_OF_PIANO_KEYS = 88
-
-# Dictionary copied from the table in this web page:
-# <https://pages.mtu.edu/~suits/notefreqs.html>
+# Dictionary copied from the table in this web page: <https://pages.mtu.edu/~suits/notefreqs.html>
 NOTE_FREQS = {
     'C0': 16.35,
     'C#0/Db0': 17.32,
@@ -131,6 +119,7 @@ NOTE_FREQS = {
     'B8': 7902.13
 }
 
+
 # a simplified dict using our above complex dictionary
 NOTE_FREQ_SIMPLE = {
     'a': NOTE_FREQS['A4'],
@@ -143,24 +132,6 @@ NOTE_FREQ_SIMPLE = {
 }
 
 
-
-def print_header(header_str):
-    """
-    Print a header -- mostly for our command line tools.
-    """
-    print(dedent(f'''
-        ################################################################################
-        # {header_str}
-        ################################################################################'''))
-
-
-def clean_text(text):
-    """Lowercase, remove punctuation"""
-    lower_case = text.lower()
-    cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
-    return cleaned_text
-
-
 def lookup_note_frequency(note):
     """
     :param note: letter (a-g)
@@ -170,3 +141,13 @@ def lookup_note_frequency(note):
         return NOTE_FREQ_SIMPLE[note]
     else:
         raise Exception(f"Error: {note} not found in note dict")
+
+
+def print_header(header_str):
+    """
+    Print a header -- mostly for our command line tools.
+    """
+    print(dedent(f'''
+        ################################################################################
+        # {header_str}
+        ################################################################################'''))

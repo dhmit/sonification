@@ -10,7 +10,7 @@ from scipy.signal import stft  # short time fourier transform
 from scipy.stats import mode
 
 from app.common import NOTE_FREQS
-from app.audio_encoding import WAV_SAMPLE_RATE
+from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
 def apply_filter(audio_samples, filter_function, **kwargs):
@@ -57,8 +57,7 @@ def get_notes(audio_samples):
     Convention: The sample indices are computed from the beginning
     of each window in which a note onset is detected.
 
-    :param audio: A tuple containing a 1D NumPy array (of samples) and a sample rate (in Hz).
-
+    :param audio_samples: 1D NumPy array (of samples)
     :return: A tuple of two lists, one of window indices and one of sample indices,
         both of which correspond to note onsets.
     """
@@ -170,7 +169,8 @@ def _spectral_difference(stft_arr):
     """
     all_sd_values = np.array([])
 
-    h_val = lambda x: (x + np.absolute(x)) / 2
+    def h_val(x):
+        return (x + np.absolute(x)) / 2
 
     window_size, num_windows = stft_arr.shape
 

@@ -1,57 +1,36 @@
 """
-These view functions and classes implement both standard GET routes and API endpoints.
+These view functions and classes implement both standard GET routes.
 
-GET routes produce largely empty HTML pages that expect a React component to attach to them and
-handle most view concerns. You can supply a few pieces of data in the render function's context
-argument to support this expectation.
+GET routes produce largely empty HTML pages that expect a React component
+to attach to them and handle most view concerns.
 
-Of particular use are the properties: page_metadata, component_props, and component_name:
-page_metadata: these values will be included in the page's <head> element.
-Currently, only the `title` property is used. component_props: these can be any properties you
-wish to pass into your React components as its highest-level props.
-component_name: this should reference the exact name of the React component
-you intend to load onto the page.
+You can supply a few pieces of data in the render function's context
+argument to support this expectation:
+    page_metadata:   These values will be included in the page's <head> element.
+                     Currently, only the `title` property is used.
+    component_props: These can be any properties you wish to pass into your React components
+                     as its highest-level props.
+    component_name:  This should reference the exact name of the React component
+                     you intend to load onto the page. The component_name must be
+                     imported in frontend/index.js in the constant COMPONENTS
 
 Example:
-context = {
-    'page_metadata': {
-        'title': 'Example ID page'
-    },
-    'component_props': {
-        'id': example_id
-    },
-    'component_name': 'ExampleId'
-}
-"""
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
-from django.shortcuts import render
-
-from app.analysis.image_to_music import analyze_image
-from app.analysis.text_to_music import text_to_note, sonify_text, sonify_text_2
-from app.audio_encoding import audio_samples_to_wav_base64
-from app.analysis import encoders
-
-from app.analysis import synthesizers as synths
-
-
-@api_view(['GET'])
-def get_example(request, api_example_id):
-    """
-    API example endpoint.
-    """
-
-    data = {
-        'name': 'Example',
-        'id': api_example_id,
+    context = {
+        'page_metadata': {
+            'title': 'Example ID page'
+        },
+        'component_props': {
+            'id': example_id
+        },
+        'component_name': 'ExampleId'
     }
-    return Response(data)
+"""
+
+from django.shortcuts import render
 
 
 def index(request):
-    """
-    Home page
-    """
+    """ Home page """
 
     context = {
         'page_metadata': {
@@ -63,10 +42,11 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+################################################################################
+# Boilerplate - just for examples
+################################################################################
 def example(request):
-    """
-    Example page
-    """
+    """ Example page """
 
     context = {
         'page_metadata': {
@@ -77,135 +57,17 @@ def example(request):
     return render(request, 'index.html', context)
 
 
-def example_id(request, ex_id):
-    """
-    Example ID page
-    """
+def example_id(request, example_id_arg):
+    """ Example ID page """
 
     context = {
         'page_metadata': {
             'title': 'Example ID page'
         },
         'component_props': {
-            'id': ex_id
+            'id': example_id_arg,
         },
         'component_name': 'ExampleId'
     }
 
     return render(request, 'index.html', context)
-
-
-def sentiment_analysis(request):
-    """
-    Sentiment Analysis Page
-    """
-
-    context = {
-        'page_metadata': {
-            'title': 'Sentiment Analysis'
-        },
-        'component_name': 'SentimentAnalysis'
-    }
-
-    return render(request, 'index.html', context)
-
-
-def sentiment_analysis_2(request):
-    """
-    Sentiment Analysis Page
-    """
-
-    context = {
-        'page_metadata': {
-            'title': 'Sentiment Analysis 2'
-        },
-        'component_name': 'SentimentAnalysis2'
-    }
-
-    return render(request, 'index.html', context)
-
-
-@api_view(['GET'])
-def get_sentiment_analysis(request):
-    """
-    API endpoint for generating audio based on the sentiment analysis of the given text
-    """
-    text = request.query_params.get('text')
-    audio_data = sonify_text_2(text)
-
-    # Filtering examples (can chain results!)
-    # audio_data = filters.apply_filter(audio_data, filters.change_pitch, pitch_factor=0.5)
-    # audio_data = filters.apply_filter(audio_data, filters.change_pitch, pitch_factor=2)
-    # audio_data = filters.apply_filter(audio_data, filters.add_chords)
-    # audio_data = filters.apply_filter(audio_data, filters.stretch_audio, speed_factor=.5)
-
-    res = {
-        'sound': audio_samples_to_wav_base64(audio_data)
-    }
-    return Response(res)
-
-
-@api_view(['GET'])
-def get_sentiment_analysis_2(request):
-    """
-    API endpoint for generating audio based on the sentiment analysis of the given text
-    """
-    text = request.query_params.get('text')
-    note = text_to_note(text)
-    sound = sonify_text(text)
-    res = {
-        'note': audio_samples_to_wav_base64(note),
-        'sound': audio_samples_to_wav_base64(sound)
-    }
-    return Response(res)
-
-
-def image_analysis(request):
-    """
-    API endpoint for image analysis
-    """
-    context = {
-        'page_metadata': {
-            'title': 'Image Analysis'
-        },
-        'component_name': 'ImageAnalysis'
-    }
-
-    return render(request, 'index.html', context)
-
-
-@api_view(['POST'])
-def image_to_music(request):
-    """
-    API endpoint for generating audio based on the image analysis of the given drawing/photo
-    """
-    image = request.data['image']
-    audio = analyze_image(image)
-    res = {
-        'sound': audio_samples_to_wav_base64(audio)
-    }
-    return Response(res)
-
-
-@api_view(['POST'])
-def generate_instrument(request):
-    """
-    Takes a 1-D CSV with the 'ratio' header and constructs samples based on those
-    ratios.
-    """
-    temp_file = request.FILES.get('value')
-    csv_data = encoders.parse_csv_upload(temp_file)
-    ratios = [float(row['ratio']) for row in csv_data]
-
-    base_frequency = 220
-    wav_files = []
-    for ratio in ratios:
-        freq_to_generate = base_frequency * ratio
-        audio_samples = synths.generate_note(
-            frequency=freq_to_generate,
-            duration=1
-        )
-        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
-        wav_files.append(wav_file_base64)
-
-    return Response(wav_files)

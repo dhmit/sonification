@@ -1,5 +1,7 @@
-import numpy as np
+# pylint: disable-msg=C0116
+# ignoring pylint's `missing-function-docstring` errors just for tests
 import base64
+import numpy as np
 
 from django.test import TestCase
 
@@ -8,8 +10,6 @@ from app.synthesis import filters
 from app.summer_2021_prototypes import text_to_music
 from app import common
 
-# pylint: disable-msg=C0116
-# ignoring pylint's `missing-function-docstring` errors just for tests
 
 class AudioEncodingTestCase(TestCase):
     """
@@ -271,5 +271,3 @@ class FiltersTestCase(TestCase):
 
         res_fast = filters.apply_filter(audio_data, filters.stretch_audio, speed_factor=3)
         self.assertLessEqual(res_fast.size, audio_data.size)
-
-

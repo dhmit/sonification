@@ -1,8 +1,12 @@
 """
 Miscellaneous utility functions useful throughout the system
 """
+from pathlib import Path
 from textwrap import dedent
 
+from django.conf import settings
+
+TEST_DATA_DIR = Path(settings.BACKEND_DIR, 'app', 'test_data')
 
 # Dictionary copied from the table in this web page: <https://pages.mtu.edu/~suits/notefreqs.html>
 NOTE_FREQS = {

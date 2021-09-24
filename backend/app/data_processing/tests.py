@@ -1,10 +1,9 @@
+# pylint: disable-msg=C0116
+# ignoring pylint's `missing-function-docstring` errors just for tests
 from django.test import TestCase
 
 from app.data_processing import text as text_processing
 
-
-# pylint: disable-msg=C0116
-# ignoring pylint's `missing-function-docstring` errors just for tests
 
 class TextProcessingTestCase(TestCase):
     """
@@ -35,4 +34,3 @@ class TextProcessingTestCase(TestCase):
         self.assertEqual(text_processing.clean_text(input_text), "hello how was your day")
         input_text = "......ooOOOoooOOOOoooo......"
         self.assertEqual(text_processing.clean_text(input_text), "oooooooooooooooo")
-

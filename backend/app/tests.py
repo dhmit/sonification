@@ -3,13 +3,11 @@
 Tests for modules in the sonification app that live in the top-level app directory.
 
 These are mostly tests for functions in common.py,
-or view/api tests to check that routes render.
+or view tests to check that routes render.
 
 """
-
 # pylint: disable-msg=C0116
 # ignoring pylint's `missing-function-docstring` errors just for tests
-
 from django.test import TestCase
 
 from app import common

@@ -1,7 +1,9 @@
+# pylint: disable-msg=C0116
+# ignoring pylint's `missing-function-docstring` errors just for tests
 import base64
 import cv2 as cv
-import numpy as np
 import io
+import numpy as np
 from pathlib import Path
 
 from PIL import Image
@@ -12,8 +14,7 @@ from rest_framework import status
 
 from app.summer_2021_prototypes import text_to_music
 from app.summer_2021_prototypes import image_to_music
-
-TEST_DATA_DIR = Path(settings.BACKEND_DIR, 'app', 'test_data')
+from app.common import TEST_DATA_DIR
 
 class ImageToMusicTestCase(TestCase):
     """
@@ -125,4 +126,3 @@ class SentimentAnalysisAPITests(APITestCase):
     def test_API_status(self):
         response = self.client.get('/api/get_sentiment_analysis/?text=good%20morning%20america')
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-

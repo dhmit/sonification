@@ -1,20 +1,19 @@
 # pylint: disable-msg=C0116
 # ignoring pylint's `missing-function-docstring` errors just for tests
 import base64
-import cv2 as cv
 import io
+import cv2 as cv
 import numpy as np
-from pathlib import Path
 
 from PIL import Image
 from django.test import TestCase
-from django.conf import settings
 from rest_framework.test import APITestCase
 from rest_framework import status
 
 from app.summer_2021_prototypes import text_to_music
 from app.summer_2021_prototypes import image_to_music
 from app.common import TEST_DATA_DIR
+
 
 class ImageToMusicTestCase(TestCase):
     """

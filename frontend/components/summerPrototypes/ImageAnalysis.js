@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useRef, useCallback} from "react";
 import STYLES from "./ImageAnalysis.module.scss";
-import {getCookie} from "../common";
+import {getCookie} from "../../common";
 import {Tabs, Tab} from "react-bootstrap";
 
 const ImageAnalysis = () => {
@@ -168,14 +168,22 @@ const ImageAnalysis = () => {
     return (
         <div className="container-fluid">
             <h1>Image Analysis</h1>
+            <p>
+                Add descriptive text here.
+            </p>
             <p>Please create a drawing or upload an image to convert into sound.</p>
             <Tabs defaultActiveKey="drawing">
                 <Tab eventKey="drawing" title="Drawing Canvas">
                     <div className="row">
                         <div className="col-12 col-sm-5">
-                            <canvas className={`${STYLES.canvas}
-                                ${submitted.drawing ? "" : STYLES.activeCanvas}`}
-                            ref={canvasRef} width="500" height="500"></canvas>
+                            <canvas
+                                className={`
+                                    ${STYLES.canvas}
+                                    ${submitted.drawing ? "" : STYLES.activeCanvas}
+                                `}
+                                ref={canvasRef}
+                                width="500" height="500"
+                            />
                         </div>
                         <div className="col mt-3">
                             <p>

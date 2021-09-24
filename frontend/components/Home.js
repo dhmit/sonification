@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import PropTypes from "prop-types";
-import UploadFileInput from "./UploadFileInput";
-import Slider from "./Slider";
+import UploadFileInput from "./inputs/UploadFileInput";
+import Slider from "./inputs/Slider";
 
 
 const Instrument = ({samples}) => {
@@ -10,9 +10,7 @@ const Instrument = ({samples}) => {
     const [isPlaying, setIsPlaying] = useState(true);
 
     const adjustAudioVolume = (audioElementId, newValue) => {
-        console.log(audioElementId);
         const audioTag = document.getElementById(audioElementId);
-        console.log(audioTag);
         audioTag.volume = newValue / 100;
     };
 

@@ -1,5 +1,5 @@
 import React, {useRef, useState} from "react";
-import {getCookie} from "../common";
+import {getCookie} from "../../common";
 import PropTypes from "prop-types";
 
 

@@ -1,5 +1,5 @@
 import React from "react";
-import {debounce} from "../common";
+import {debounce} from "../../common";
 import PropTypes from "prop-types";
 
 const Slider = ({onChangeFunction}) => {

@@ -16,31 +16,16 @@ from app.summer_2021_prototypes import (
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 
 
-def sentiment_analysis(request):
+def summer_prototypes(request):
     """
-    Sentiment Analysis Page
-    """
-
-    context = {
-        'page_metadata': {
-            'title': 'Sentiment Analysis'
-        },
-        'component_name': 'SentimentAnalysis'
-    }
-
-    return render(request, 'index.html', context)
-
-
-def sentiment_analysis_2(request):
-    """
-    Sentiment Analysis Page
+    Page showing all the summer prototypes
     """
 
     context = {
         'page_metadata': {
-            'title': 'Sentiment Analysis 2'
+            'title': 'Summer Prototypes'
         },
-        'component_name': 'SentimentAnalysis2'
+        'component_name': 'SummerPrototypes'
     }
 
     return render(request, 'index.html', context)
@@ -79,20 +64,6 @@ def get_sentiment_analysis_2(request):
         'sound': audio_samples_to_wav_base64(sound)
     }
     return Response(res)
-
-
-def image_analysis(request):
-    """
-    API endpoint for image analysis
-    """
-    context = {
-        'page_metadata': {
-            'title': 'Image Analysis'
-        },
-        'component_name': 'ImageAnalysis'
-    }
-
-    return render(request, 'index.html', context)
 
 
 @api_view(['POST'])

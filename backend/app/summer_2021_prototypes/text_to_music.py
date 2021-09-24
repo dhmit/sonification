@@ -6,6 +6,7 @@ import random
 import numpy as np
 from nltk.tokenize import sent_tokenize
 
+from app.common import lookup_note_frequency
 from app.data_processing import text as text_processing
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 from app.synthesis import synthesizers as synths
@@ -20,6 +21,7 @@ MUSICAL_CHARS = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
 DISSONANT_RATIOS = [(5, 6), (4, 7), (5, 8), (5, 7), (6, 7)]
 NEUTRAL_RATIOS = [(3, 4), (3, 5), (4, 5)]
 CONSONANT_RATIOS = [(1, 2), (2, 3)]
+
 
 def get_ratios_from_sentiment(sentiment):
     """
@@ -45,7 +47,7 @@ def apply_ratio_to_frequency(ratio, frequency):
     return frequency * ratio[0] / ratio[1]
 
 
-def get_note_frequency(sentiment, frequency):
+def get_note_frequency_for_sentiment(sentiment, frequency):
     """
     :param sentiment: Either None or dict of negative, positive, neutral, and compound values
     :param frequency: a float
@@ -168,7 +170,7 @@ def sonify_sentiment(notes, durations, sentiment):
     for index, _ in enumerate(notes):
         duration = durations[index]
         louder_note_freq = lookup_note_frequency(notes[index])
-        quieter_note_freq = get_note_frequency(sentiment, louder_note_freq)
+        quieter_note_freq = get_note_frequency_for_sentiment(sentiment, louder_note_freq)
 
         time_steps = np.linspace(0, duration, int(duration * WAV_SAMPLE_RATE), False)
         louder_note = np.sin(louder_note_freq * time_steps * 2 * np.pi).tolist()

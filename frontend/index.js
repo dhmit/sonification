@@ -6,21 +6,17 @@ import "bootstrap/dist/css/bootstrap.min.css";
 // Our imports
 import "./scss/index.scss";
 import Base from "./components/global/Base";
-import ErrorNotFoundComponent from "./components/ErrorNotFoundComponent";
-import ExampleId from "./components/ExampleId";
-import SentimentAnalysis from "./components/SentimentAnalysis";
-import SentimentAnalysis2 from "./components/SentimentAnalysis2";
+import ErrorNotFoundComponent from "./components/global/ErrorNotFoundComponent";
+import ExampleId from "./components/global/ExampleId";
+import SummerPrototypes from "./components/summerPrototypes/SummerPrototypes";
 import Home from "./components/Home";
-import ImageAnalysis from "./components/ImageAnalysis";
 
 // Register each new view component here
 const COMPONENTS = {
     ErrorNotFoundComponent,
     ExampleId,
-    SentimentAnalysis,
-    SentimentAnalysis2,
-    ImageAnalysis,
     Home,
+    SummerPrototypes,
 };
 
 // Here, we take the data for our components specified by Django in our views.py file,

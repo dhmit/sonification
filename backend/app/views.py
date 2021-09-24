@@ -57,7 +57,7 @@ def example(request):
     return render(request, 'index.html', context)
 
 
-def example_id(request, ex_id):
+def example_id(request, example_id_arg):
     """ Example ID page """
 
     context = {
@@ -65,7 +65,7 @@ def example_id(request, ex_id):
             'title': 'Example ID page'
         },
         'component_props': {
-            'id': ex_id
+            'id': example_id_arg,
         },
         'component_name': 'ExampleId'
     }

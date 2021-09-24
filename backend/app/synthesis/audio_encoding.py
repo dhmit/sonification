@@ -67,7 +67,7 @@ def _audio_samples_to_wav_base64(audio_samples, sample_rate):
               The public interface to this is the above function wav_samples_to_base64, which
               assumes 44.1 kHz sampling.
 
-    :param audio: NumPy array representing the list of samples.
+    :param audio_samples: NumPy array representing the list of samples.
     :param sample_rate: int, the sampling rate in Hz
     :return: base64 encoding of the given array as a str
     """

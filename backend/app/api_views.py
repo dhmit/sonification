@@ -9,8 +9,8 @@ from app.data_processing import csv_files as csv_processing
 @api_view(['POST'])
 def generate_instrument(request):
     """
-    Takes a 1-D CSV with the 'ratio' header and constructs samples based on those
-    ratios.
+    Takes a 1-D CSV with the 'ratio' header and constructs samples based on those ratios.
+    TODO(ra): this is way too hardcoded! Move out of here.
     """
     temp_file = request.FILES.get('value')
     csv_data = csv_processing.parse_csv_upload(temp_file)
@@ -31,13 +31,27 @@ def generate_instrument(request):
 
 
 ################################################################################
-# Boilerplate - just for examples
+# Example views
 ################################################################################
 @api_view(['GET'])
 def get_example(_request, api_example_id):
     """
     API example endpoint.
     """
+
+    data = {
+        'name': 'Example',
+        'id': api_example_id,
+    }
+    return Response(data)
+
+
+@api_view(['POST'])
+def post_example(request):
+    """
+    API example endpoint.
+    """
+    api_example_id = request.data['api_example_id']
 
     data = {
         'name': 'Example',

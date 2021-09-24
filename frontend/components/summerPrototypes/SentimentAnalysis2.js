@@ -12,7 +12,7 @@ const SentimentAnalysis2 = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        fetch(`/api/get_sentiment_analysis_2?text=${userInput}`)
+        fetch(`/api/get_sentiment_analysis_2/?text=${userInput}`)
             .then(response => response.json())
             .then(data =>{
                 setNoteData(data.note);
@@ -31,15 +31,23 @@ const SentimentAnalysis2 = () => {
 
     return(
         <div className="container-fluid">
-            <h1>Sentiment Analysis</h1>
+            <h1>Text Sentiment Analysis</h1>
+            <p>
+                Add descriptive text here.
+            </p>
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
                     <label>
                         Please input your response in the textarea below.
                     </label>
-                    <textarea className="form-control col-7" id="user-input-text" rows="5"
-                        onChange={handleInputChange} disabled={submitted}
-                        required value={userInput}></textarea>
+                    <textarea
+                        className="form-control col-7"
+                        id="user-input-text" rows="5"
+                        onChange={handleInputChange}
+                        disabled={submitted}
+                        required
+                        value={userInput}
+                    />
                 </div>
                 <button type="submit" className="btn btn-primary"
                     disabled={submitted}>Submit</button>
@@ -54,9 +62,11 @@ const SentimentAnalysis2 = () => {
                             noteData
                                 ? <>
                                     <p><b>Note:</b></p>
-                                    <audio controls="controls"
+                                    <audio
+                                        controls
                                         src={`data:audio/wav;base64, ${noteData}`}
-                                        controlsList="nodownload"/>
+                                        controlsList="nodownload"
+                                    />
                                 </>
                                 : <p>Loading note...</p>
                         }
@@ -64,9 +74,11 @@ const SentimentAnalysis2 = () => {
                             soundData
                                 ? <>
                                     <p><b>Sound:</b></p>
-                                    <audio controls="controls"
+                                    <audio
+                                        controls
                                         src={`data:audio/wav;base64, ${soundData}`}
-                                        controlsList="nodownload"/>
+                                        controlsList="nodownload"
+                                    />
                                 </>
                                 : <p>Loading sound...</p>
                         }

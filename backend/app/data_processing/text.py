@@ -20,7 +20,7 @@ nltk.download('vader_lexicon')
 def get_sentiment(text):
     """
     Using sentiment analysis from NLTK's "VADER" model:
-     https://www.programcreek.com/python/example/100005/nltk.sentiment.vader.SentimentIntensityAnalyzer
+    https://www.programcreek.com/python/example/100005/nltk.sentiment.vader.SentimentIntensityAnalyzer
     :param text: String of text
     :return score: Dict, sentiment analysis of the text.
         {'neg': 0.0, 'neu': 0.448, 'pos': 0.552, 'compound': 0.5719}

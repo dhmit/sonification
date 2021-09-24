@@ -69,6 +69,11 @@ const ImageAnalysis = () => {
         }
     }, [isDrawing, mouseCoords]);
 
+    const endDrawing = useCallback(() => {
+        setIsDrawing(false);
+        setMouseCoords([]);
+    }, []);
+
     useEffect(() => {
         if (!canvasRef.current) return;
         const canvas = canvasRef.current;
@@ -83,11 +88,6 @@ const ImageAnalysis = () => {
             canvas.removeEventListener("mouseleave", endDrawing);
         };
     }, [beginDrawing, draw, endDrawing]);
-
-    const endDrawing = useCallback(() => {
-        setIsDrawing(false);
-        setMouseCoords([]);
-    }, []);
 
     const switchMode = (event) => {
         event.preventDefault();
@@ -234,8 +234,11 @@ const ImageAnalysis = () => {
                             {
                                 imageFile &&
                                 <p>
-                                    <img className={STYLES.imageFile}
-                                        src={URL.createObjectURL(imageFile)}></img>
+                                    <img
+                                        alt="User uploaded image"
+                                        className={STYLES.imageFile}
+                                        src={URL.createObjectURL(imageFile)}
+                                    />
                                 </p>
                             }
                             <button className="btn btn-primary mr-3" disabled={submitted.file}

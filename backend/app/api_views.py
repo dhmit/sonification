@@ -5,6 +5,8 @@ from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
 from app.data_processing import csv_files as csv_processing
 
+import numpy as np
+
 
 @api_view(['POST'])
 def generate_instrument(request):
@@ -28,6 +30,62 @@ def generate_instrument(request):
         wav_files.append(wav_file_base64)
 
     return Response(wav_files)
+
+
+@api_view(['POST'])
+def generate_instrument_2d(request):
+    """
+    Takes a 2-D CSV with the header and constructs samples based on those ratios.
+    """
+
+    temp_file = request.FILES.get('value')
+    csv_data = csv_processing.parse_csv_upload(temp_file)
+
+    ratios = []
+    rows = len(csv_data)
+    cols = 0
+    for each in csv_data[0]:
+        cols = len(each.split("\t"))
+
+    for i in range(cols):
+        ratios.append([])
+
+    for row in csv_data:
+        for col_names in row:
+            row_values = row[col_names]
+            row_values = row_values.split("\t")
+            for i, each in enumerate(row_values):
+                ratios[i].append(float(each))
+
+    print(ratios)
+
+    base_frequency = 220
+    audio_samples = None
+    for ratio_group in ratios:
+
+        ratio_sound = None
+        for ratio in ratio_group:
+            freq_to_generate = base_frequency * ratio
+            if ratio_sound is None:
+                ratio_sound = synths.generate_note(
+                    frequency=freq_to_generate,
+                    duration=1
+                )
+            else:
+                ratio_sound += synths.generate_note(
+                    frequency=freq_to_generate,
+                    duration=1
+                )
+        if audio_samples is None:
+            audio_samples = ratio_sound
+        else:
+            audio_samples = np.append(audio_samples, ratio_sound)
+
+    sound = audio_samples_to_wav_base64(audio_samples)
+
+    return Response(sound)
+
+
 
 
 ################################################################################

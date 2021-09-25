@@ -42,7 +42,6 @@ def generate_instrument_2d(request):
     csv_data = csv_processing.parse_csv_upload(temp_file)
 
     ratios = []
-    rows = len(csv_data)
     cols = 0
     for each in csv_data[0]:
         cols = len(each.split("\t"))
@@ -57,8 +56,6 @@ def generate_instrument_2d(request):
             for i, each in enumerate(row_values):
                 ratios[i].append(float(each))
 
-    print(ratios)
-
     base_frequency = 220
     audio_samples = None
     for ratio_group in ratios:
@@ -66,19 +63,19 @@ def generate_instrument_2d(request):
         ratio_sound = None
         for ratio in ratio_group:
             freq_to_generate = base_frequency * ratio
+            note = synths.generate_note(
+                    frequency=freq_to_generate,
+                    duration=1
+                )
             if ratio_sound is None:
-                ratio_sound = synths.generate_note(
-                    frequency=freq_to_generate,
-                    duration=1
-                )
+                ratio_sound = note
             else:
-                ratio_sound += synths.generate_note(
-                    frequency=freq_to_generate,
-                    duration=1
-                )
+                # combine ratios into a single sound
+                ratio_sound += note
         if audio_samples is None:
             audio_samples = ratio_sound
         else:
+            # add sounds sequentially
             audio_samples = np.append(audio_samples, ratio_sound)
 
     sound = audio_samples_to_wav_base64(audio_samples)

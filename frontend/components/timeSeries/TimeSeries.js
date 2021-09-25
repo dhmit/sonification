@@ -1,7 +1,5 @@
 import React, {useState} from "react";
 import UploadFileInput from "../inputs/UploadFileInput";
-import SliderInstrument from "../instruments/SliderInstrument";
-
 
 const TimeSeries = () => {
     const [instrumentSamples, setInstrumentSamples] = useState(null);
@@ -22,7 +20,7 @@ const TimeSeries = () => {
                         autoPlay
                         loop
                         src={`data:audio/wav;base64, ${instrumentSamples}`}
-                        controlsList="nodownload"
+                        controlsList="download"
                     />
                 </>: null
             }

@@ -7,7 +7,7 @@ import cv2 as cv
 from colorthief import ColorThief
 
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
-from app.synthesis.synthesizers import generate_note
+from app.synthesis.synthesizers import generate_sine_wave_with_envelope
 
 # Found from https://www.vobarian.com/celloanly/
 CELLO_OVERTONES = {
@@ -162,9 +162,9 @@ def analyze_image(img):
     full_audio = []
     for audio_slice in beats_and_durations:
         for _ in range(audio_slice[0]):
-            notes = generate_note(frequency, audio_slice[1])
+            notes = generate_sine_wave_with_envelope(frequency, audio_slice[1])
             for harmonic in instrument:
-                notes += generate_note(frequency * harmonic, audio_slice[1])
+                notes += generate_sine_wave_with_envelope(frequency * harmonic, audio_slice[1])
 
             full_audio += notes.tolist()
 

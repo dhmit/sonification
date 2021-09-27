@@ -9,13 +9,20 @@ from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
 def generate_sine_wave(frequency, duration):
+    """
+    Generates audio samples for a sine wave at a given frequency and duration
+
+    :param frequency:  frequency in Hz
+    :param duration:   duration in seconds
+    :return: audio samples for the sine wave
+    """
     num_samples = duration * WAV_SAMPLE_RATE
     time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
     sine_wave_samples = np.sin(frequency * 2 * np.pi * time_steps)
     return sine_wave_samples
 
 
-def generate_note(frequency, duration):
+def generate_sine_wave_with_envelope(frequency, duration):
     # pylint: disable-msg=R0914
     """
     Uses the ADSR (Attack, Decay, Sustain, Release) envelope

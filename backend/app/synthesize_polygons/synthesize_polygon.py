@@ -1,4 +1,4 @@
-import app.synthesis.synthesizers as synthesizers
+from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 import numpy as np
 
 # hard-coded data
@@ -70,8 +70,9 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
     :param amplitude: amplitude as a scaling factor
     :return: numpy array which represents the note
     """
-    note = synthesizers.generate_note(frequency, duration)
-    return amplitude * note
+    time_steps = np.linspace(0, duration, duration * WAV_SAMPLE_RATE, False)
+    note = np.sin(frequency * time_steps * 2 * np.pi) * amplitude
+    return note
 
 
 def synthesize_polygon(points):
@@ -89,7 +90,8 @@ def synthesize_polygon(points):
 
     sound = np.array([])
     for ind in range(len(sides_list)):
-        note = generate_note_with_amplitude(base, 0.5, sides_list[ind])
+        print(base, sides_list[ind])
+        note = generate_note_with_amplitude(base, 1, sides_list[ind])
         sound = np.append(sound, [note])
         base *= freq_change[ind]
 

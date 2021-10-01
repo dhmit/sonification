@@ -43,8 +43,10 @@ def generate_instrument_2d(request):
 
     ratios = []
     cols = 0
+
+    # Gets the number of columns in csv_data
     for each in csv_data[0]:
-        cols = len(each.split("\t"))
+        cols = max(cols, len(each.split("\t")))
 
     for i in range(cols):
         ratios.append([])
@@ -58,8 +60,8 @@ def generate_instrument_2d(request):
 
     base_frequency = 220
     audio_samples = None
-    for ratio_group in ratios:
 
+    for ratio_group in ratios:
         ratio_sound = None
         for ratio in ratio_group:
             freq_to_generate = base_frequency * ratio

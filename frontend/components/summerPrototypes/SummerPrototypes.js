@@ -7,8 +7,6 @@ import TimeSeries from "../timeSeries/TimeSeries";
 
 const SummerPrototypes = () => {
     return (<div>
-        <TimeSeries />
-        <hr />
         <SentimentAnalysis />
         <hr />
         <SentimentAnalysis2 />

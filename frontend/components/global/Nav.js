@@ -12,6 +12,11 @@ const Nav = () => {
                         Summer 2021 Prototypes
                     </a>
                 </li>
+                <li>
+                    <a className="nav-link" href="/gestures-to-sound/">
+                        Gestures to Sound
+                    </a>
+                </li>
             </ul>
             <a className={STYLES.linkLab} href="https://digitalhumanities.mit.edu/" target="_blank" rel="noreferrer">
                 <img alt="MIT Digital Humanities Logo" className={STYLES.imageLab} src={DH_LOGO} />

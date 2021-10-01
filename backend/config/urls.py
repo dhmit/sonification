@@ -29,6 +29,7 @@ urlpatterns = [
 
     # View paths
     path('', views.index, name='index'),
+    path('gestures-to-sound/', views.gestures_to_sound, name='gestures-to-sound'),
 
     # Summer prototype view paths and API endpoints
     path('summer-prototypes/', summer_prototype_views.summer_prototypes),

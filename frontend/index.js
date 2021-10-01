@@ -10,6 +10,7 @@ import ErrorNotFoundComponent from "./components/global/ErrorNotFoundComponent";
 import ExampleId from "./components/global/ExampleId";
 import SummerPrototypes from "./components/summerPrototypes/SummerPrototypes";
 import Home from "./components/Home";
+import GesturesToSound from "./components/GesturesToSound";
 
 // Register each new view component here
 const COMPONENTS = {
@@ -17,6 +18,7 @@ const COMPONENTS = {
     ExampleId,
     Home,
     SummerPrototypes,
+    GesturesToSound,
 };
 
 // Here, we take the data for our components specified by Django in our views.py file,

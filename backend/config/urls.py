@@ -19,6 +19,7 @@ from django.urls import path
 
 from app import views, api_views
 from app.summer_2021_prototypes import views as summer_prototype_views
+from app.color_encoding_to_sound import views as color_encoding_to_sound_views
 
 urlpatterns = [
     # Django admin page
@@ -35,6 +36,9 @@ urlpatterns = [
     path('api/get_sentiment_analysis/', summer_prototype_views.get_sentiment_analysis),
     path('api/get_sentiment_analysis_2/', summer_prototype_views.get_sentiment_analysis_2),
     path('api/image_to_music/', summer_prototype_views.image_to_music),
+
+    # Color encoding to sound paths and API endpoints
+    path('color_encode_to_sound/', color_encoding_to_sound_views.base_page)
 
 ]
 

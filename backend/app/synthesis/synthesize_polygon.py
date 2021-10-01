@@ -10,6 +10,13 @@ def angles_of_polygon(points):
     """
     pass
 
+def change_in_frequency(angles):
+    """
+        Maps angles of the polygon, in input order, to frequency.
+        :param angles: A list of angles of a polygon.
+        :return: A list of frequencies.
+        """
+    return [180/theta for theta in angles]
 
 def sides_of_polygons(points):
     """

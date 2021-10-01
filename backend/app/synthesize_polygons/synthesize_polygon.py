@@ -11,9 +11,9 @@ base_frequency = 220  # base note in Hz
 
 def angles_of_polygon(points):
     """
-    Computes the internal angles (in degrees) of this polygon, in input order.
-    :param points: list of points representing a polygon.
-    :return: list of angles of this polygon in degrees.
+    Computes the internal angles of this polygon, in input order.
+    :param points: A list of points representing a polygon.
+    :return: A list of angles of this polygon in degrees.
     """
     points.append(points[0])  # Polygon need to be closed shape.
     vectors = []
@@ -34,6 +34,7 @@ def angles_of_polygon(points):
     angles = list(rad_to_deg)
 
     return angles
+
 
 
 print(angles_of_polygon(square))

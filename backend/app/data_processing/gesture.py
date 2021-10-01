@@ -37,8 +37,11 @@ def get_pitch(x):
     raise NotImplementedError
 
 
-def get_volume(y):
+def get_volume(y, low = 50, high = 100):
     """
     Given y coordinate, convert to volume.
     """
-    raise NotImplementedError
+    volume_range = high - low
+    y_volume = low + (y/500)*volume_range
+    return y_volume
+

@@ -18,6 +18,16 @@ def sides_of_polygons(points):
     :return: A list of side lengths of this polygon.
     """
     pass
+    side_lengths = []
+    for i in range(len(points)):
+        if i < len(points) - 1:
+            side_lengths.append(((points[i + 1][0] - points[i][0]) ** 2 + (
+                    points[i + 1][1] - points[i][1]) ** 2) ** (1 / 2))
+        else:
+            side_lengths.append(
+                ((points[0][0] - points[i][0]) ** 2 + (points[0][1] - points[i][1]) ** 2) ** (
+                        1 / 2))
+    return side_lengths
 
 
 def synthesize_polygon(points):

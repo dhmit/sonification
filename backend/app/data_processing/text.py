@@ -48,3 +48,26 @@ def clean_text(text):
     lower_case = text.lower()
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
     return cleaned_text
+
+def extract_whitespace_info_from_text(text):
+    """
+    :param text:
+    :return: list of tuples in form (x, y), where x is
+    the number of continuous y (' ' or '\n') characters.
+    """
+    cleaned_text=clean_text(text)
+    counter=0
+    white_space_info=[]
+    previous_char=None
+    for char in cleaned_text:
+        if char!=previous_char:
+            if previous_char in {'\n', ' '}:
+                white_space_info.append((counter,previous_char))
+            counter=0
+        counter+=1
+        previous_char = char
+    if previous_char in {'\n', ' '}: #account for trailing whitespace
+        white_space_info.append((counter, previous_char))
+    return white_space_info
+
+

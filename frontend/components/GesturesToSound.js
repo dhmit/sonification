@@ -33,7 +33,6 @@ const GesturesToSound = () => {
             context.lineWidth = 5;
             context.lineJoin = "round";
             context.lineCap = "round";
-            context.strokeStyle = "black";
             context.globalCompositeOperation = "source-over";
             context.moveTo(coords[0].x, coords[0].y);
             let i;
@@ -103,20 +102,24 @@ const GesturesToSound = () => {
     return (
         <>
             <h1>Gestures to Sound</h1>
+            <div className="col-12 col-sm-5">
+                <canvas
+                    className={`
+                        ${STYLES.canvas}
+                        ${submitted ? "" : STYLES.activeCanvas}
+                    `}
+                    ref={canvasRef}
+                    width="500" height="500"
+                />
+            </div>
+            <div className="col mt-3">
+                <p>
+                    <button className="btn btn-sm btn-outline-primary text-right"
+                        onClick={resetCanvas} disabled={submitted}>
+                        Clear Drawing</button>
+                </p>
+            </div>
 
-            <canvas
-                className={`
-                    ${STYLES.canvas}
-                    ${submitted ? "" : STYLES.activeCanvas}
-                `}
-                ref={canvasRef}
-                width="500" height="500"
-            />
-            <p>
-                <button className="btn btn-sm btn-outline-primary text-right"
-                    onClick={resetCanvas} disabled={submitted}>
-                    Clear Drawing</button>
-            </p>
         </>
     );
 };

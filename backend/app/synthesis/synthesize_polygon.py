@@ -2,6 +2,9 @@ import synthesizers
 import numpy as np
 
 # hard-coded data
+import math
+import numpy as np
+
 square = [(0, 0), (0, 1), (1, 1), (1, 0)]
 base_frequency = 220  # base note in Hz
 
@@ -12,8 +15,28 @@ def angles_of_polygon(points):
     :param points: list of points representing a polygon.
     :return: list of angles of this polygon in degrees.
     """
-    pass
+    vectors = []
+    angles = []
+    for i in range(points-1):
+        vectors.append(np.array[points[i+1][0]-points[i][0],points[i+1][1]-points[i][1]])
 
+    for i in range(vectors-1):
+        mag_v1 = (np.sqrt(vectors[i].dot(vectors[i])))
+        mag_v2 = (np.sqrt(vectors[i+1].dot(vectors[i+1])))
+        angles.append(math.acos(vectors[i].dot(vectors[i+1])/(mag_v1*mag_v2)))
+
+    return angles
+
+
+
+
+def change_in_frequency(angles):
+    """
+        Maps angles of the polygon, in input order, to frequency.
+        :param angles: A list of angles of a polygon.
+        :return: A list of frequencies.
+        """
+    return [180/theta for theta in angles]
 
 def sides_of_polygons(points):
     """
@@ -22,6 +45,15 @@ def sides_of_polygons(points):
     :return: list of side lengths of this polygon.
     """
     pass
+    side_lengths = []
+    for i in range(len(points)):
+        if i < len(points) - 1:
+            side_lengths.append(((points[i + 1][0] - points[i][0]) ** 2 +
+                                 (points[i + 1][1] - points[i][1]) ** 2) ** (1 / 2))
+        else:
+            side_lengths.append(((points[0][0] - points[i][0]) ** 2 +
+                                 (points[0][1] - points[i][1]) ** 2) ** (1 / 2))
+    return side_lengths
 
 
 def generate_note_with_amplitude(frequency, duration, amplitude):

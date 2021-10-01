@@ -16,8 +16,9 @@ def compress_coordinates(gesture, factor):
 
 def get_sound(gesture):
     """
-    Given a list of coordinates representing a single gesture received from user input via
-    frontend, return a list of (pitch, volume) tuples representing the gesture converted to sound
+    Given a list of dictionaries {"x": x_val, "y": y_val}, each representing a coordinate
+    from a single gesture received from user input via frontend, return a list of (pitch,
+    volume) tuples representing the gesture converted to sound
     """
     result = list()
     for coordinate in gesture:

@@ -1,15 +1,19 @@
+import app.synthesis.synthesizers as synthesizers
+import numpy as np
+
 # hard-coded data
 import math
 import numpy as np
 
 square = [(0, 0), (0, 1), (1, 1), (1, 0)]
+base_frequency = 220  # base note in Hz
 
 
 def angles_of_polygon(points):
     """
-    Computes the internal angles of this polygon, in input order.
-    :param points: A list of points representing a polygon.
-    :return: A list of angles of this polygon in degrees.
+    Computes the internal angles (in degrees) of this polygon, in input order.
+    :param points: list of points representing a polygon.
+    :return: list of angles of this polygon in degrees.
     """
     points.append(points[0])  # Polygon need to be closed shape.
     vectors = []
@@ -47,8 +51,8 @@ def change_in_frequency(angles):
 def sides_of_polygons(points):
     """
     Computes the side lengths of this polygon, in input order.
-    :param points: A list of points representing a polygon.
-    :return: A list of side lengths of this polygon.
+    :param points: list of points representing a polygon.
+    :return: list of side lengths of this polygon.
     """
     pass
     side_lengths = []
@@ -62,11 +66,23 @@ def sides_of_polygons(points):
     return side_lengths
 
 
+def generate_note_with_amplitude(frequency, duration, amplitude):
+    """
+    Generates a note with the given frequency, duration, and amplitude.
+    :param frequency: frequency of the note
+    :param duration: duration in seconds
+    :param amplitude: amplitude as a scaling factor
+    :return: numpy array which represents the note
+    """
+    note = synthesizers.generate_note(frequency, duration)
+    return amplitude * note
+
+
 def synthesize_polygon(points):
     """
     Synthesizes a polygon. The polygon is represented as a list of points
     where each point is a tuple of length 2.
-    :param points: A list of points representing a polygon.
-    :return: A numpy array which represents the sound.
+    :param points: list of points representing a polygon.
+    :return: numpy array which represents the sound.
     """
     pass

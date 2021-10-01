@@ -36,7 +36,6 @@ def angles_of_polygon(points):
     return angles
 
 
-
 def change_in_frequency(angles):
     """
         Maps angles of the polygon, in input order, to frequency.
@@ -83,7 +82,7 @@ def synthesize_polygon(points):
     :param points: list of points representing a polygon.
     :return: numpy array which represents the sound.
     """
-    sides_list = sides_of_polygons(points)
+    sides_list = sides_of_polygon(points)
     angles_list = angles_of_polygon(points)
     # duration_list = sides_to_duration(sides_list)
     freq_change = change_in_frequency(angles_list)

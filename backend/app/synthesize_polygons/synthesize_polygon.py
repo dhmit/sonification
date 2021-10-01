@@ -1,4 +1,4 @@
-import synthesizers
+import app.synthesis.synthesizers as synthesizers
 import numpy as np
 
 # hard-coded data

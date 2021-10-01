@@ -1,4 +1,4 @@
-import app.synthesis.synthesizers as synthesizers
+from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 import numpy as np
 
 # hard-coded data
@@ -29,6 +29,7 @@ def angles_of_polygon(points):
 
     vectors.append(vectors[0])  # Polygon needs to be closed shape.
 
+
     for i in range(len(vectors) - 1):
         mag_v1 = (np.sqrt(vectors[i].dot(vectors[i])))
         mag_v2 = (np.sqrt(vectors[i + 1].dot(vectors[i + 1])))
@@ -41,20 +42,19 @@ def angles_of_polygon(points):
 
 def change_in_frequency(angles):
     """
-        Maps angles of the polygon, in input order, to frequency.
-        :param angles: A list of angles of a polygon.
-        :return: A list of frequencies.
-        """
+    Maps angles of the polygon, in input order, to frequency.
+    :param angles: A list of angles of a polygon.
+    :return: A list of frequencies.
+    """
     return [180 / theta for theta in angles]
 
 
-def sides_of_polygons(points):
+def sides_of_polygon(points):
     """
     Computes the side lengths of this polygon, in input order.
     :param points: list of points representing a polygon.
     :return: list of side lengths of this polygon.
     """
-    pass
     side_lengths = []
     for i in range(len(points)):
         if i < len(points) - 1:
@@ -74,8 +74,9 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
     :param amplitude: amplitude as a scaling factor
     :return: numpy array which represents the note
     """
-    note = synthesizers.generate_note(frequency, duration)
-    return amplitude * note
+    time_steps = np.linspace(0, duration, duration * WAV_SAMPLE_RATE, False)
+    note = np.sin(frequency * time_steps * 2 * np.pi) * amplitude
+    return note
 
 
 def synthesize_polygon(points):
@@ -85,16 +86,18 @@ def synthesize_polygon(points):
     :param points: list of points representing a polygon.
     :return: numpy array which represents the sound.
     """
-    sides_list = sides_of_polygons(points)
+    sides_list = sides_of_polygon(points)
     angles_list = angles_of_polygon(points)
     # duration_list = sides_to_duration(sides_list)
     freq_change = change_in_frequency(angles_list)
     base = base_frequency
 
-    pre_np = []
+    sound = np.array([])
     for ind in range(len(sides_list)):
-        pre_np.append((base, sides_list[ind]))
-        base += freq_change[ind]
+        print(base, sides_list[ind])
+        note = generate_note_with_amplitude(base, 1, sides_list[ind])
+        sound = np.append(sound, [note])
+        base *= freq_change[ind]
 
-    return np.array(pre_np)
+    return sound
 

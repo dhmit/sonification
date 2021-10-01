@@ -33,10 +33,13 @@ urlpatterns = [
 
     # Summer prototype view paths and API endpoints
     path('summer-prototypes/', summer_prototype_views.summer_prototypes),
-    path('synthesize-polygons/', synthesize_polygons_views.synthesize_polygons),
     path('api/get_sentiment_analysis/', summer_prototype_views.get_sentiment_analysis),
     path('api/get_sentiment_analysis_2/', summer_prototype_views.get_sentiment_analysis_2),
     path('api/image_to_music/', summer_prototype_views.image_to_music),
+
+    # Synthesize polygons view paths and API endpoints
+    path('synthesize-polygons/', synthesize_polygons_views.synthesize_polygons),
+    path('api/synthesize_polygon/', synthesize_polygons_views.synthesize_polygon_endpoint),
 
 ]
 

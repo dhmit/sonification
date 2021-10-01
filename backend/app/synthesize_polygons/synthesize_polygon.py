@@ -36,8 +36,6 @@ def angles_of_polygon(points):
     return angles
 
 
-print(angles_of_polygon(square))
-
 
 def change_in_frequency(angles):
     """
@@ -48,7 +46,7 @@ def change_in_frequency(angles):
     return [180 / theta for theta in angles]
 
 
-def sides_of_polygons(points):
+def sides_of_polygon(points):
     """
     Computes the side lengths of this polygon, in input order.
     :param points: list of points representing a polygon.

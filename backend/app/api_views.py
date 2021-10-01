@@ -29,6 +29,14 @@ def generate_instrument(request):
 
     return Response(wav_files)
 
+@api_view(['POST'])
+def gesture_to_sound(request):
+    gestures = request.data['gestures']
+    audio = [] #TODO: put function here
+    res = {
+        'sound': audio_samples_to_wav_base64(audio)
+    }
+    return Response(res)
 
 ################################################################################
 # Example views

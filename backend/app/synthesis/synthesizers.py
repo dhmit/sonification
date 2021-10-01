@@ -16,7 +16,7 @@ def generate_sine_wave(frequency, duration):
     :param duration:   duration in seconds
     :return: audio samples for the sine wave
     """
-    num_samples = duration * WAV_SAMPLE_RATE
+    num_samples = int(duration * WAV_SAMPLE_RATE)
     time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
     sine_wave_samples = np.sin(frequency * 2 * np.pi * time_steps)
     return sine_wave_samples
@@ -41,7 +41,7 @@ def generate_sine_wave_with_envelope(frequency, duration):
     sustain_weight = peak_weight * 0.7
     final_weight = 0
 
-    total_num_samples = duration * WAV_SAMPLE_RATE
+    total_num_samples = int(duration * WAV_SAMPLE_RATE)
     len_a = int(a_percentage * total_num_samples)
     len_d = int(d_percentage * total_num_samples)
     len_s = int(s_percentage * total_num_samples)
@@ -67,7 +67,7 @@ def generate_sine_wave_with_envelope(frequency, duration):
         for x in range(len_d)
     ]
 
-    # Fill out length of the sustain portion with the same weight
+    # Fill out length of the sustain portion with the sustain weight
     s_weights = [sustain_weight for _ in range(len_s)]
 
     # Compute weights for the release portion of the audio

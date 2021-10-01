@@ -38,7 +38,7 @@ urlpatterns = [
 
 
     # time series endpoints
-    path('summer-prototypes/api/generate_instrument_2d/', api_views.generate_instrument_2d),
+    path('api/generate_instrument_2d/', api_views.generate_instrument_2d),
 
 ]
 

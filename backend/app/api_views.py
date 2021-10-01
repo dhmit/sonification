@@ -22,7 +22,7 @@ def generate_instrument(request):
     wav_files = []
     for ratio in ratios:
         freq_to_generate = base_frequency * ratio
-        audio_samples = synths.generate_note(
+        audio_samples = synths.generate_sine_wave_with_envelope(
             frequency=freq_to_generate,
             duration=1
         )

@@ -1,3 +1,5 @@
+factor = 5
+
 
 def compress_coordinates(gesture, factor):
     """
@@ -30,11 +32,15 @@ def get_sound(gesture):
     return result
 
 
-def get_pitch(x):
+def get_pitch(x, low = 65, high = 1065):
     """
     Given x coordinate, convert to pitch.
     """
-    raise NotImplementedError
+    pitch_range = high - low
+    compressed_square = 500/factor
+    change_per_coordinate = pitch_range/compressed_square
+    x_pitch = low + change_per_coordinate(x)
+    return x_pitch
 
 
 def get_volume(y, low = 50, high = 100):

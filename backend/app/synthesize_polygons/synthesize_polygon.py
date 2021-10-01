@@ -16,29 +16,28 @@ def angles_of_polygon(points):
                    same. Adjacent points in the list cannot be the same.
     :return: A list of angles of this polygon in degrees.
     """
-    assert points[0] != points[len(points)-1],"Ends of input points cannot be the same."
+    assert points[0] != points[len(points) - 1], "Ends of input points cannot be the same."
 
     points.append(points[0])  # Polygon needs to be closed shape.
     vectors = []
     angles = []
 
     for i in range(len(points) - 1):
-        assert points[i] != points[i+1],"Adjacent points cannot be the same."
+        assert points[i] != points[i + 1], "Adjacent points cannot be the same."
         arr = [points[i + 1][0] - points[i][0], points[i + 1][1] - points[i][1]]
         vectors.append(np.array(arr))
 
     vectors.append(vectors[0])  # Polygon needs to be closed shape.
-
-
     for i in range(len(vectors) - 1):
         mag_v1 = (np.sqrt(vectors[i].dot(vectors[i])))
         mag_v2 = (np.sqrt(vectors[i + 1].dot(vectors[i + 1])))
-        angles.append(math.acos(vectors[i].dot(vectors[i + 1]) / (mag_v1 * mag_v2)))
+        angles.append(math.acos(-vectors[i].dot(vectors[i + 1]) / (mag_v1 * mag_v2)))
 
     rad_to_deg = map(lambda x: x * 180 / math.pi, angles)
     angles = list(rad_to_deg)
 
     return angles
+
 
 def change_in_frequency(angles):
     """
@@ -94,10 +93,8 @@ def synthesize_polygon(points):
 
     sound = np.array([])
     for ind in range(len(sides_list)):
-        print(base, sides_list[ind])
         note = generate_note_with_amplitude(base, 1, sides_list[ind])
         sound = np.append(sound, [note])
         base *= freq_change[ind]
 
     return sound
-

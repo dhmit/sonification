@@ -7,13 +7,10 @@ See app.api_views and app.views for documentation on how these kinds of views wo
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
-
-from app.summer_2021_prototypes import (
-    image_to_music as summer_2021_image_to_music,
-    text_to_music as summer_2021_text_to_music,
-)
-
+from app.data_processing import csv_files as csv_processing
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
+
+from app.synthesize_polygons.synthesize_polygon import synthesize_polygon
 
 
 def synthesize_polygons(request):
@@ -29,4 +26,13 @@ def synthesize_polygons(request):
     }
 
     return render(request, 'index.html', context)
+
+
+@api_view(['POST'])
+def synthesize_polygon_endpoint(request):
+    temp_file = request.FILES.get('value')
+    csv_data = csv_processing.parse_csv_upload(temp_file)
+    # TODO: reformat csv data
+    return Response(audio_samples_to_wav_base64(synthesize_polygon(csv_data)))
+
 

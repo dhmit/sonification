@@ -12,6 +12,11 @@ const SynthesizePolygons = () => {
                 uploadSuccessfulCallback={setSound}
                 apiEndpoint={'/api/synthesize_polygon/'}
             />
+            {sound &&
+                <audio controls controlsList={"nodownload"}>
+                    <source src={`data:audio/wav;base64,${sound}`} type={"audio/wav"}/>
+                </audio>
+            }
         </div>
     );
 };

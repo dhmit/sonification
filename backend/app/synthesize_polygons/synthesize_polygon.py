@@ -17,17 +17,15 @@ def angles_of_polygon(points):
     """
     vectors = []
     angles = []
-    for i in range(points-1):
-        vectors.append(np.array[points[i+1][0]-points[i][0],points[i+1][1]-points[i][1]])
+    for i in range(points - 1):
+        vectors.append(np.array[points[i + 1][0] - points[i][0], points[i + 1][1] - points[i][1]])
 
-    for i in range(vectors-1):
+    for i in range(vectors - 1):
         mag_v1 = (np.sqrt(vectors[i].dot(vectors[i])))
-        mag_v2 = (np.sqrt(vectors[i+1].dot(vectors[i+1])))
-        angles.append(math.acos(vectors[i].dot(vectors[i+1])/(mag_v1*mag_v2)))
+        mag_v2 = (np.sqrt(vectors[i + 1].dot(vectors[i + 1])))
+        angles.append(math.acos(vectors[i].dot(vectors[i + 1]) / (mag_v1 * mag_v2)))
 
     return angles
-
-
 
 
 def change_in_frequency(angles):
@@ -36,7 +34,8 @@ def change_in_frequency(angles):
         :param angles: A list of angles of a polygon.
         :return: A list of frequencies.
         """
-    return [180/theta for theta in angles]
+    return [180 / theta for theta in angles]
+
 
 def sides_of_polygons(points):
     """

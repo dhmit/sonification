@@ -19,6 +19,7 @@ from django.urls import path
 
 from app import views, api_views
 from app.summer_2021_prototypes import views as summer_prototype_views
+from app.synthesize_polygons import views as synthesize_polygons_views
 
 urlpatterns = [
     # Django admin page
@@ -32,6 +33,7 @@ urlpatterns = [
 
     # Summer prototype view paths and API endpoints
     path('summer-prototypes/', summer_prototype_views.summer_prototypes),
+    path('synthesize-polygons/', synthesize_polygons_views.synthesize_polygons),
     path('api/get_sentiment_analysis/', summer_prototype_views.get_sentiment_analysis),
     path('api/get_sentiment_analysis_2/', summer_prototype_views.get_sentiment_analysis_2),
     path('api/image_to_music/', summer_prototype_views.image_to_music),

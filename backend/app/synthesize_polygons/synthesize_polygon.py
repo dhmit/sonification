@@ -23,7 +23,8 @@ def angles_of_polygon(points):
         arr = [points[i + 1][0] - points[i][0], points[i + 1][1] - points[i][1]]
         vectors.append(np.array(arr))
 
-    vectors.append(vectors[0])  # Polygon need to be closed shape.
+    vectors.append(np.array([points[0][0] - points[len(points) - 1][0], points[0][1] - points[len(
+        points) - 1][1]]))  # Polygon need to be a closed shape.
 
     for i in range(len(vectors) - 1):
         mag_v1 = (np.sqrt(vectors[i].dot(vectors[i])))
@@ -41,10 +42,10 @@ print(angles_of_polygon(square))
 
 def change_in_frequency(angles):
     """
-        Maps angles of the polygon, in input order, to frequency.
-        :param angles: A list of angles of a polygon.
-        :return: A list of frequencies.
-        """
+    Maps angles of the polygon, in input order, to frequency.
+    :param angles: A list of angles of a polygon.
+    :return: A list of frequencies.
+    """
     return [180 / theta for theta in angles]
 
 
@@ -54,7 +55,6 @@ def sides_of_polygons(points):
     :param points: list of points representing a polygon.
     :return: list of side lengths of this polygon.
     """
-    pass
     side_lengths = []
     for i in range(len(points)):
         if i < len(points) - 1:
@@ -91,9 +91,11 @@ def synthesize_polygon(points):
     freq_change = change_in_frequency(angles_list)
     base = base_frequency
 
-    pre_np = []
+    sound = np.array([])
     for ind in range(len(sides_list)):
-        pre_np.append((base, sides_list[ind]))
-        base += freq_change[ind]
+        note = generate_note_with_amplitude(base, 0.5, sides_list[ind])
+        sound = np.append(sound, [note])
+        base *= freq_change[ind]
 
-    return np.array(pre_np)
+    print(sound)
+    return sound

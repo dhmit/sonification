@@ -32,7 +32,9 @@ def synthesize_polygons(request):
 def synthesize_polygon_endpoint(request):
     temp_file = request.FILES.get('value')
     csv_data = csv_processing.parse_csv_upload(temp_file)
-    # TODO: reformat csv data
-    return Response(audio_samples_to_wav_base64(synthesize_polygon(csv_data)))
-
-
+    polygon_points = []
+    for row in csv_data:
+        x = list(row.keys())[0]
+        y = row[x]
+        polygon_points.append((float(x), float(y)))
+    return Response(audio_samples_to_wav_base64(synthesize_polygon(polygon_points)))

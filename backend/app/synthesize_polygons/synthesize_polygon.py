@@ -29,7 +29,6 @@ def angles_of_polygon(points):
     for i in range(len(vectors) - 1):
         mag_v1 = (np.sqrt(vectors[i].dot(vectors[i])))
         mag_v2 = (np.sqrt(vectors[i + 1].dot(vectors[i + 1])))
-        print(vectors[i], mag_v1)
         angles.append(math.acos(vectors[i].dot(vectors[i + 1]) / (mag_v1 * mag_v2)))
 
     rad_to_deg = map(lambda x: x * 180 / math.pi, angles)
@@ -95,5 +94,4 @@ def synthesize_polygon(points):
         sound = np.append(sound, [note])
         base *= freq_change[ind]
 
-    print(sound)
     return sound

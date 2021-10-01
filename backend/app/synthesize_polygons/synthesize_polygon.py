@@ -23,8 +23,7 @@ def angles_of_polygon(points):
         arr = [points[i + 1][0] - points[i][0], points[i + 1][1] - points[i][1]]
         vectors.append(np.array(arr))
 
-    vectors.append(np.array([points[0][0] - points[len(points) - 1][0], points[0][1] - points[len(
-        points) - 1][1]]))  # Polygon need to be a closed shape.
+    vectors.append(vectors[0])  # Polygon need to be a closed shape.
 
     for i in range(len(vectors) - 1):
         mag_v1 = (np.sqrt(vectors[i].dot(vectors[i])))

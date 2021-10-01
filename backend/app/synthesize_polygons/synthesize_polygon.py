@@ -6,6 +6,15 @@ import math
 import numpy as np
 
 square = [(0, 0), (0, 1), (1, 1), (1, 0)]
+reg_square = [(0, 0), (0, 4), (4, 4), (4, 0)]
+sailboat = [(3, 1), (3, 5), (6, 6), (4, 3), (6, 0)]
+obtuse_triangle = [(1, 5), (6, 6), (8, 0)]
+hexagon = [(3, 1), (1.5, 3.5), (3, 6), (6, 6), (7.5, 3.5), (6, 1)]
+reg_triangle = [(3, 2), (4.5, 5), (6, 2)]
+boomerang = [(5, 1), (2, 4), (6, 5), (4, 3.5)]
+right_triangle = [(0, 0), (14, 0), (0, 8)]
+bowtie = [(4, 0), (8, 0), (6, 6), (10, 5)]
+line = [(6, 6), (2, 3)]
 base_frequency = 220  # base note in Hz
 
 

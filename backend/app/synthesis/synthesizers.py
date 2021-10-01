@@ -8,7 +8,8 @@ from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
-def generate_note(frequency, duration):
+def generate_note(frequency, duration, a_percentage=0.1, d_percentage=0.1, s_percentage=0.1,
+                  r_percentage=0.7):
     # pylint: disable-msg=R0914
     """
     Uses the ADSR (Attack, Decay, Sustain, Release) envelope to
@@ -16,13 +17,13 @@ def generate_note(frequency, duration):
     Adapted from example in https://towardsdatascience.com/music-in-python-2f054deb41f4
     :param frequency: frequency of the note
     :param duration: duration in seconds
+    :param a_percentage: attack
+    :param d_percentage: decay
+    :param s_percentage: sustain
+    :param r_percentage: release
     :return note: list of samples for the note
     """
-    # TODO(ra): these should all be params that we can modify in a call
-    a_percentage = 0.1  # attack
-    d_percentage = 0.1  # decay
-    s_percentage = 0.1  # sustain
-    r_percentage = 0.7  # release
+
     peak_weight = 1
     sustain_weight = 0.7
     final_weight = 0

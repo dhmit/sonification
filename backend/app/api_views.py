@@ -39,38 +39,29 @@ def generate_instrument_2d(request):
     """
 
     temp_file = request.FILES.get('value')
-    csv_data = csv_processing.parse_csv_upload(temp_file)
+    csv_data = csv_processing.parse_csv_upload(temp_file, False)
 
-    ratios = []
-    cols = 0
-    for each in csv_data[0]:
-        cols = len(each.split("\t"))
-
-    for i in range(cols):
-        ratios.append([])
-
-    for row in csv_data:
-        for col_names in row:
-            row_values = row[col_names]
-            row_values = row_values.split("\t")
-            for i, each in enumerate(row_values):
-                ratios[i].append(float(each))
+    csv_data = np.array(csv_data).astype(np.float)
+    csv_data = csv_data.T.tolist()
 
     base_frequency = 220
     audio_samples = None
-    for ratio_group in ratios:
+    for ratio_group in csv_data:
 
         ratio_sound = None
         for ratio in ratio_group:
             freq_to_generate = base_frequency * ratio
             note = synths.generate_note(
                     frequency=freq_to_generate,
-                    duration=1
+                    duration=.7,
+                    a_percentage=0.1,
+                    d_percentage=0.1,
+                    s_percentage=0.1,
+                    r_percentage=0.001
                 )
             if ratio_sound is None:
                 ratio_sound = note
             else:
-                # combine ratios into a single sound
                 ratio_sound += note
         if audio_samples is None:
             audio_samples = ratio_sound

@@ -36,7 +36,6 @@ def angles_of_polygon(points):
     return angles
 
 
-
 print(angles_of_polygon(square))
 
 
@@ -86,4 +85,15 @@ def synthesize_polygon(points):
     :param points: list of points representing a polygon.
     :return: numpy array which represents the sound.
     """
-    pass
+    sides_list = sides_of_polygons(points)
+    angles_list = angles_of_polygon(points)
+    # duration_list = sides_to_duration(sides_list)
+    freq_change = change_in_frequency(angles_list)
+    base = base_frequency
+
+    pre_np = []
+    for ind in range(len(sides_list)):
+        pre_np.append((base, sides_list[ind]))
+        base += freq_change[ind]
+
+    return np.array(pre_np)

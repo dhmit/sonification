@@ -51,23 +51,32 @@ def clean_text(text):
 
 def extract_whitespace_info_from_text(text):
     """
-    :param text:
-    :return: list of tuples in form (x, y), where x is
-    the number of continuous y (' ' or '\n') characters.
+    Extract information about whitespace in given text.
+    :param text: String of text
+    :return: whitespace_info: Array of tuples in form (n, c), where n is the number of
+                              continuous characters c, such that c is either ' ' or '\n'.
     """
-    cleaned_text=clean_text(text)
-    counter=0
-    white_space_info=[]
-    previous_char=None
+    cleaned_text = clean_text(text)
+    whitespace_characters = {' ', '\n'}
+    whitespace_info = []
+
+    # Keep track of previous character and number of contiguous whitespace characters
+    previous_char = None
+    counter = 0
+
     for char in cleaned_text:
-        if char!=previous_char:
-            if previous_char in {'\n', ' '}:
-                white_space_info.append((counter,previous_char))
-            counter=0
-        counter+=1
+        # If contiguous block of whitespace has ended, add info to output and reset counter
+        if char != previous_char and previous_char in whitespace_characters:
+            whitespace_info.append((counter, previous_char))
+            counter = 0
+
         previous_char = char
-    if previous_char in {'\n', ' '}: #account for trailing whitespace
-        white_space_info.append((counter, previous_char))
-    return white_space_info
+        counter += 1
+
+    # Account for trailing whitespaces
+    if previous_char in whitespace_characters:
+        whitespace_info.append((counter, previous_char))
+
+    return whitespace_info
 
 

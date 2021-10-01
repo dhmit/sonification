@@ -64,7 +64,7 @@ def _audio_samples_to_wav_base64(audio_samples, sample_rate):
               as an argument, rather than assuming 44.1 kHz in order to be able
               to write human-readable, sensible tests. (See tests.WavToBase64TestCase)
 
-              The public interface to this is the above function wav_samples_to_base64, which
+              The public interface to this is the above function audio_samples_to_wav_base64, which
               assumes 44.1 kHz sampling.
 
     :param audio_samples: NumPy array representing the list of samples.

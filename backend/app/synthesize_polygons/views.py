@@ -39,4 +39,5 @@ def synthesize_polygon_endpoint(request):
             x, y = map(float, row.split(","))
             polygon_points.append((x, y))
     print(polygon_points)
-    return Response(audio_samples_to_wav_base64(synthesize_polygon(polygon_points)))
+    return Response({"sound": audio_samples_to_wav_base64(synthesize_polygon(polygon_points)),
+                     "points": polygon_points})

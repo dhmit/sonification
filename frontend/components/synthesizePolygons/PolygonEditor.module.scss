@@ -1,0 +1,20 @@
+.svgDisplay {
+    border: 1px solid black;
+}
+
+.point {
+    stroke: black;
+    stroke-width: 2;
+    fill: aqua;
+}
+
+.point:hover {
+    stroke-width: 3;
+}
+
+.line {
+    stroke: black;
+    stroke-width: 2;
+}
+
+

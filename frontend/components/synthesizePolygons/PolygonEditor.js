@@ -2,13 +2,13 @@ import React, {useRef, useState} from "react";
 import STYLES from "./PolygonEditor.module.scss";
 import PropTypes from "prop-types";
 
-const PolygonEditor = ({width=300, height=300, pointColor="rgb(100,100,100)"}) => {
+const PolygonEditor = ({width=300, height=300}) => {
 
     const [points, setPoints] = useState([]);
 
     const svgDisplay = useRef(null);
 
-    function handleClick(e) {
+    function handleClickSvg(e) {
         e.preventDefault();
         const rect = svgDisplay.current.getBoundingClientRect();
         const x = e.clientX - rect.left; // x position within the element.
@@ -21,7 +21,7 @@ const PolygonEditor = ({width=300, height=300, pointColor="rgb(100,100,100)"}) =
             className={STYLES.svgDisplay}
             width={width}
             height={height}
-            onClick={handleClick}
+            onClick={handleClickSvg}
             ref={svgDisplay}
         >
             {points.map((p, i) => (
@@ -39,9 +39,7 @@ const PolygonEditor = ({width=300, height=300, pointColor="rgb(100,100,100)"}) =
                         cx={p[0]}
                         cy={p[1]}
                         r={5}
-                        stroke="black"
-                        strokeWidth={2}
-                        fill={pointColor}
+                        className={STYLES.point}
                     />
                 </React.Fragment>
             ))}

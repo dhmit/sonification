@@ -12,6 +12,7 @@ const PolygonEditor = ({width = 300, height = 300, finishedEditingCallback}) => 
 
     function handleClickSvg(e) {
         e.preventDefault();
+        if (finishedDrawing) return;
         const rect = svgDisplay.current.getBoundingClientRect();
         const x = e.clientX - rect.left; // x position within the element.
         const y = e.clientY - rect.top;  // y position within the element.
@@ -44,7 +45,7 @@ const PolygonEditor = ({width = 300, height = 300, finishedEditingCallback}) => 
     return (
         <div className={STYLES.editorContainer}>
             <svg
-                className={STYLES.svgDisplay}
+                className={finishedDrawing ? STYLES.svgDisplayFinished : STYLES.svgDisplay}
                 width={width}
                 height={height}
                 onClick={handleClickSvg}
@@ -96,7 +97,7 @@ const PolygonEditor = ({width = 300, height = 300, finishedEditingCallback}) => 
                     cx={cursorLocation[0]}
                     cy={cursorLocation[1]}
                     r={5}
-                    className={STYLES.point}
+                    className={STYLES.cursorPoint}
                 /> }
             </svg>
             <div className={STYLES.buttonRow}>

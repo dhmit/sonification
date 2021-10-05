@@ -2,7 +2,14 @@ import React, {useRef, useState} from "react";
 import STYLES from "./PolygonEditor.module.scss";
 import PropTypes, {func} from "prop-types";
 
-const PolygonEditor = ({width = 300, height = 300, finishedEditingCallback}) => {
+const PolygonEditor =
+    ({
+        width = 300,
+        height = 300,
+        onFinishedEditing,
+        showSubmit = false,
+        onSubmit,
+    }) => {
 
     const [points, setPoints] = useState([]);
     const [cursorLocation, setCursorLocation] = useState(null);
@@ -34,7 +41,7 @@ const PolygonEditor = ({width = 300, height = 300, finishedEditingCallback}) => 
 
     function finishDrawing() {
         setFinishedDrawing(true);
-        finishedEditingCallback(points);
+        onFinishedEditing(points);
     }
 
     function clearDrawing() {
@@ -115,6 +122,14 @@ const PolygonEditor = ({width = 300, height = 300, finishedEditingCallback}) => 
                 >
                     Clear
                 </button>
+                {showSubmit &&
+                <button
+                    className={STYLES.editorButton}
+                    onClick={onSubmit}
+                    disabled={!finishedDrawing}
+                >
+                    Submit
+                </button>}
             </div>
         </div>
 
@@ -124,7 +139,9 @@ const PolygonEditor = ({width = 300, height = 300, finishedEditingCallback}) => 
 PolygonEditor.propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
-    finishedEditingCallback: PropTypes.func,
+    onFinishedEditing: PropTypes.func,
+    showSubmit: PropTypes.bool,
+    onSubmit: PropTypes.func,
 };
 
 export default PolygonEditor;

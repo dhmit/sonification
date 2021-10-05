@@ -14,6 +14,11 @@ const SynthesizePolygons = () => {
         }
     }, [data]);
 
+    // TODO: implement this
+    async function submitPolygon() {
+        
+    }
+
     return (
         <div>
             <h1>Synthesize Polygons</h1>
@@ -32,7 +37,13 @@ const SynthesizePolygons = () => {
                     <PolygonViewer width={300} height={300} points={data["points"]}/>
                 </>
             }
-            <PolygonEditor width={300} height={300} finishedEditingCallback={setEditorPoints}/>
+            <PolygonEditor
+                width={300}
+                height={300}
+                onFinishedEditing={setEditorPoints}
+                showSubmit
+                onSubmit={submitPolygon}
+            />
         </div>
     );
 };

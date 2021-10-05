@@ -7,7 +7,6 @@ import {getCookie} from "../../common";
 const SynthesizePolygons = () => {
     const [data, setData] = useState(null);
     const [sound, setSound] = useState(null);
-    const [editorPoints, setEditorPoints] = useState(null);
     const audioRef = useRef(null);
 
     useEffect(() => {
@@ -23,7 +22,7 @@ const SynthesizePolygons = () => {
         }
     }, [sound]);
 
-    async function submitPolygon() {
+    async function submitPolygon(points) {
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
             method: "POST",
@@ -31,7 +30,7 @@ const SynthesizePolygons = () => {
                 "X-CSRFToken": csrftoken,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({points: editorPoints}),
+            body: JSON.stringify({ points }),
         };
         fetch("/api/synthesize_polygon/", requestOptions)
             .then(response => response.json())
@@ -49,7 +48,6 @@ const SynthesizePolygons = () => {
             <PolygonEditor
                 width={300}
                 height={300}
-                onFinishedEditing={setEditorPoints}
                 showSubmit
                 onSubmit={submitPolygon}
             />

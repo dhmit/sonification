@@ -43,7 +43,7 @@
 }
 
 .cursorPoint {
-    stroke: black;
+    stroke: #8a8a8a;
     stroke-width: 2;
     fill: aqua;
     r: 5;
@@ -52,6 +52,10 @@
 .line {
     stroke: black;
     stroke-width: 2;
+}
+
+.tempLine {
+    stroke: #8a8a8a;
 }
 
 

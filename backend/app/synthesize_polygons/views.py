@@ -30,7 +30,7 @@ def synthesize_polygons(request):
 
 
 @api_view(['POST'])
-def synthesize_polygon_endpoint(request):
+def synthesize_polygon_csv_endpoint(request):
     temp_file = request.FILES.get('value')
     csv_data = re.split(r"\s", temp_file.read().decode('utf-8'))
     polygon_points = []

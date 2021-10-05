@@ -16,7 +16,7 @@ const SynthesizePolygons = () => {
 
     // TODO: implement this
     async function submitPolygon() {
-        
+        console.log(editorPoints);
     }
 
     return (
@@ -25,7 +25,7 @@ const SynthesizePolygons = () => {
             <UploadFileInput
                 id={1}
                 uploadSuccessfulCallback={setData}
-                apiEndpoint={'/api/synthesize_polygon/'}
+                apiEndpoint={'/api/synthesize_polygon_csv/'}
             />
             {data &&
                 <>

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import PropTypes from "prop-types";
 
 const PolygonViewer = ({ points, width, height }) => {
     const [pointsText, setPointsText] = useState("");
@@ -31,9 +32,9 @@ const PolygonViewer = ({ points, width, height }) => {
 };
 
 PolygonViewer.propTypes = {
-    points: Array,
-    width: Number,
-    height: Number,
+    points: PropTypes.array,
+    width: PropTypes.number,
+    height: PropTypes.number,
 };
 
 export default PolygonViewer;

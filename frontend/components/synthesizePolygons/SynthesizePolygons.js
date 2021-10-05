@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import UploadFileInput from "../inputs/UploadFileInput";
 import PolygonViewer from "./PolygonViewer";
+import PolygonEditor from "./PolygonEditor";
 
 const SynthesizePolygons = () => {
     const [data, setData] = useState(null);
@@ -30,6 +31,7 @@ const SynthesizePolygons = () => {
                     <PolygonViewer width={300} height={300} points={data["points"]}/>
                 </>
             }
+            <PolygonEditor width={300} height={300}/>
         </div>
     );
 };

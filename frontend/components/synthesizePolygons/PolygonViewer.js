@@ -18,8 +18,11 @@ const PolygonViewer = ({ points, width, height }) => {
         });
 
         let pointsStr = "";
+        const xStretch = 0.9 * width / (maxX - minX);
+        const yStretch = 0.9 * height / (maxY - minY);
+        const stretch = Math.min(xStretch, yStretch);
         points.forEach(val => {
-            pointsStr += `${(val[0] - minX) * 0.9 * width / (maxX - minX) + .05 * width},${(val[1] - minY) * 0.9 * height / (maxY - minY) + .05 * height} `;
+            pointsStr += `${(val[0] - minX) * stretch + .05 * width},${(val[1] - minY) * stretch + .05 * height} `;
         });
         setPointsText(pointsStr);
     }, [points]);

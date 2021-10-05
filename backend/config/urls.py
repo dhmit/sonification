@@ -39,6 +39,7 @@ urlpatterns = [
 
     # Synthesize polygons view paths and API endpoints
     path('synthesize-polygons/', synthesize_polygons_views.synthesize_polygons),
+    path('api/synthesize_polygon/', synthesize_polygons_views.synthesize_polygon_endpoint),
     path('api/synthesize_polygon_csv/', synthesize_polygons_views.synthesize_polygon_csv_endpoint),
 
 ]

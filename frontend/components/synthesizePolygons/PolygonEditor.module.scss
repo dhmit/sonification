@@ -2,15 +2,13 @@
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
-    align-items: center;
+    //align-items: center;
 }
 
 .buttonRow {
     display: flex;
     flex-direction: row;
     flex-wrap: nowrap;
-    align-items: center;
-    justify-content: center;
 }
 
 .editorButton {

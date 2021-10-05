@@ -12,6 +12,7 @@ from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 
 from app.synthesize_polygons.synthesize_polygon import synthesize_polygon
 import re
+import json
 
 
 def synthesize_polygons(request):
@@ -38,6 +39,17 @@ def synthesize_polygon_csv_endpoint(request):
         if len(row) > 0:
             x, y = map(float, row.split(","))
             polygon_points.append((x, y))
+    print(polygon_points)
+    return Response({"sound": audio_samples_to_wav_base64(synthesize_polygon(polygon_points)),
+                     "points": polygon_points})
+
+
+@api_view(['POST'])
+def synthesize_polygon_endpoint(request):
+    data = json.loads(request.body)
+    polygon_points = []
+    for point in data["points"]:
+        polygon_points.append(tuple(map(float, point)))
     print(polygon_points)
     return Response({"sound": audio_samples_to_wav_base64(synthesize_polygon(polygon_points)),
                      "points": polygon_points})

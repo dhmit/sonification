@@ -1,6 +1,6 @@
 import React, {useRef, useState} from "react";
 import STYLES from "./PolygonEditor.module.scss";
-import PropTypes, {func} from "prop-types";
+import PropTypes from "prop-types";
 
 const PolygonEditor =
     ({

@@ -6,6 +6,7 @@ import PolygonEditor from "./PolygonEditor";
 const SynthesizePolygons = () => {
     const [data, setData] = useState(null);
     const [sound, setSound] = useState(null);
+    const [editorPoints, setEditorPoints] = useState(null);
 
     useEffect(() => {
         if (data && data["sound"]) {
@@ -31,7 +32,7 @@ const SynthesizePolygons = () => {
                     <PolygonViewer width={300} height={300} points={data["points"]}/>
                 </>
             }
-            <PolygonEditor width={300} height={300}/>
+            <PolygonEditor width={300} height={300} finishedEditingCallback={setEditorPoints}/>
         </div>
     );
 };

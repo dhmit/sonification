@@ -2,7 +2,7 @@ import React, {useRef, useState} from "react";
 import STYLES from "./PolygonEditor.module.scss";
 import PropTypes, {func} from "prop-types";
 
-const PolygonEditor = ({width = 300, height = 300}) => {
+const PolygonEditor = ({width = 300, height = 300, finishedEditingCallback}) => {
 
     const [points, setPoints] = useState([]);
     const [cursorLocation, setCursorLocation] = useState(null);
@@ -33,6 +33,7 @@ const PolygonEditor = ({width = 300, height = 300}) => {
 
     function finishDrawing() {
         setFinishedDrawing(true);
+        finishedEditingCallback(points);
     }
 
     function clearDrawing() {
@@ -122,7 +123,7 @@ const PolygonEditor = ({width = 300, height = 300}) => {
 PolygonEditor.propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
-    pointColor: PropTypes.string,
+    finishedEditingCallback: PropTypes.func,
 };
 
 export default PolygonEditor;

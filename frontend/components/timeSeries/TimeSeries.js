@@ -12,9 +12,9 @@ const TimeSeries = () => {
                 uploadSuccessfulCallback={setInstrumentSamples}
                 apiEndpoint={'api/generate_instrument_2d/'}
             />
-            <p>Upload a .csv file where each column represents the ratios for a single sound.
-                Ratios need to be within (0,1)
-                Multiple columns represents multiple sounds joined together.</p>
+            <p>Upload a .csv file where each row represents the ratios for a single sound.
+                Ratios should be within (0,1)
+                Multiple rows represents multiple sounds joined together.</p>
             {
                 instrumentSamples ? <>
                     <p><b>Sound:</b></p>

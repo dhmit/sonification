@@ -42,8 +42,8 @@ def generate_instrument_2d(request):
     csv_data = csv_processing.parse_csv_upload(temp_file, False)
 
     csv_data = np.array(csv_data).astype(np.float)
-    csv_data = csv_data.T.tolist()
 
+    # TODO allow users to change this value
     base_frequency = 220
     audio_samples = None
     for ratio_group in csv_data:

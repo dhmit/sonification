@@ -22,8 +22,10 @@ def generate_sine_wave(frequency, duration):
     return sine_wave_samples
 
 
+# pylint: disable-msg=R0914
 def generate_sine_wave_with_envelope(frequency, duration,
-            a_percentage=0.1, d_percentage=0.1, s_percentage=0.1,r_percentage=0.7):
+                                     a_percentage=0.1, d_percentage=0.1,
+                                     s_percentage=0.1, r_percentage=0.7):
     # pylint: disable-msg=R0914
     """
     Uses the ADSR (Attack, Decay, Sustain, Release) envelope

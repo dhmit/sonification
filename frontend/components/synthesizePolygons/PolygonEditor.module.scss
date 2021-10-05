@@ -1,5 +1,40 @@
+.editorContainer {
+    display: flex;
+    flex-direction: column;
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.buttonRow {
+    display: flex;
+    flex-direction: row;
+    -ms-flex-direction: row;
+    -webkit-flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+}
+
+.editorButton {
+    background-color: #0074f1;
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 5px;
+}
+
+.editorButton:disabled {
+    background-color: #8a8a8a;
+}
+
 .svgDisplay {
     border: 1px solid black;
+    cursor: none;
 }
 
 .point {

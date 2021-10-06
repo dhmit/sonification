@@ -103,7 +103,7 @@ def synthesize_polygon(points):
 
     sound = np.array([])
     for ind in range(len(sides_list)):
-        note = generate_note_with_amplitude(base, 1, sides_list[ind])
+        note = generate_note_with_amplitude(base, 1, sides_list[ind] / sides_list[0])
         sound = np.append(sound, [note])
         base *= freq_change[ind]
 

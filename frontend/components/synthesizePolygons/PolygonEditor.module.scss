@@ -12,19 +12,26 @@
 }
 
 .editorButton {
-    background-color: #0074f1;
-    border: none;
+    background-color: #007bff;
+    border: 1px solid #007bff;
+    border-radius: 0.25rem;
     color: white;
-    padding: 15px 32px;
+    padding: 0.5rem 0.75rem;
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    font-size: 16px;
     margin: 5px;
+    transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+}
+
+.editorButton:hover {
+    background-color: #0069d9;
+    border-color: #0062cc;
 }
 
 .editorButton:disabled {
     background-color: #8a8a8a;
+    border: 1px solid #8a8a8a;
 }
 
 .svgDisplay {

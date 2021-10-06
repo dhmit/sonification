@@ -1,11 +1,11 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+import numpy as np
 
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
 from app.data_processing import csv_files as csv_processing
 
-import numpy as np
 
 
 @api_view(['POST'])

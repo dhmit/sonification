@@ -46,7 +46,7 @@ def generate_sine_wave_with_envelope(frequency, duration,
 
     try:
         assert a_percentage + d_percentage + s_percentage + r_percentage == 1
-    except AssertionError as err:
+    except AssertionError:
         print("ADSR percentages should add up to 1")
 
     total_num_samples = int(duration * WAV_SAMPLE_RATE)

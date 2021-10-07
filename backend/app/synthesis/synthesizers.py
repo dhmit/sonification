@@ -37,13 +37,17 @@ def generate_sine_wave_with_envelope(frequency, duration,
     :param d_percentage: decay
     :param s_percentage: sustain
     :param r_percentage: release
-    :return note: list of samples for the note
     :return audio_samples: list of samples for the note
     """
 
     peak_weight = 1
     sustain_weight = peak_weight * 0.7
     final_weight = 0
+
+    try:
+        assert a_percentage + d_percentage + s_percentage + r_percentage == 1
+    except AssertionError as err:
+        print("ADSR percentages should add up to 1")
 
     total_num_samples = int(duration * WAV_SAMPLE_RATE)
     len_a = int(a_percentage * total_num_samples)

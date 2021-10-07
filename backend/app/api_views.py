@@ -41,22 +41,28 @@ def generate_instrument_2d(request):
     temp_file = request.FILES.get('value')
     csv_data = csv_processing.parse_csv_upload(temp_file, False)
 
-    csv_data = np.array(csv_data).astype(np.float)
+    # TODO allow users to change these values
+    base_frequency = 50
+    duration = .2
+    a_percentage = 0.1
+    d_percentage = 0.4
+    s_percentage = 0.4
+    r_percentage = 0.1
 
-    # TODO allow users to change this value
-    base_frequency = 220
     audio_samples = None
     for ratio_group in csv_data:
         ratio_sound = None
         for ratio in ratio_group:
-            freq_to_generate = base_frequency * ratio
+            if ratio == "":
+                continue
+            freq_to_generate = base_frequency * float(ratio)
             note = synths.generate_sine_wave_with_envelope(
                     frequency=freq_to_generate,
-                    duration=.7,
-                    a_percentage=0.1,
-                    d_percentage=0.1,
-                    s_percentage=0.1,
-                    r_percentage=0.001
+                    duration=duration,
+                    a_percentage=a_percentage,
+                    d_percentage=d_percentage,
+                    s_percentage=s_percentage,
+                    r_percentage=r_percentage
                 )
             if ratio_sound is None:
                 ratio_sound = note
@@ -65,7 +71,6 @@ def generate_instrument_2d(request):
         if audio_samples is None:
             audio_samples = ratio_sound
         else:
-            # add sounds sequentially
             audio_samples = np.append(audio_samples, ratio_sound)
 
     sound = audio_samples_to_wav_base64(audio_samples)

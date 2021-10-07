@@ -43,11 +43,6 @@ def generate_instrument_2d(request):
 
     # TODO allow users to change these values
     base_frequency = 50
-    duration = .2
-    a_percentage = 0.1
-    d_percentage = 0.4
-    s_percentage = 0.4
-    r_percentage = 0.1
 
     audio_samples = None
     for ratio_group in csv_data:
@@ -58,11 +53,11 @@ def generate_instrument_2d(request):
             freq_to_generate = base_frequency * float(ratio)
             note = synths.generate_sine_wave_with_envelope(
                     frequency=freq_to_generate,
-                    duration=duration,
-                    a_percentage=a_percentage,
-                    d_percentage=d_percentage,
-                    s_percentage=s_percentage,
-                    r_percentage=r_percentage
+                    duration=.2,
+                    a_percentage=0.1,
+                    d_percentage=0.4,
+                    s_percentage=0.4,
+                    r_percentage=0.1
                 )
             if ratio_sound is None:
                 ratio_sound = note

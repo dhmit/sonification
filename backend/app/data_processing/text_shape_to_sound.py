@@ -3,7 +3,7 @@ from matplotlib import pyplot as plt
 import numpy as np
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 from app.synthesis.audio_encoding import _audio_samples_to_wav_base64
-from text import get_average_contiguous_spaces_per_line
+from text import get_average_length_of_whitespace_per_line
 import base64
 
 

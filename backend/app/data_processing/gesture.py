@@ -1,5 +1,6 @@
 from app.synthesis.synthesizers import *
 import pyaudio
+import math
 import numpy as np
 
 # factor by which we compress coordinates
@@ -10,15 +11,17 @@ duration = 4
 
 def compress_coordinates(gesture):
     """
-    :param gesture: list of coordinates received from user input via frontend
-    :return: list of tuples (x, y) each representing a compressed coordinate, compressed by
-    taking averages of groups of coordinates
+    :param gesture: list of coordinates (each coordinate a dictionary) received from user input via
+    frontend
+    :return: (in the same format as input), shorter list of coordinates, each representing a
+    compressed coordinate, compressed by taking averages of groups of coordinates
     """
     result = list()
     for i in range(0, len(gesture)-factor, factor):
-        x_average = (gesture[i]["x"] + gesture[i+factor-1]["x"])/2
-        y_average = (gesture[i]["y"] + gesture[i+factor-1]["y"])/2
-        result.append((x_average, y_average))
+        compressed_coord = dict()
+        compressed_coord["x"] = (gesture[i]["x"] + gesture[i+factor-1]["x"])/2
+        compressed_coord["y"] = (gesture[i]["y"] + gesture[i+factor-1]["y"])/2
+        result.append(compressed_coord)
     return result
 
 
@@ -42,8 +45,14 @@ def get_pitch(x, low = 65, high = 1065):
     """
     Given x coordinate, convert to pitch.
     """
+    x_pitch = (high/math.log(500, 2) - low/math.log(500, 2))*math.log(x, 2) + low
+
+    """
+    LINEAR FUNCTION
     pitch_range = high - low
     x_pitch = (x/500)*pitch_range + low
+    """
+
     return x_pitch
 
 
@@ -67,15 +76,18 @@ def play_sound(gesture):
         audio_samples.append(generate_sine_wave(pair[0], duration))
     return audio_samples
 
-p = pyaudio.PyAudio()
+def test_sound():
+    p = pyaudio.PyAudio()
 
-stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=True)
-audio = play_sound([{"x":10, "y":10}, {"x":20, "y":20}, {"x":30, "y":30}])
+    stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=True)
+    audio = play_sound([{"x": 10, "y": 10}, {"x": 20, "y": 20}, {"x": 30, "y": 30}])
 
-for sample in audio:
-    stream.write(sample)
+    for sample in audio:
+        stream.write(sample)
 
-stream.stop_stream()
-stream.close()
+    stream.stop_stream()
+    stream.close()
 
-p.terminate()
+    p.terminate()
+
+test_sound()

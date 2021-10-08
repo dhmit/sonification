@@ -29,7 +29,7 @@ def text_shape_to_sound(text):
     samples = np.array([])
 
     base_freq = 440
-    avg_contig_spaces_list = get_average_contiguous_spaces_per_line(text)
+    avg_contig_spaces_list = get_average_length_of_whitespace_per_line(text)
     num_lines = len(avg_contig_spaces_list)
     base_audio_freq = abs(base_freq - num_lines * 20)
     base_wave = generate_sine_wave(base_audio_freq, 1)

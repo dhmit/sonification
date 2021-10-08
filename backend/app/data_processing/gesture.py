@@ -1,8 +1,9 @@
 from app.synthesis.synthesizers import *
-generate_sine_wave()
+import pyaudio
+import numpy as np
 
 # factor by which we compress coordinates
-factor = 5
+factor = 1
 # duration of sonified pitch of each coordinate in gesture (seconds)
 duration = 1
 
@@ -63,6 +64,18 @@ def play_sound(gesture):
     """
     compressed_gesture = compress_coordinates(gesture)
     sonified_gesture = get_sound(compressed_gesture)
+    audio_samples = []
     for pair in sonified_gesture:
-        generate_sine_wave(pair[0], duration)
+        audio_samples.append(generate_sine_wave(pair[0], duration))
+    return audio_samples
 
+p = pyaudio.PyAudio()
+
+stream = p.open(format=pyaudio.paFloat32, channels=1, rate=fs, output=True)
+audio = play_sound([{"x":10, "y":10}, {"x":20, "y":20}, {"x":30, "y":30}])
+stream.write(audio)
+
+stream.stop_stream()
+stream.close()
+
+p.terminate()

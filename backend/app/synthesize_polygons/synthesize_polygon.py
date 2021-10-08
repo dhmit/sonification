@@ -88,23 +88,42 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
     return note
 
 
-def synthesize_polygon(points):
+def synthesize_polygon(points, note_length=5, note_delay=2.5):
     """
     Synthesizes a polygon. The polygon is represented as a list of points
     where each point is a tuple of length 2.
     :param points: list of points representing a polygon.
+    :param note_length: length of each note in seconds.
+    :param note_delay: delay between each note in seconds.
     :return: numpy array which represents the sound.
     """
+    # Compute number of notes, note length and delay in samples
+    num_notes = len(points)
+    note_length_samples = int(note_length * WAV_SAMPLE_RATE)
+    note_delay_samples = int(note_delay * WAV_SAMPLE_RATE)
+    # Total length of sound in samples
+    total_length = (num_notes - 1) * note_delay_samples + note_length_samples
+
+    # Compute sides and angles of polygon
     sides_list = sides_of_polygon(points)
     angles_list = angles_of_polygon(points)
     # duration_list = sides_to_duration(sides_list)
     freq_change = change_in_frequency(angles_list)
-    base = base_frequency
+    cur_freq = base_frequency
 
-    sound = np.array([])
-    for ind in range(len(sides_list)):
-        note = generate_note_with_amplitude(base, 1, sides_list[ind] / sides_list[0])
-        sound = np.append(sound, [note])
-        base *= freq_change[ind]
+    # initialize the empty sound
+    sound = np.zeros(total_length)
+    # add each note to the sound
+    for note_ind in range(len(sides_list)):
+        # generate note and ensure it has correct length
+        note = generate_note_with_amplitude(cur_freq, note_length, sides_list[note_ind] / sides_list[0])
+        assert len(note) == note_length_samples, "Note length computation issue"
 
+        #  append note samples
+        for i in range(0, note_length_samples):
+            sound[note_ind * note_delay_samples + i] += note[i]
+
+        # update current frequency
+        cur_freq *= freq_change[note_ind]
+    
     return sound

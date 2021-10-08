@@ -80,7 +80,8 @@ const PolygonEditor =
                 />}
                 {points.map((p, i) => (
                     <React.Fragment key={`fragment-${i}`}>
-                        {i < points.length - 1 && <line
+                        {i < points.length - 1 &&
+                        <line
                             key={`line-${i}`}
                             x1={points[i][0]}
                             y1={points[i][1]}

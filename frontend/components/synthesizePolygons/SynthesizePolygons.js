@@ -40,8 +40,9 @@ const SynthesizePolygons = () => {
 
     async function submitPolygonFile(file) {
         const formData = new FormData();
-        formData.append("type", "file");
-        formData.append("value", file, "tempfile.csv");
+        formData.append("points", file, "tempfile.csv");
+        formData.append("noteLength", noteLength.toString());
+        formData.append("noteDelay", noteDelay.toString());
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
             method: "POST",
@@ -63,9 +64,9 @@ const SynthesizePolygons = () => {
                 "X-CSRFToken": csrftoken,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({points}),
+            body: JSON.stringify({points, noteLength, noteDelay}),
         };
-        fetch("API_ENDPOINT", requestOptions)
+        fetch(API_ENDPOINT, requestOptions)
             .then(response => response.json())
             .then(data => setData(data));
     }

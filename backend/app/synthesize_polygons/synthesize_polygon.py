@@ -83,12 +83,12 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
     :param amplitude: amplitude as a scaling factor
     :return: numpy array which represents the note
     """
-    time_steps = np.linspace(0, duration, duration * WAV_SAMPLE_RATE, False)
+    time_steps = np.linspace(0, duration, int(duration * WAV_SAMPLE_RATE), False)
     note = np.sin(frequency * time_steps * 2 * np.pi) * amplitude
     return note
 
 
-def synthesize_polygon(points, note_length=5, note_delay=2.5):
+def synthesize_polygon(points, note_length, note_delay):
     """
     Synthesizes a polygon. The polygon is represented as a list of points
     where each point is a tuple of length 2.

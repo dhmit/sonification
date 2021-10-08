@@ -1,4 +1,4 @@
-import React, {useRef, useState} from "react";
+import React, {useEffect, useRef, useState} from "react";
 import STYLES from "./PolygonEditor.module.scss";
 import PropTypes from "prop-types";
 
@@ -12,8 +12,24 @@ const PolygonEditor =
 
     const [points, setPoints] = useState([]);
     const [cursorLocation, setCursorLocation] = useState(null);
+    const [fileDownloadUrl, setFileDownloadUrl] = useState(null);
+    const fileDownloadRef = useRef(null);
+
+    useEffect(() => {
+        if (fileDownloadUrl) {
+            fileDownloadRef.current.click();
+            URL.revokeObjectURL(fileDownloadUrl);
+            setFileDownloadUrl(null);
+        }
+    }, [fileDownloadUrl]);
 
     const svgDisplay = useRef(null);
+
+    function downloadPolygon() {
+        const csvContent = points.map(e => e.join(",")).join("\n");
+        const blob = new Blob([csvContent]);
+        setFileDownloadUrl(URL.createObjectURL(blob));
+    }
 
     function handleClickSvg(e) {
         const rect = svgDisplay.current.getBoundingClientRect();
@@ -108,13 +124,6 @@ const PolygonEditor =
                 /> }
             </svg>
             <div className={STYLES.buttonRow}>
-                {/*<button*/}
-                {/*    className={STYLES.editorButton}*/}
-                {/*    onClick={finishDrawing}*/}
-                {/*    disabled={points.length < 3 || finishedDrawing}*/}
-                {/*>*/}
-                {/*    Done*/}
-                {/*</button>*/}
                 <button
                     className={STYLES.editorButton}
                     onClick={clearDrawing}
@@ -130,6 +139,20 @@ const PolygonEditor =
                 >
                     Submit
                 </button>}
+                <button
+                    className={STYLES.editorButton}
+                    onClick={downloadPolygon}
+                    disabled={points.length === 0}
+                >
+                    Download
+                </button>
+                <a
+                    hidden
+                    style={{display: "hidden"}}
+                    download="points.csv"
+                    ref={fileDownloadRef}
+                    href={fileDownloadUrl}
+                />
             </div>
         </div>
 

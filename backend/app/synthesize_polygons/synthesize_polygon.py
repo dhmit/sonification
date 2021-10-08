@@ -117,7 +117,7 @@ def synthesize_polygon(points, note_length, note_delay):
     for note_ind in range(len(sides_list)):
         # generate note and ensure it has correct length
         note = generate_note_with_amplitude(cur_freq, note_length, sides_list[note_ind] / sides_list[0])
-        assert len(note) == note_length_samples, "Note length computation issue"
+        assert len(note) == note_length_samples, "Incorrect note length computation"
 
         #  append note samples
         for i in range(0, note_length_samples):

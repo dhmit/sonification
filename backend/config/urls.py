@@ -36,6 +36,10 @@ urlpatterns = [
     path('api/get_sentiment_analysis_2/', summer_prototype_views.get_sentiment_analysis_2),
     path('api/image_to_music/', summer_prototype_views.image_to_music),
 
+
+    # time series endpoints
+    path('api/generate_instrument_2d/', api_views.generate_instrument_2d),
+
 ]
 
 

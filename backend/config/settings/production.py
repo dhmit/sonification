@@ -4,6 +4,7 @@ Production settings for *****
 
 """
 
+# pylint: disable-msg=E0401
 from .base import *  # pylint: disable=unused-wildcard-import, wildcard-import
 
 # SECURITY WARNING: don't run with debug turned on in production!

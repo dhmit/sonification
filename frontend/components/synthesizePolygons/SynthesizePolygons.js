@@ -3,10 +3,16 @@ import UploadFileInput from "../inputs/UploadFileInput";
 import PolygonViewer from "./PolygonViewer";
 import PolygonEditor from "./PolygonEditor";
 import {getCookie} from "../../common";
+import FileInput from "./FileInput";
+
+const API_ENDPOINT = "/api/synthesize_polygon/";
+const API_ENDPOINT_FILE = "/api/synthesize_polygon_csv/";
 
 const SynthesizePolygons = () => {
     const [data, setData] = useState(null);
     const [sound, setSound] = useState(null);
+    const [noteLength, setNoteLength] = useState(1);
+    const [noteDelay, setNoteDelay] = useState(1);
     const audioRef = useRef(null);
 
     useEffect(() => {
@@ -22,6 +28,33 @@ const SynthesizePolygons = () => {
         }
     }, [sound]);
 
+    function handleChangeNoteLength(e) {
+        e.preventDefault();
+        setNoteLength(e.target.value);
+    }
+
+    function handleChangeNoteDelay(e) {
+        e.preventDefault();
+        setNoteDelay(e.target.value);
+    }
+
+    async function submitPolygonFile(file) {
+        const formData = new FormData();
+        formData.append("type", "file");
+        formData.append("value", file, "tempfile.csv");
+        const csrftoken = getCookie("csrftoken");
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                "X-CSRFToken": csrftoken,
+            },
+            body: formData,
+        };
+        fetch(API_ENDPOINT_FILE, requestOptions)
+            .then(response => response.json())
+            .then(data => setData(data));
+    }
+
     async function submitPolygon(points) {
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
@@ -32,7 +65,7 @@ const SynthesizePolygons = () => {
             },
             body: JSON.stringify({points}),
         };
-        fetch("/api/synthesize_polygon/", requestOptions)
+        fetch("API_ENDPOINT", requestOptions)
             .then(response => response.json())
             .then(data => setData(data));
     }
@@ -41,10 +74,16 @@ const SynthesizePolygons = () => {
         <div>
             <h1>Synthesize Polygons</h1>
             <h2>Inputs</h2>
-            <UploadFileInput
-                id={1}
-                uploadSuccessfulCallback={setData}
-                apiEndpoint={'/api/synthesize_polygon_csv/'}
+            <p>
+                Note Length (seconds):
+                <input type="number" style={{marginLeft: 5}} value={noteLength} onChange={handleChangeNoteLength}/>
+            </p>
+            <p>
+                Note Delay (seconds):
+                <input type="number" style={{marginLeft: 5}} value={noteDelay} onChange={handleChangeNoteDelay}/>
+            </p>
+            <FileInput
+                onSubmit={submitPolygonFile}
             />
             <PolygonEditor
                 width={300}

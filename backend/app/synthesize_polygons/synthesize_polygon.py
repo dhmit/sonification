@@ -125,5 +125,5 @@ def synthesize_polygon(points, note_length=5, note_delay=2.5):
 
         # update current frequency
         cur_freq *= freq_change[note_ind]
-    
+
     return sound

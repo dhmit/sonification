@@ -131,6 +131,13 @@ const PolygonEditor =
                 >
                     Clear
                 </button>
+                <button
+                    className={STYLES.editorButton}
+                    onClick={downloadPolygon}
+                    disabled={points.length === 0}
+                >
+                    Download
+                </button>
                 {showSubmit &&
                 <button
                     className={STYLES.editorButton}
@@ -139,13 +146,6 @@ const PolygonEditor =
                 >
                     Submit
                 </button>}
-                <button
-                    className={STYLES.editorButton}
-                    onClick={downloadPolygon}
-                    disabled={points.length === 0}
-                >
-                    Download
-                </button>
                 <a
                     hidden
                     style={{display: "hidden"}}

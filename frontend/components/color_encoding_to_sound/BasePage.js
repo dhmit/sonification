@@ -4,11 +4,15 @@ import { fetchPost } from "../../common";
 
 class BasePage extends React.Component {
     state = {
-        color: '#fff',
+        color: {
+            r: 51,
+            g: 51,
+            b: 51
+        }
     };
 
     handleChangeComplete = (color) => {
-        this.setState({color: color.hex });
+        this.setState({color: color.rgb });
     };
 
     handleSubmit = () => {
@@ -16,7 +20,7 @@ class BasePage extends React.Component {
         const responseCallbackFunc = responseDict => alert(responseDict.text);
         fetchPost('/api/color/', requestBody, responseCallbackFunc);
     };
-Ss
+
     render() {
         return (<div>
             <p>Hi</p>

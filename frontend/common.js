@@ -36,7 +36,6 @@ export const fetchPost = (
     bodyIsJson=true,
 ) => {
     const csrftoken = getCookie("csrftoken");
-
     const headers = {"X-CSRFToken": csrftoken};
 
     if (bodyIsJson) {

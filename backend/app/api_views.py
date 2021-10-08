@@ -6,11 +6,16 @@ from app.synthesis import synthesizers as synths
 from app.data_processing import csv_files as csv_processing
 
 
+
 @api_view(['POST'])
 def color(request):
-    response_text = request.data['color']
+    response_object = request.data['color']
+    r = response_object["r"]
+    g = response_object["g"]
+    b = response_object["b"]
+    energy = round(0.299*r + .587*g + .114*b)
     return Response({
-        'text': response_text,
+        "text": str(energy)
     })
 
 

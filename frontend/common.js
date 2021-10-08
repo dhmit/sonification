@@ -25,6 +25,28 @@ export function getCookie(name) {
 }
 
 /**
+ * Calls a given api endpoint with a POST request
+ * Given a request body and a callback function for what to do with the
+ * resulting JSON. We expect the Response body to be JSON here.
+ **/
+export const fetchPost = (apiUrl, body, responseCallbackFunc) => {
+    const csrftoken = getCookie("csrftoken");
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            'Content-Type': 'application/json',
+            "X-CSRFToken": csrftoken,
+        },
+        body: JSON.stringify(body),
+    };
+    return fetch(apiUrl, requestOptions)
+            .then(response => response.json())
+            .then(responseDict => responseCallbackFunc(responseDict));
+};
+
+
+
+/**
  * Delays a function invocation (used when lots of changes are happening very quickly,
  * but we don't want to be super reactionary)
  * taken from https://www.freecodecamp.org/news/javascript-debounce-example/

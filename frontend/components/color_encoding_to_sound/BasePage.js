@@ -1,6 +1,6 @@
 import React from "react";
 import { SketchPicker } from 'react-color';
-import {getCookie} from "../../common";
+import { fetchPost } from "../../common";
 
 class BasePage extends React.Component {
     state = {
@@ -12,22 +12,9 @@ class BasePage extends React.Component {
     };
 
     handleSubmit = () => {
-        const csrftoken = getCookie("csrftoken");
-        console.log(this.state.color);
-        const requestBody = {
-            color: this.state.color,
-        };
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json',
-                "X-CSRFToken": csrftoken,
-            },
-            body: JSON.stringify(requestBody),
-        };
-        fetch('/api/color/', requestOptions)
-            .then(response => response.json())
-            .then(responseDict => alert(responseDict.text));
+        const requestBody = {color: this.state.color};
+        const responseCallbackFunc = responseDict => alert(responseDict.text);
+        fetchPost('/api/color/', requestBody, responseCallbackFunc);
     };
 Ss
     render() {

@@ -41,7 +41,7 @@ def get_sound(gesture):
     return result
 
 
-def get_pitch(x, low = 65, high = 1065):
+def get_pitch(x, low = 440, high = 880):
     """
     Given x coordinate, convert to pitch.
     """

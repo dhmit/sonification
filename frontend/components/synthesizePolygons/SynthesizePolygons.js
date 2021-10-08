@@ -30,7 +30,7 @@ const SynthesizePolygons = () => {
                 "X-CSRFToken": csrftoken,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ points }),
+            body: JSON.stringify({points}),
         };
         fetch("/api/synthesize_polygon/", requestOptions)
             .then(response => response.json())
@@ -40,6 +40,7 @@ const SynthesizePolygons = () => {
     return (
         <div>
             <h1>Synthesize Polygons</h1>
+            <h2>Inputs</h2>
             <UploadFileInput
                 id={1}
                 uploadSuccessfulCallback={setData}
@@ -51,15 +52,17 @@ const SynthesizePolygons = () => {
                 showSubmit
                 onSubmit={submitPolygon}
             />
-            {data &&
-            <>
-                <audio controls controlsList={"nodownload"} ref={audioRef}>
-                    <source src={`data:audio/wav;base64,${sound}`} type={"audio/wav"}/>
-                </audio>
-                <br/>
-                <br/>
-                <PolygonViewer width={300} height={300} points={data["points"]}/>
-            </>
+            <h2>Results</h2>
+            {data ?
+                <>
+                    <audio controls controlsList={"nodownload"} ref={audioRef}>
+                        <source src={`data:audio/wav;base64,${sound}`} type={"audio/wav"}/>
+                    </audio>
+                    <br/>
+                    <br/>
+                    <PolygonViewer width={300} height={300} points={data["points"]}/>
+                </>
+                : <p>Upload a CSV or draw a polygon above to get results!</p>
             }
         </div>
     );

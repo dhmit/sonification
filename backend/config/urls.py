@@ -27,6 +27,7 @@ urlpatterns = [
 
     # API endpoints
     path('api/generate_instrument/', api_views.generate_instrument),
+    path('api/color/', api_views.color),
 
     # View paths
     path('', views.index, name='index'),

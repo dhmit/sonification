@@ -7,6 +7,14 @@ from app.data_processing import csv_files as csv_processing
 
 
 @api_view(['POST'])
+def color(request):
+    response_text = request.data['color']
+    return Response({
+        'text': response_text,
+    })
+
+
+@api_view(['POST'])
 def generate_instrument(request):
     """
     Takes a 1-D CSV with the 'ratio' header and constructs samples based on those ratios.

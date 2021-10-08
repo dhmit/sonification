@@ -1,5 +1,5 @@
 import React, {useRef, useState} from "react";
-import {getCookie} from "../../common";
+import {fetchPost} from "../../common";
 import PropTypes from "prop-types";
 
 
@@ -29,17 +29,7 @@ const UploadFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
         formData.append("type", "file");
         formData.append("id", id);
         formData.append("value", file, "tempfile.csv");
-        const csrftoken = getCookie("csrftoken");
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": csrftoken,
-            },
-            body: formData,
-        };
-        fetch(apiEndpoint, requestOptions)
-            .then(response => response.json())
-            .then(data => uploadSuccessfulCallback(data));
+        fetchPost(apiEndpoint, formData, uploadSuccessfulCallback, false);
     };
 
     return (

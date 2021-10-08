@@ -29,16 +29,27 @@ export function getCookie(name) {
  * Given a request body and a callback function for what to do with the
  * resulting JSON. We expect the Response body to be JSON here.
  **/
-export const fetchPost = (apiUrl, body, responseCallbackFunc) => {
+export const fetchPost = (
+    apiUrl,
+    body,
+    responseCallbackFunc,
+    bodyIsJson=true,
+) => {
     const csrftoken = getCookie("csrftoken");
+
+    const headers = {"X-CSRFToken": csrftoken};
+
+    if (bodyIsJson) {
+        headers['Content-Type'] = 'application/json';
+        body = JSON.stringify(body);
+    }
+
     const requestOptions = {
         method: "POST",
-        headers: {
-            'Content-Type': 'application/json',
-            "X-CSRFToken": csrftoken,
-        },
-        body: JSON.stringify(body),
+        body,
+        headers,
     };
+
     return fetch(apiUrl, requestOptions)
             .then(response => response.json())
             .then(responseDict => responseCallbackFunc(responseDict));

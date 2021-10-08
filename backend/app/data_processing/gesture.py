@@ -5,7 +5,7 @@ import numpy as np
 # factor by which we compress coordinates
 factor = 1
 # duration of sonified pitch of each coordinate in gesture (seconds)
-duration = 1
+duration = 4
 
 
 def compress_coordinates(gesture):
@@ -43,9 +43,7 @@ def get_pitch(x, low = 65, high = 1065):
     Given x coordinate, convert to pitch.
     """
     pitch_range = high - low
-    compressed_square = 500/factor
-    change_per_coordinate = pitch_range/compressed_square
-    x_pitch = low + change_per_coordinate(x)
+    x_pitch = (x/500)*pitch_range + low
     return x_pitch
 
 
@@ -62,8 +60,8 @@ def play_sound(gesture):
     :param gesture: list of coordinates received from user input via frontend
     :return: sine waves of sound
     """
-    compressed_gesture = compress_coordinates(gesture)
-    sonified_gesture = get_sound(compressed_gesture)
+    #compressed_gesture = compress_coordinates(gesture)
+    sonified_gesture = get_sound(gesture)
     audio_samples = []
     for pair in sonified_gesture:
         audio_samples.append(generate_sine_wave(pair[0], duration))
@@ -71,9 +69,11 @@ def play_sound(gesture):
 
 p = pyaudio.PyAudio()
 
-stream = p.open(format=pyaudio.paFloat32, channels=1, rate=fs, output=True)
+stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=True)
 audio = play_sound([{"x":10, "y":10}, {"x":20, "y":20}, {"x":30, "y":30}])
-stream.write(audio)
+
+for sample in audio:
+    stream.write(sample)
 
 stream.stop_stream()
 stream.close()

@@ -3,18 +3,18 @@ import { SketchPicker } from 'react-color';
 
 class BasePage extends React.Component {
     state = {
-        background: '#fff',
+        color: '#fff',
     };
 
     handleChangeComplete = (color) => {
-        this.setState({background: color.hex });
+        this.setState({color: color.hex });
     };
 
     render() {
         return (<div>
             <p> Hi </p>
             <SketchPicker
-            color={this.state.background}
+            color={this.state.color}
             onChangeComplete={this.handleChangeComplete}
             />
         </div>);

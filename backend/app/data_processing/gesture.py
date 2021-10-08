@@ -1,10 +1,15 @@
+from app.synthesis.synthesizers import *
+generate_sine_wave()
+
+# factor by which we compress coordinates
 factor = 5
+# duration of sonified pitch of each coordinate in gesture (seconds)
+duration = 1
 
 
-def compress_coordinates(gesture, factor):
+def compress_coordinates(gesture):
     """
     :param gesture: list of coordinates received from user input via frontend
-    :param factor: factor by which we compress coordinates
     :return: list of tuples (x, y) each representing a compressed coordinate, compressed by
     taking averages of groups of coordinates
     """
@@ -50,4 +55,14 @@ def get_volume(y, low = 50, high = 100):
     volume_range = high - low
     y_volume = low + (y/500)*volume_range
     return y_volume
+
+def play_sound(gesture):
+    """
+    :param gesture: list of coordinates received from user input via frontend
+    :return: sine waves of sound
+    """
+    compressed_gesture = compress_coordinates(gesture)
+    sonified_gesture = get_sound(compressed_gesture)
+    for pair in sonified_gesture:
+        generate_sine_wave(pair[0], duration)
 

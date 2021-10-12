@@ -1,7 +1,7 @@
+import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import numpy as np
-import json
 
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths

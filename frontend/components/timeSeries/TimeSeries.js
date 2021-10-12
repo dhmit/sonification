@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import UploadFileInput from "../inputs/UploadFileInput";
+import UploadTimeSeriesFileInput from "../inputs/UploadTimeSeriesFileInput";
 
 const TimeSeries = () => {
     const [instrumentSamples, setInstrumentSamples] = useState(null);
@@ -7,7 +7,7 @@ const TimeSeries = () => {
     return (
         <>
             <h2>Time Series Data</h2>
-            <UploadFileInput
+            <UploadTimeSeriesFileInput
                 id={0}
                 uploadSuccessfulCallback={setInstrumentSamples}
                 apiEndpoint={'api/generate_instrument_2d/'}

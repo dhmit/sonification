@@ -1,9 +1,9 @@
 """
 Methods for creating sound!
 """
-
-import numpy as np
 import math
+import numpy as np
+
 
 from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE

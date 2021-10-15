@@ -143,12 +143,12 @@ const GesturesToSound = () => {
                 </div>
                 <div className="col mt-3">
                     <p>
-                        <button className="btn btn-sm btn-outline-primary text-right"
+                        <button className="btn btn-outline-primary text-right"
                             onClick={resetCanvas} disabled={submitted}>
                             Clear Gestures</button>
-                        <button className="btn btn-primary mr-3" disabled={submitted}
+                        <button className="btn btn-outline-primary mx-3" disabled={submitted}
                             onClick={handleSubmitGestures}>Submit Gestures</button>
-                        <button className="btn btn-secondary"
+                        <button className="btn btn-outline-secondary"
                             onClick={handleNewGestures}>New Canvas</button>
                     </p>
                     {

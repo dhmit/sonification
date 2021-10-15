@@ -1,9 +1,9 @@
 import React, {useEffect, useRef, useState} from "react";
-import UploadFileInput from "../inputs/UploadFileInput";
+import {getCookie} from "../../common";
 import PolygonViewer from "./PolygonViewer";
 import PolygonEditor from "./PolygonEditor";
-import {getCookie} from "../../common";
 import FileInput from "./FileInput";
+import CustomizableInput from "../inputs/CustomizableInput";
 
 const API_ENDPOINT = "/api/synthesize_polygon/";
 const API_ENDPOINT_FILE = "/api/synthesize_polygon_csv/";
@@ -13,6 +13,7 @@ const SynthesizePolygons = () => {
     const [sound, setSound] = useState(null);
     const [noteLength, setNoteLength] = useState(1);
     const [noteDelay, setNoteDelay] = useState(1);
+    const [restrictOctave, setRestrictOctave] = useState(false);
     const audioRef = useRef(null);
 
     useEffect(() => {
@@ -28,21 +29,9 @@ const SynthesizePolygons = () => {
         }
     }, [sound]);
 
-    function handleChangeNoteLength(e) {
-        e.preventDefault();
-        setNoteLength(e.target.value);
-    }
-
-    function handleChangeNoteDelay(e) {
-        e.preventDefault();
-        setNoteDelay(e.target.value);
-    }
-
     async function submitPolygonFile(file) {
-        const formData = new FormData();
+        const formData = createUserOptionFormData();
         formData.append("points", file, "tempfile.csv");
-        formData.append("noteLength", noteLength.toString());
-        formData.append("noteDelay", noteDelay.toString());
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
             method: "POST",
@@ -71,18 +60,44 @@ const SynthesizePolygons = () => {
             .then(data => setData(data));
     }
 
+    function createUserOptionFormData() {
+        const formData = new FormData();
+        userOptions.forEach((option) => {
+            console.log(`${option.name}: ${option.getValue().toString()}`);
+            formData.append(option.name, option.getValue().toString());
+        });
+        return formData;
+    }
+
+    const userOptions = [
+        {
+            type: "number",
+            name: "noteLength",
+            display: "Note Length (seconds):",
+            getValue: () => noteLength,
+            setValue: setNoteLength,
+        },
+        {
+            type: "number",
+            name: "noteDelay",
+            display: "Note Delay (seconds):",
+            getValue: () => noteDelay,
+            setValue: setNoteDelay,
+        },
+        {
+            type: "checkbox",
+            name: "restrictOctave",
+            display: "Restrict Octave:",
+            getValue: () => restrictOctave,
+            setValue: () => setRestrictOctave(!restrictOctave),
+        },
+    ];
+
     return (
         <div>
             <h1>Synthesize Polygons</h1>
             <h2>Inputs</h2>
-            <p>
-                Note Length (seconds):
-                <input type="number" style={{marginLeft: 5}} value={noteLength} onChange={handleChangeNoteLength}/>
-            </p>
-            <p>
-                Note Delay (seconds):
-                <input type="number" style={{marginLeft: 5}} value={noteDelay} onChange={handleChangeNoteDelay}/>
-            </p>
+            {userOptions.map((option) => <CustomizableInput key={option.name} {...option}/>)}
             <FileInput
                 onSubmit={submitPolygonFile}
             />
@@ -93,8 +108,8 @@ const SynthesizePolygons = () => {
                 onSubmit={submitPolygon}
             />
             <h2>Results</h2>
-            {data ?
-                <>
+            {data
+                ? <>
                     <audio controls controlsList={"nodownload"} ref={audioRef}>
                         <source src={`data:audio/wav;base64,${sound}`} type={"audio/wav"}/>
                     </audio>

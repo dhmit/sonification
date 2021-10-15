@@ -4,7 +4,7 @@ import math
 import numpy as np
 
 # factor by which we compress coordinates
-factor = 1
+factor = 10
 # duration of sonified pitch of each coordinate in gesture (seconds)
 duration = 4
 
@@ -76,8 +76,8 @@ def play_sound(gesture):
     :param gesture: list of coordinates received from user input via frontend
     :return: sine waves of sound
     """
-    #compressed_gesture = compress_coordinates(gesture)
-    sonified_gesture = get_sound(gesture)
+    compressed_gesture = compress_coordinates(gesture)
+    sonified_gesture = get_sound(compressed_gesture)
     audio_samples = []
     for pair in sonified_gesture:
         audio_samples.extend(generate_sine_wave_with_envelope(pair[0], duration))

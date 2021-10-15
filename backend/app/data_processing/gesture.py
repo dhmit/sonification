@@ -68,8 +68,8 @@ def get_volume(y, low=50, high=100):
     """
     volume_range = high - low
     y_volume = low + (y/500)*volume_range
-    factor = 0.01
-    return factor*y_volume
+    amp = 0.01
+    return amp*y_volume
 
 
 def play_sound(gesture):

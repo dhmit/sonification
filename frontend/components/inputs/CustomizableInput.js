@@ -1,6 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
-import STYLES from "../synthesizePolygons/SynthesizePolygon.module.scss";
+import STYLES from "./CustomizableInput.module.scss";
 
 const CustomizableInput = ({type, name, display, getValue, setValue, ...rest}) => {
     return (

@@ -3,6 +3,7 @@ These are views (both standard GET and API endpoints) for the synthesize polygon
 
 See app.api_views and app.views for documentation on how these kinds of views work.
 """
+import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
@@ -10,8 +11,6 @@ from app.data_processing import csv_files as csv_processing
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 
 from app.synthesize_polygons.synthesize_polygon import synthesize_polygon
-import re
-import json
 
 
 def synthesize_polygons(request):
@@ -69,6 +68,11 @@ def synthesize_polygon_general(data):
 
 @api_view(['POST'])
 def synthesize_polygon_csv_endpoint(request):
+    """
+    Endpoint for synthesizing a polygon from a csv file.
+    :param request: the HttpRequest
+    :return: an HttpResponse
+    """
     temp_file = request.FILES.get('points')
     data = request.POST.copy()
     data['points'] = csv_processing.parse_csv_upload(temp_file, dictionary=False)
@@ -78,4 +82,9 @@ def synthesize_polygon_csv_endpoint(request):
 
 @api_view(['POST'])
 def synthesize_polygon_endpoint(request):
+    """
+    Endpoint for synthesizing a polygon from a list of points.
+    :param request: the HttpRequest
+    :return: an HttpResponse
+    """
     return synthesize_polygon_general(json.loads(request.body))

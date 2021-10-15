@@ -85,6 +85,10 @@ def play_sound(gesture):
 
 
 def test_sound():
+    """
+    Helper method for testing out the audio within backend
+    :return: None
+    """
     p = pyaudio.PyAudio()
 
     stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=True)

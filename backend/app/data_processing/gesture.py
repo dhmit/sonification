@@ -62,14 +62,13 @@ def get_pitch(x, low=440, high=880):
     return x_pitch
 
 
-def get_volume(y, low=50, high=100):
+def get_volume(y, low=10, high=500):
     """
     Given y coordinate, convert to volume.
     """
     volume_range = high - low
     y_volume = low + (y/500)*volume_range
-    amp = 0.001
-    return amp*y_volume
+    return y_volume
 
 
 def play_sound(gesture):

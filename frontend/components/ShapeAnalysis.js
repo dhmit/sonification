@@ -12,7 +12,8 @@ const ShapeAnalysis = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         setResults("");
-        fetch(`/api/get_shape_analysis/?text=${text}`)
+        const encodedText = encodeURIComponent(text);
+        fetch(`/api/get_shape_analysis/?text=${encodedText}`)
             .then(response => response.json())
             .then(data => {
                 setResults(data["sound"]);

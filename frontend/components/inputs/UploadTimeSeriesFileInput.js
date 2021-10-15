@@ -6,34 +6,35 @@ import PropTypes from "prop-types";
 const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
     const [submitted, setSubmitted] = useState({"file": false});
     const [tempFile, setTempFile] = useState(null);
+    const [duration, setDuration] = useState(.2);
     const [constants, setConstants] = useState(
         [
             {
-                "base_frequency": 100,
-                "multiplier": 20,
-                "offset": 0,
-                "a_percentage": .25,
-                "d_percentage": 0,
-                "s_percentage": .5,
-                "r_percentage": .25,
+                "base_frequency": {"value": 100, "label": "Base Frequency"},
+                "multiplier": {"value": 20, "label": "Multiplier"},
+                "offset": {"value": 0, "label": "Offset"},
+                "a_percentage": {"value": 0, "label": "A", "min": 0, "max": 1, "step": .1},
+                "d_percentage": {"value": 0, "label": "D", "min": 0, "max": 1, "step": .1},
+                "s_percentage": {"value": 1, "label": "S", "min": 0, "max": 1, "step": .1},
+                "r_percentage": {"value": 0, "label": "R", "min": 0, "max": 1, "step": .1},
             },
             {
-                "base_frequency": 150,
-                "multiplier": 20,
-                "offset": 0,
-                "a_percentage": .2,
-                "d_percentage": .4,
-                "s_percentage": .3,
-                "r_percentage": .1,
+                "base_frequency": {"value": 150, "label": "Base Frequency"},
+                "multiplier": {"value": 20, "label": "Multiplier"},
+                "offset": {"value": 0, "label": "Offset"},
+                "a_percentage": {"value": 0, "label": "A", "min": 0, "max": 1, "step": .1},
+                "d_percentage": {"value": 0, "label": "D", "min": 0, "max": 1, "step": .1},
+                "s_percentage": {"value": 1, "label": "S", "min": 0, "max": 1, "step": .1},
+                "r_percentage": {"value": 0, "label": "R", "min": 0, "max": 1, "step": .1},
             },
             {
-                "base_frequency": 225,
-                "multiplier": 20,
-                "offset": 0,
-                "a_percentage": .2,
-                "d_percentage": .4,
-                "s_percentage": .3,
-                "r_percentage": .1,
+                "base_frequency": {"value": 225, "label": "Base Frequency"},
+                "multiplier": {"value": 20, "label": "Multiplier"},
+                "offset": {"value": 0, "label": "Offset"},
+                "a_percentage": {"value": 0, "label": "A", "min": 0, "max": 1, "step": .1},
+                "d_percentage": {"value": 0, "label": "D", "min": 0, "max": 1, "step": .1},
+                "s_percentage": {"value": 1, "label": "S", "min": 0, "max": 1, "step": .1},
+                "r_percentage": {"value": 0, "label": "R", "min": 0, "max": 1, "step": .1},
             },
         ]
     );
@@ -52,7 +53,7 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
     const updateConstant = (col, name, val) => {
         setConstants(prevState => {
             let temp = Object.assign([], prevState);
-            temp[col][name] = parseFloat(val);
+            temp[col][name]["value"] = parseFloat(val);
             return temp;
         });
     };
@@ -70,6 +71,7 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
         formData.append("id", id);
         formData.append("value", file, "tempfile.csv");
         formData.append("constants", JSON.stringify(constants));
+        formData.append("duration", duration.toString());
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
             method: "POST",
@@ -83,69 +85,39 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
             .then(data => uploadSuccessfulCallback(data));
     };
 
+
+    const makeControl = (i, key) => (
+        <div key={i + key["label"]}>
+            <label>{constants[i][key]["label"]}</label>
+            <input className="form-control my-3" type="number"
+                    min={constants[i][key]["min"]}
+                    max={constants[i][key]["max"]}
+                    step={constants[i][key]["step"]}
+                    onChange={e => updateConstant(i, key, e.target.value)}
+                    value={constants[i][key]["value"]}
+            />
+        </div>
+    );
+
     return (
         <>
+            <div className={"time-series-input"}>
+                <label>Duration of each step (sec)</label>
+                <input className="form-control my-3" type="number"
+                        min={0.1}
+                        max={10}
+                        step={.1}
+                        onChange={e => setDuration(e.target.value)}
+                       value={duration}
+                />
+            </div>
             <div className="form-inline">
-                {constants.map((each, i) => {
+                {constants.map((col, i) => {
                     return <div className={"time-series-input"} key={i}>
                         <p>Column {i}: </p>
-                        <div className={"time-series-input"}>
-                            <label>Offset</label>
-                            <input className="form-control my-3" type="number"
-                                   min={-10000} max={10000}
-                                   onChange={e => updateConstant(i, "offset", e.target.value)}
-                                   placeholder={"Offset"} value={constants[i]["offset"]}
-                            />
-                        </div>
-                        <div>
-                            <label>Multiplier</label>
-                            <input className="form-control my-3" type="number"
-                                   min={-10000} max={10000}
-                                   onChange={e => updateConstant(i, "multiplier", e.target.value)}
-                                   placeholder={"Multiplier"} value={constants[i]["multiplier"]}
-                            />
-                        </div>
-                        <div>
-                            <label>Base Frequency</label>
-                            <input className="form-control my-3" type="number"
-                                   min={0} max={10000}
-                                   onChange={e => updateConstant(i, "base_frequency", e.target.value)}
-                                   placeholder={"Base Frequency"}
-                                   value={constants[i]["base_frequency"]}
-                            />
-                        </div>
-                        <div>
-                            <label>A</label>
-                            <input className="form-control my-3" type="number" min={0} max={1}
-                                   step={.1}
-                                   onChange={e => updateConstant(i, "a_percentage", e.target.value)}
-                                   placeholder={"Attack"} value={constants[i]["a_percentage"]}
-                            />
-                        </div>
-                        <div>
-                            <label>D</label>
-                            <input className="form-control my-3" type="number" min={0} max={1}
-                                   step={.1}
-                                   onChange={e => updateConstant(i, "d_percentage", e.target.value)}
-                                   placeholder={"Decay"} value={constants[i]["d_percentage"]}
-                            />
-                        </div>
-                        <div>
-                            <label>S</label>
-                            <input className="form-control my-3" type="number" min={0} max={1}
-                                   step={.1}
-                                   onChange={e => updateConstant(i, "s_percentage", e.target.value)}
-                                   placeholder={"Sustain"} value={constants[i]["s_percentage"]}
-                            />
-                        </div>
-                        <div>
-                            <label>R</label>
-                            <input className="form-control my-3" type="number" min={0} max={1}
-                                   step={.1}
-                                   onChange={e => updateConstant(i, "r_percentage", e.target.value)}
-                                   placeholder={"Release"} value={constants[i]["r_percentage"]}
-                            />
-                        </div>
+                        {Object.keys(col).map(constant => {
+                            return makeControl(i,constant);
+                        })}
                     </div>;
                 })}
             </div>

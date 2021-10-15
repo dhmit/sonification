@@ -83,28 +83,50 @@ def get_average_length_of_whitespace_per_line(text):
 def align_left(text):
     """
     :param text: String of text
-    :return: String representing transformation of given text where lines are aligned left
+    :return: String representing the transformation of aligning the given text to the left.
     """
     cleaned_text = clean_text(text)
     lines = cleaned_text.split('\n')
 
     # remove leading whitespace for each line
-    for i in range(len(lines)): lines[i] = lines[i].lstrip()
+    lines = [lines[i].lstrip() for i in range(len(lines))]
 
     return '\n'.join(lines)
 
 def align_right(text):
     """
     :param text: String of text
-    :return: String representing transformation of given text where lines are aligned right
+    :return: String representing the transformation of aligning the given text to the right.
     """
     cleaned_text = clean_text(text)
     lines = cleaned_text.split('\n')
+
+    # remove trailing whitespace for every line
+    lines = [lines[i].rstrip() for i in range(len(lines))]
 
     # get length of longest line
     max_line_len = len(max(lines, key=len))
 
     # based on the longest line, add leading spaces needed to align the line to the right
-    for i in range(len(lines)): lines[i] = " " * (max_line_len - len(lines[i])) + lines[i]
+    lines = [" " * (max_line_len - len(lines[i])) + lines[i] for i in range(len(lines))]
+
+    return '\n'.join(lines)
+
+def align_center(text):
+    """
+    :param text: String of text
+    :return: String representing the transformation of centering the given text.
+    """
+    cleaned_text = clean_text(text)
+    lines = cleaned_text.split('\n')
+
+    # remove leading and trailing whitespaces for each line
+    lines = [lines[i].strip() for i in range(len(lines))]
+
+    # get length of longest line
+    max_line_len = len(max(lines, key=len))
+
+    # center every line based on length of longest line
+    lines = [lines[i].center(max_line_len) for i in range(len(lines))]
 
     return '\n'.join(lines)

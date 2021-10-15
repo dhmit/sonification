@@ -75,6 +75,16 @@ def sides_of_polygon(points):
     return side_lengths
 
 
+def durations_from_sides(sides, base_duration):
+    """
+    Comptue the duration of each side based on the ratio to the first side and the base duration.
+    :param sides: a list of the side lengths
+    :param base_duration: the duration (in seconds) of the first side
+    :return: a list of durations of each side
+    """
+    pass
+
+
 def generate_note_with_amplitude(frequency, duration, amplitude):
     """
     Generates a note with the given frequency, duration, and amplitude.

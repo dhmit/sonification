@@ -2,45 +2,45 @@ import React, {useRef, useState} from "react";
 import {getCookie} from "../../common";
 import PropTypes from "prop-types";
 
+export const handleSubmitFile = (event, setSubmitted, submitFileToAPI, tempFile) => {
+    event.preventDefault();
+    setSubmitted(prevSubmitted => ({...prevSubmitted, "file": true}));
+    submitFileToAPI(tempFile, "file");
+};
+
+export const handleFileInput = (event, setTempFile) => {
+    setTempFile(event.target.files[0]);
+};
+
+export const clearFile = (fileRef, setTempFile, setSubmitted) => {
+    const file = fileRef.current;
+    file.value = null;
+    setTempFile(null);
+    setSubmitted(prevSubmitted => ({...prevSubmitted, "file": false}));
+};
+
+export const submitFileToAPI = (file, apiEndpoint, uploadSuccessfulCallback) => {
+    const formData = new FormData();
+    formData.append("type", "file");
+    formData.append("id", id);
+    formData.append("value", file, "tempfile.csv");
+    const csrftoken = getCookie("csrftoken");
+    const requestOptions = {
+        method: "POST",
+        headers: {
+            "X-CSRFToken": csrftoken,
+        },
+        body: formData,
+    };
+    fetch(apiEndpoint, requestOptions)
+        .then(response => response.json())
+        .then(data => uploadSuccessfulCallback(data));
+};
 
 const UploadFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
     const [submitted, setSubmitted] = useState({"file": false});
     const [tempFile, setTempFile] = useState(null);
     const fileRef = useRef(null);
-    const handleSubmitFile = (event) => {
-        event.preventDefault();
-        setSubmitted(prevSubmitted => ({...prevSubmitted, "file": true}));
-        submitFileToAPI(tempFile, "file");
-    };
-
-    const handleFileInput = (event) => {
-        setTempFile(event.target.files[0]);
-    };
-
-    const clearFile = () => {
-        const file = fileRef.current;
-        file.value = null;
-        setTempFile(null);
-        setSubmitted(prevSubmitted => ({...prevSubmitted, "file": false}));
-    };
-
-    const submitFileToAPI = (file) => {
-        const formData = new FormData();
-        formData.append("type", "file");
-        formData.append("id", id);
-        formData.append("value", file, "tempfile.csv");
-        const csrftoken = getCookie("csrftoken");
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": csrftoken,
-            },
-            body: formData,
-        };
-        fetch(apiEndpoint, requestOptions)
-            .then(response => response.json())
-            .then(data => uploadSuccessfulCallback(data));
-    };
 
     return (
         <>
@@ -48,11 +48,11 @@ const UploadFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
                 <div className="form-group">
                     <input className="form-control my-3" type="file" ref={fileRef}
                         accept="text/csv" disabled={submitted.file}
-                        onChange={handleFileInput}/>
+                        onChange={(e) => handleFileInput(e, setTempFile)}/>
                     {tempFile &&
                     <button className="btn btn-secondary ml-1"
                         type="button"
-                        onClick={clearFile} disabled={tempFile === null}
+                        onClick={(e) => clearFile(fileRef, setTempFile, setSubmitted)} disabled={tempFile === null}
                         data-dismiss="fileupload">Clear</button>
                     }
                 </div>
@@ -60,7 +60,7 @@ const UploadFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
                 <button id="upload-file" className="btn btn-primary ml-1"
                     disabled={tempFile === null}
                     type={"submit"}
-                    onClick={handleSubmitFile}>
+                    onClick={(e) => handleSubmitFile(e, setSubmitted, submitFileToAPI, tempFile)}>
                     Upload file
                 </button>
                 }

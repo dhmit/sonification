@@ -1,6 +1,7 @@
 import React, {useRef, useState} from "react";
 import {getCookie} from "../../common";
 import PropTypes from "prop-types";
+import { handleSubmitFile, handleFileInput, clearFile } from "./UploadFileInput";
 
 
 const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
@@ -39,15 +40,7 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
     );
 
     const fileRef = useRef(null);
-    const handleSubmitFile = (event) => {
-        event.preventDefault();
-        setSubmitted(prevSubmitted => ({...prevSubmitted, "file": true}));
-        submitFileToAPI(tempFile, "file");
-    };
 
-    const handleFileInput = (event) => {
-        setTempFile(event.target.files[0]);
-    };
 
     const updateConstant = (col, name, val) => {
         setConstants(prevState => {
@@ -55,13 +48,6 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
             temp[col][name] = parseFloat(val);
             return temp;
         });
-    };
-
-    const clearFile = () => {
-        const file = fileRef.current;
-        file.value = null;
-        setTempFile(null);
-        setSubmitted(prevSubmitted => ({...prevSubmitted, "file": false}));
     };
 
     const submitFileToAPI = (file) => {
@@ -153,11 +139,11 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
                 <div className="form-group">
                     <input className="form-control my-3" type="file" ref={fileRef}
                            accept="text/csv" disabled={submitted.file}
-                           onChange={handleFileInput}/>
+                           onChange={(e) => handleFileInput(e, setTempFile)}/>
                     {tempFile &&
                     <button className="btn btn-secondary ml-1"
                             type="button"
-                            onClick={clearFile} disabled={tempFile === null}
+                            onClick={(e) => clearFile(fileRef, setTempFile, setSubmitted)} disabled={tempFile === null}
                             data-dismiss="fileupload">Clear</button>
                     }
                 </div>
@@ -165,7 +151,7 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
                 <button id="upload-file" className="btn btn-primary ml-1"
                         disabled={tempFile === null}
                         type={"submit"}
-                        onClick={handleSubmitFile}>
+                        onClick={(e) => handleSubmitFile(e, setSubmitted, submitFileToAPI, tempFile)}>
                     Upload file
                 </button>
                 }

@@ -9,19 +9,21 @@ factor = 1
 duration = 4
 
 
-def compress_coordinates(gesture):
+def compress_coordinates(gestures):
     """
-    :param gesture: list of coordinates (each coordinate a dictionary) received from user input via
+    :param gesture: list of list of coordinates (each coordinate a dictionary) received from user
+    input via
     frontend
     :return: (in the same format as input), shorter list of coordinates, each representing a
     compressed coordinate, compressed by taking averages of groups of coordinates
     """
     result = list()
-    for i in range(0, len(gesture)-factor, factor):
-        compressed_coord = dict()
-        compressed_coord["x"] = (gesture[i]["x"] + gesture[i+factor-1]["x"])/2
-        compressed_coord["y"] = (gesture[i]["y"] + gesture[i+factor-1]["y"])/2
-        result.append(compressed_coord)
+    for gesture in gestures:
+        for i in range(0, len(gesture)-factor, factor):
+            compressed_coord = dict()
+            compressed_coord["x"] = (gesture[i]["x"] + gesture[i+factor-1]["x"])/2
+            compressed_coord["y"] = (gesture[i]["y"] + gesture[i+factor-1]["y"])/2
+            result.append(compressed_coord)
     return result
 
 

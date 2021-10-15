@@ -81,7 +81,8 @@ def durations_from_sides(sides, base_duration):
     :param base_duration: the duration (in seconds) of the first side
     :return: a list of durations of each side
     """
-    pass
+    return [(side/side[0])*base_duration for side in sides]
+
 
 
 def generate_note_with_amplitude(frequency, duration, amplitude):

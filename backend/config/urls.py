@@ -36,6 +36,10 @@ urlpatterns = [
     path('api/get_sentiment_analysis_2/', summer_prototype_views.get_sentiment_analysis_2),
     path('api/image_to_music/', summer_prototype_views.image_to_music),
 
+    # Text shape to music API endpoint
+    path('api/get_shape_analysis/', views.get_shape_analysis),
+    path('get_shape_analysis/', views.get_shape_analysis),
+
 ]
 
 

@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import UploadFileInput from "./inputs/UploadFileInput";
 import SliderInstrument from "./instruments/SliderInstrument";
-
+import ShapeAnalysis from "./ShapeAnalysis";
 
 const Home = () => {
     const [instrumentSamples, setInstrumentSamples] = useState(null);
@@ -17,6 +17,8 @@ const Home = () => {
             <SliderInstrument
                 samples={instrumentSamples}
             />
+            <hr />
+            <ShapeAnalysis />
         </>
     );
 };

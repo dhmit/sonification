@@ -26,8 +26,11 @@ Example:
     }
 """
 
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
 from django.shortcuts import render
-
+from app.data_processing import text_shape_to_sound
+from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 
 def index(request):
     """ Home page """
@@ -41,6 +44,19 @@ def index(request):
 
     return render(request, 'index.html', context)
 
+@api_view(['GET'])
+def get_shape_analysis(request):
+    """
+    API endpoint for generating audio based on the shape analysis of the given text
+    """
+    text = request.query_params.get('text')
+    audio_data = text_shape_to_sound.text_shape_to_sound(text)
+
+    res = {
+        'sound': audio_samples_to_wav_base64(audio_data)
+    }
+
+    return Response(res)
 
 ################################################################################
 # Boilerplate - just for examples
@@ -71,3 +87,5 @@ def example_id(request, example_id_arg):
     }
 
     return render(request, 'index.html', context)
+
+

@@ -1,7 +1,6 @@
 import math
 from app.synthesis.synthesizers import *
 # import pyaudio
-import numpy as np
 
 # factor by which we compress coordinates
 factor = 10

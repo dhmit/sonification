@@ -84,7 +84,6 @@ def durations_from_sides(sides, base_duration):
     return [(side/side[0])*base_duration for side in sides]
 
 
-
 def generate_note_with_amplitude(frequency, duration, amplitude):
     """
     Generates a note with the given frequency, duration, and amplitude.

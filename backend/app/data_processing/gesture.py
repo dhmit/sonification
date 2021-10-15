@@ -19,11 +19,13 @@ def compress_coordinates(gestures):
     """
     result = list()
     for gesture in gestures:
+        current_result = list()
         for i in range(0, len(gesture)-factor, factor):
             compressed_coord = dict()
             compressed_coord["x"] = (gesture[i]["x"] + gesture[i+factor-1]["x"])/2
             compressed_coord["y"] = (gesture[i]["y"] + gesture[i+factor-1]["y"])/2
-            result.append(compressed_coord)
+            current_result.append(compressed_coord)
+        result.append(current_result)
     return result
 
 

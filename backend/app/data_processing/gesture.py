@@ -62,7 +62,7 @@ def get_pitch(x, low=440, high=880):
     return x_pitch
 
 
-def get_duration(y, low=0.01, high=2):
+def get_duration(y, low=0.1, high=2):
     """
     Given y coordinate, convert to duration.
     """

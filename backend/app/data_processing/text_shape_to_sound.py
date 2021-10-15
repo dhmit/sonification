@@ -34,18 +34,14 @@ def text_shape_to_sound(text):
     base_audio_freq = abs(base_freq - num_lines * 20)
     base_wave = generate_sine_wave(base_audio_freq, 1)
 
-    print(avg_contig_spaces_list)
-
     for avg_spaces in avg_contig_spaces_list:
-        secondary_freq = base_audio_freq - avg_spaces
+        secondary_freq = base_audio_freq - max(20-avg_spaces, 0)
         secondary_wave = generate_sine_wave(secondary_freq, 1)
         constructive_wave = base_wave + secondary_wave
         samples = np.hstack((samples, constructive_wave))
     return samples
 
 
-# beat = generate_sine_wave(440, 5) + generate_sine_wave(442, 5)
-# x = [i for i in range(len(beat))]
 
 text = "                     Wanna be a                   fish.\n" \
        "             Have a slick fish head.             Spread\n" \

@@ -50,8 +50,8 @@ def get_pitch(x, low=440, high=880):
     """
     Given x coordinate, convert to pitch.
     """
-    x += 1
-    x_pitch = (high/math.log(499, 2) - low/math.log(499, 2))*math.log(x, 2) + low
+    number_of_octaves = math.log((high/low), 2)
+    x_pitch = low*(2**(x*number_of_octaves/500))
 
     """
     LINEAR FUNCTION

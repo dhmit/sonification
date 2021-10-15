@@ -1,5 +1,4 @@
 import React, {useRef, useState} from 'react';
-import {getCookie} from "../../common";
 import PropTypes from "prop-types";
 
 const FileInput = ({onSubmit}) => {

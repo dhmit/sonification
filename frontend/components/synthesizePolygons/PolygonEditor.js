@@ -2,14 +2,9 @@ import React, {useEffect, useRef, useState} from "react";
 import STYLES from "./PolygonEditor.module.scss";
 import PropTypes from "prop-types";
 
-const PolygonEditor =
-    ({
-        width = 300,
-        height = 300,
-        showSubmit = false,
-        onSubmit,
-    }) => {
-
+const PolygonEditor = (
+    {width = 300, height = 300, showSubmit = false, onSubmit}
+) => {
     const [points, setPoints] = useState([]);
     const [cursorLocation, setCursorLocation] = useState(null);
     const [fileDownloadUrl, setFileDownloadUrl] = useState(null);
@@ -45,7 +40,7 @@ const PolygonEditor =
         setCursorLocation([x, y]);
     }
 
-    function handleLeaveSvg(e) {
+    function handleLeaveSvg() {
         setCursorLocation(null);
     }
 

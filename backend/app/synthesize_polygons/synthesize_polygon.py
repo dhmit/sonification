@@ -98,13 +98,13 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
     :param restrict_octave: whether to restrict the notes to a single octave
     :return: numpy array which represents the sound.
     """
-    print(restrict_octave)
     # Compute number of notes, note length and delay in samples
     num_notes = len(points)
     note_length_samples = int(note_length * WAV_SAMPLE_RATE)
     note_delay_samples = int(note_delay * WAV_SAMPLE_RATE)
     # Total length of sound in samples
     total_length = (num_notes - 1) * note_delay_samples + note_length_samples
+    print("Total sound length:", total_length)
 
     # Compute sides and angles of polygon
     sides_list = sides_of_polygon(points)

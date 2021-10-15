@@ -41,7 +41,7 @@ def get_sound(gesture):
     return result
 
 
-def get_pitch(x, low = 65, high = 1065):
+def get_pitch(x, low=65, high=1065):
     """
     Given x coordinate, convert to pitch.
     """
@@ -56,13 +56,14 @@ def get_pitch(x, low = 65, high = 1065):
     return x_pitch
 
 
-def get_volume(y, low = 50, high = 100):
+def get_volume(y, low=50, high=100):
     """
     Given y coordinate, convert to volume.
     """
     volume_range = high - low
     y_volume = low + (y/500)*volume_range
     return y_volume
+
 
 def play_sound(gesture):
     """
@@ -76,11 +77,12 @@ def play_sound(gesture):
         audio_samples.append(generate_sine_wave(pair[0], duration))
     return audio_samples
 
+
 def test_sound():
     p = pyaudio.PyAudio()
 
     stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=True)
-    audio = play_sound([{"x": 10, "y": 10}, {"x": 20, "y": 20}, {"x": 30, "y": 30}])
+    audio = play_sound([{"x": 0, "y": 10}, {"x":250, "y": 20}, {"x": 500, "y": 30}])
 
     for sample in audio:
         stream.write(sample)
@@ -90,4 +92,6 @@ def test_sound():
 
     p.terminate()
 
+
 test_sound()
+

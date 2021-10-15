@@ -12,7 +12,7 @@ const ShapeAnalysis = () => {
     const handleSubmit = (event) => {
         event.preventDefault();
         setResults("");
-        fetch(`/api/get_sentiment_analysis/?text=${text}`)
+        fetch(`/api/get_shape_analysis/?text=${text}`)
             .then(response => response.json())
             .then(data => {
                 setResults(data["sound"]);

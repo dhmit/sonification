@@ -25,7 +25,7 @@ def color(request):
     # return Response({
     #     "text": str(energy)
     # })
-    return Response(wav_file_base64)
+    return Response([wav_file_base64])
 
 
 @api_view(['POST'])

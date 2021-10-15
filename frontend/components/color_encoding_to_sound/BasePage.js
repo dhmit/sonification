@@ -1,6 +1,7 @@
 import React from "react";
 import { SketchPicker } from 'react-color';
 import { fetchPost } from "../../common";
+import SliderInstrument from "../instruments/SliderInstrument";
 
 class BasePage extends React.Component {
     state = {
@@ -9,7 +10,7 @@ class BasePage extends React.Component {
             g: 51,
             b: 51
         },
-        result: "",
+        result: [],
     };
 
     handleChangeComplete = (color) => {
@@ -39,9 +40,13 @@ class BasePage extends React.Component {
             {/*<audio controls controlsList={"nodownload"}>*/}
             {/*        <source src={`data:audio/wav;base64,${this.state.result}`} type={"audio/wav"}/>*/}
             {/*</audio>*/}
-            <audio controls="controls"
-                   src={`data:audio/wav;base64, ${this.state.result}`}
-                   controlsList="nodownload"/>
+            {/*<audio controls="controls"*/}
+            {/*       src={`data:audio/wav;base64, ${this.state.result}`}*/}
+            {/*       controlsList="nodownload"/>*/}
+
+            <SliderInstrument
+                samples={this.state.result}
+            />
         </div>);
     }
 };

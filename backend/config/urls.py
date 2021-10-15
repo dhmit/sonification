@@ -39,7 +39,7 @@ urlpatterns = [
     path('api/image_to_music/', summer_prototype_views.image_to_music),
 
     # Color encoding to sound paths and API endpoints
-    path('color_encode_to_sound/', color_encoding_to_sound_views.base_page)
+    path('color_encode_to_sound/', color_encoding_to_sound_views.base_page),
 
     # time series endpoints
     path('api/generate_instrument_2d/', api_views.generate_instrument_2d),

@@ -15,7 +15,6 @@ boomerang = [(5, 1), (2, 4), (6, 5), (4, 3.5)]
 right_triangle = [(0, 0), (14, 0), (0, 8)]
 bowtie = [(4, 0), (8, 0), (6, 6), (10, 5)]
 line = [(6, 6), (2, 3)]
-base_frequency = 220  # base note in Hz
 
 
 def angles_of_polygon(points):
@@ -99,7 +98,7 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
 
 
 def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=False,
-                       sides_as_duration=False):
+                       sides_as_duration=False, base_frequency=220):
     """
     Synthesizes a polygon. The polygon is represented as a list of points
     where each point is a tuple of length 2.
@@ -109,6 +108,7 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
     :param restrict_octave: whether to restrict the notes to a single octave
     :param sides_as_duration: whether to use side lengths to determine duration. if False, then use
     side lengths to determine amplitude.
+    :param base_frequency: the frequency of the first note of the polygon
     :return: numpy array which represents the sound.
     """
     # Compute number of notes, note length and delay in samples

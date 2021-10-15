@@ -18,7 +18,11 @@ def color(request):
     freq_to_generate = ((200*energy) / 255 ) + 150
     audio_samples = synths.generate_sine_wave_with_envelope(
         frequency=freq_to_generate,
-        duration=3
+        duration=500,
+        a_percentage=0,
+        d_percentage=0,
+        s_percentage=1,
+        r_percentage=0
     )
     wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
 

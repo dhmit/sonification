@@ -28,7 +28,6 @@ class BasePage extends React.Component {
 
     render() {
         return (<div>
-            <p>Hi</p>
             <SketchPicker
                 color={this.state.color}
                 onChangeComplete={this.handleChangeComplete}

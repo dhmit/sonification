@@ -75,7 +75,7 @@ def get_average_length_of_whitespace_per_line(text):
                                 int(line != line.lstrip())
 
         # Calculate average length of whitespace and store in output
-        average_length_of_whitespace = num_whitespaces / num_whitespace_blocks;
+        average_length_of_whitespace = num_whitespaces / max(num_whitespace_blocks, 1);
         average_length_of_whitespace_per_line.append(average_length_of_whitespace);
 
     return average_length_of_whitespace_per_line

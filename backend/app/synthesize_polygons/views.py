@@ -16,7 +16,7 @@ import json
 
 def synthesize_polygons(request):
     """
-    Page showing all the summer prototypes
+    Page showing the synthesize polygon tool
     """
 
     context = {
@@ -49,6 +49,14 @@ def convert_data(data):
 
 
 def synthesize_polygon_general(data):
+    """
+    Synthesize a polygon using the provided data.
+    :param data: a dictionary with the input for synthesis. data should have a field "points"
+    with the polygon points. it may also contain fields for the other arguments that
+    synthesize_polygon takes.
+    :return: a Response object to send back to the client with the generated sound and the
+    polygon points.
+    """
     converted_data = convert_data(data)
     print('Points:', converted_data['points'])
     return Response({

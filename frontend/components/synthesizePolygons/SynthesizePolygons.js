@@ -2,7 +2,7 @@ import React, {useEffect, useRef, useState} from "react";
 import {getCookie} from "../../common";
 import PolygonViewer from "./PolygonViewer";
 import PolygonEditor from "./PolygonEditor";
-import FileInput from "./FileInput";
+import FileInput from "../inputs/FileInput";
 import CustomizableInput from "../inputs/CustomizableInput";
 
 const API_ENDPOINT = "/api/synthesize_polygon/";
@@ -78,6 +78,8 @@ const SynthesizePolygons = () => {
         return obj;
     }
 
+    // customizable user options. simply add or remove items to the list to add/remove options
+    // fields are passed to <CustomizableInput/> component.
     const userOptions = [
         {
             type: "number",

@@ -1,6 +1,11 @@
 import React, {useEffect, useState} from "react";
 import PropTypes from "prop-types";
 
+/**
+ * A polygon viewer using svg graphics with specified width and height. Takes a list of points
+ * as input and draws the polygon based on these points. Also auto scales the polygon to
+ * fit/fill the svg.
+ */
 const PolygonViewer = ({points, width, height}) => {
     const [pointsText, setPointsText] = useState("");
 

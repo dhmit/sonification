@@ -1,6 +1,11 @@
 import React, {useRef, useState} from 'react';
 import PropTypes from "prop-types";
 
+/**
+ * A component for file input with a specified callback onSubmit. An alternative to
+ * UploadFileInput allowing for different handling of file inputs besides direct uploading to an
+ * api endpoint.
+ */
 const FileInput = ({onSubmit}) => {
     const [submitted, setSubmitted] = useState({"file": false});
     const [tempFile, setTempFile] = useState(null);

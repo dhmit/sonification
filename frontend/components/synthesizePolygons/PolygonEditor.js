@@ -2,6 +2,11 @@ import React, {useEffect, useRef, useState} from "react";
 import STYLES from "./PolygonEditor.module.scss";
 import PropTypes from "prop-types";
 
+/**
+ * A simple polygon editor with specified width and height. A custom callback onSubmit can be
+ * specified, which is called when the submit button is clicked. The submit button is shown
+ * only if the prop showSubmit is true.
+ */
 const PolygonEditor = (
     {width = 300, height = 300, showSubmit = false, onSubmit}
 ) => {
@@ -9,7 +14,10 @@ const PolygonEditor = (
     const [cursorLocation, setCursorLocation] = useState(null);
     const [fileDownloadUrl, setFileDownloadUrl] = useState(null);
     const fileDownloadRef = useRef(null);
+    const svgDisplay = useRef(null);
 
+    // When fileDownloadUrl is set, if it is not null, download the generated file and revoke
+    // the URL to preserve resources.
     useEffect(() => {
         if (fileDownloadUrl) {
             fileDownloadRef.current.click();
@@ -18,14 +26,14 @@ const PolygonEditor = (
         }
     }, [fileDownloadUrl]);
 
-    const svgDisplay = useRef(null);
-
+    // download the polygon as csv
     function downloadPolygon() {
         const csvContent = points.map(e => e.join(",")).join("\n");
         const blob = new Blob([csvContent]);
         setFileDownloadUrl(URL.createObjectURL(blob));
     }
 
+    // add a new point to polygon
     function handleClickSvg(e) {
         const rect = svgDisplay.current.getBoundingClientRect();
         const x = e.clientX - rect.left; // x position within the element.
@@ -33,6 +41,7 @@ const PolygonEditor = (
         setPoints([...points, [x, y]]);
     }
 
+    // move the cursor
     function handleMoveSvg(e) {
         const rect = svgDisplay.current.getBoundingClientRect();
         const x = e.clientX - rect.left; // x position within the element.
@@ -40,6 +49,7 @@ const PolygonEditor = (
         setCursorLocation([x, y]);
     }
 
+    // remove the cursor
     function handleLeaveSvg() {
         setCursorLocation(null);
     }

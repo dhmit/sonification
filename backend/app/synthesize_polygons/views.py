@@ -29,36 +29,45 @@ def synthesize_polygons(request):
     return render(request, 'index.html', context)
 
 
+def convert_data(data):
+    """
+    Converts parameters for a synthesize_polygon call into correct formats.
+    :param data: a dict containing parameters for synthesize_polygon as strings/files
+    :return: a dict containing the parameters for synthesize_polygon in correct format
+    """
+    converted_data = {}
+    if 'noteLength' in data:
+        converted_data['note_length'] = float(data['noteLength'])
+    if 'noteDelay' in data:
+        converted_data['note_delay'] = float(data['noteDelay'])
+    if 'restrictOctave' in data:
+        converted_data['restrict_octave'] = str(data['restrictOctave']).lower() == 'true'
+    if 'points' in data:
+        converted_data['points'] = [tuple(map(float, p)) for p in data['points']]
+
+    return converted_data
+
+
+def synthesize_polygon_general(data):
+    converted_data = convert_data(data)
+    print('Points:', converted_data['points'])
+    return Response({
+        "sound": audio_samples_to_wav_base64(
+            synthesize_polygon(**converted_data)
+        ),
+        "points": converted_data['points']
+    })
+
+
 @api_view(['POST'])
 def synthesize_polygon_csv_endpoint(request):
     temp_file = request.FILES.get('points')
+    data = request.POST.copy()
+    data['points'] = csv_processing.parse_csv_upload_headless(temp_file)
 
-    data = request.POST
-    note_length = float(data['noteLength'])
-    note_delay = float(data['noteDelay'])
-    print(data['restrictOctave'])
-    restrict_octave = data['restrictOctave'].lower() == "true"
-
-    csv_data = csv_processing.parse_csv_upload_headless(temp_file)
-    polygon_points = [tuple(map(float, p)) for p in csv_data]
-
-    print(polygon_points)
-    synthesized = synthesize_polygon(polygon_points, note_length, note_delay, restrict_octave)
-    return Response({"sound": audio_samples_to_wav_base64(synthesized),
-                     "points": polygon_points})
+    return synthesize_polygon_general(data)
 
 
 @api_view(['POST'])
 def synthesize_polygon_endpoint(request):
-    data = json.loads(request.body)
-    note_length = float(data['noteLength'])
-    note_delay = float(data['noteDelay'])
-    restrict_octave = data['restrictOctave'].lower() == "true"
-
-    polygon_points = []
-    for point in data["points"]:
-        polygon_points.append(tuple(map(float, point)))
-    print(polygon_points)
-    synthesized = synthesize_polygon(polygon_points, note_length, note_delay, restrict_octave)
-    return Response({"sound": audio_samples_to_wav_base64(synthesized),
-                     "points": polygon_points})
+    return synthesize_polygon_general(json.loads(request.body))

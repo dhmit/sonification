@@ -88,15 +88,17 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
     return note
 
 
-def synthesize_polygon(points, note_length, note_delay):
+def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=False):
     """
     Synthesizes a polygon. The polygon is represented as a list of points
     where each point is a tuple of length 2.
     :param points: list of points representing a polygon.
     :param note_length: length of each note in seconds.
     :param note_delay: delay between each note in seconds.
+    :param restrict_octave: whether to restrict the notes to a single octave
     :return: numpy array which represents the sound.
     """
+    print(restrict_octave)
     # Compute number of notes, note length and delay in samples
     num_notes = len(points)
     note_length_samples = int(note_length * WAV_SAMPLE_RATE)

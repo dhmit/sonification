@@ -75,7 +75,36 @@ def get_average_length_of_whitespace_per_line(text):
                                 int(line != line.lstrip())
 
         # Calculate average length of whitespace and store in output
-        average_length_of_whitespace = num_whitespaces / max(num_whitespace_blocks, 1);
-        average_length_of_whitespace_per_line.append(average_length_of_whitespace);
+        average_length_of_whitespace = num_whitespaces / max(num_whitespace_blocks, 1)
+        average_length_of_whitespace_per_line.append(average_length_of_whitespace)
 
     return average_length_of_whitespace_per_line
+
+def align_left(text):
+    """
+    :param text: String of text
+    :return: String representing transformation of given text where lines are aligned left
+    """
+    cleaned_text = clean_text(text)
+    lines = cleaned_text.split('\n')
+
+    # remove leading whitespace for each line
+    for i in range(len(lines)): lines[i] = lines[i].lstrip()
+
+    return '\n'.join(lines)
+
+def align_right(text):
+    """
+    :param text: String of text
+    :return: String representing transformation of given text where lines are aligned right
+    """
+    cleaned_text = clean_text(text)
+    lines = cleaned_text.split('\n')
+
+    # get length of longest line
+    max_line_len = len(max(lines, key=len))
+
+    # based on the longest line, add leading spaces needed to align the line to the right
+    for i in range(len(lines)): lines[i] = " " * (max_line_len - len(lines[i])) + lines[i]
+
+    return '\n'.join(lines)

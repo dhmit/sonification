@@ -85,13 +85,14 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
 
     return (
         <>
-            <div>
+            <div className="form-inline">
                 {constants.map((each, i) => {
-                    return <div className="form-inline" key={i}>
+                    return <div className={"time-series-input"} key={i}>
                         <p>Column {i}: </p>
-                        <div>
+                        <div className={"time-series-input"}>
                             <label>Offset</label>
                             <input className="form-control my-3" type="number"
+                                   min={-10000} max={10000}
                                    onChange={e => updateConstant(i, "offset", e.target.value)}
                                    placeholder={"Offset"} value={constants[i]["offset"]}
                             />
@@ -99,6 +100,7 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
                         <div>
                             <label>Multiplier</label>
                             <input className="form-control my-3" type="number"
+                                   min={-10000} max={10000}
                                    onChange={e => updateConstant(i, "multiplier", e.target.value)}
                                    placeholder={"Multiplier"} value={constants[i]["multiplier"]}
                             />
@@ -106,6 +108,7 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
                         <div>
                             <label>Base Frequency</label>
                             <input className="form-control my-3" type="number"
+                                   min={0} max={10000}
                                    onChange={e => updateConstant(i, "base_frequency", e.target.value)}
                                    placeholder={"Base Frequency"}
                                    value={constants[i]["base_frequency"]}

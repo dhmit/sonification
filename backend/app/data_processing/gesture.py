@@ -6,7 +6,7 @@ import numpy as np
 # factor by which we compress coordinates
 factor = 10
 # duration of sonified pitch of each coordinate in gesture (seconds)
-duration = 4
+#duration = 4
 
 
 def compress_coordinates(gestures):
@@ -33,7 +33,7 @@ def get_sound(gestures):
     """
     Given a list of list of dictionaries {"x": x_val, "y": y_val}, each representing a coordinate
     from a single gesture received from user input via frontend, return a list of (pitch,
-    volume) tuples representing the gesture converted to sound
+    duration) tuples representing the gesture converted to sound
     """
     result = list()
     for gesture in gestures:
@@ -41,8 +41,8 @@ def get_sound(gestures):
             x = coordinate["x"]
             y = coordinate["y"]
             pitch = get_pitch(x)
-            volume = get_volume(y)
-            result.append((pitch, volume))
+            duration = get_duration(y)
+            result.append((pitch, duration))
     return result
 
 
@@ -62,13 +62,13 @@ def get_pitch(x, low=440, high=880):
     return x_pitch
 
 
-def get_volume(y, low=0.1, high=1):
+def get_duration(y, low=0.1, high=2):
     """
-    Given y coordinate, convert to volume.
+    Given y coordinate, convert to duration.
     """
-    volume_range = high - low
-    y_volume = low + (y/500)*volume_range
-    return y_volume**2
+    duration_range = high - low
+    y_duration = low + (y/500)*duration_range
+    return y_duration
 
 
 def play_sound(gesture):

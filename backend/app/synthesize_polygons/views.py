@@ -3,7 +3,6 @@ These are views (both standard GET and API endpoints) for the synthesize polygon
 
 See app.api_views and app.views for documentation on how these kinds of views work.
 """
-
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
@@ -33,17 +32,18 @@ def synthesize_polygons(request):
 @api_view(['POST'])
 def synthesize_polygon_csv_endpoint(request):
     temp_file = request.FILES.get('points')
-    note_length = float(request.POST['noteLength'])
-    note_delay = float(request.POST['noteDelay'])
 
-    csv_data = re.split(r"\s", temp_file.read().decode('utf-8'))
-    polygon_points = []
-    for row in csv_data:
-        if len(row) > 0:
-            x, y = map(float, row.split(","))
-            polygon_points.append((x, y))
+    data = request.POST
+    note_length = float(data['noteLength'])
+    note_delay = float(data['noteDelay'])
+    print(data['restrictOctave'])
+    restrict_octave = data['restrictOctave'].lower() == "true"
+
+    csv_data = csv_processing.parse_csv_upload_headless(temp_file)
+    polygon_points = [tuple(map(float, p)) for p in csv_data]
+
     print(polygon_points)
-    synthesized = synthesize_polygon(polygon_points, note_length, note_delay)
+    synthesized = synthesize_polygon(polygon_points, note_length, note_delay, restrict_octave)
     return Response({"sound": audio_samples_to_wav_base64(synthesized),
                      "points": polygon_points})
 
@@ -53,11 +53,12 @@ def synthesize_polygon_endpoint(request):
     data = json.loads(request.body)
     note_length = float(data['noteLength'])
     note_delay = float(data['noteDelay'])
+    restrict_octave = data['restrictOctave'].lower() == "true"
 
     polygon_points = []
     for point in data["points"]:
         polygon_points.append(tuple(map(float, point)))
     print(polygon_points)
-    synthesized = synthesize_polygon(polygon_points, note_length, note_delay)
+    synthesized = synthesize_polygon(polygon_points, note_length, note_delay, restrict_octave)
     return Response({"sound": audio_samples_to_wav_base64(synthesized),
                      "points": polygon_points})

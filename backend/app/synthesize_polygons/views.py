@@ -63,7 +63,7 @@ def synthesize_polygon_general(data):
 def synthesize_polygon_csv_endpoint(request):
     temp_file = request.FILES.get('points')
     data = request.POST.copy()
-    data['points'] = csv_processing.parse_csv_upload_headless(temp_file)
+    data['points'] = csv_processing.parse_csv_upload(temp_file, dictionary=False)
 
     return synthesize_polygon_general(data)
 

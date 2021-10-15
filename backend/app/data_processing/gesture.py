@@ -68,7 +68,7 @@ def get_volume(y, low=50, high=100):
     """
     volume_range = high - low
     y_volume = low + (y/500)*volume_range
-    amp = 0.01
+    amp = 0.001
     return amp*y_volume
 
 

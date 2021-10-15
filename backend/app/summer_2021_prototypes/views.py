@@ -4,8 +4,7 @@ These are views (both standard GET and API endpoints) for the summer 2021 sonifi
 See app.api_views and app.views for documentation on how these kinds of views work.
 """
 
-
-
+from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
 

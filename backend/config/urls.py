@@ -26,6 +26,7 @@ urlpatterns = [
 
     # API endpoints
     path('api/generate_instrument/', api_views.generate_instrument),
+    path('api/gesture_to_sound/', api_views.gesture_to_sound),
 
     # View paths
     path('', views.index, name='index'),
@@ -36,7 +37,6 @@ urlpatterns = [
     path('api/get_sentiment_analysis/', summer_prototype_views.get_sentiment_analysis),
     path('api/get_sentiment_analysis_2/', summer_prototype_views.get_sentiment_analysis_2),
     path('api/image_to_music/', summer_prototype_views.image_to_music),
-    path('api/gesture_to_sound', api_views.gesture_to_sound)
 
 ]
 

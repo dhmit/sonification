@@ -1,5 +1,5 @@
 from app.synthesis.synthesizers import *
-import pyaudio
+# import pyaudio
 import math
 import numpy as np
 
@@ -25,19 +25,20 @@ def compress_coordinates(gesture):
     return result
 
 
-def get_sound(gesture):
+def get_sound(gestures):
     """
-    Given a list of dictionaries {"x": x_val, "y": y_val}, each representing a coordinate
+    Given a list of list of dictionaries {"x": x_val, "y": y_val}, each representing a coordinate
     from a single gesture received from user input via frontend, return a list of (pitch,
     volume) tuples representing the gesture converted to sound
     """
     result = list()
-    for coordinate in gesture:
-        x = coordinate["x"]
-        y = coordinate["y"]
-        pitch = get_pitch(x)
-        volume = get_volume(y)
-        result.append((pitch, volume))
+    for gesture in gestures:
+        for coordinate in gesture:
+            x = coordinate["x"]
+            y = coordinate["y"]
+            pitch = get_pitch(x)
+            volume = get_volume(y)
+            result.append((pitch, volume))
     return result
 
 
@@ -75,7 +76,7 @@ def play_sound(gesture):
     sonified_gesture = get_sound(gesture)
     audio_samples = []
     for pair in sonified_gesture:
-        audio_samples.append(generate_sine_wave(pair[0], duration))
+        audio_samples.extend(generate_sine_wave_with_envelope(pair[0], duration))
     return audio_samples
 
 
@@ -93,5 +94,4 @@ def test_sound():
 
     p.terminate()
 
-
-test_sound()
+# test_sound()

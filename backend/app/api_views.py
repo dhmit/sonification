@@ -5,6 +5,8 @@ from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
 from app.data_processing import csv_files as csv_processing
 
+from app.data_processing.gesture import play_sound
+
 
 @api_view(['POST'])
 def generate_instrument(request):
@@ -32,7 +34,7 @@ def generate_instrument(request):
 @api_view(['POST'])
 def gesture_to_sound(request):
     gestures = request.data['gestures']
-    audio = [] #TODO: put function here
+    audio = play_sound(gestures)
     res = {
         'sound': audio_samples_to_wav_base64(audio)
     }

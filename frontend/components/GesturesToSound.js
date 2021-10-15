@@ -1,5 +1,6 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./summerPrototypes/ImageAnalysis.module.scss";
+import {getCookie} from "../common";
 
 
 const GesturesToSound = () => {
@@ -86,6 +87,26 @@ const GesturesToSound = () => {
         };
     }, [beginDrawing, draw, endDrawing]);
 
+    const submitGesturesToAPI = () => {
+        const csrftoken = getCookie("csrftoken");
+        const requestOptions = {
+            method: "POST",
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+                "X-CSRFToken": csrftoken,
+            },
+            body: JSON.stringify({
+                gestures: allMouseCoords,
+            }),
+        };
+        fetch("/api/gesture_to_sound/", requestOptions)
+            .then(response => response.json())
+            .then(data => {
+                setSoundData(data.sound);
+            });
+    };
+
     const resetCanvas = (event) => {
         event.preventDefault();
         const canvas = canvasRef.current;
@@ -94,32 +115,52 @@ const GesturesToSound = () => {
         setAllMouseCoords([]);
     };
 
-    const handleNewDrawing = (event) => {
+    const handleNewGestures = (event) => {
         resetCanvas(event);
         setSubmitted(false);
+        setSoundData(null);
+    };
+
+    const handleSubmitGestures = (event) => {
+        event.preventDefault();
+        submitGesturesToAPI(event);
+        setSubmitted(true);
     };
 
     return (
         <>
             <h1>Gestures to Sound</h1>
-            <div className="col-12 col-sm-5">
-                <canvas
-                    className={`
-                        ${STYLES.canvas}
-                        ${submitted ? "" : STYLES.activeCanvas}
-                    `}
-                    ref={canvasRef}
-                    width="500" height="500"
-                />
+            <div className="row">
+                <div className="col-12 col-sm-5">
+                    <canvas
+                        className={`
+                            ${STYLES.canvas}
+                            ${submitted ? "" : STYLES.activeCanvas}
+                        `}
+                        ref={canvasRef}
+                        width="500" height="500"
+                    />
+                </div>
+                <div className="col mt-3">
+                    <p>
+                        <button className="btn btn-sm btn-outline-primary text-right"
+                            onClick={resetCanvas} disabled={submitted}>
+                            Clear Gestures</button>
+                        <button className="btn btn-primary mr-3" disabled={submitted}
+                            onClick={handleSubmitGestures}>Submit Gestures</button>
+                        <button className="btn btn-secondary"
+                            onClick={handleNewGestures}>New Canvas</button>
+                    </p>
+                    {
+                        soundData && <p>
+                            Gesture Sounds:
+                            <audio controls="controls"
+                                src={`data:audio/wav;base64, ${soundData}`}
+                                controlsList="nodownload"/>
+                        </p>
+                    }
+                </div>
             </div>
-            <div className="col mt-3">
-                <p>
-                    <button className="btn btn-sm btn-outline-primary text-right"
-                        onClick={resetCanvas} disabled={submitted}>
-                        Clear Drawing</button>
-                </p>
-            </div>
-
         </>
     );
 };

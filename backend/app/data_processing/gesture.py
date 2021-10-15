@@ -11,7 +11,7 @@ duration = 4
 
 def compress_coordinates(gestures):
     """
-    :param gesture: list of list of coordinates (each coordinate a dictionary) received from user
+    :param gestures: list of list of coordinates (each coordinate a dictionary) received from user
     input via
     frontend
     :return: (in the same format as input), shorter list of coordinates, each representing a

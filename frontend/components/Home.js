@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import UploadFileInput from "./inputs/UploadFileInput";
 import SliderInstrument from "./instruments/SliderInstrument";
+import TimeSeries from "./timeSeries/TimeSeries";
 
 
 const Home = () => {
@@ -17,6 +18,9 @@ const Home = () => {
             <SliderInstrument
                 samples={instrumentSamples}
             />
+            <hr />
+            <TimeSeries />
+
         </>
     );
 };

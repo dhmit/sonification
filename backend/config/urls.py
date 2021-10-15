@@ -42,6 +42,9 @@ urlpatterns = [
     path('api/synthesize_polygon/', synthesize_polygons_views.synthesize_polygon_endpoint),
     path('api/synthesize_polygon_csv/', synthesize_polygons_views.synthesize_polygon_csv_endpoint),
 
+    # time series endpoints
+    path('api/generate_instrument_2d/', api_views.generate_instrument_2d),
+
 ]
 
 

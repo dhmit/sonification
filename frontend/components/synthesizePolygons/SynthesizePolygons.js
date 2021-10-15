@@ -53,7 +53,7 @@ const SynthesizePolygons = () => {
                 "X-CSRFToken": csrftoken,
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({points, noteLength, noteDelay}),
+            body: JSON.stringify({points, ...createUserOptionObject()}),
         };
         fetch(API_ENDPOINT, requestOptions)
             .then(response => response.json())
@@ -67,6 +67,15 @@ const SynthesizePolygons = () => {
             formData.append(option.name, option.getValue().toString());
         });
         return formData;
+    }
+
+    function createUserOptionObject() {
+        const obj = {};
+        userOptions.forEach((option) => {
+            console.log(`${option.name}: ${option.getValue().toString()}`);
+            obj[option.name] = option.getValue();
+        });
+        return obj;
     }
 
     const userOptions = [

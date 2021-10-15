@@ -62,7 +62,7 @@ def get_pitch(x, low=440, high=880):
     return x_pitch
 
 
-def get_volume(y, low=10, high=100):
+def get_volume(y, low=0.1, high=1):
     """
     Given y coordinate, convert to volume.
     """
@@ -80,7 +80,7 @@ def play_sound(gesture):
     sonified_gesture = get_sound(compressed_gesture)
     audio_samples = []
     for pair in sonified_gesture:
-        audio_samples.extend(generate_sine_wave_with_envelope(pair[0], duration))
+        audio_samples.extend(generate_sine_wave_with_envelope(pair[0], pair[1]))
     return audio_samples
 
 

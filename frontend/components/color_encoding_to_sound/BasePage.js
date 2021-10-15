@@ -17,7 +17,7 @@ class BasePage extends React.Component {
 
     handleSubmit = () => {
         const requestBody = {color: this.state.color};
-        const responseCallbackFunc = responseDict => alert(responseDict.text);
+        const responseCallbackFunc = responseDict => console.log(responseDict);
         fetchPost('/api/color/', requestBody, responseCallbackFunc);
     };
 

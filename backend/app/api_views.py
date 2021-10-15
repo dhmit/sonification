@@ -14,9 +14,18 @@ def color(request):
     g = response_object["g"]
     b = response_object["b"]
     energy = round(0.299*r + .587*g + .114*b)
-    return Response({
-        "text": str(energy)
-    })
+
+    freq_to_generate = ((200*energy) / 255 ) + 150
+    audio_samples = synths.generate_sine_wave_with_envelope(
+        frequency=freq_to_generate,
+        duration=1
+    )
+    wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+
+    # return Response({
+    #     "text": str(energy)
+    # })
+    return Response(wav_file_base64)
 
 
 @api_view(['POST'])

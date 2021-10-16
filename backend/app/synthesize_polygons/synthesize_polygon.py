@@ -60,7 +60,7 @@ def sides_of_polygon(points):
     return side_lengths
 
 
-#for future feature
+# for future feature
 # def durations_from_sides(sides, base_duration):
 #     """
 #     Comptue the duration of each side based on the ratio to the first side and the base duration.
@@ -84,6 +84,7 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
     return note
 
 
+# pylint: disable=too-many-arguments,too-many-locals
 def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=False,
                        sides_as_duration=False, base_frequency=220):
     """

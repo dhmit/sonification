@@ -50,13 +50,8 @@ def sides_of_polygon(points):
     :return: list of side lengths of this polygon.
     """
     side_lengths = []
-    for i in range(len(points)):
-        if i < len(points) - 1:
-            side_lengths.append(((points[i + 1][0] - points[i][0]) ** 2 +
-                                 (points[i + 1][1] - points[i][1]) ** 2) ** (1 / 2))
-        else:
-            side_lengths.append(((points[0][0] - points[i][0]) ** 2 +
-                                 (points[0][1] - points[i][1]) ** 2) ** (1 / 2))
+    for p1, p2 in zip(points, points[1:] + points[:1]):
+        side_lengths.append(((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2) ** (1 / 2))
     return side_lengths
 
 
@@ -84,7 +79,8 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
     return note
 
 
-# pylint: disable=too-many-arguments,too-many-locals
+# pylint: disable=too-many-arguments
+# pylint: disable=too-many-locals
 def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=False,
                        sides_as_duration=False, base_frequency=220):
     """

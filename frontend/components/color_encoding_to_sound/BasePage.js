@@ -11,6 +11,7 @@ class BasePage extends React.Component {
             b: 51
         },
         result: [],
+        listOfColors: []
     };
 
     handleChangeComplete = (color) => {
@@ -20,8 +21,12 @@ class BasePage extends React.Component {
     handleSubmit = () => {
         const requestBody = {color: this.state.color};
         const responseCallbackFunc = responseDict => {
-                this.setState({result: responseDict});
-                console.log(responseDict);
+                const tempColor = this.state.color;
+                this.setState({
+                        result: responseDict,
+                        listOfColors: this.state.listOfColors.concat(tempColor)
+                    });
+                console.log(this.state.listOfColors);
         };
         fetchPost('/api/color/', requestBody, responseCallbackFunc);
     };

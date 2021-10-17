@@ -9,13 +9,17 @@ from app.data_processing import csv_files as csv_processing
 
 @api_view(['POST'])
 def color(request):
+    """
+    :param request: colorpicker's rgb values stored as a dictionary when the user hits submit
+    :return: wav file, sine wave with frequency corresponds to energy of the color
+    """
     response_object = request.data['color']
     r = response_object["r"]
     g = response_object["g"]
     b = response_object["b"]
-    energy = round(0.299*r + .587*g + .114*b)
+    energy = round(0.299*r + .587*g + .114*b) # color energy calculation
 
-    freq_to_generate = ((200*energy) / 255 ) + 150
+    freq_to_generate = ((200*energy) / 255 ) + 150 # frequency based on energy, scaled for 150-350hz
     audio_samples = synths.generate_sine_wave_with_envelope(
         frequency=freq_to_generate,
         duration=500,

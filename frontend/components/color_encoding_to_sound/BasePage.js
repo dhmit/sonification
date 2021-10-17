@@ -32,6 +32,12 @@ class BasePage extends React.Component {
     };
 
     render() {
+        const colorDisplay = this.state.listOfColors.map( (color, i) =>
+            <div key={i}>
+                <p>Color {i}</p>
+                <p> R: {color.r} G: {color.g} B: {color.b}</p>
+            </div>
+        );
         return (<div>
             <SketchPicker
                 color={this.state.color}
@@ -51,6 +57,8 @@ class BasePage extends React.Component {
             <SliderInstrument
                 samples={this.state.result}
             />
+
+            { colorDisplay }
         </div>);
     }
 };

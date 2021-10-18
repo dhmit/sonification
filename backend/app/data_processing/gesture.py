@@ -51,11 +51,9 @@ def get_pitch(x, low=440, high=880):
     number_of_octaves = math.log((high/low), 2)
     x_pitch = low*(2**(x*number_of_octaves/500))
 
-    """
-    LINEAR FUNCTION
-    pitch_range = high - low
-    x_pitch = (x/500)*pitch_range + low
-    """
+    # LINEAR FUNCTION
+    # pitch_range = high - low
+    # x_pitch = (x/500)*pitch_range + low
 
     return x_pitch
 

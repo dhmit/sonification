@@ -33,6 +33,10 @@ def generate_instrument(request):
 
 @api_view(['POST'])
 def gesture_to_sound(request):
+    """
+    Takes in gestures as a list of list of (x,y) coordinates and constructs audio sample
+    based on the horizontal and vertical components of the gestures
+    """
     gestures = request.data['gestures']
     audio = play_sound(gestures)
     res = {

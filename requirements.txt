@@ -11,6 +11,7 @@ nltk==3.6.2
 numpy==1.21.0
 opencv-python==4.5.3.56
 Pillow==8.3.2
+PyAudio==0.2.11
 pytz==2020.5
 regex==2021.4.4
 scipy==1.7.0

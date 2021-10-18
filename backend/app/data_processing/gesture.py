@@ -1,11 +1,9 @@
 import math
-from app.synthesis.synthesizers import *
-# import pyaudio
+from app.synthesis.synthesizers import generate_sine_wave_with_envelope
+import pyaudio
 
 # factor by which we compress coordinates
-factor = 10
-# duration of sonified pitch of each coordinate in gesture (seconds)
-#duration = 4
+FACTOR = 10
 
 
 def compress_coordinates(gestures):
@@ -16,13 +14,14 @@ def compress_coordinates(gestures):
     :return: (in the same format as input), shorter list of coordinates, each representing a
     compressed coordinate, compressed by taking averages of groups of coordinates
     """
-    result = list()
+    result = []
     for gesture in gestures:
-        current_result = list()
-        for i in range(0, len(gesture)-factor, factor):
-            compressed_coord = dict()
-            compressed_coord["x"] = (gesture[i]["x"] + gesture[i+factor-1]["x"])/2
-            compressed_coord["y"] = (gesture[i]["y"] + gesture[i+factor-1]["y"])/2
+        current_result = []
+        for i in range(0, len(gesture)-FACTOR, FACTOR):
+            compressed_coord = {
+                "x": (gesture[i]["x"] + gesture[i+FACTOR-1]["x"])/2,
+                "y": (gesture[i]["y"] + gesture[i+FACTOR-1]["y"])/2
+            }
             current_result.append(compressed_coord)
         result.append(current_result)
     return result
@@ -34,7 +33,7 @@ def get_sound(gestures):
     from a single gesture received from user input via frontend, return a list of (pitch,
     duration) tuples representing the gesture converted to sound
     """
-    result = list()
+    result = []
     for gesture in gestures:
         for coordinate in gesture:
             x = coordinate["x"]
@@ -91,7 +90,7 @@ def test_sound():
     p = pyaudio.PyAudio()
 
     stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=True)
-    audio = play_sound([{"x": 0, "y": 10}, {"x":250, "y": 20}, {"x": 500, "y": 30}])
+    audio = play_sound([{"x": 0, "y": 10}, {"x": 250, "y": 20}, {"x": 500, "y": 30}])
 
     for sample in audio:
         stream.write(sample)

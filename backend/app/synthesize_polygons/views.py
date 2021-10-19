@@ -41,6 +41,8 @@ def convert_data(data):
         converted_data['note_delay'] = float(data['noteDelay'])
     if 'restrictOctave' in data:
         converted_data['restrict_octave'] = str(data['restrictOctave']).lower() == 'true'
+    if 'sidesAsDuration' in data:
+        converted_data['sides_as_duration'] = str(data['sidesAsDuration']).lower() == 'true'
     if 'points' in data:
         converted_data['points'] = [tuple(map(float, p)) for p in data['points']]
 

@@ -14,6 +14,7 @@ const SynthesizePolygons = () => {
     const [noteLength, setNoteLength] = useState(1);
     const [noteDelay, setNoteDelay] = useState(1);
     const [restrictOctave, setRestrictOctave] = useState(false);
+    const [sidesAsDuration, setSidesAsDuration] = useState(false);
     const audioRef = useRef(null);
 
     useEffect(() => {
@@ -101,6 +102,13 @@ const SynthesizePolygons = () => {
             display: "Restrict Octave:",
             getValue: () => restrictOctave,
             setValue: () => setRestrictOctave(!restrictOctave),
+        },
+        {
+            type: "checkbox",
+            name: "sidesAsDuration",
+            display: "Use side lengths as durations:",
+            getValue: () => sidesAsDuration,
+            setValue: () => setSidesAsDuration(!sidesAsDuration),
         },
     ];
 

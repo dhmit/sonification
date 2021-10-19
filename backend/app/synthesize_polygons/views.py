@@ -57,7 +57,6 @@ def synthesize_polygon_general(data):
     polygon points.
     """
     converted_data = convert_data(data)
-    print('Points:', converted_data['points'])
     return Response({
         "sound": audio_samples_to_wav_base64(
             synthesize_polygon(**converted_data)

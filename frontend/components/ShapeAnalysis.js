@@ -9,18 +9,42 @@ const ShapeAnalysis = () => {
         setText(event.target.value);
     };
 
-    const handleAlignCenter = (event) => {
+    const handleAlignCenter = () => {
         // Get lines of current text and remove leading/trailing whitespaces
         let lines = text.split('\n').map(line => line.trim());
         const maxLineLength = Math.max(...lines.map(line => line.length));
 
         // Pad each line with leading/trailing whitespaces to center it according to maxLineLength
-        lines = lines.map(line => line.padStart(Math.floor((maxLineLength - line.length) / 2) + line.length).padEnd(maxLineLength));
+        lines = lines.map(line => line.padStart(Math.floor((maxLineLength - line.length) / 2) +
+            line.length).padEnd(maxLineLength));
 
-        // Update text 
+        // Update text
         const newText = lines.join('\n');
         setText(newText);
     };
+
+    const handleAlignLeft = () => {
+        // Get lines of current text and remove leading whitespaces to align left
+        let lines = text.split('\n').map(line => line.trimStart());
+
+        // Update text
+        const newText = lines.join('\n');
+        setText(newText);
+    };
+
+    const handleAlignRight = () => {
+        // Get lines of current text and remove trailing whitespaces
+        let lines = text.split('\n').map(line => line.trimEnd());
+        const maxLineLength = Math.max(...lines.map(line => line.length));
+
+        // Pad each line with leading whitespaces to align right according to maxLineLength
+        lines = lines.map(line => line.padStart(maxLineLength));
+
+        // Update text
+        const newText = lines.join('\n');
+        setText(newText);
+    };
+
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -52,7 +76,12 @@ const ShapeAnalysis = () => {
                         />
                     </div>
                 </div>
-                <button className="btn btn-secondary" type="button" onClick={handleAlignCenter}>Align Center</button><br/><br/>
+                <button className="btn btn-secondary" type="button" onClick={handleAlignLeft}>
+                    Align Left</button> &nbsp;
+                <button className="btn btn-secondary" type="button" onClick={handleAlignCenter}>
+                    Align Center</button> &nbsp;
+                <button className="btn btn-secondary" type="button" onClick={handleAlignRight}>
+                    Align Right</button><br/><br/>
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
             {results && (<>

@@ -81,6 +81,8 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
 
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-locals
+# TODO: Fill in for and use restrict_octave
+# TODO: Fill in for and use sides_as_duration along with sides_as_duration function
 def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=False,
                        sides_as_duration=False, base_frequency=220):
     """

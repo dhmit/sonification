@@ -146,5 +146,8 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
 
         # update current frequency
         cur_freq *= freq_change[note_ind]
+        if restrict_octave:
+            while cur_freq > 440:
+                cur_freq /= 2
 
     return sound

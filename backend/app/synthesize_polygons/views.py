@@ -34,15 +34,25 @@ def convert_data(data):
     :param data: a dict containing parameters for synthesize_polygon as strings/files
     :return: a dict containing the parameters for synthesize_polygon in correct format
     """
+    float_values = {
+        'noteLength': 'note_length',
+        'noteDelay': 'note_delay',
+        'baseFrequency': 'base_frequency',
+        'floorFrequency': 'floor_frequency',
+        'ceilFrequency': 'ceil_frequency',
+    }
+    bool_values = {
+        'restrictFrequency': 'restrict_frequency',
+        'sidesAsDuration': 'sides_as_duration',
+    }
+
     converted_data = {}
-    if 'noteLength' in data:
-        converted_data['note_length'] = float(data['noteLength'])
-    if 'noteDelay' in data:
-        converted_data['note_delay'] = float(data['noteDelay'])
-    if 'restrictOctave' in data:
-        converted_data['restrict_octave'] = str(data['restrictOctave']).lower() == 'true'
-    if 'sidesAsDuration' in data:
-        converted_data['sides_as_duration'] = str(data['sidesAsDuration']).lower() == 'true'
+    for float_val in float_values:
+        if float_val in data:
+            converted_data[float_values[float_val]] = float(data[float_val])
+    for bool_val in bool_values:
+        if bool_val in data:
+            converted_data[bool_values[bool_val]] = str(data[bool_val]).lower() == 'true'
     if 'points' in data:
         converted_data['points'] = [tuple(map(float, p)) for p in data['points']]
 

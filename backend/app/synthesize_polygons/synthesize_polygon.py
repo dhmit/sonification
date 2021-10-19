@@ -86,21 +86,26 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
 
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-locals
-# TODO: Fill in for and use restrict_octave
-def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=False,
-                       sides_as_duration=False, base_frequency=220):
+def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=False,
+                       sides_as_duration=False, base_frequency=220, floor_frequency=20,
+                       ceil_frequency=10000):
     """
     Synthesizes a polygon. The polygon is represented as a list of points
     where each point is a tuple of length 2.
     :param points: list of points representing a polygon.
     :param note_length: length of each note in seconds.
     :param note_delay: delay between each note in seconds.
-    :param restrict_octave: whether to restrict the notes to a single octave
+    :param restrict_frequency: whether to restrict the notes to a specified frequency range
     :param sides_as_duration: whether to use side lengths to determine duration. if False, then use
     side lengths to determine amplitude.
     :param base_frequency: the frequency of the first note of the polygon
+    :param floor_frequency: the lowest allowable frequency for any note
+    :param ceil_frequency: the highest allowable frequency for any note
     :return: numpy array which represents the sound.
     """
+    assert ceil_frequency >= 2*floor_frequency, \
+        "the ceiling frequency must be at least an octave above the floor frequency"
+
     # Compute number of notes, note length and delay in samples
     num_notes = len(points)
     note_length_samples = int(note_length * WAV_SAMPLE_RATE)
@@ -146,10 +151,10 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
 
         # update current frequency
         cur_freq *= freq_change[note_ind]
-        if restrict_octave:
-            while cur_freq > 2 * base_frequency:
+        if restrict_frequency:
+            while cur_freq > ceil_frequency:
                 cur_freq /= 2
-            while cur_freq < base_frequency:
+            while cur_freq < floor_frequency:
                 cur_freq *= 2
 
     return sound

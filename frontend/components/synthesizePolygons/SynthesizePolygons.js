@@ -7,14 +7,19 @@ import CustomizableInput from "../inputs/CustomizableInput";
 
 const API_ENDPOINT = "/api/synthesize_polygon/";
 const API_ENDPOINT_FILE = "/api/synthesize_polygon_csv/";
+const LOW_FREQ = 20;
+const HIGH_FREQ = 10000;
 
 const SynthesizePolygons = () => {
     const [data, setData] = useState(null);
     const [sound, setSound] = useState(null);
     const [noteLength, setNoteLength] = useState(1);
     const [noteDelay, setNoteDelay] = useState(1);
-    const [restrictOctave, setRestrictOctave] = useState(false);
+    const [restrictFrequency, setRestrictFrequency] = useState(false);
     const [sidesAsDuration, setSidesAsDuration] = useState(false);
+    const [baseFrequency, setBaseFrequency] = useState(220);
+    const [floorFrequency, setFloorFrequency] = useState(LOW_FREQ);
+    const [ceilFrequency, setCeilFrequency] = useState(HIGH_FREQ);
     const audioRef = useRef(null);
 
     useEffect(() => {
@@ -64,8 +69,10 @@ const SynthesizePolygons = () => {
     function createUserOptionFormData() {
         const formData = new FormData();
         userOptions.forEach((option) => {
-            console.log(`${option.name}: ${option.getValue().toString()}`);
-            formData.append(option.name, option.getValue().toString());
+            if (typeof option.enabled === "undefined" || option.enabled) {
+                console.log(`${option.name}: ${option.getValue().toString()}`);
+                formData.append(option.name, option.getValue().toString());
+            }
         });
         return formData;
     }
@@ -73,42 +80,96 @@ const SynthesizePolygons = () => {
     function createUserOptionObject() {
         const obj = {};
         userOptions.forEach((option) => {
-            console.log(`${option.name}: ${option.getValue().toString()}`);
-            obj[option.name] = option.getValue();
+            if (typeof option.enabled === "undefined" || option.enabled) {
+                console.log(`${option.name}: ${option.getValue().toString()}`);
+                obj[option.name] = option.getValue();
+            }
         });
         return obj;
+    }
+
+    function capFrequency(freq, setFreq) {
+        if (freq < LOW_FREQ) {
+            setFreq(LOW_FREQ);
+        }
+        if (freq > HIGH_FREQ) {
+            setFreq(HIGH_FREQ);
+        }
     }
 
     // customizable user options. simply add or remove items to the list to add/remove options
     // fields are passed to <CustomizableInput/> component.
     const userOptions = [
         {
+            type: "dropdown",
+            name: "sidesAsDuration",
+            display: "Use side lengths as:",
+            getValue: () => sidesAsDuration,
+            setValue: (v) => setSidesAsDuration(v === "true"),
+            options: [
+                {
+                    name: "false",
+                    display: "amplitudes",
+                },
+                {
+                    name: "true",
+                    display: "durations",
+                },
+            ],
+        },
+        {
             type: "number",
             name: "noteLength",
-            display: "Note Length (seconds):",
+            display: "Note length (seconds):",
             getValue: () => noteLength,
             setValue: setNoteLength,
         },
         {
             type: "number",
             name: "noteDelay",
-            display: "Note Delay (seconds):",
+            display: "Note delay (seconds):",
             getValue: () => noteDelay,
             setValue: setNoteDelay,
+            enabled: !sidesAsDuration,
+        },
+        {
+            type: "number",
+            name: "baseFrequency",
+            display: "Base frequency (Hz):",
+            getValue: () => baseFrequency,
+            setValue: setBaseFrequency,
+            onBlur: () => capFrequency(baseFrequency, setBaseFrequency),
+            min: LOW_FREQ,
+            max: HIGH_FREQ,
         },
         {
             type: "checkbox",
-            name: "restrictOctave",
-            display: "Restrict Octave:",
-            getValue: () => restrictOctave,
-            setValue: () => setRestrictOctave(!restrictOctave),
+            name: "restrictFrequency",
+            display: "Restrict frequencies:",
+            getValue: () => restrictFrequency,
+            setValue: () => setRestrictFrequency(!restrictFrequency),
         },
         {
-            type: "checkbox",
-            name: "sidesAsDuration",
-            display: "Use side lengths as durations:",
-            getValue: () => sidesAsDuration,
-            setValue: () => setSidesAsDuration(!sidesAsDuration),
+            type: "number",
+            name: "floorFrequency",
+            display: "Floor frequency (Hz):",
+            getValue: () => floorFrequency,
+            setValue: setFloorFrequency,
+            onBlur: () => capFrequency(floorFrequency, setFloorFrequency),
+            min: LOW_FREQ,
+            max: HIGH_FREQ,
+            enabled: restrictFrequency,
+        },
+        {
+            type: "number",
+            name: "ceilFrequency",
+            display: "Ceiling frequency (Hz):",
+            getValue: () => ceilFrequency,
+            setValue: setCeilFrequency,
+            onBlur: () => capFrequency(ceilFrequency, setCeilFrequency),
+            min: LOW_FREQ,
+            max: HIGH_FREQ,
+            enabled: restrictFrequency,
         },
     ];
 
@@ -120,9 +181,11 @@ const SynthesizePolygons = () => {
             <FileInput
                 onSubmit={submitPolygonFile}
             />
-            <p>Files should be CSVs that have two columns that include x and y coordinates of the points
-                    of the polygon with x-coordinates in the first column and the corresponding
-                        y-coordinates in the second column.</p>
+            <p>
+                Files should be CSVs that have two columns that include x and y coordinates of the
+                points of the polygon with x-coordinates in the first column and the corresponding
+                y-coordinates in the second column.
+            </p>
             <PolygonEditor
                 width={300}
                 height={300}

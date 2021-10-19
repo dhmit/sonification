@@ -3,6 +3,7 @@ import numpy as np
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
+
 def angles_of_polygon(points):
     """
     Computes the internal angles of this polygon, in input order.
@@ -55,15 +56,19 @@ def sides_of_polygon(points):
     return side_lengths
 
 
-# for future feature
-# def durations_from_sides(sides, base_duration):
-#     """
-#     Comptue the duration of each side based on the ratio to the first side and the base duration.
-#     :param sides: a list of the side lengths
-#     :param base_duration: the duration (in seconds) of the first side
-#     :return: a list of durations of each side
-#     """
-#     return [(side/side[0])*base_duration for side in sides]
+def sides_to_duration(sides, base_duration):
+    """
+    Compute the duration of each side based on the ratio to the first side and the base duration.
+    :param sides: a list of the side lengths
+    :param base_duration: the duration (in seconds) of the first side
+    :return: a tuple consisting of a list of durations of each side as well as the total length
+    of the sound as an integer
+    """
+    duration_list = [(side/side[0])*base_duration for side in sides]
+    total_duration = 0
+    for duration in duration_list:
+        total_duration += duration
+    return (duration_list, total_duration)
 
 
 def generate_note_with_amplitude(frequency, duration, amplitude):
@@ -106,7 +111,9 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
     # Compute sides and angles of polygon
     sides_list = sides_of_polygon(points)
     angles_list = angles_of_polygon(points)
-    # duration_list = sides_to_duration(sides_list)
+    if sides_as_duration:
+        duration_list = sides_to_duration(sides_list)[0]
+        total_length = sides_to_duration(sides_list)[1]
     freq_change = change_in_frequency(angles_list)
     cur_freq = base_frequency
 
@@ -115,9 +122,14 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
     # add each note to the sound
     for note_ind in range(num_notes):
         # generate note and ensure it has correct length
-        note = generate_note_with_amplitude(
-            cur_freq, note_length, sides_list[note_ind] / sides_list[0]
-        )
+        if sides_as_duration:
+            note_duration = duration_list[note_ind]
+            note = generate_note_with_amplitude(cur_freq, note_duration, 1) #base amplitude of 1
+
+        else:
+            note = generate_note_with_amplitude(
+                cur_freq, note_length, sides_list[note_ind] / sides_list[0]
+            )
         assert len(note) == note_length_samples, "Incorrect note length computation"
 
         #  append note samples

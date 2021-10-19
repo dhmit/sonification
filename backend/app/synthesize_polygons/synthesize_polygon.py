@@ -64,11 +64,11 @@ def sides_to_duration(sides, base_duration):
     :return: a tuple consisting of a list of durations of each side as well as the total length
     of the sound as an integer
     """
-    duration_list = [(side/side[0])*base_duration for side in sides]
+    duration_list = [(side/sides[0])*base_duration for side in sides]
     total_duration = 0
     for duration in duration_list:
         total_duration += duration
-    return (duration_list, total_duration)
+    return duration_list, total_duration
 
 
 def generate_note_with_amplitude(frequency, duration, amplitude):
@@ -113,9 +113,10 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
     # Compute sides and angles of polygon
     sides_list = sides_of_polygon(points)
     angles_list = angles_of_polygon(points)
+    cur_time = 0
     if sides_as_duration:
-        duration_list = sides_to_duration(sides_list)[0]
-        total_length = sides_to_duration(sides_list)[1]
+        duration_list, total_length = sides_to_duration(sides_list, note_length)
+        total_length = int(total_length * WAV_SAMPLE_RATE)
     freq_change = change_in_frequency(angles_list)
     cur_freq = base_frequency
 
@@ -125,18 +126,24 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
     for note_ind in range(num_notes):
         # generate note and ensure it has correct length
         if sides_as_duration:
-            note_duration = duration_list[note_ind]
-            note = generate_note_with_amplitude(cur_freq, note_duration, 1) #base amplitude of 1
+            # base amplitude of 1
+            note = generate_note_with_amplitude(cur_freq, duration_list[note_ind], 1)
+            duration_samples = len(note)
 
+            #  append note samples
+            for i in range(0, duration_samples):
+                sound[cur_time + i] += note[i]
+
+            # update the current time
+            cur_time += duration_samples
         else:
             note = generate_note_with_amplitude(
                 cur_freq, note_length, sides_list[note_ind] / sides_list[0]
             )
-        assert len(note) == note_length_samples, "Incorrect note length computation"
-
-        #  append note samples
-        for i in range(0, note_length_samples):
-            sound[note_ind * note_delay_samples + i] += note[i]
+            assert len(note) == note_length_samples, "Incorrect note length computation"
+            #  append note samples
+            for i in range(0, note_length_samples):
+                sound[note_ind * note_delay_samples + i] += note[i]
 
         # update current frequency
         cur_freq *= freq_change[note_ind]

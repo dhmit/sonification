@@ -9,6 +9,19 @@ const ShapeAnalysis = () => {
         setText(event.target.value);
     };
 
+    const handleAlignCenter = (event) => {
+        // Get lines of current text and remove leading/trailing whitespaces
+        let lines = text.split('\n').map(line => line.trim());
+        const maxLineLength = Math.max(...lines.map(line => line.length));
+
+        // Pad each line with leading/trailing whitespaces to center it according to maxLineLength
+        lines = lines.map(line => line.padStart(Math.floor((maxLineLength - line.length) / 2) + line.length).padEnd(maxLineLength));
+
+        // Update text 
+        const newText = lines.join('\n');
+        setText(newText);
+    };
+
     const handleSubmit = (event) => {
         event.preventDefault();
         setResults("");
@@ -39,6 +52,7 @@ const ShapeAnalysis = () => {
                         />
                     </div>
                 </div>
+                <button className="btn btn-secondary" type="button" onClick={handleAlignCenter}>Align Center</button><br/><br/>
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
             {results && (<>

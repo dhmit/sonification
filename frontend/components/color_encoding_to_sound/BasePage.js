@@ -34,7 +34,7 @@ class BasePage extends React.Component {
     render() {
         const colorDisplay = this.state.listOfColors.map( (color, i) =>
             <div key={i}>
-                <p>Color {i}</p>
+                <p>Color {i+1}</p>
                 <p> R: {color.r} G: {color.g} B: {color.b}</p>
             </div>
         );

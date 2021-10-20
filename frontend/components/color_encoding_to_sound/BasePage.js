@@ -1,6 +1,6 @@
 import React from "react";
-import { SketchPicker } from 'react-color';
-import { fetchPost } from "../../common";
+import {SketchPicker} from 'react-color';
+import {fetchPost} from "../../common";
 import SliderInstrument from "../instruments/SliderInstrument";
 
 class BasePage extends React.Component {
@@ -8,25 +8,25 @@ class BasePage extends React.Component {
         color: {
             r: 51,
             g: 51,
-            b: 51
+            b: 51,
         },
         result: [],
-        listOfColors: []
+        listOfColors: [],
     };
 
     handleChangeComplete = (color) => {
-        this.setState({color: color.rgb });
+        this.setState({color: color.rgb});
     };
 
     handleSubmit = () => {
         const requestBody = {color: this.state.color};
         const responseCallbackFunc = responseDict => {
-                const tempColor = this.state.color;
-                this.setState({
-                        result: responseDict,
-                        listOfColors: this.state.listOfColors.concat(tempColor)
-                    });
-                console.log(this.state.listOfColors);
+            const tempColor = this.state.color;
+            this.setState({
+                result: responseDict,
+                listOfColors: this.state.listOfColors.concat(tempColor),
+            });
+            console.log(this.state.listOfColors);
         };
         fetchPost('/api/color/', requestBody, responseCallbackFunc);
     };

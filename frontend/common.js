@@ -24,38 +24,6 @@ export function getCookie(name) {
     return cookieValue;
 }
 
-
-/**
- * Calls a given api endpoint with a POST request
- * Given a request body and a callback function for what to do with the
- * resulting JSON. We expect the Response body to be JSON here.
- **/
-export const fetchPost = (
-    apiUrl,
-    body,
-    responseCallbackFunc,
-    bodyIsJson=true,
-) => {
-    const csrftoken = getCookie("csrftoken");
-    const headers = {"X-CSRFToken": csrftoken};
-
-    if (bodyIsJson) {
-        headers['Content-Type'] = 'application/json';
-        body = JSON.stringify(body);
-    }
-
-    const requestOptions = {
-        method: "POST",
-        body,
-        headers,
-    };
-
-    return fetch(apiUrl, requestOptions)
-        .then(response => response.json())
-        .then(responseDict => responseCallbackFunc(responseDict));
-};
-
-
 /**
  * Calls a given api endpoint with a POST request
  * Given a request body and a callback function for what to do with the

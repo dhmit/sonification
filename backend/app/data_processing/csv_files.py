@@ -15,7 +15,7 @@ def parse_csv_upload(csv_upload, dictionary=True):
     :param csv_upload: client-submitted file expected to be in CSV format
     :return: a list of dictionaries mapping the CSV header data to values for each row
     """
-    csv_str = csv_upload.read().decode('utf-8-sig')
+    csv_str = csv_upload.read().decode('utf-8')
     if dictionary:
         reader = csv.DictReader(io.StringIO(csv_str))
     else:

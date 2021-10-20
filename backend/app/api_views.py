@@ -1,4 +1,3 @@
-import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import numpy as np
@@ -69,40 +68,39 @@ def generate_instrument_2d(request):
 
     temp_file = request.FILES.get('value')
     csv_data = csv_processing.parse_csv_upload(temp_file, False)
-    column_constants = json.loads(request.data['constants'])
-    duration = float(request.data['duration'])
+
+    # TODO allow users to change these values
+    base_frequency = 50
 
     audio_samples = None
-    for i, row in enumerate(csv_data):
-        sound = None
-
-        for j, frequency in enumerate(row):
-            if frequency == "":
+    for ratio_group in csv_data:
+        ratio_sound = None
+        for ratio in ratio_group:
+            if ratio == "":
                 continue
-            column_constant = column_constants[j]
-            freq_to_generate = column_constant["base_frequency"]["value"] + (
-                    float(frequency) + column_constant["offset"]["value"]) * column_constant[
-                                   "multiplier"]["value"]
+            freq_to_generate = base_frequency * float(ratio)
             note = synths.generate_sine_wave_with_envelope(
-                frequency=freq_to_generate,
-                duration=duration,
-                a_percentage=column_constant["a_percentage"]["value"],
-                d_percentage=column_constant["d_percentage"]["value"],
-                s_percentage=column_constant["s_percentage"]["value"],
-                r_percentage=column_constant["r_percentage"]["value"]
-            )
-            if sound is None:
-                sound = note
+                    frequency=freq_to_generate,
+                    duration=.2,
+                    a_percentage=0.1,
+                    d_percentage=0.4,
+                    s_percentage=0.4,
+                    r_percentage=0.1
+                )
+            if ratio_sound is None:
+                ratio_sound = note
             else:
-                sound += note
+                ratio_sound += note
         if audio_samples is None:
-            audio_samples = sound
+            audio_samples = ratio_sound
         else:
-            audio_samples = np.append(audio_samples, sound)
+            audio_samples = np.append(audio_samples, ratio_sound)
 
     sound = audio_samples_to_wav_base64(audio_samples)
 
     return Response(sound)
+
+
 
 
 ################################################################################

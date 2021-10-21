@@ -6,6 +6,11 @@ from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
 def check_valid_polygon(polygon):
+    """
+    Checks if the given polygon is valid. If not, raises an AssertionError with an appropriate
+    error message. Otherwise, does nothing.
+    :param polygon: the polygon to check
+    """
     assert isinstance(polygon, list), "polygon must be a list."
     assert len(polygon) >= 3, "polygon must have at least 3 points."
     for i, point in enumerate(polygon):

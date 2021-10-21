@@ -41,7 +41,7 @@ urlpatterns = [
     path('api/generate_instrument_2d/', api_views.generate_instrument_2d),
 
 ]
-print("hello")
+print("hello there")
 
 ################################################################################
 # Examples of how to implement these

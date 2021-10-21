@@ -1,8 +1,9 @@
 """
 Methods for creating sound!
 """
-
+import math
 import numpy as np
+
 
 from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
@@ -45,7 +46,7 @@ def generate_sine_wave_with_envelope(frequency, duration,
     final_weight = 0
 
     try:
-        assert a_percentage + d_percentage + s_percentage + r_percentage == 1
+        assert math.isclose(a_percentage + d_percentage + s_percentage + r_percentage, 1.0)
     except AssertionError:
         print("ADSR percentages should add up to 1")
 

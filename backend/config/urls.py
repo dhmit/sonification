@@ -19,6 +19,8 @@ from django.urls import path
 
 from app import views, api_views
 from app.summer_2021_prototypes import views as summer_prototype_views
+from app.synthesize_polygons import views as synthesize_polygons_views
+from app.color_encoding_to_sound import views as color_encoding_to_sound_views
 
 urlpatterns = [
     # Django admin page
@@ -27,6 +29,7 @@ urlpatterns = [
     # API endpoints
     path('api/generate_instrument/', api_views.generate_instrument),
     path('api/gesture_to_sound/', api_views.gesture_to_sound),
+    path('api/color/', api_views.color),
 
     # View paths
     path('', views.index, name='index'),
@@ -38,6 +41,12 @@ urlpatterns = [
     path('api/get_sentiment_analysis_2/', summer_prototype_views.get_sentiment_analysis_2),
     path('api/image_to_music/', summer_prototype_views.image_to_music),
 
+    # Synthesize polygons view paths and API endpoints
+    path('synthesize-polygons/', synthesize_polygons_views.synthesize_polygons),
+    path('api/synthesize_polygon/', synthesize_polygons_views.synthesize_polygon_endpoint),
+    path('api/synthesize_polygon_csv/', synthesize_polygons_views.synthesize_polygon_csv_endpoint),
+    # Color encoding to sound paths and API endpoints
+    path('color_encode_to_sound/', color_encoding_to_sound_views.base_page),
 
     # time series endpoints
     path('api/generate_instrument_2d/', api_views.generate_instrument_2d),

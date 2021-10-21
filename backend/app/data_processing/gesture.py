@@ -79,23 +79,3 @@ def play_sound(gesture):
         audio_samples.extend(generate_sine_wave_with_envelope(pair[0], pair[1]))
     return audio_samples
 
-
-def test_sound():
-    """
-    Helper method for testing out the audio within backend
-    :return: None
-    """
-    p = pyaudio.PyAudio()
-
-    stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=True)
-    audio = play_sound([{"x": 0, "y": 10}, {"x": 250, "y": 20}, {"x": 500, "y": 30}])
-
-    for sample in audio:
-        stream.write(sample)
-
-    stream.stop_stream()
-    stream.close()
-
-    p.terminate()
-
-# test_sound()

@@ -112,9 +112,11 @@ const SynthesizePolygons = () => {
             <FileInput
                 onSubmit={submitPolygonFile}
             />
-            <p>Files should be CSVs that have two columns that include x and y coordinates of the points
-                    of the polygon with x-coordinates in the first column and the corresponding
-                        y-coordinates in the second column.</p>
+            <p>
+                Files should be CSVs that have two columns that include x and y coordinates of the
+                points of the polygon with x-coordinates in the first column and the corresponding
+                y-coordinates in the second column.
+            </p>
             <PolygonEditor
                 width={300}
                 height={300}

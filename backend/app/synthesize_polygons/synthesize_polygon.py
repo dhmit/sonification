@@ -120,11 +120,7 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
     :param base_frequency: the frequency of the first note of the polygon
     :return: numpy array which represents the sound.
     """
-    try:
-        check_valid_polygon(points)
-    except AssertionError:
-        # TODO: add more detailed error handling
-        return
+    check_valid_polygon(points)
 
     # Compute number of notes, note length and delay in samples
     num_notes = len(points)

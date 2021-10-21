@@ -13,7 +13,7 @@ const Home = () => {
             <UploadFileInput
                 id={0}
                 uploadSuccessfulCallback={setInstrumentSamples}
-                apiEndpoint={'api/generate_instrument/'}
+                apiEndpoint={'/api/generate_instrument/'}
             />
             <SliderInstrument
                 samples={instrumentSamples}

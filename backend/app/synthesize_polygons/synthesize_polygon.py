@@ -1,6 +1,28 @@
 import math
+import numbers
+
 import numpy as np
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
+
+
+def check_valid_polygon(polygon):
+    assert isinstance(polygon, list), "polygon must be a list."
+    assert len(polygon) >= 3, "polygon must have at least 3 points."
+    for i, point in enumerate(polygon):
+        assert isinstance(point, tuple), f"each point of polygon should be a tuple but found " \
+                                         f"{type(point)} at position {i} ."
+        assert len(point) == 2, f"each point should have length 2, but point {i} had length " \
+                                f"{len(point)} instead."
+        for j, coord in enumerate(point):
+            assert isinstance(coord, numbers.Real), f"each point coordinate should be a " \
+                                                    f"real number, but found {type(coord)} at " \
+                                                    f"coordinate {j} of point {i} instead."
+        if i < len(polygon) - 1:
+            assert point != polygon[i+1], f"adjacent points of polygon cannot be the same but" \
+                                               f" point {i} matched point {i+1}."
+        else:
+            assert point != polygon[0], f"beginning point and ending point of polygon cannot be " \
+                                         f"the same but point 0 matched point {i}."
 
 
 def angles_of_polygon(points):
@@ -10,14 +32,13 @@ def angles_of_polygon(points):
                    same. Adjacent points in the list cannot be the same.
     :return: A list of angles of this polygon in degrees.
     """
-    assert points[0] != points[len(points) - 1], "Ends of input points cannot be the same."
+    check_valid_polygon(points)
 
     points.append(points[0])  # Polygon needs to be closed shape.
     vectors = []
     angles = []
 
     for i in range(len(points) - 1):
-        assert points[i] != points[i + 1], "Adjacent points cannot be the same."
         arr = [points[i + 1][0] - points[i][0], points[i + 1][1] - points[i][1]]
         vectors.append(np.array(arr))
 
@@ -49,6 +70,8 @@ def sides_of_polygon(points):
     :param points: list of points representing a polygon.
     :return: list of side lengths of this polygon.
     """
+    check_valid_polygon(points)
+
     side_lengths = []
     for p1, p2 in zip(points, points[1:] + points[:1]):
         side_lengths.append(((p2[0] - p1[0]) ** 2 + (p2[1] - p1[1]) ** 2) ** (1 / 2))
@@ -97,6 +120,12 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
     :param base_frequency: the frequency of the first note of the polygon
     :return: numpy array which represents the sound.
     """
+    try:
+        check_valid_polygon(points)
+    except AssertionError:
+        # TODO: add more detailed error handling
+        return
+
     # Compute number of notes, note length and delay in samples
     num_notes = len(points)
     note_length_samples = int(note_length * WAV_SAMPLE_RATE)

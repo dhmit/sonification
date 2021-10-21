@@ -77,4 +77,3 @@ def play_sound(gesture):
     for pair in sonified_gesture:
         audio_samples.extend(generate_sine_wave_with_envelope(pair[0], pair[1]))
     return audio_samples
-

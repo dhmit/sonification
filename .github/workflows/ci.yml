@@ -24,6 +24,7 @@ jobs:
       - name: Install Python packages and Ubuntu dependencies
         run: |
           sudo apt-get install libasound2-dev
+          sudo apt-get install portaudio19-dev
           pip install -r requirements.txt
       - name: Run Django tests
         run: |
@@ -38,9 +39,10 @@ jobs:
         with:
           python-version: '3.9'
           architecture: 'x64'
-      - name: Install Python packages
+      - name: Install Python packages and Ubuntu dependencies
         run: |
           sudo apt-get install libasound2-dev
+          sudo apt-get install portaudio19-dev
           pip install -r requirements.txt
           pip install pylint
       - name: Run pylint on backend/

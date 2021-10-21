@@ -1,6 +1,5 @@
 import math
 from app.synthesis.synthesizers import generate_sine_wave_with_envelope
-import pyaudio
 
 # factor by which we compress coordinates
 FACTOR = 10

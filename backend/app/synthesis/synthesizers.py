@@ -1,8 +1,9 @@
 """
 Methods for creating sound!
 """
-
+import math
 import numpy as np
+
 
 from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
@@ -22,7 +23,10 @@ def generate_sine_wave(frequency, duration):
     return sine_wave_samples
 
 
-def generate_sine_wave_with_envelope(frequency, duration):
+# pylint: disable-msg=R0913
+def generate_sine_wave_with_envelope(frequency, duration,
+                                     a_percentage=0.1, d_percentage=0.1,
+                                     s_percentage=0.1, r_percentage=0.7):
     # pylint: disable-msg=R0914
     """
     Uses the ADSR (Attack, Decay, Sustain, Release) envelope
@@ -30,16 +34,21 @@ def generate_sine_wave_with_envelope(frequency, duration):
     Adapted from example in https://towardsdatascience.com/music-in-python-2f054deb41f4
     :param frequency: frequency of the note in Hz
     :param duration: duration in seconds
+    :param a_percentage: attack
+    :param d_percentage: decay
+    :param s_percentage: sustain
+    :param r_percentage: release
     :return audio_samples: list of samples for the note
     """
-    # TODO(ra): these should all be params that we can modify in a call
-    a_percentage = 0.1  # attack
-    d_percentage = 0.1  # decay
-    s_percentage = 0.1  # sustain
-    r_percentage = 0.7  # release
+
     peak_weight = 1
     sustain_weight = peak_weight * 0.7
     final_weight = 0
+
+    try:
+        assert math.isclose(a_percentage + d_percentage + s_percentage + r_percentage, 1.0)
+    except AssertionError:
+        print("ADSR percentages should add up to 1")
 
     total_num_samples = int(duration * WAV_SAMPLE_RATE)
     len_a = int(a_percentage * total_num_samples)

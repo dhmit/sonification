@@ -54,7 +54,6 @@ const ShapeAnalysis = () => {
             .then(response => response.json())
             .then(data => {
                 setResults(data["sound"]);
-                setText("");
             });
     };
 

@@ -17,7 +17,8 @@ Including another URL configuration
 from django.contrib import admin
 from django.urls import path
 
-from app import views, api_views
+from app import api_views
+from app.text_shape_to_sound import views
 from app.summer_2021_prototypes import views as summer_prototype_views
 
 urlpatterns = [

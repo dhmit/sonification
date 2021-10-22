@@ -1,6 +1,6 @@
 import numpy as np
 from app.synthesis.synthesizers import generate_sine_wave
-from .text import get_average_length_of_whitespace_per_line
+from app.data_processing.text import get_average_length_of_whitespace_per_line
 
 def text_shape_to_sound(text):
     """

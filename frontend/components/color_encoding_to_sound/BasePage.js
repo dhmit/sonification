@@ -2,6 +2,7 @@ import React from "react";
 import {SketchPicker} from 'react-color';
 import {fetchPost} from "../../common";
 import SliderInstrument from "../instruments/SliderInstrument";
+import PaletteColor from "../color_encoding_to_sound/PaletteColor";
 
 class BasePage extends React.Component {
     state = {
@@ -34,8 +35,7 @@ class BasePage extends React.Component {
     render() {
         const colorDisplay = this.state.listOfColors.map( (color, i) =>
             <div key={i}>
-                <p>Color {i+1}</p>
-                <p> R: {color.r} G: {color.g} B: {color.b}</p>
+                <PaletteColor id={i} color={color} selected={false} />
             </div>
         );
         return (<div>

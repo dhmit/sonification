@@ -66,7 +66,7 @@ def get_duration(y, low=0.1, high=2):
     return y_duration
 
 
-def play_sound(gesture):
+def convert_gesture_to_audio(gesture):
     """
     :param gesture: list of coordinates received from user input via frontend
     :return: sine waves of sound

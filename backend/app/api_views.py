@@ -7,7 +7,7 @@ from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
 from app.data_processing import csv_files as csv_processing
 
-from app.data_processing.gesture import play_sound
+from app.data_processing.gesture import convert_gesture_to_audio
 
 
 @api_view(['POST'])
@@ -69,7 +69,7 @@ def gesture_to_sound(request):
     based on the horizontal and vertical components of the gestures
     """
     gestures = request.data['gestures']
-    audio = play_sound(gestures)
+    audio = convert_gesture_to_audio(gestures)
     res = {
         'sound': audio_samples_to_wav_base64(audio)
     }

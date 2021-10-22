@@ -86,11 +86,6 @@ const GesturesToSound = () => {
         };
     }, [beginDrawing, draw, endDrawing]);
 
-    const submitGesturesToAPI = () => {
-        const APIBody = ({gestures: allMouseCoords});
-        fetchPost("/api/gesture_to_sound/", APIBody, (data) => {setSoundData(data.sound);});
-    };
-
     const resetCanvas = (event) => {
         event.preventDefault();
         const canvas = canvasRef.current;
@@ -107,7 +102,14 @@ const GesturesToSound = () => {
 
     const handleSubmitGestures = (event) => {
         event.preventDefault();
-        submitGesturesToAPI(event);
+        const apiBody = {
+            gestures: allMouseCoords,
+        };
+        const apiURL = "/api/gesture_to_sound/";
+        const responseCallbackFunc = (data) => {
+            setSoundData((data.sound));
+        };
+        fetchPost(apiURL, apiBody, responseCallbackFunc());
         setSubmitted(true);
     };
 

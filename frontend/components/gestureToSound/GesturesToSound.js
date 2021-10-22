@@ -109,7 +109,7 @@ const GesturesToSound = () => {
         const responseCallbackFunc = (data) => {
             setSoundData((data.sound));
         };
-        fetchPost(apiURL, apiBody, responseCallbackFunc());
+        fetchPost(apiURL, apiBody, responseCallbackFunc);
         setSubmitted(true);
     };
 

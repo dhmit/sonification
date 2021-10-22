@@ -30,7 +30,7 @@ def compress_coordinates(gestures):
     return result
 
 
-def get_sound(gestures):
+def get_sound(gestures, pitch_range, duration_range):
     """
     Given a list of list of dictionaries {"x": x_val, "y": y_val}, each representing a coordinate
     from a single gesture received from user input via frontend, return a list of (pitch,
@@ -41,13 +41,13 @@ def get_sound(gestures):
         for coordinate in gesture:
             x = coordinate["x"]
             y = coordinate["y"]
-            pitch = get_pitch(x)
-            duration = get_duration(y)
+            pitch = get_pitch(x, pitch_range["low"], pitch_range["high"])
+            duration = get_duration(y, duration_range["low"], duration_range["high"])
             result.append((pitch, duration))
     return result
 
 
-def get_pitch(x, low=440, high=880):
+def get_pitch(x, low, high):
     """
     Given x coordinate, convert to pitch.
     """
@@ -61,7 +61,7 @@ def get_pitch(x, low=440, high=880):
     return x_pitch
 
 
-def get_duration(y, low=0.1, high=2):
+def get_duration(y, low, high):
     """
     Given y coordinate, convert to duration.
     """
@@ -70,13 +70,15 @@ def get_duration(y, low=0.1, high=2):
     return y_duration
 
 
-def convert_gesture_to_audio(gesture):
+def convert_gesture_to_audio(gesture, pitch_range, duration_range):
     """
     :param gesture: list of coordinates received from user input via frontend
+    :param pitch_range: dictionary storing the high and low bounds of pitch in Hz
+    :param duration_range: dictionary storing the high and low bounds of duration in seconds
     :return: sine waves of sound
     """
     compressed_gesture = compress_coordinates(gesture)
-    sonified_gesture = get_sound(compressed_gesture)
+    sonified_gesture = get_sound(compressed_gesture, pitch_range, duration_range)
     audio_samples = []
     for pair in sonified_gesture:
         audio_samples.extend(generate_sine_wave_with_envelope(pair[0], pair[1]))

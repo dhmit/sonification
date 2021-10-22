@@ -10,7 +10,7 @@ import ErrorNotFoundComponent from "./components/global/ErrorNotFoundComponent";
 import ExampleId from "./components/global/ExampleId";
 import SummerPrototypes from "./components/summerPrototypes/SummerPrototypes";
 import Home from "./components/Home";
-import GesturesToSound from "./components/GesturesToSound";
+import GesturesToSound from "./components/gestureToSound/GesturesToSound";
 import SynthesizePolygons from './components/synthesizePolygons/SynthesizePolygons';
 import BasePage from "./components/color_encoding_to_sound/BasePage";
 

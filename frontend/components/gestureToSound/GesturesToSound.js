@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
-import STYLES from "./summerPrototypes/ImageAnalysis.module.scss";
-import {getCookie} from "../common";
+import STYLES from "./GesturesToSound.module.scss";
+import {getCookie, fetchPost} from "../../common";
 
 
 const GesturesToSound = () => {
@@ -87,23 +87,8 @@ const GesturesToSound = () => {
     }, [beginDrawing, draw, endDrawing]);
 
     const submitGesturesToAPI = () => {
-        const csrftoken = getCookie("csrftoken");
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json',
-                "X-CSRFToken": csrftoken,
-            },
-            body: JSON.stringify({
-                gestures: allMouseCoords,
-            }),
-        };
-        fetch("/api/gesture_to_sound/", requestOptions)
-            .then(response => response.json())
-            .then(data => {
-                setSoundData(data.sound);
-            });
+        const APIBody = ({gestures: allMouseCoords});
+        fetchPost("/api/gesture_to_sound/", APIBody, (data) => {setSoundData(data.sound);});
     };
 
     const resetCanvas = (event) => {

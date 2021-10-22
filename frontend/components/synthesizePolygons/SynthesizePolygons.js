@@ -2,11 +2,9 @@ import React, {useEffect, useRef, useState} from "react";
 import {getCookie} from "../../common";
 import PolygonViewer from "./PolygonViewer";
 import PolygonEditor from "./PolygonEditor";
-import FileInput from "../inputs/FileInput";
 import CustomizableInput from "../inputs/CustomizableInput";
 
 const API_ENDPOINT = "/api/synthesize_polygon/";
-const API_ENDPOINT_FILE = "/api/synthesize_polygon_csv/";
 const LOW_FREQ = 20;
 const HIGH_FREQ = 10000;
 
@@ -35,22 +33,6 @@ const SynthesizePolygons = () => {
         }
     }, [sound]);
 
-    async function submitPolygonFile(file) {
-        const formData = createUserOptionFormData();
-        formData.append("points", file, "tempfile.csv");
-        const csrftoken = getCookie("csrftoken");
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": csrftoken,
-            },
-            body: formData,
-        };
-        fetch(API_ENDPOINT_FILE, requestOptions)
-            .then(response => response.json())
-            .then(data => setData(data));
-    }
-
     async function submitPolygon(points) {
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
@@ -66,16 +48,6 @@ const SynthesizePolygons = () => {
             .then(data => setData(data));
     }
 
-    function createUserOptionFormData() {
-        const formData = new FormData();
-        userOptions.forEach((option) => {
-            if (typeof option.enabled === "undefined" || option.enabled) {
-                console.log(`${option.name}: ${option.getValue().toString()}`);
-                formData.append(option.name, option.getValue().toString());
-            }
-        });
-        return formData;
-    }
 
     function createUserOptionObject() {
         const obj = {};
@@ -178,9 +150,6 @@ const SynthesizePolygons = () => {
             <h1>Synthesize Polygons</h1>
             <h2>Inputs</h2>
             {userOptions.map((option) => <CustomizableInput key={option.name} {...option}/>)}
-            <FileInput
-                onSubmit={submitPolygonFile}
-            />
             <p>
                 Files should be CSVs that have two columns that include x and y coordinates of the
                 points of the polygon with x-coordinates in the first column and the corresponding

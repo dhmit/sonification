@@ -45,6 +45,15 @@ const ShapeAnalysis = () => {
         setText(newText);
     };
 
+    const handleUploadFile = (event) => {
+        const file = event.target.files[0];
+        const fileReader = new FileReader();
+        fileReader.onload = function (fileEvent) {
+            const textFromFile = fileEvent.target.result;
+            setText(textFromFile);
+        };
+        fileReader.readAsText(file, 'utf-8');
+    };
 
     const handleSubmit = (event) => {
         event.preventDefault();
@@ -61,26 +70,29 @@ const ShapeAnalysis = () => {
         <div className="container-fluid">
             <h1>Text Shape Analysis</h1>
             <p>
-                Add descriptive text here.
+                Hear your written work come to life!
             </p>
             <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
-                    <h3><label htmlFor="text" className="col-2 col-form-label">Text</label></h3>
                     <div className="col">
                         <textarea
                             className="form-control"
                             id="text" rows="8" value={text}
                             onChange={handleTextChange}
+                            placeholder={"Write text here ..."}
                             required
                         />
                     </div>
                 </div>
-                <button className="btn btn-secondary" type="button" onClick={handleAlignLeft}>
-                    Align Left</button> &nbsp;
-                <button className="btn btn-secondary" type="button" onClick={handleAlignCenter}>
-                    Align Center</button> &nbsp;
-                <button className="btn btn-secondary" type="button" onClick={handleAlignRight}>
-                    Align Right</button><br/><br/>
+                Alignment: <button className="btn btn-dark" type="button" onClick={handleAlignLeft}>
+                    Left</button> &nbsp;
+                <button className="btn btn-dark" type="button" onClick={handleAlignCenter}>
+                    Center</button> &nbsp;
+                <button className="btn btn-dark" type="button" onClick={handleAlignRight}>
+                    Right</button><br/>
+                <br/>
+                <input className="my-3" type="file" accept=".txt" onChange={handleUploadFile}/>
+                <br/>
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
             {results && (<>

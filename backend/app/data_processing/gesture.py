@@ -16,19 +16,16 @@ def compress_coordinates(gestures):
     result = []
     for gesture in gestures:
         current_result = []
-        x_sum = 0
-        y_sum = 0
-        for i in range(0, len(gesture)):
-            x_sum += gesture[i]["x"]
-            y_sum += gesture[i]["y"]
-            if i+1 % FACTOR == 0 or i == len(gesture)-1:
-                compressed_coord = {
-                    "x": x_sum/FACTOR,
-                    "y": y_sum/FACTOR
-                }
-                current_result.append(compressed_coord)
-                x_sum = 0
-                y_sum = 0
+        for i in range(0, len(gesture), FACTOR):
+            coords_list = [gesture[j] for j in range(i, min(i+FACTOR, len(gesture)))]
+            sum_x = sum(coord["x"] for coord in coords_list)
+            sum_y = sum(coord["y"] for coord in coords_list)
+            num_coords = min(i + FACTOR, len(gesture)) - i + 1
+            compressed_coord = {
+                "x": sum_x/num_coords,
+                "y": sum_y/num_coords
+            }
+            current_result.append(compressed_coord)
         result.append(current_result)
     return result
 

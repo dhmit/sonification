@@ -36,8 +36,7 @@ const GesturesToSound = () => {
             context.lineCap = "round";
             context.globalCompositeOperation = "source-over";
             context.moveTo(coords[0].x, coords[0].y);
-            let i;
-            for (i = 0; i < coords.length - 1; i++) {
+            for (let i = 0; i < coords.length - 1; i++) {
                 const c = (coords[i].x + coords[i + 1].x) / 2;
                 const d = (coords[i].y + coords[i + 1].y) / 2;
                 context.quadraticCurveTo(coords[i].x, coords[i].y, c, d);

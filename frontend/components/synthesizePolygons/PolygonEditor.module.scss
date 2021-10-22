@@ -39,8 +39,12 @@
     cursor: none;
 }
 
-.svgDisplayFinished {
+.svgDisplayLoading {
     border: 1px solid black;
+    cursor: none;
+    pointer-events: none;
+    filter: grayscale(100%);
+    opacity: 0.6;
 }
 
 .point {

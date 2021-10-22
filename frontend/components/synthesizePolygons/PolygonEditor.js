@@ -10,11 +10,56 @@ import PropTypes from "prop-types";
 const PolygonEditor = (
     {width = 300, height = 300, showSubmit = false, onSubmit}
 ) => {
+    const [loading, setLoading] = useState(false);
     const [points, setPoints] = useState([]);
     const [cursorLocation, setCursorLocation] = useState(null);
     const [fileDownloadUrl, setFileDownloadUrl] = useState(null);
     const fileDownloadRef = useRef(null);
+    const fileUploadRef = useRef(null);
     const svgDisplay = useRef(null);
+
+    const fileReader = new FileReader();
+
+    fileReader.onloadstart = (e) => {
+        setLoading(true);
+    };
+
+    fileReader.onloadend = (e) => {
+        const content = fileReader.result;
+
+        let minX = Number.MAX_VALUE;
+        let maxX = -Number.MAX_VALUE;
+        let minY = Number.MAX_VALUE;
+        let maxY = -Number.MAX_VALUE;
+
+        const newPoints = [];
+        content.split(/\s+/).forEach((row) => {
+            const values = row.split(",");
+            if (values.length === 2) {
+                newPoints.push([parseFloat(values[0]), parseFloat(values[1])]);
+                minX = Math.min(minX, values[0]);
+                maxX = Math.max(maxX, values[0]);
+                minY = Math.min(minY, values[1]);
+                maxY = Math.max(maxY, values[1]);
+            }
+        });
+
+        const xStretch = 0.9 * width / (maxX - minX);
+        const yStretch = 0.9 * height / (maxY - minY);
+        const stretch = Math.min(xStretch, yStretch);
+
+        const scaledPoints = newPoints.map((point) => {
+            return [
+                stretch * (point[0] - minX) + 0.05 * width,
+                stretch * (point[1] - minY) + 0.05 * height,
+            ];
+        });
+
+        setPoints(scaledPoints);
+
+        fileUploadRef.current.value = null;
+        setLoading(false);
+    };
 
     // When fileDownloadUrl is set, if it is not null, download the generated file and revoke
     // the URL to preserve resources.
@@ -31,6 +76,15 @@ const PolygonEditor = (
         const csvContent = points.map(e => e.join(",")).join("\n");
         const blob = new Blob([csvContent]);
         setFileDownloadUrl(URL.createObjectURL(blob));
+    }
+
+    function handleClickUpload() {
+        fileUploadRef.current.click();
+    }
+
+    function uploadPolygon(e) {
+        const file = e.target.files[0];
+        fileReader.readAsText(file);
     }
 
     // add a new point to polygon
@@ -61,7 +115,7 @@ const PolygonEditor = (
     return (
         <div className={STYLES.editorContainer}>
             <svg
-                className={STYLES.svgDisplay}
+                className={loading ? STYLES.svgDisplayLoading : STYLES.svgDisplay}
                 width={width}
                 height={height}
                 onClick={handleClickSvg}
@@ -143,6 +197,12 @@ const PolygonEditor = (
                 >
                     Download
                 </button>
+                <button
+                    className={STYLES.editorButton}
+                    onClick={handleClickUpload}
+                >
+                    Upload
+                </button>
                 {showSubmit &&
                 <button
                     className={STYLES.editorButton}
@@ -157,6 +217,14 @@ const PolygonEditor = (
                     download="points.csv"
                     ref={fileDownloadRef}
                     href={fileDownloadUrl}
+                />
+                <input
+                    hidden
+                    style={{display: "hidden"}}
+                    type="file"
+                    ref={fileUploadRef}
+                    accept=".txt,.csv"
+                    onChange={uploadPolygon}
                 />
             </div>
         </div>

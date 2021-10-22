@@ -111,6 +111,30 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
     return note
 
 
+def generate_time_stamps(duration_list, note_delay, sides_as_duration=False):
+    """
+    Generates a list indicating when the sound associated with each line of the polygon should
+    start and end in seconds.
+    :param duration_list: a list of durations of each side
+    :param note_delay: delay between each note in seconds
+    :param sides_as_duration: whether to use side lengths to determine duration. if False, then use
+    side lengths to determine amplitude.
+    :return: list of tuples signifying the time in which each line starts and ends in seconds
+    """
+
+    time_stamps = []
+    start = 0
+    for duration in duration_list:
+        end = start + duration
+        time_stamps.append((start, end))
+        if sides_as_duration:
+            start += duration
+        else:
+            start += note_delay
+
+    return time_stamps
+
+
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-locals
 def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=False,
@@ -184,5 +208,10 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
                 cur_freq /= 2
             while cur_freq < floor_frequency:
                 cur_freq *= 2
+
+    if not sides_as_duration:
+        duration_list = [note_length]*num_notes
+    time_stamp_list = generate_time_stamps(duration_list, note_delay, sides_as_duration)
+    # TODO: return time_stamp_list as tuple with sound once compatible with frontend.
 
     return sound

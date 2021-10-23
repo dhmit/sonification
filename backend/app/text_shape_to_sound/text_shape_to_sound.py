@@ -3,13 +3,13 @@ from app.synthesis.synthesizers import generate_sine_wave
 from app.data_processing.text import get_average_length_of_whitespace_per_line
 
 
-def text_shape_to_sound(text, base_freq=440, max_beat_freq=20, secs_per_line=1,
+def text_shape_to_sound(text, secs_per_line=1, base_freq=440, max_beat_freq=20,
                         higher_second_freq=False):
     """
     :param text: String of text
-    :param base_freq: integer representing the base frequency in Hertz
-    :param max_beat_freq: integer representing the maximum beat frequency in Hertz
-    :param secs_per_line: integer representing the length of the sound of each line in seconds
+    :param base_freq: number representing the base frequency in Hertz
+    :param max_beat_freq: number representing the maximum beat frequency in Hertz
+    :param secs_per_line: number representing the length of the sound of each line in seconds
     :param higher_second_freq: boolean representing whether the second frequency will be higher
     than the base frequency
     :return: Numpy array of samples representing the sonification of a text based on its shape

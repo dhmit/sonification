@@ -3,11 +3,27 @@ import React, {useState} from "react";
 const ShapeAnalysis = () => {
 
     const [text, setText] = useState("");
+    const[secondsPerLine, setSecondsPerLine] = useState(1);
+    const[baseFreq, setBaseFreq] = useState(440);
+    const[maxBeatFreq, setMaxBeatFreq] = useState(20);
     const [results, setResults] = useState("");
 
     const handleTextChange = (event) => {
         setText(event.target.value);
     };
+
+    const handleSecondsPerLineChange = (event) => {
+        setSecondsPerLine(event.target.value);
+    };
+
+    const handleBaseFreqChange = (event) => {
+        setBaseFreq(event.target.value);
+    };
+
+    const handleMaxBeatFreqChange = (event) => {
+        setMaxBeatFreq(event.target.value);
+    };
+
 
     const handleAlignCenter = () => {
         // Get lines of current text and remove leading/trailing whitespaces
@@ -59,12 +75,19 @@ const ShapeAnalysis = () => {
         event.preventDefault();
         setResults("");
         const encodedText = encodeURIComponent(text);
-        fetch(`/api/get_shape_analysis/?text=${encodedText}`)
+        const encodedSecondsPerLine = encodeURIComponent(secondsPerLine);
+        const encodedBaseFreq = encodeURIComponent(baseFreq);
+        const encodedMaxBeatFreq = encodeURIComponent(maxBeatFreq);
+        fetch(`/api/get_shape_analysis/?text=${encodedText}
+        &secondsPerLine=${encodedSecondsPerLine}&baseFreq=${encodedBaseFreq}
+        &maxBeatFreq=${encodedMaxBeatFreq}`)
             .then(response => response.json())
             .then(data => {
                 setResults(data["sound"]);
             });
     };
+
+
 
     return (
         <div className="container-fluid">
@@ -84,15 +107,37 @@ const ShapeAnalysis = () => {
                         />
                     </div>
                 </div>
-                Alignment: <button className="btn btn-dark" type="button" onClick={handleAlignLeft}>
-                    Left</button> &nbsp;
-                <button className="btn btn-dark" type="button" onClick={handleAlignCenter}>
-                    Center</button> &nbsp;
-                <button className="btn btn-dark" type="button" onClick={handleAlignRight}>
-                    Right</button><br/>
-                <br/>
-                <input className="my-3" type="file" accept=".txt" onChange={handleUploadFile}/>
-                <br/>
+                <div className="row mb-3">
+                    <div className="col">
+                        Align: <button className="btn btn-dark" type="button"
+                                           onClick={handleAlignLeft}> Left</button> &nbsp;
+                        <button className="btn btn-dark" type="button" onClick={handleAlignCenter}>
+                            Center</button> &nbsp;
+                        <button className="btn btn-dark" type="button" onClick={handleAlignRight}>
+                            Right</button><br/>
+                        <br/>
+                        <input className="my-3" type="file" accept=".txt"
+                               onChange={handleUploadFile}/>
+                    </div>
+                    <div className="col">
+                        <p>Edit Default Parameters</p>
+                        <div className="form-inline">
+                                Seconds Per Line: &nbsp;
+                                <input className="form-control" id="secondsPerLine" type="number"
+                                       value={secondsPerLine} onChange={handleSecondsPerLineChange}/>
+                        </div>
+                        <div className="form-inline">
+                                Base Frequency: &nbsp;
+                                <input className="form-control" id="baseFreq" type="number"
+                                       value={baseFreq} onChange={handleBaseFreqChange}/>
+                        </div>
+                        <div className="form-inline">
+                                Max Beat Frequency:&nbsp;
+                                <input className="form-control" id="maxBeatFreq" type="number"
+                                       value={maxBeatFreq} onChange={handleMaxBeatFreqChange}/>
+                        </div>
+                    </div>
+                </div>
                 <button className="btn btn-primary" type="submit">Submit</button>
             </form>
             {results && (<>

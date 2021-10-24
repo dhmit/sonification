@@ -10,6 +10,7 @@ const GesturesToSound = () => {
     const [allMouseCoords, setAllMouseCoords] = useState([]);
     const [submitted, setSubmitted] = useState(false);
     const [soundData, setSoundData] = useState(null);
+    const [undoneGestures, setUndoneGestures] = useState([]);
 
     const getCoords = (event) => {
         if (!canvasRef.current) return;
@@ -113,11 +114,43 @@ const GesturesToSound = () => {
         setSubmitted(true);
     };
 
+    const undoGesture = (event) => {
+        event.preventDefault();
+        if (allMouseCoords.length > 0) {
+            let lastGesture = allMouseCoords.pop();
+            setUndoneGestures(prevLines => [...prevLines, lastGesture]);
+            const canvas = canvasRef.current;
+            const context = canvas.getContext("2d");
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            for (let step = 0; step < allMouseCoords.length; step++) {
+                drawLine(allMouseCoords[step]);
+            }
+        }
+    };
+
+    const redoGesture = (event) => {
+        event.preventDefault();
+        if (undoneGestures.length > 0) {
+            let lastUndoneGesture = undoneGestures.pop();
+            setAllMouseCoords(prevLines => [...prevLines, lastUndoneGesture]);
+            //drawLine(allMouseCoords[allMouseCoords.length-1]);
+            drawLine(lastUndoneGesture);
+        }
+    };
+
     return (
         <>
             <h1>Gestures to Sound</h1>
             <div className="row">
                 <div className="col-12 col-sm-5">
+                    <p>
+                        <button className="btn btn-outline-primary text-right"
+                            onClick={undoGesture} disabled={submitted}>
+                            Undo</button>
+                        <button className="btn btn-outline-primary mx-3"
+                            onClick={redoGesture} disabled={submitted}>
+                            Redo</button>
+                    </p>
                     <canvas
                         className={`
                             ${STYLES.canvas}

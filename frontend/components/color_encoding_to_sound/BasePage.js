@@ -39,6 +39,10 @@ class BasePage extends React.Component {
             </div>
         );
         return (<div>
+            <h1> Color Encoding to Sound </h1>
+            <p> Use the color picker below to choose a color, and hit the submit
+            button to add up to (max) colors to your palette. When you're ready to
+            hear them together, click the Generate Instrument button to hear them together!</p>
             <SketchPicker
                 color={this.state.color}
                 onChangeComplete={this.handleChangeComplete}

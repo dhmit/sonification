@@ -159,12 +159,13 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
                        value={duration}
                 />
             </div>
+            <p>Column Constants:</p>
             <button className="btn btn-secondary ml-1" onClick={addColumn}>+</button>
             <button className="btn btn-secondary ml-1" onClick={removeColumn}>-</button>
             <div className="form-inline">
                 {constants.map((col, i) => {
                     return <div className={"time-series-input"} key={i}>
-                        <p>Column {i}: </p>
+                        <p>Column {i+1}: </p>
                         {Object.keys(col).map(constant => {
                             return makeControl(i,constant);
                         })}

@@ -27,6 +27,9 @@ const TextShapeAnalysis = () => {
 
     const handleHigherSecondFreqChange = (event) => {
         sethigherSecondFreq(event.target.checked);
+        let higherSecondFreqStatus = "<b>Lower</b>";
+        if (event.target.checked) {higherSecondFreqStatus = "<b>Higher</b>";}
+        document.getElementById("higherSecondFreqStatus").innerHTML=higherSecondFreqStatus;
     };
 
 
@@ -131,30 +134,32 @@ const TextShapeAnalysis = () => {
                         <button className="btn btn-primary" type="submit">Submit</button>
                     </div>
                     <div className="col">
-                        <p>Edit Default Parameters</p>
+                        <p><b>Edit Default Parameters</b></p>
                         <div className="form-inline">
                             Seconds Per Line: &nbsp;
                             <input className="form-control" id="secondsPerLine" type="number"
                                    value={secondsPerLine} onChange={handleSecondsPerLineChange}/>
+                            &nbsp;<b>s</b>
                         </div>
                         <div className="form-inline">
                             Base Frequency: &nbsp;
                             <input className="form-control" id="baseFreq" type="number"
-                                   value={baseFreq} onChange={handleBaseFreqChange}/>
+                                   value={baseFreq} onChange={handleBaseFreqChange}/>&nbsp;<b>Hz</b>
                         </div>
                         <div className="form-inline">
                             Max Beat Frequency:&nbsp;
                             <input className="form-control" id="maxBeatFreq" type="number"
-                                   value={maxBeatFreq} onChange={handleMaxBeatFreqChange}/>
+                                   value={maxBeatFreq} onChange={handleMaxBeatFreqChange}/>&nbsp;
+                            <b>Hz</b>
                         </div>
                          <div className="form-inline">
-                             Second Frequency Higher Than Base Frequency? &nbsp;
+                             Second Frequency Relative to Base Frequency: &nbsp;
                             <input
-                                name="isGoing"
                                 type="checkbox"
                                 checked={higherSecondFreq}
                                 onChange={handleHigherSecondFreqChange}
-                            />
+                            /> &nbsp;
+                             <div id="higherSecondFreqStatus"><b>Lower</b></div>&nbsp;
                         </div>
                     </div>
                 </div>

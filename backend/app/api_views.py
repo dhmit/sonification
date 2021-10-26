@@ -11,6 +11,34 @@ from app.data_processing.gesture import convert_gesture_to_audio
 
 
 @api_view(['POST'])
+def color(request):
+    """
+    :param request: colorpicker's rgb values stored as a dictionary when the user hits submit
+    :return: wav file, sine wave with frequency corresponds to energy of the color
+    """
+    response_object = request.data['color']
+    r = response_object["r"]
+    g = response_object["g"]
+    b = response_object["b"]
+    energy = round(0.299*r + .587*g + .114*b) # color energy calculation
+
+    freq_to_generate = ((200*energy) / 255 ) + 150 # frequency based on energy, scaled for 150-350hz
+    audio_samples = synths.generate_sine_wave_with_envelope(
+        frequency=freq_to_generate,
+        duration=500,
+        a_percentage=0,
+        d_percentage=0,
+        s_percentage=1,
+        r_percentage=0
+    )
+    wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+
+    # return Response({
+    #     "text": str(energy)
+    # })
+    return Response([wav_file_base64])
+
+@api_view(['POST'])
 def generate_instrument(request):
     """
     Takes a 1-D CSV with the 'ratio' header and constructs samples based on those ratios.

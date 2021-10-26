@@ -1,11 +1,11 @@
 import React, {useState} from "react";
 
-const ShapeAnalysis = () => {
+const TextShapeAnalysis = () => {
 
     const [text, setText] = useState("");
-    const[secondsPerLine, setSecondsPerLine] = useState(1);
-    const[baseFreq, setBaseFreq] = useState(440);
-    const[maxBeatFreq, setMaxBeatFreq] = useState(20);
+    const [secondsPerLine, setSecondsPerLine] = useState(1);
+    const [baseFreq, setBaseFreq] = useState(440);
+    const [maxBeatFreq, setMaxBeatFreq] = useState(20);
     const [results, setResults] = useState("");
 
     const handleTextChange = (event) => {
@@ -88,7 +88,6 @@ const ShapeAnalysis = () => {
     };
 
 
-
     return (
         <div className="container-fluid">
             <h1>Text Shape Analysis</h1>
@@ -110,11 +109,15 @@ const ShapeAnalysis = () => {
                 <div className="row mb-3">
                     <div className="col">
                         Align: <button className="btn btn-dark" type="button"
-                                           onClick={handleAlignLeft}> Left</button> &nbsp;
+                                       onClick={handleAlignLeft}> Left</button> &nbsp;
                         <button className="btn btn-dark" type="button" onClick={handleAlignCenter}>
-                            Center</button> &nbsp;
+                            Center
+                        </button>
+                        &nbsp;
                         <button className="btn btn-dark" type="button" onClick={handleAlignRight}>
-                            Right</button><br/>
+                            Right
+                        </button>
+                        <br/>
                         <br/>
                         <input className="my-3" type="file" accept=".txt"
                                onChange={handleUploadFile}/>
@@ -122,19 +125,19 @@ const ShapeAnalysis = () => {
                     <div className="col">
                         <p>Edit Default Parameters</p>
                         <div className="form-inline">
-                                Seconds Per Line: &nbsp;
-                                <input className="form-control" id="secondsPerLine" type="number"
-                                       value={secondsPerLine} onChange={handleSecondsPerLineChange}/>
+                            Seconds Per Line: &nbsp;
+                            <input className="form-control" id="secondsPerLine" type="number"
+                                   value={secondsPerLine} onChange={handleSecondsPerLineChange}/>
                         </div>
                         <div className="form-inline">
-                                Base Frequency: &nbsp;
-                                <input className="form-control" id="baseFreq" type="number"
-                                       value={baseFreq} onChange={handleBaseFreqChange}/>
+                            Base Frequency: &nbsp;
+                            <input className="form-control" id="baseFreq" type="number"
+                                   value={baseFreq} onChange={handleBaseFreqChange}/>
                         </div>
                         <div className="form-inline">
-                                Max Beat Frequency:&nbsp;
-                                <input className="form-control" id="maxBeatFreq" type="number"
-                                       value={maxBeatFreq} onChange={handleMaxBeatFreqChange}/>
+                            Max Beat Frequency:&nbsp;
+                            <input className="form-control" id="maxBeatFreq" type="number"
+                                   value={maxBeatFreq} onChange={handleMaxBeatFreqChange}/>
                         </div>
                     </div>
                 </div>
@@ -150,4 +153,4 @@ const ShapeAnalysis = () => {
     );
 };
 
-export default ShapeAnalysis;
+export default TextShapeAnalysis;

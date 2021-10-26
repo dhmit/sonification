@@ -44,25 +44,6 @@ def index(request):
 
     return render(request, 'index.html', context)
 
-@api_view(['GET'])
-def get_shape_analysis(request):
-    """
-    API endpoint for generating audio based on the shape analysis of the given text
-    """
-    text = request.query_params.get('text')
-    secs_per_line = float(request.query_params.get('secondsPerLine'))
-    base_freq = float(request.query_params.get('baseFreq'))
-    max_beat_freq = float(request.query_params.get('maxBeatFreq'))
-
-    audio_data = text_shape_to_sound.text_shape_to_sound(text, secs_per_line, base_freq,
-                                                         max_beat_freq)
-
-    res = {
-        'sound': audio_samples_to_wav_base64(audio_data)
-    }
-
-    return Response(res)
-
 ################################################################################
 # Boilerplate - just for examples
 ################################################################################

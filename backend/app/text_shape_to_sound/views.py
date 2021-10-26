@@ -32,14 +32,14 @@ from django.shortcuts import render
 from app.text_shape_to_sound import text_shape_to_sound
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 
-def index(request):
-    """ Home page """
+def text_shape_analysis(request):
+    """ Text Shape Analysis Page """
 
     context = {
         'page_metadata': {
-            'title': 'Home page'
+            'title': 'Shape Analysis'
         },
-        'component_name': 'Home'
+        'component_name': 'TextShapeAnalysis'
     }
 
     return render(request, 'index.html', context)

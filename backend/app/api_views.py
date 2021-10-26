@@ -7,6 +7,8 @@ from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
 from app.data_processing import csv_files as csv_processing
 
+from app.data_processing.gesture import convert_gesture_to_audio
+
 
 @api_view(['POST'])
 def generate_instrument(request):
@@ -31,6 +33,28 @@ def generate_instrument(request):
 
     return Response(wav_files)
 
+@api_view(['POST'])
+def gesture_to_sound(request):
+    """
+    Takes in gestures as a list of list of (x,y) coordinates and constructs audio sample
+    based on the horizontal and vertical components of the gestures
+    """
+    gestures = request.data['gestures']
+    # pitch_range and duration_range are hardcoded for now
+    # TODO: allow variable pitch/duration range inputs in the frontend
+    pitch_range = {
+        "low": 440,
+        "high": 880
+    }
+    duration_range = {
+        "low": 0.1,
+        "high": 2
+    }
+    audio = convert_gesture_to_audio(gestures, pitch_range, duration_range)
+    res = {
+        'sound': audio_samples_to_wav_base64(audio)
+    }
+    return Response(res)
 
 @api_view(['POST'])
 def generate_instrument_2d(request):

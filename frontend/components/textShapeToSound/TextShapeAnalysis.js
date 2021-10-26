@@ -27,9 +27,15 @@ const TextShapeAnalysis = () => {
 
     const handleHigherSecondFreqChange = (event) => {
         sethigherSecondFreq(event.target.checked);
-        let higherSecondFreqStatus = "<b>Lower</b>";
-        if (event.target.checked) {higherSecondFreqStatus = "<b>Higher</b>";}
+        let higherSecondFreqStatus = "Higher";
+        let lowerSecondFreqStatus = "<b>Lower</b>";
+
+        if (event.target.checked) {
+            higherSecondFreqStatus = "<b>Higher</b>";
+            lowerSecondFreqStatus = "Lower";
+        }
         document.getElementById("higherSecondFreqStatus").innerHTML=higherSecondFreqStatus;
+        document.getElementById("lowerSecondFreqStatus").innerHTML=lowerSecondFreqStatus;
     };
 
 
@@ -154,12 +160,28 @@ const TextShapeAnalysis = () => {
                         </div>
                          <div className="form-inline">
                              Second Frequency Relative to Base Frequency: &nbsp;
-                            <input
-                                type="checkbox"
-                                checked={higherSecondFreq}
-                                onChange={handleHigherSecondFreqChange}
-                            /> &nbsp;
-                             <div id="higherSecondFreqStatus"><b>Lower</b></div>&nbsp;
+                             <div className="form-check form-switch">
+                                 <label className="form-check-label"
+                                            id="lowerSecondFreqStatus">
+                                         <b>Lower</b>
+                                 </label> &nbsp;&nbsp;
+                                 <input className="form-check-input"
+                                        type="checkbox"
+                                        id="flexSwitchCheckDefault"
+                                        checked={higherSecondFreq}
+                                        onChange={handleHigherSecondFreqChange}
+                                 />&nbsp;
+                                 <label className="form-check-label"
+                                            id="higherSecondFreqStatus">
+                                         Higher
+                                 </label>
+                             </div>
+                            {/*<input*/}
+                            {/*    className="form-check-input"*/}
+                            {/*    type="checkbox"*/}
+                            {/*    checked={higherSecondFreq}*/}
+                            {/*    onChange={handleHigherSecondFreqChange}*/}
+                            {/*/> &nbsp;*/}
                         </div>
                     </div>
                 </div>

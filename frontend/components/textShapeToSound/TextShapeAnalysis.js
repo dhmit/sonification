@@ -7,6 +7,7 @@ const TextShapeAnalysis = () => {
     const [baseFreq, setBaseFreq] = useState(440);
     const [maxBeatFreq, setMaxBeatFreq] = useState(20);
     const [results, setResults] = useState("");
+    const [higherSecondFreq, sethigherSecondFreq] = useState(false);
 
     const handleTextChange = (event) => {
         setText(event.target.value);
@@ -22,6 +23,10 @@ const TextShapeAnalysis = () => {
 
     const handleMaxBeatFreqChange = (event) => {
         setMaxBeatFreq(event.target.value);
+    };
+
+    const handleHigherSecondFreqChange = (event) => {
+        sethigherSecondFreq(event.target.checked);
     };
 
 
@@ -78,9 +83,11 @@ const TextShapeAnalysis = () => {
         const encodedSecondsPerLine = encodeURIComponent(secondsPerLine);
         const encodedBaseFreq = encodeURIComponent(baseFreq);
         const encodedMaxBeatFreq = encodeURIComponent(maxBeatFreq);
+        const encodedHigherSecondFreq = encodeURIComponent(higherSecondFreq);
         fetch(`/api/get_shape_analysis/?text=${encodedText}
         &secondsPerLine=${encodedSecondsPerLine}&baseFreq=${encodedBaseFreq}
-        &maxBeatFreq=${encodedMaxBeatFreq}`)
+        &maxBeatFreq=${encodedMaxBeatFreq}
+        &higherSecondFreq=${encodedHigherSecondFreq}`)
             .then(response => response.json())
             .then(data => {
                 setResults(data["sound"]);
@@ -120,7 +127,8 @@ const TextShapeAnalysis = () => {
                         <br/>
                         <br/>
                         <input className="my-3" type="file" accept=".txt"
-                               onChange={handleUploadFile}/>
+                               onChange={handleUploadFile}/><br/><br/>
+                        <button className="btn btn-primary" type="submit">Submit</button>
                     </div>
                     <div className="col">
                         <p>Edit Default Parameters</p>
@@ -139,9 +147,17 @@ const TextShapeAnalysis = () => {
                             <input className="form-control" id="maxBeatFreq" type="number"
                                    value={maxBeatFreq} onChange={handleMaxBeatFreqChange}/>
                         </div>
+                         <div className="form-inline">
+                             Second Frequency Higher Than Base Frequency? &nbsp;
+                            <input
+                                name="isGoing"
+                                type="checkbox"
+                                checked={higherSecondFreq}
+                                onChange={handleHigherSecondFreqChange}
+                            />
+                        </div>
                     </div>
                 </div>
-                <button className="btn btn-primary" type="submit">Submit</button>
             </form>
             {results && (<>
                 <h3>Play Audio:</h3>

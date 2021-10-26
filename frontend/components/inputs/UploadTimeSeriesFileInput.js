@@ -75,6 +75,32 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
         setSubmitted(prevSubmitted => ({...prevSubmitted, "file": false}));
     };
 
+    const addColumn = () => {
+        setConstants(prevState => {
+            let temp = Object.assign([], prevState);
+            temp.push({
+                "base_frequency": 100,
+                "multiplier": 20,
+                "offset": 0,
+                "a_percentage": 0,
+                "d_percentage": 0,
+                "s_percentage": 1,
+                "r_percentage": 0,
+            },);
+            return temp;
+        });
+    };
+
+    const removeColumn = () => {
+        setConstants(prevState => {
+            let temp = Object.assign([], prevState);
+            temp.pop();
+            return temp;
+        });
+    };
+
+
+
     const submitFileToAPI = (file) => {
         const formData = new FormData();
         formData.append("type", "file");
@@ -133,6 +159,8 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
                        value={duration}
                 />
             </div>
+            <button className="btn btn-secondary ml-1" onClick={addColumn}>+</button>
+            <button className="btn btn-secondary ml-1" onClick={removeColumn}>-</button>
             <div className="form-inline">
                 {constants.map((col, i) => {
                     return <div className={"time-series-input"} key={i}>

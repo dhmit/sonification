@@ -18,27 +18,49 @@ def color(request):
     :param request: colorpicker's rgb values stored as a dictionary when the user hits submit
     :return: wav file, sine wave with frequency corresponds to energy of the color
     """
-    response_object = request.data['listOfColors'][0]
-    r = response_object["r"]
-    g = response_object["g"]
-    b = response_object["b"]
-    energy = round(0.299*r + .587*g + .114*b) # color energy calculation
+    response_object = request.data['listOfColors']
+    # r = response_object["r"]
+    # g = response_object["g"]
+    # b = response_object["b"]
+    # energy = round(0.299*r + .587*g + .114*b) # color energy calculation
+    #
+    # freq_to_generate = ((200*energy) / 255 ) + 150 # frequency based on energy, scaled for 150-350hz
+    # audio_samples = synths.generate_sine_wave_with_envelope(
+    #     frequency=freq_to_generate,
+    #     duration=500,
+    #     a_percentage=0,
+    #     d_percentage=0,
+    #     s_percentage=1,
+    #     r_percentage=0
+    # )
+    # wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+    #
+    # # return Response({
+    # #     "text": str(energy)
+    # # })
+    # return Response([wav_file_base64])
 
-    freq_to_generate = ((200*energy) / 255 ) + 150 # frequency based on energy, scaled for 150-350hz
-    audio_samples = synths.generate_sine_wave_with_envelope(
-        frequency=freq_to_generate,
-        duration=500,
-        a_percentage=0,
-        d_percentage=0,
-        s_percentage=1,
-        r_percentage=0
-    )
-    wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+    wav_files = []
+    for response in response_object:
+        r = response["r"]
+        g = response["g"]
+        b = response["b"]
+        energy = round(0.299 * r + .587 * g + .114 * b)  # color energy calculation
 
-    # return Response({
-    #     "text": str(energy)
-    # })
-    return Response([wav_file_base64])
+        freq_to_generate = ((200 * energy) / 255) + 150  # frequency based on energy, scaled for 150-350hz
+
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=500,
+            a_percentage=0,
+            d_percentage=0,
+            s_percentage=1,
+            r_percentage=0
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
+
+    return Response(wav_files)
 
 
 @api_view(['POST'])

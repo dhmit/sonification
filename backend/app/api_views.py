@@ -18,7 +18,7 @@ def color(request):
     :param request: colorpicker's rgb values stored as a dictionary when the user hits submit
     :return: wav file, sine wave with frequency corresponds to energy of the color
     """
-    response_object = request.data['color']
+    response_object = request.data['listOfColors'][0]
     r = response_object["r"]
     g = response_object["g"]
     b = response_object["b"]

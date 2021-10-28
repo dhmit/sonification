@@ -10,13 +10,9 @@ class BasePage extends React.Component {
 
         this.handlePaletteClick = this.handlePaletteClick.bind(this);
         this.state = {
-            color: {
-                r: 51,
-                g: 51,
-                b: 51,
-            },
             result: [],
             selected: 0,
+            instrumentGenerated: false,
             listOfColors: [
                 {
                     r: 0,
@@ -68,12 +64,11 @@ class BasePage extends React.Component {
     };
 
     handleSubmit = () => {
-        const requestBody = {color: this.state.color};
+        const requestBody = {listOfColors: this.state.listOfColors};
         const responseCallbackFunc = responseDict => {
-            const tempColor = this.state.color;
             this.setState({
                 result: responseDict,
-                listOfColors: this.state.listOfColors.concat(tempColor),
+                instrumentGenerated: true
             });
             console.log(this.state.listOfColors);
         };
@@ -94,10 +89,8 @@ class BasePage extends React.Component {
             <SketchPicker
                 color={this.state.color}
                 onChangeComplete={this.handleChangeComplete}
+                disableAlpha
             />
-            {/*<button onClick={this.handleSubmit}>*/}
-            {/*    Submit*/}
-            {/*</button>*/}
 
             {/*<audio controls controlsList={"nodownload"}>*/}
             {/*        <source src={`data:audio/wav;base64,${this.state.result}`} type={"audio/wav"}/>*/}
@@ -106,11 +99,15 @@ class BasePage extends React.Component {
             {/*       src={`data:audio/wav;base64, ${this.state.result}`}*/}
             {/*       controlsList="nodownload"/>*/}
 
-            {/*<SliderInstrument*/}
-            {/*    samples={this.state.result}*/}
-            {/*/>*/}
-
             { colorDisplay }
+
+            <button onClick={this.handleSubmit}>
+                {this.state.instrumentGenerated ? "Update Instrument" : "Generate Instrument"}
+            </button>
+
+            {this.state.result.length !== 0 && <SliderInstrument
+                samples={this.state.result}
+            />}
         </div>);
     }
 };

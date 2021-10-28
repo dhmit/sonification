@@ -9,14 +9,17 @@ class PaletteColor extends React.Component {
         const styleString = `background-color: rgb(${color.r},${color.g},${color.b})`;
         const id = this.props.id;
         return (<div>
-            <input type="checkbox" id={id} />
-                <div style={
-                    {
-                        backgroundColor: `rgb(${color.r},${color.g},${color.b}`,
-                        height: "15px",
-                        width: "100px"
+                <div
+                    id={id}
+                    style={
+                        {
+                            backgroundColor: `rgb(${color.r},${color.g},${color.b}`,
+                            height: "15px",
+                            width: "100px"
+                        }
                     }
-                } />
+                    onClick={this.props.handlePaletteClick}/>
+                <br />
         </div>);
     }
 }
@@ -24,7 +27,8 @@ class PaletteColor extends React.Component {
 PaletteColor.propTypes = {
     selected: PropTypes.bool,
     color: PropTypes.object,
-    id: PropTypes.number
+    id: PropTypes.number,
+    handlePaletteClick: PropTypes.func
 };
 
 export default PaletteColor;

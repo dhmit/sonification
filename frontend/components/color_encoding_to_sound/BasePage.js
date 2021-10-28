@@ -5,18 +5,66 @@ import SliderInstrument from "../instruments/SliderInstrument";
 import PaletteColor from "../color_encoding_to_sound/PaletteColor";
 
 class BasePage extends React.Component {
-    state = {
-        color: {
-            r: 51,
-            g: 51,
-            b: 51,
-        },
-        result: [],
-        listOfColors: [],
-    };
+    constructor(props) {
+        super(props);
+
+        this.handlePaletteClick = this.handlePaletteClick.bind(this);
+        this.state = {
+            color: {
+                r: 51,
+                g: 51,
+                b: 51,
+            },
+            result: [],
+            selected: 0,
+            listOfColors: [
+                {
+                    r: 0,
+                    g: 0,
+                    b: 0,
+                },
+                {
+                    r: 0,
+                    g: 0,
+                    b: 0,
+                },
+                {
+                    r: 0,
+                    g: 0,
+                    b: 0,
+                },
+                {
+                    r: 0,
+                    g: 0,
+                    b: 0,
+                },
+                {
+                    r: 0,
+                    g: 0,
+                    b: 0,
+                },
+                {
+                    r: 0,
+                    g: 0,
+                    b: 0,
+                },
+                {
+                    r: 0,
+                    g: 0,
+                    b: 0,
+                }
+            ],
+        };
+    }
+
+    handlePaletteClick = (e) => {
+        this.setState({ selected: e.target.id });
+    }
 
     handleChangeComplete = (color) => {
-        this.setState({color: color.rgb});
+        const currentColorState = [ ...this.state.listOfColors ];
+        currentColorState[this.state.selected] = color.rgb;
+        this.setState({ listOfColors: [ ...currentColorState ] });
     };
 
     handleSubmit = () => {
@@ -35,7 +83,7 @@ class BasePage extends React.Component {
     render() {
         const colorDisplay = this.state.listOfColors.map( (color, i) =>
             <div key={i}>
-                <PaletteColor id={i} color={color} selected={false} />
+                <PaletteColor id={i} color={color} selected={false} handlePaletteClick={this.handlePaletteClick}/>
             </div>
         );
         return (<div>
@@ -47,9 +95,9 @@ class BasePage extends React.Component {
                 color={this.state.color}
                 onChangeComplete={this.handleChangeComplete}
             />
-            <button onClick={this.handleSubmit}>
-                Submit
-            </button>
+            {/*<button onClick={this.handleSubmit}>*/}
+            {/*    Submit*/}
+            {/*</button>*/}
 
             {/*<audio controls controlsList={"nodownload"}>*/}
             {/*        <source src={`data:audio/wav;base64,${this.state.result}`} type={"audio/wav"}/>*/}
@@ -58,9 +106,9 @@ class BasePage extends React.Component {
             {/*       src={`data:audio/wav;base64, ${this.state.result}`}*/}
             {/*       controlsList="nodownload"/>*/}
 
-            <SliderInstrument
-                samples={this.state.result}
-            />
+            {/*<SliderInstrument*/}
+            {/*    samples={this.state.result}*/}
+            {/*/>*/}
 
             { colorDisplay }
         </div>);

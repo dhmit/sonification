@@ -94,5 +94,3 @@ def example_id(request, example_id_arg):
     }
 
     return render(request, 'index.html', context)
-
-

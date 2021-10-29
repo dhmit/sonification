@@ -1,4 +1,5 @@
 import React, {useState} from "react";
+import STYLES from "./TextShapeAnalysis.module.scss";
 
 const TextShapeAnalysis = () => {
 
@@ -114,7 +115,7 @@ const TextShapeAnalysis = () => {
                 <div className="row mb-3">
                     <div className="col">
                         <textarea
-                            className="form-control"
+                            className={`form-control ${STYLES.inputTextArea}`}
                             id="text" rows="8" value={text}
                             onChange={handleTextChange}
                             placeholder={"Write text here ..."}

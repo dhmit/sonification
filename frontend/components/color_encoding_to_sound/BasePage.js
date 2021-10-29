@@ -59,7 +59,7 @@ class BasePage extends React.Component {
     }
 
     handlePaletteClick = (e) => {
-        this.setState({ selected: e.target.id });
+        this.setState({ selected: Number(e.target.id) });
     }
 
     handleChangeComplete = (color) => {
@@ -82,9 +82,12 @@ class BasePage extends React.Component {
 
     render() {
         const colorDisplay = this.state.listOfColors.map( (color, i) =>
-            <div key={i}>
-                <PaletteColor id={i} color={color} selected={false} handlePaletteClick={this.handlePaletteClick}/>
-            </div>
+            {console.log("i", i);
+                console.log("selected", this.state.selected);
+                return (<div key={i}>
+                    <PaletteColor id={i} color={color} selected={i===Number(this.state.selected)} handlePaletteClick={this.handlePaletteClick}/>
+                </div>);
+            }
         );
         return (<div>
             <h1> Color Encoding to Sound </h1>

@@ -82,12 +82,9 @@ class BasePage extends React.Component {
 
     render() {
         const colorDisplay = this.state.listOfColors.map( (color, i) =>
-            {console.log("i", i);
-                console.log("selected", this.state.selected);
-                return (<div key={i}>
+            <div key={i}>
                     <PaletteColor id={i} color={color} selected={i===Number(this.state.selected)} handlePaletteClick={this.handlePaletteClick}/>
-                </div>);
-            }
+            </div>
         );
         return (<div>
             <h1> Color Encoding to Sound </h1>

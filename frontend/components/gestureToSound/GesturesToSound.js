@@ -11,6 +11,11 @@ const GesturesToSound = () => {
     const [submitted, setSubmitted] = useState(false);
     const [soundData, setSoundData] = useState(null);
     const [undoneGestures, setUndoneGestures] = useState([]);
+    const [gestureParams, setGestureParams] = useState({
+        compression: 10,
+        pitch: {low: 440, high:880},
+        duration: {low: 0.1, high:2},
+    });
 
     const getCoords = (event) => {
         if (!canvasRef.current) return;
@@ -105,6 +110,7 @@ const GesturesToSound = () => {
         event.preventDefault();
         const apiBody = {
             gestures: allMouseCoords,
+            parameters: gestureParams,
         };
         const apiURL = "/api/gesture_to_sound/";
         const responseCallbackFunc = (data) => {
@@ -145,10 +151,10 @@ const GesturesToSound = () => {
                 <div className="col-12 col-sm-5">
                     <p>
                         <button className="btn btn-outline-primary text-right"
-                            onClick={undoGesture} disabled={submitted}>
+                            onClick={undoGesture} disabled={allMouseCoords.length === 0}>
                             Undo</button>
                         <button className="btn btn-outline-primary mx-3"
-                            onClick={redoGesture} disabled={submitted}>
+                            onClick={redoGesture} disabled={undoneGestures.length === 0}>
                             Redo</button>
                     </p>
                     <canvas

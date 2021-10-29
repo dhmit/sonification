@@ -1,26 +1,23 @@
 import math
 from app.synthesis.synthesizers import generate_sine_wave_with_envelope
 
-# factor by which we compress coordinates
-FACTOR = 10
 
-
-def compress_coordinates(gestures):
+def compress_coordinates(gestures, factor):
     """
     :param gestures: list of list of coordinates (each coordinate a dictionary) received from user
-    input via
-    frontend
+    input via frontend
+    :param factor: factor by which the coordinates are compressed
     :return: (in the same format as input), shorter list of coordinates, each representing a
     compressed coordinate, compressed by taking averages of groups of coordinates
     """
     result = []
     for gesture in gestures:
         current_result = []
-        for i in range(0, len(gesture), FACTOR):
-            coords_list = [gesture[j] for j in range(i, min(i+FACTOR, len(gesture)))]
+        for i in range(0, len(gesture), factor):
+            coords_list = [gesture[j] for j in range(i, min(i+factor, len(gesture)))]
             sum_x = sum(coord["x"] for coord in coords_list)
             sum_y = sum(coord["y"] for coord in coords_list)
-            num_coords = min(i + FACTOR, len(gesture)) - i + 1
+            num_coords = min(i + factor, len(gesture)) - i + 1
             compressed_coord = {
                 "x": sum_x/num_coords,
                 "y": sum_y/num_coords
@@ -70,15 +67,16 @@ def get_duration(y, low, high):
     return y_duration
 
 
-def convert_gesture_to_audio(gesture, pitch_range, duration_range):
+def convert_gesture_to_audio(gesture, gesture_param):
     """
     :param gesture: list of coordinates received from user input via frontend
-    :param pitch_range: dictionary storing the high and low bounds of pitch in Hz
-    :param duration_range: dictionary storing the high and low bounds of duration in seconds
+    :param gesture_param: dictionary storing the high and low bounds of pitch in Hz,
+        the high and low bounds of duration in seconds, and the factor to compress notes by
     :return: sine waves of sound
     """
-    compressed_gesture = compress_coordinates(gesture)
-    sonified_gesture = get_sound(compressed_gesture, pitch_range, duration_range)
+    compressed_gesture = compress_coordinates(gesture, gesture_param['compression'])
+    sonified_gesture = get_sound(compressed_gesture, gesture_param['pitch'], gesture_param[
+        'duration'])
     audio_samples = []
     for pair in sonified_gesture:
         audio_samples.extend(generate_sine_wave_with_envelope(pair[0], pair[1]))

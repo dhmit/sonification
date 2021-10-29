@@ -13,7 +13,7 @@ const GesturesToSound = () => {
     const [undoneGestures, setUndoneGestures] = useState([]);
     const [gestureParams, setGestureParams] = useState({
         compression: 10,
-        pitch: {low: 440, high:880},
+        pitch: {low: 131, high:698}, // range of tenor-alto
         duration: {low: 0.1, high:2},
     });
 
@@ -144,6 +144,22 @@ const GesturesToSound = () => {
         }
     };
 
+    const handleUpdateCompression = (event) => {
+        event.preventDefault();
+        setGestureParams(prevState =>
+            ({...prevState, compression: parseInt(event.target.value)}));
+    };
+
+    const handleUpdatePitch = (event) => {
+        event.preventDefault();
+        setGestureParams(prevParams => ({...prevParams, pitch:{...prevParams.pitch, [event.target.id]: parseInt(event.target.value)}}));
+    };
+
+    const handleUpdateDuration = (event) => {
+        event.preventDefault();
+        setGestureParams(prevParams => ({...prevParams, duration:{...prevParams.duration, [event.target.id]: parseFloat(event.target.value)}}));
+    };
+
     return (
         <>
             <h1>Gestures to Sound</h1>
@@ -175,6 +191,31 @@ const GesturesToSound = () => {
                             onClick={handleSubmitGestures}>Submit Gestures</button>
                         <button className="btn btn-outline-secondary"
                             onClick={handleNewGestures}>New Canvas</button>
+                    </p>
+                    <p>
+                        <b>Compression:</b>
+                        <input className="slider mx-3" type="range"
+                            min="1" max="100" step="1" value={gestureParams.compression}
+                            onChange={handleUpdateCompression}/>
+                        {gestureParams.compression}
+                    </p>
+                    <p>
+                        <b className="mr-2">Pitch:</b>
+                        <span>Low: <input type="range" min="75" max="262" step="1" id="low"
+                            value={gestureParams.pitch.low}
+                            onChange={handleUpdatePitch}/> {gestureParams.pitch.low} </span>
+                        <span className="ml-3">High: <input type="range" min="300" max="1045" step="1" id="high"
+                            value={gestureParams.pitch.high}
+                                           onChange={handleUpdatePitch}/> {gestureParams.pitch.high}</span>
+                    </p>
+                    <p>
+                        <b className="mr-2">Duration:</b>
+                        <span>Low: <input type="range" min="0.01" max="0.5" id="low" step="0.01"
+                            value={gestureParams.duration.low}
+                            onChange={handleUpdateDuration}/> {gestureParams.duration.low} </span>
+                        <span className="ml-3">High: <input type="range" min="1" max="2" step="0.01" id="high"
+                            value={gestureParams.duration.high}
+                                           onChange={handleUpdateDuration}/> {gestureParams.duration.high}</span>
                     </p>
                     {
                         soundData && <p>

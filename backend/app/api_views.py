@@ -104,16 +104,16 @@ def generate_instrument_2d(request):
             if frequency == "":
                 continue
             column_constant = column_constants[j]
-            freq_to_generate = column_constant["base_frequency"]["value"] + (
-                    float(frequency) + column_constant["offset"]["value"]) * column_constant[
-                                   "multiplier"]["value"]
+            freq_to_generate = column_constant["base_frequency"] + (
+                    float(frequency) + column_constant["offset"]) * column_constant[
+                                   "multiplier"]
             note = synths.generate_sine_wave_with_envelope(
                 frequency=freq_to_generate,
                 duration=duration,
-                a_percentage=column_constant["a_percentage"]["value"],
-                d_percentage=column_constant["d_percentage"]["value"],
-                s_percentage=column_constant["s_percentage"]["value"],
-                r_percentage=column_constant["r_percentage"]["value"]
+                a_percentage=column_constant["a_percentage"],
+                d_percentage=column_constant["d_percentage"],
+                s_percentage=column_constant["s_percentage"],
+                r_percentage=column_constant["r_percentage"]
             )
             if sound is None:
                 sound = note

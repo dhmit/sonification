@@ -11,6 +11,7 @@ const HIGH_FREQ = 10000;
 const SynthesizePolygons = () => {
     const [data, setData] = useState(null);
     const [sound, setSound] = useState(null);
+    const [timestamps, setTimestamps] = useState([]);
     const [noteLength, setNoteLength] = useState(1);
     const [noteDelay, setNoteDelay] = useState(1);
     const [restrictFrequency, setRestrictFrequency] = useState(false);
@@ -21,8 +22,14 @@ const SynthesizePolygons = () => {
     const audioRef = useRef(null);
 
     useEffect(() => {
-        if (data && data["sound"]) {
-            setSound(data["sound"]);
+        if (data) {
+            if (data["sound"]) {
+                setSound(data["sound"]);
+            }
+            if (data["timestamps"]) {
+                setTimestamps(data["timestamps"]);
+                console.log(data["timestamps"]);
+            }
         }
     }, [data]);
 

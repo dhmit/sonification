@@ -128,6 +128,7 @@ const ImageAnalysis = () => {
     const submitFileToAPI = (file, inputType) => {
         const formData = new FormData();
         formData.append("image", file, "image.jpg");
+
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
             method: "POST",
@@ -141,6 +142,7 @@ const ImageAnalysis = () => {
             .then(data => {
                 setSoundData(prevSoundData => ({...prevSoundData, [inputType]: data.sound}));
             });
+
     };
 
     const resetCanvas = (event) => {

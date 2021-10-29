@@ -40,7 +40,6 @@
         "prefer-destructuring": ["off"],
         "prefer-template": ["off"],
         "quote-props": ["error", "consistent"],
-
         "radix": ["off"],
         "react/no-unescaped-entities": [ "error", { "forbid": [">", "}"] }],
         "semi": ["error", "always"]

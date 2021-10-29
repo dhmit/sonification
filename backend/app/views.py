@@ -26,11 +26,8 @@ Example:
     }
 """
 
-from rest_framework.decorators import api_view
-from rest_framework.response import Response
 from django.shortcuts import render
-from app.text_shape_to_sound import text_shape_to_sound
-from app.synthesis.audio_encoding import audio_samples_to_wav_base64
+
 
 def index(request):
     """ Home page """
@@ -43,6 +40,19 @@ def index(request):
     }
 
     return render(request, 'index.html', context)
+
+def gestures_to_sound(request):
+    """ Gestures to Sound page"""
+
+    context = {
+        'page_metadata': {
+            'title': 'Gestures to Sound'
+        },
+        'component_name': 'GesturesToSound'
+    }
+
+    return render(request, 'index.html', context)
+
 
 ################################################################################
 # Boilerplate - just for examples

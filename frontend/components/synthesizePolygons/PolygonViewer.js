@@ -11,14 +11,6 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
     const [points, setPoints] = useState([]);
 
     useEffect(() => {
-        console.log("timestamps", timestamps);
-    }, [timestamps]);
-
-    useEffect(() => {
-        console.log("points", points);
-    }, [points]);
-
-    useEffect(() => {
         let minX = Number.MAX_VALUE;
         let maxX = -Number.MAX_VALUE;
         let minY = Number.MAX_VALUE;
@@ -39,8 +31,6 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
             newPoints.push([(val[0] - minX) * stretch + .05 * width,(val[1] - minY) * stretch + .05 * height]);
         });
         setPoints(newPoints);
-        console.log("rawPoints", rawPoints);
-        console.log("newPoints", newPoints);
     }, [rawPoints]);
 
     return (

@@ -75,7 +75,7 @@ class BasePage extends React.Component {
                 result: responseDict,
                 instrumentGenerated: true
             });
-            // console.log(this.state.listOfColors);
+            alert("Instrument has been updated!");
         };
         fetchPost('/api/color/', requestBody, responseCallbackFunc);
     };

@@ -1,4 +1,5 @@
 import React, {useEffect, useState} from "react";
+import STYLES from "./PolygonEditor.module.scss";
 import PropTypes from "prop-types";
 
 /**
@@ -6,8 +7,8 @@ import PropTypes from "prop-types";
  * as input and draws the polygon based on these points. Also auto scales the polygon to
  * fit/fill the svg.
  */
-const PolygonViewer = ({points, width, height}) => {
-    const [pointsText, setPointsText] = useState("");
+const PolygonViewer = ({rawPoints, width, height}) => {
+    const [points, setPoints] = useState([]);
 
     useEffect(() => {
         let minX = Number.MAX_VALUE;
@@ -15,27 +16,54 @@ const PolygonViewer = ({points, width, height}) => {
         let minY = Number.MAX_VALUE;
         let maxY = -Number.MAX_VALUE;
 
-        points.forEach(val => {
+        rawPoints.forEach(val => {
             minX = Math.min(minX, val[0]);
             maxX = Math.max(maxX, val[0]);
             minY = Math.min(minY, val[1]);
             maxY = Math.max(maxY, val[1]);
         });
 
-        let pointsStr = "";
         const xStretch = 0.9 * width / (maxX - minX);
         const yStretch = 0.9 * height / (maxY - minY);
         const stretch = Math.min(xStretch, yStretch);
-        points.forEach(val => {
-            pointsStr += `${(val[0] - minX) * stretch + .05 * width},` +
-                `${(val[1] - minY) * stretch + .05 * height} `;
+        const newPoints = [];
+        rawPoints.forEach(val => {
+            newPoints.push([(val[0] - minX) * stretch + .05 * width,(val[1] - minY) * stretch + .05 * height]);
         });
-        setPointsText(pointsStr);
-    }, [points]);
+        setPoints(newPoints);
+    }, [rawPoints]);
 
     return (
         <svg width={width} height={height}>
-            <polygon points={pointsText} fill="none" stroke="black" strokeWidth={3}/>
+            {points.length >= 3 &&
+            <line
+                key="line-0"
+                x1={points[points.length - 1][0]}
+                y1={points[points.length - 1][1]}
+                x2={points[0][0]}
+                y2={points[0][1]}
+                className={STYLES.line}
+            />}
+            {points.map((p, i) => (
+                <React.Fragment key={`fragment-${i}`}>
+                    {i < points.length - 1 &&
+                    <line
+                        key={`line-${i}`}
+                        x1={points[i][0]}
+                        y1={points[i][1]}
+                        x2={points[i + 1][0]}
+                        y2={points[i + 1][1]}
+                        className={STYLES.line}
+                    />}
+                    <circle
+                        key={`point-${i}`}
+                        cx={p[0]}
+                        cy={p[1]}
+                        r={5}
+                        className={STYLES.point}
+                    />
+                </React.Fragment>
+            ))}
         </svg>
     );
 };

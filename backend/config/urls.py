@@ -18,7 +18,6 @@ from django.contrib import admin
 from django.urls import path
 
 from app import views, api_views
-from app.text_shape_to_sound import views as text_shape_views
 from app.summer_2021_prototypes import views as summer_prototype_views
 from app.synthesize_polygons import views as synthesize_polygons_views
 from app.color_encoding_to_sound import views as color_encoding_to_sound_views
@@ -43,9 +42,8 @@ urlpatterns = [
     path('api/image_to_music/', summer_prototype_views.image_to_music),
 
     # Text shape to music API endpoint
-    path('text-shape-analysis/', text_shape_views.text_shape_analysis),
-    path('api/get_shape_analysis/', text_shape_views.get_shape_analysis),
-    path('get_shape_analysis/', text_shape_views.get_shape_analysis),
+    path('text-shape-analysis/', views.text_shape_analysis),
+    path('api/get_shape_analysis/', api_views.get_shape_analysis),
 
     # Synthesize polygons view paths and API endpoints
     path('synthesize-polygons/', synthesize_polygons_views.synthesize_polygons),

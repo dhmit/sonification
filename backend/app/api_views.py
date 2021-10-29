@@ -9,6 +9,8 @@ from app.data_processing import csv_files as csv_processing
 
 from app.data_processing.gesture import convert_gesture_to_audio
 
+from app.text_shape_to_sound.text_shape_to_sound import text_shape_to_sound
+
 
 @api_view(['POST'])
 def color(request):
@@ -128,6 +130,25 @@ def generate_instrument_2d(request):
 
     return Response(sound)
 
+@api_view(['GET'])
+def get_shape_analysis(request):
+    """
+    API endpoint for generating audio based on the shape analysis of the given text
+    """
+    text = request.query_params.get('text')
+    secs_per_line = float(request.query_params.get('secondsPerLine'))
+    base_freq = float(request.query_params.get('baseFreq'))
+    max_beat_freq = float(request.query_params.get('maxBeatFreq'))
+    higher_second_freq = True if request.query_params.get('higherSecondFreq') == 'true' else False
+
+    audio_data = text_shape_to_sound(text, secs_per_line, base_freq,
+                                                         max_beat_freq, higher_second_freq)
+
+    res = {
+        'sound': audio_samples_to_wav_base64(audio_data)
+    }
+
+    return Response(res)
 
 ################################################################################
 # Example views

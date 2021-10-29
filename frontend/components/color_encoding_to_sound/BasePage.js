@@ -13,6 +13,11 @@ class BasePage extends React.Component {
             result: [],
             selected: 0,
             instrumentGenerated: false,
+            colorPickerColor: {
+                    r: 51,
+                    g: 51,
+                    b: 51,
+            },
             listOfColors: [
                 {
                     r: 0,
@@ -60,7 +65,7 @@ class BasePage extends React.Component {
     handleChangeComplete = (color) => {
         const currentColorState = [ ...this.state.listOfColors ];
         currentColorState[this.state.selected] = color.rgb;
-        this.setState({ listOfColors: [ ...currentColorState ] });
+        this.setState({ listOfColors: [ ...currentColorState ], colorPickerColor: color.rgb });
     };
 
     handleSubmit = () => {
@@ -70,7 +75,7 @@ class BasePage extends React.Component {
                 result: responseDict,
                 instrumentGenerated: true
             });
-            console.log(this.state.listOfColors);
+            // console.log(this.state.listOfColors);
         };
         fetchPost('/api/color/', requestBody, responseCallbackFunc);
     };
@@ -88,7 +93,7 @@ class BasePage extends React.Component {
             click the <b>Generate Instrument</b> button to hear them together!</p>
             <div className="row">
                 <SketchPicker
-                    color={this.state.color}
+                    color={this.state.colorPickerColor}
                     onChangeComplete={this.handleChangeComplete}
                     disableAlpha
                     className="col-sm"

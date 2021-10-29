@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
-import {getCookie, fetchPost} from "../../common";
+import {fetchPost} from "../../common";
 
 
 const GesturesToSound = () => {
@@ -152,12 +152,14 @@ const GesturesToSound = () => {
 
     const handleUpdatePitch = (event) => {
         event.preventDefault();
-        setGestureParams(prevParams => ({...prevParams, pitch:{...prevParams.pitch, [event.target.id]: parseInt(event.target.value)}}));
+        setGestureParams(prevParams => ({...prevParams,
+            pitch:{...prevParams.pitch, [event.target.id]: parseInt(event.target.value)}}));
     };
 
     const handleUpdateDuration = (event) => {
         event.preventDefault();
-        setGestureParams(prevParams => ({...prevParams, duration:{...prevParams.duration, [event.target.id]: parseFloat(event.target.value)}}));
+        setGestureParams(prevParams => ({...prevParams,
+            duration:{...prevParams.duration, [event.target.id]: parseFloat(event.target.value)}}));
     };
 
     return (
@@ -200,22 +202,42 @@ const GesturesToSound = () => {
                         {gestureParams.compression}
                     </p>
                     <p>
-                        <b className="mr-2">Pitch:</b>
-                        <span>Low: <input type="range" min="75" max="262" step="1" id="low"
-                            value={gestureParams.pitch.low}
-                            onChange={handleUpdatePitch}/> {gestureParams.pitch.low} </span>
-                        <span className="ml-3">High: <input type="range" min="300" max="1045" step="1" id="high"
-                            value={gestureParams.pitch.high}
-                                           onChange={handleUpdatePitch}/> {gestureParams.pitch.high}</span>
+                    <b>Pitch:</b>
+                        <div className="row">
+                            <div className="col">
+                                Low:
+                                <input className="mx-2" type="range" min="75" max="262" step="1" id="low"
+                                    value={gestureParams.pitch.low}
+                                    onChange={handleUpdatePitch}/>
+                                {gestureParams.pitch.low}
+                            </div>
+                            <div className="col">
+                                High:
+                                <input className="mx-2" type="range" min="300" max="1045" step="1" id="high"
+                                    value={gestureParams.pitch.high}
+                                    onChange={handleUpdatePitch}/>
+                                {gestureParams.pitch.high}
+                            </div>
+                        </div>
                     </p>
                     <p>
-                        <b className="mr-2">Duration:</b>
-                        <span>Low: <input type="range" min="0.01" max="0.5" id="low" step="0.01"
-                            value={gestureParams.duration.low}
-                            onChange={handleUpdateDuration}/> {gestureParams.duration.low} </span>
-                        <span className="ml-3">High: <input type="range" min="1" max="2" step="0.01" id="high"
-                            value={gestureParams.duration.high}
-                                           onChange={handleUpdateDuration}/> {gestureParams.duration.high}</span>
+                        <b>Duration:</b>
+                        <div className="row">
+                            <div className="col">
+                                Low:
+                                <input type="range" min="0.01" max="0.5" id="low" step="0.01"
+                                    value={gestureParams.duration.low}
+                                    onChange={handleUpdateDuration}/>
+                                {gestureParams.duration.low}
+                            </div>
+                            <div className="col">
+                                High:
+                                <input type="range" min="1" max="2" step="0.01" id="high"
+                                    value={gestureParams.duration.high}
+                                    onChange={handleUpdateDuration}/>
+                                {gestureParams.duration.high}
+                            </div>
+                        </div>
                     </p>
                     {
                         soundData && <p>

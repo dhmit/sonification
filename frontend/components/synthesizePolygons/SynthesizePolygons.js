@@ -12,6 +12,7 @@ const SynthesizePolygons = () => {
     const [data, setData] = useState(null);
     const [sound, setSound] = useState(null);
     const [timestamps, setTimestamps] = useState([]);
+    const [curAudioTime, setCurAudioTime] = useState(0);
     const [noteLength, setNoteLength] = useState(1);
     const [noteDelay, setNoteDelay] = useState(1);
     const [restrictFrequency, setRestrictFrequency] = useState(false);
@@ -171,12 +172,19 @@ const SynthesizePolygons = () => {
             <h2>Results</h2>
             {data
                 ? <>
-                    <audio controls controlsList={"nodownload"} ref={audioRef}>
+                    <audio
+                        controls
+                        controlsList={"nodownload"}
+                        ref={audioRef}
+                        onTimeUpdate={() => {
+                            setCurAudioTime(audioRef.current.currentTime);
+                        }}
+                    >
                         <source src={`data:audio/wav;base64,${sound}`} type={"audio/wav"}/>
                     </audio>
                     <br/>
                     <br/>
-                    <PolygonViewer width={300} height={300} rawPoints={data["points"]} audioRef={audioRef} timestamps={timestamps}/>
+                    <PolygonViewer width={300} height={300} rawPoints={data["points"]} curTime={curAudioTime} timestamps={timestamps}/>
                 </>
                 : <p>Upload a CSV or draw a polygon above to get results! </p>
             }

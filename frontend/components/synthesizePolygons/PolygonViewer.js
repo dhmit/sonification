@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
  * as input and draws the polygon based on these points. Also auto scales the polygon to
  * fit/fill the svg.
  */
-const PolygonViewer = ({rawPoints, width, height, audioRef, timestamps}) => {
+const PolygonViewer = ({rawPoints, width, height, curTime, timestamps}) => {
     const [points, setPoints] = useState([]);
 
     useEffect(()=>
@@ -45,10 +45,6 @@ const PolygonViewer = ({rawPoints, width, height, audioRef, timestamps}) => {
         console.log("newPoints", newPoints);
     }, [rawPoints]);
 
-    function currentTime() {
-        return audioRef.current.currentTime;
-    }
-
     return (
         <svg width={width} height={height}>
             {points && timestamps && timestamps.length===points.length && points.length >= 3 &&
@@ -58,7 +54,7 @@ const PolygonViewer = ({rawPoints, width, height, audioRef, timestamps}) => {
                 y1={points[points.length - 1][1]}
                 x2={points[0][0]}
                 y2={points[0][1]}
-                className={(currentTime() >= timestamps[points.length - 1][0] && currentTime() <= timestamps[points.length - 1][1]) ? STYLES.playedLine : STYLES.line}
+                className={(currentTime >= timestamps[points.length - 1][0] && currentTime <= timestamps[points.length - 1][1]) ? STYLES.playedLine : STYLES.line}
             />}
             {points && timestamps && timestamps.length===points.length && points.map((p, i) => (
                 <React.Fragment key={`fragment-${i}`}>
@@ -69,7 +65,7 @@ const PolygonViewer = ({rawPoints, width, height, audioRef, timestamps}) => {
                         y1={points[i][1]}
                         x2={points[i + 1][0]}
                         y2={points[i + 1][1]}
-                        className={(currentTime() >= timestamps[i][0] && currentTime() <= timestamps[i][1]) ? STYLES.playedLine : STYLES.line}
+                        className={(currentTime >= timestamps[i][0] && currentTime <= timestamps[i][1]) ? STYLES.playedLine : STYLES.line}
                     />}
                     <circle
                         key={`point-${i}`}
@@ -88,7 +84,7 @@ PolygonViewer.propTypes = {
     rawPoints: PropTypes.array,
     width: PropTypes.number,
     height: PropTypes.number,
-    audioRef: PropTypes.object,
+    curTime: PropTypes.number,
     timestamps: PropTypes.array,
 };
 

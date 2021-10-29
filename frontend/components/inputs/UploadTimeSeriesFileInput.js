@@ -6,6 +6,7 @@ import FileInput from "./FileInput";
 const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
     const [duration, setDuration] = useState(.2);
     const [everyN, setEveryN] = useState(1);
+    const [mapToNote, setMapToNote] = useState(false);
     const [constants, setConstants] = useState(
         [
             {
@@ -86,6 +87,7 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
         formData.append("constants", JSON.stringify(constants));
         formData.append("duration", duration.toString());
         formData.append("everyN", everyN.toString());
+        formData.append("mapToNote", mapToNote.toString());
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
             method: "POST",
@@ -136,6 +138,10 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                     value={duration}
                 />
             </div>
+            <label>
+                <input type="checkbox" onClick={e => setMapToNote(e.target.checked)}/>
+                <span> Map numbers to note?</span>
+            </label>
             <p>Column Constants:</p>
             <button className="btn btn-secondary ml-1" onClick={addColumn}>+</button>
             <button className="btn btn-secondary ml-1" onClick={removeColumn}>-</button>

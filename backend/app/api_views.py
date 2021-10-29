@@ -158,6 +158,7 @@ def time_series_to_music(request):
     duration = float(request.data['duration'])
     every_n = int(request.data['everyN'])
     csv_data = csv_data[::every_n]
+    map_to_note = request.data['mapToNote'] == "true"
 
     audio_samples = None
     for i, row in enumerate(csv_data):
@@ -170,7 +171,10 @@ def time_series_to_music(request):
 
             frequency = (float(frequency) + column_constant["offset"]) * column_constant[
                                    "multiplier"]
-            
+            if map_to_note:
+                # map number [0,88] to a note
+                frequency = (2 ** ((frequency - 49) / 12)) * 440
+
             frequency += column_constant["base_frequency"]
 
             note = synths.generate_sine_wave_with_envelope(

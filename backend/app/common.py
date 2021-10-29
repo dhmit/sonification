@@ -151,33 +151,3 @@ def print_header(header_str):
         ################################################################################
         # {header_str}
         ################################################################################'''))
-
-
-# def test_sound(audio):
-#     """
-#     Helper method for testing out the audio within backend
-#     This function is commented out on purpose, so we don't make PyAudio into a required
-#     dependency of the project, since there are some installation issues on Windows.
-#
-#     Windows users who wish to use this function should go to
-#     https://www.lfd.uci.edu/~gohlke/pythonlibs/#pyaudio
-#     and download the version appropriate for their machine
-#     (most likely PyAudio‑0.2.11‑cp39‑cp39‑win_amd64.whl as of this writing)
-#     to the root directory of this project, and then run pip install PATH_TO_THE_INSTALLER
-#
-#     macOS users can just run pip install pyaudio
-#     """
-#
-#     import pyaudio
-#
-#     p = pyaudio.PyAudio()
-#
-#     stream = p.open(format=pyaudio.paFloat32, channels=1, rate=44100, output=True)
-#
-#     for sample in audio:
-#         stream.write(sample)
-#
-#     stream.stop_stream()
-#     stream.close()
-#
-#     p.terminate()

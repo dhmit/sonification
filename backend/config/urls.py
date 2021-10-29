@@ -26,13 +26,9 @@ urlpatterns = [
 
     # API endpoints
     path('api/generate_instrument/', api_views.generate_instrument),
-    path('api/gesture_to_sound/', api_views.gesture_to_sound),
-    path('api/color/', api_views.color),
-
 
     # View paths
     path('', views.index, name='index'),
-    path('gestures-to-sound/', views.gestures_to_sound, name='gestures-to-sound'),
 
     # Summer prototype view paths and API endpoints
     path('summer-prototypes/', summer_prototype_views.summer_prototypes),

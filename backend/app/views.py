@@ -42,18 +42,6 @@ def index(request):
     return render(request, 'index.html', context)
 
 
-def gestures_to_sound(request):
-    """ Gestures to Sound page"""
-
-    context = {
-        'page_metadata': {
-            'title': 'Gestures to Sound'
-        },
-        'component_name': 'GesturesToSound'
-    }
-
-    return render(request, 'index.html', context)
-
 ################################################################################
 # Boilerplate - just for examples
 ################################################################################

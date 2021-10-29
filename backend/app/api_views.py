@@ -95,6 +95,8 @@ def generate_instrument_2d(request):
     csv_data = csv_processing.parse_csv_upload(temp_file, False)
     column_constants = json.loads(request.data['constants'])
     duration = float(request.data['duration'])
+    every_n = int(request.data['everyN'])
+    csv_data = csv_data[::every_n]
 
     audio_samples = None
     for i, row in enumerate(csv_data):
@@ -104,11 +106,14 @@ def generate_instrument_2d(request):
             if frequency == "":
                 continue
             column_constant = column_constants[j]
-            freq_to_generate = column_constant["base_frequency"] + (
-                    float(frequency) + column_constant["offset"]) * column_constant[
+
+            frequency = (float(frequency) + column_constant["offset"]) * column_constant[
                                    "multiplier"]
+            
+            frequency += column_constant["base_frequency"]
+
             note = synths.generate_sine_wave_with_envelope(
-                frequency=freq_to_generate,
+                frequency=frequency,
                 duration=duration,
                 a_percentage=column_constant["a_percentage"],
                 d_percentage=column_constant["d_percentage"],

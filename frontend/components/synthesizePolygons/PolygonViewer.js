@@ -36,8 +36,9 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
 
     return (
         <svg width={width} height={height}>
-            {points && timestamps && timestamps.length===points.length && points.map((p, i) => (
-                {i < points.length - 1 &&
+            {points && timestamps && timestamps.length===points.length && points.map((p, i) => {
+                if(i < points.length - 1) {
+                  return (
                     <React.Fragment key={`fragment-${i}`}>
                         <line
                             key={`line-${i}`}
@@ -55,8 +56,11 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
                             className={STYLES.point}
                         />
                     </React.Fragment>
+                  );
+                } else {
+                  return (</>);
                 }
-            ))}
+          })}
         </svg>
     );
 };

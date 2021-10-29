@@ -27,6 +27,7 @@ class PaletteColor extends React.Component {
 
         return (<div>
                 <div
+                    className='float-left'
                     id={id}
                     style={style}
                     onClick={this.props.handlePaletteClick}/>

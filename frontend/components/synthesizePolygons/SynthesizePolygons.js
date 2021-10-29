@@ -28,7 +28,7 @@ const SynthesizePolygons = () => {
             }
             if (data["timestamps"]) {
                 setTimestamps(data["timestamps"]);
-                console.log(data["timestamps"]);
+                // console.log(data["timestamps"]);
             }
         }
     }, [data]);
@@ -176,7 +176,7 @@ const SynthesizePolygons = () => {
                     </audio>
                     <br/>
                     <br/>
-                    <PolygonViewer width={300} height={300} rawPoints={data["points"]}/>
+                    <PolygonViewer width={300} height={300} rawPoints={data["points"]} currentTime={audioRef && audioRef.current.currentTime} timestamps={timestamps}/>
                 </>
                 : <p>Upload a CSV or draw a polygon above to get results! </p>
             }

@@ -176,7 +176,7 @@ const SynthesizePolygons = () => {
                     </audio>
                     <br/>
                     <br/>
-                    <PolygonViewer width={300} height={300} points={data["points"]}/>
+                    <PolygonViewer width={300} height={300} rawPoints={data["points"]}/>
                 </>
                 : <p>Upload a CSV or draw a polygon above to get results! </p>
             }

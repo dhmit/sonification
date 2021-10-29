@@ -69,7 +69,7 @@ const PolygonViewer = ({rawPoints, width, height}) => {
 };
 
 PolygonViewer.propTypes = {
-    points: PropTypes.array,
+    rawPoints: PropTypes.array,
     width: PropTypes.number,
     height: PropTypes.number,
 };

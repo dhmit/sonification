@@ -30,7 +30,7 @@ const SliderInstrument = ({samples}) => {
     for (let i = 0; i < samples.length; i++) {
         const audioElementId = `audio-${i}`;
         controllers.push(
-            <li className="list-inline-item" key={i} >
+            <li className="list-unstyled" key={i} >
                 <audio
                     autoPlay
                     loop

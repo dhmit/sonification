@@ -109,7 +109,7 @@ class BasePage extends React.Component {
                 {/*       src={`data:audio/wav;base64, ${this.state.result}`}*/}
                 {/*       controlsList="nodownload"/>*/}
 
-                <div className="col-sm">
+                <div className="col-sm-2">
                     { colorDisplay }
                     <button onClick={this.handleSubmit}>
                         {this.state.instrumentGenerated ? "Update Instrument" : "Generate Instrument"}

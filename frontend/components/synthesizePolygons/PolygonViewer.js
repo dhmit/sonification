@@ -10,13 +10,12 @@ import PropTypes from "prop-types";
 const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
     const [points, setPoints] = useState([]);
 
-    useEffect(()=>
-    {
-        console.log("timestamps", timestamps);
-
-    }, [timestamps]);
     useEffect(() => {
-        console.log("pointd", points);
+        console.log("timestamps", timestamps);
+    }, [timestamps]);
+
+    useEffect(() => {
+        console.log("points", points);
     }, [points]);
 
     useEffect(() => {
@@ -39,7 +38,6 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
         rawPoints.forEach(val => {
             newPoints.push([(val[0] - minX) * stretch + .05 * width,(val[1] - minY) * stretch + .05 * height]);
         });
-        newPoints.pop();
         setPoints(newPoints);
         console.log("rawPoints", rawPoints);
         console.log("newPoints", newPoints);

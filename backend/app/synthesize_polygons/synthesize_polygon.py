@@ -214,4 +214,4 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
     time_stamp_list = generate_time_stamps(duration_list, note_delay, sides_as_duration)
     # TODO: return time_stamp_list as tuple with sound once compatible with frontend.
 
-    return sound
+    return sound, time_stamp_list

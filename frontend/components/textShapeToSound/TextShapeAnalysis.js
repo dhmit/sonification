@@ -136,6 +136,8 @@ const TextShapeAnalysis = () => {
                         </button>
                         <br/>
                         <br/>
+                        <label>Upload text into text box:</label>
+                        <br/>
                         <input className="my-3" type="file" accept=".txt"
                                onChange={handleUploadFile}/><br/><br/>
                         <button className="btn btn-primary" type="submit">Submit</button>
@@ -145,18 +147,33 @@ const TextShapeAnalysis = () => {
                         <div className="form-inline">
                             Seconds Per Line: &nbsp;
                             <input className="form-control" id="secondsPerLine" type="number"
-                                   value={secondsPerLine} onChange={handleSecondsPerLineChange}/>
+                                   value={secondsPerLine}
+                                   data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="the duration of each beat frequency in seconds"
+                                   onChange={handleSecondsPerLineChange}
+                                   required/>
                             &nbsp;<b>s</b>
                         </div>
                         <div className="form-inline">
                             Base Frequency: &nbsp;
                             <input className="form-control" id="baseFreq" type="number"
-                                   value={baseFreq} onChange={handleBaseFreqChange}/>&nbsp;<b>Hz</b>
+                                   data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="the frequency that the beat frequencies will be based on
+                                   in Hertz"
+                                   value={baseFreq} onChange={handleBaseFreqChange}
+                                   required/>
+                            &nbsp;<b>Hz</b>
                         </div>
                         <div className="form-inline">
                             Max Beat Frequency:&nbsp;
                             <input className="form-control" id="maxBeatFreq" type="number"
-                                   value={maxBeatFreq} onChange={handleMaxBeatFreqChange}/>&nbsp;
+                                   data-toggle="tooltip"
+                                   data-placement="top"
+                                   title="the maximum possible beat frequency in Hertz"
+                                   value={maxBeatFreq} onChange={handleMaxBeatFreqChange}
+                                   required/>&nbsp;
                             <b>Hz</b>
                         </div>
                          <div className="form-inline">
@@ -169,6 +186,11 @@ const TextShapeAnalysis = () => {
                                  <input className="form-check-input"
                                         type="checkbox"
                                         id="flexSwitchCheckDefault"
+                                        data-toggle="tooltip"
+                                        data-placement="top"
+                                        title="determines whether the second frequencies,
+                                        which combined with the base frequency produces the beats,
+                                        will be higher than the base frequency"
                                         checked={higherSecondFreq}
                                         onChange={handleHigherSecondFreqChange}
                                  />&nbsp;

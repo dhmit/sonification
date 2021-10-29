@@ -131,11 +131,11 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
             <div key={i + constantsDefaults[key]["label"]}>
                 <label>{constantsDefaults[key]["label"]}</label>
                 <input className="form-control my-3" type="number"
-                       min={constantsDefaults[key]["min"]}
-                       max={constantsDefaults[key]["max"]}
-                       step={constantsDefaults[key]["step"]}
-                       onChange={e => updateConstant(i, key, e.target.value)}
-                       value={constants[i][key]}
+                        min={constantsDefaults[key]["min"]}
+                        max={constantsDefaults[key]["max"]}
+                        step={constantsDefaults[key]["step"]}
+                        onChange={e => updateConstant(i, key, e.target.value)}
+                        value={constants[i][key]}
                 />
             </div>
         );
@@ -204,14 +204,14 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
             <form className="form-inline">
                 <div className="form-group">
                     <input className="form-control my-3" type="file" ref={fileRef}
-                           accept="text/csv" disabled={submitted.file}
-                           onChange={(e) => handleFileInput(e, setTempFile)}/>
+                        accept="text/csv" disabled={submitted.file}
+                        onChange={(e) => handleFileInput(e, setTempFile)}/>
                     {tempFile &&
                     <button className="btn btn-secondary ml-1"
-                            type="button"
-                            onClick={(e) => clearFile(
-                                fileRef, setTempFile, setSubmitted)} disabled={tempFile === null}
-                            data-dismiss="fileupload">Clear</button>
+                        type="button"
+                        onClick={(e) => clearFile(
+                            fileRef, setTempFile, setSubmitted)} disabled={tempFile === null}
+                        data-dismiss="fileupload">Clear</button>
                     }
                 </div>
                 {tempFile &&
@@ -233,57 +233,50 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
                     </div>
                     <div className="col-auto">
                         <input className="form-control" type="number"
-                               min={0.1}
-                               max={10}
-                               step={.1}
-                               onChange={e => setDuration(e.target.value)}
-                               value={duration}
+                            min={0.1}
+                            max={10}
+                            step={.1}
+                            onChange={e => setDuration(e.target.value)}
+                            value={duration}
                         />
                     </div>
                 </div>
             </form>
-
-            <Accordion>
-                <Accordion.Item eventKey="0">
-                    <Accordion.Header>Accordion Item #1</Accordion.Header>
-                    <Accordion.Body>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                        est laborum.
-                    </Accordion.Body>
-                </Accordion.Item>
-                <Accordion.Item eventKey="1">
-                    <Accordion.Header>Accordion Item #2</Accordion.Header>
-                    <Accordion.Body>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod
-                        tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim
-                        veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                        commodo consequat. Duis aute irure dolor in reprehenderit in voluptate
-                        velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
-                        cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-                        est laborum.
-                    </Accordion.Body>
-                </Accordion.Item>
-            </Accordion>
-
             <div>
                 {constants.map((col, i) => {
                     return (<Accordion key={i}>
-                        <Card>
-                            <AccordionToggle as={Card.Header}>
+                        <Card eventKey={i}>
+                            <AccordionToggle as={Card.Header} eventKey={i}>
                                 Instrument {i}
                             </AccordionToggle>
-                            <AccordionCollapse>
+                            <AccordionCollapse eventKey={i}>
                                 <Card.Body>Placeholder for properties for instrument {i}</Card.Body>
                             </AccordionCollapse>
                         </Card>
                     </Accordion>);
                 })}
             </div>
+            <!--{/*<div className="form-inline">*/}
+            {/*    {constants.map((col, i) => {*/}
+            {/*        return <div className={"time-series-input"} key={i}>*/}
+            {/*            <p>Instrument {i}: </p>*/}
+
+            {/*            {Object.keys(col).map(constant => {*/}
+            {/*                return makeControl(i,constant);*/}
+            {/*            })}*/}
+            {/*        </div>;*/}
+            {/*    })}*/}
+            {/*</div>*/}
+            {/*<Accordion>*/}
+            {/*    <Car     Instrument {i}*/}
+            {/*        </Accordion.Toggle>*/}
+            {/*        <Accordion.Collapse key={i}>*/}
+            {/*            <Card.Body>Place holder for properties</Card.Body>*/}
+            {/*        </Accordion.Collapse>*/}
+            {/*    </Card>*/}
+            {/*</Accordion>*!/d>*/}
+            {/*        <Accordion.Toggle as={Card.Header} key={i}>*/}
+            {/*-->
         </>
     );
 };

@@ -7,8 +7,17 @@ import PropTypes from "prop-types";
  * as input and draws the polygon based on these points. Also auto scales the polygon to
  * fit/fill the svg.
  */
-const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
+const PolygonViewer = ({rawPoints, width, height, audioRef, timestamps}) => {
     const [points, setPoints] = useState([]);
+
+    useEffect(()=>
+    {
+        console.log("timestamps", timestamps);
+
+    }, [timestamps]);
+    useEffect(() => {
+        console.log("pointd", points);
+    }, [points]);
 
     useEffect(() => {
         let minX = Number.MAX_VALUE;
@@ -30,21 +39,28 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
         rawPoints.forEach(val => {
             newPoints.push([(val[0] - minX) * stretch + .05 * width,(val[1] - minY) * stretch + .05 * height]);
         });
+        newPoints.pop();
         setPoints(newPoints);
+        console.log("rawPoints", rawPoints);
+        console.log("newPoints", newPoints);
     }, [rawPoints]);
+
+    function currentTime() {
+        return audioRef.current.currentTime;
+    }
 
     return (
         <svg width={width} height={height}>
-            {points.length >= 3 &&
+            {points && timestamps && timestamps.length===points.length && points.length >= 3 &&
             <line
                 key="line-0"
                 x1={points[points.length - 1][0]}
                 y1={points[points.length - 1][1]}
                 x2={points[0][0]}
                 y2={points[0][1]}
-                className={(currentTime >= timestamps[points.length - 1][0] && currentTime <= timestamps[points.length - 1][1]) ? STYLES.playedLine : STYLES.line}
+                className={(currentTime() >= timestamps[points.length - 1][0] && currentTime() <= timestamps[points.length - 1][1]) ? STYLES.playedLine : STYLES.line}
             />}
-            {points.map((p, i) => (
+            {points && timestamps && timestamps.length===points.length && points.map((p, i) => (
                 <React.Fragment key={`fragment-${i}`}>
                     {i < points.length - 1 &&
                     <line
@@ -53,7 +69,7 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
                         y1={points[i][1]}
                         x2={points[i + 1][0]}
                         y2={points[i + 1][1]}
-                        className={(currentTime >= timestamps[i][0] && currentTime <= timestamps[i][1]) ? STYLES.playedLine : STYLES.line}
+                        className={(currentTime() >= timestamps[i][0] && currentTime() <= timestamps[i][1]) ? STYLES.playedLine : STYLES.line}
                     />}
                     <circle
                         key={`point-${i}`}
@@ -72,7 +88,7 @@ PolygonViewer.propTypes = {
     rawPoints: PropTypes.array,
     width: PropTypes.number,
     height: PropTypes.number,
-    currentTime: PropTypes.number,
+    audioRef: PropTypes.object,
     timestamps: PropTypes.array,
 };
 

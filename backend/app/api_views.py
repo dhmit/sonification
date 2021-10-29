@@ -140,7 +140,8 @@ def get_shape_analysis(request):
     base_freq = float(request.query_params.get('baseFreq'))
     max_beat_freq = float(request.query_params.get('maxBeatFreq'))
     higher_second_freq = False
-    if request.query_params.get('higherSecondFreq') == 'true': higher_second_freq = True
+    if request.query_params.get('higherSecondFreq') == 'true':
+        higher_second_freq = True
 
     audio_data = text_shape_to_sound(text, secs_per_line, base_freq,
                                                          max_beat_freq, higher_second_freq)

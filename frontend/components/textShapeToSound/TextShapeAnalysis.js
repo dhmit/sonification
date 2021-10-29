@@ -109,7 +109,10 @@ const TextShapeAnalysis = () => {
         <div className="container-fluid">
             <h1>Text Shape Analysis</h1>
             <p>
-                Hear your written work come to life!
+                This sonificiation produces sequence of beat frequencies based on the shape of the text.<br/>
+                Each beat frequency, based on the base frequency, represents a line by taking into
+                account the average length of spaces in it.<br/>
+                As the average length of spaces in a line increases, the beat frequency decreases.
             </p>
             <form onSubmit={handleSubmit}>
                 <div className="row mb-3">
@@ -118,7 +121,7 @@ const TextShapeAnalysis = () => {
                             className={`form-control ${STYLES.inputTextArea}`}
                             id="text" rows="8" value={text}
                             onChange={handleTextChange}
-                            placeholder={"Write text here ..."}
+                            placeholder={"Write text here or upload a text file ..."}
                             required
                         />
                     </div>
@@ -199,12 +202,6 @@ const TextShapeAnalysis = () => {
                                          Higher
                                  </label>
                              </div>
-                            {/*<input*/}
-                            {/*    className="form-check-input"*/}
-                            {/*    type="checkbox"*/}
-                            {/*    checked={higherSecondFreq}*/}
-                            {/*    onChange={handleHigherSecondFreqChange}*/}
-                            {/*/> &nbsp;*/}
                         </div>
                     </div>
                 </div>

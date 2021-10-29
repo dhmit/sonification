@@ -16,12 +16,7 @@ class PaletteColor extends React.Component {
 
         if (selected) {
             style = {
-                    backgroundColor: `rgb(${color.r},${color.g},${color.b}`,
-                    height: "15px",
-                    width: "100px",
-                    // borderStyle: "solid",
-                    // borderWidth: 1,
-                    // borderColor: 'red',
+                    ...style,
                     boxShadow: "5px 5px 4px gray"};
         }
 

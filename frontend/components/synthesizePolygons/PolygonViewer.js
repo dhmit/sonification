@@ -30,37 +30,40 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
         rawPoints.forEach(val => {
             newPoints.push([(val[0] - minX) * stretch + .05 * width,(val[1] - minY) * stretch + .05 * height]);
         });
-        newPoints.push(newPoints[0]);
         setPoints(newPoints);
     }, [rawPoints]);
 
     return (
         <svg width={width} height={height}>
-            {points && timestamps && timestamps.length===points.length && points.map((p, i) => {
-                if(i < points.length - 1) {
-                  return (
-                    <React.Fragment key={`fragment-${i}`}>
-                        <line
-                            key={`line-${i}`}
-                            x1={points[i][0]}
-                            y1={points[i][1]}
-                            x2={points[i + 1][0]}
-                            y2={points[i + 1][1]}
-                            className={(currentTime >= timestamps[i][0] && currentTime <= timestamps[i][1]) ? STYLES.playedLine : STYLES.line}
-                        />
-                        <circle
-                            key={`point-${i}`}
-                            cx={p[0]}
-                            cy={p[1]}
-                            r={5}
-                            className={STYLES.point}
-                        />
-                    </React.Fragment>
-                  );
-                } else {
-                  return (</>);
-                }
-          })}
+            {points && timestamps && timestamps.length===points.length && points.length >= 3 &&
+            <line
+                key="line-0"
+                x1={points[points.length - 1][0]}
+                y1={points[points.length - 1][1]}
+                x2={points[0][0]}
+                y2={points[0][1]}
+                className={(currentTime >= timestamps[points.length - 1][0] && currentTime <= timestamps[points.length - 1][1]) ? STYLES.playedLine : STYLES.line}
+            />}
+            {points && timestamps && timestamps.length===points.length && points.map((p, i) => (
+                <React.Fragment key={`fragment-${i}`}>
+                    {i < points.length - 1 &&
+                    <line
+                        key={`line-${i}`}
+                        x1={points[i][0]}
+                        y1={points[i][1]}
+                        x2={points[i + 1][0]}
+                        y2={points[i + 1][1]}
+                        className={(currentTime >= timestamps[i][0] && currentTime <= timestamps[i][1]) ? STYLES.playedLine : STYLES.line}
+                    />}
+                    <circle
+                        key={`point-${i}`}
+                        cx={p[0]}
+                        cy={p[1]}
+                        r={5}
+                        className={STYLES.point}
+                    />
+                </React.Fragment>
+            ))}
         </svg>
     );
 };

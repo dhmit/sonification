@@ -86,28 +86,34 @@ class BasePage extends React.Component {
             <p> Use the color picker below to choose a color, and hit the <b>submit</b> button
             to add up to (max) colors to your palette. When you're ready to  hear them together,
             click the <b>Generate Instrument</b> button to hear them together!</p>
-            <SketchPicker
-                color={this.state.color}
-                onChangeComplete={this.handleChangeComplete}
-                disableAlpha
-            />
+            <div className="row">
+                <SketchPicker
+                    color={this.state.color}
+                    onChangeComplete={this.handleChangeComplete}
+                    disableAlpha
+                    className="col-sm"
+                />
 
-            {/*<audio controls controlsList={"nodownload"}>*/}
-            {/*        <source src={`data:audio/wav;base64,${this.state.result}`} type={"audio/wav"}/>*/}
-            {/*</audio>*/}
-            {/*<audio controls="controls"*/}
-            {/*       src={`data:audio/wav;base64, ${this.state.result}`}*/}
-            {/*       controlsList="nodownload"/>*/}
+                {/*<audio controls controlsList={"nodownload"}>*/}
+                {/*        <source src={`data:audio/wav;base64,${this.state.result}`} type={"audio/wav"}/>*/}
+                {/*</audio>*/}
+                {/*<audio controls="controls"*/}
+                {/*       src={`data:audio/wav;base64, ${this.state.result}`}*/}
+                {/*       controlsList="nodownload"/>*/}
 
-            { colorDisplay }
+                <div className="col-sm">
+                    { colorDisplay }
+                    <button onClick={this.handleSubmit}>
+                        {this.state.instrumentGenerated ? "Update Instrument" : "Generate Instrument"}
+                    </button>
+                </div>
 
-            <button onClick={this.handleSubmit}>
-                {this.state.instrumentGenerated ? "Update Instrument" : "Generate Instrument"}
-            </button>
-
-            {this.state.result.length !== 0 && <SliderInstrument
-                samples={this.state.result}
-            />}
+                <div className="col-sm">
+                    {this.state.result.length !== 0 && <SliderInstrument
+                        samples={this.state.result}
+                    />}
+                </div>
+            </div>
         </div>);
     }
 };

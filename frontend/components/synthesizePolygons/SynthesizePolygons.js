@@ -3,7 +3,7 @@ import {getCookie} from "../../common";
 import PolygonViewer from "./PolygonViewer";
 import PolygonEditor from "./PolygonEditor";
 import CustomizableInput from "../inputs/CustomizableInput";
-import "./PolygonPageLayout.scss";
+import STYLES from "./PolygonPageLayout.module.scss";
 
 const API_ENDPOINT = "/api/synthesize_polygon/";
 const LOW_FREQ = 20;
@@ -157,8 +157,8 @@ const SynthesizePolygons = () => {
     return (
         <div>
             <h1>Synthesize Polygons</h1>
-            <div className = "pageGrid">
-                <div id = "polygonEditor">
+            <div className={STYLES.pageGrid}>
+                <div className={STYLES.polygonEditor}>
                     <p>
                         Files should be CSVs that have two columns that include x and y coordinates of the
                         points of the polygon with x-coordinates in the first column and the corresponding
@@ -178,12 +178,12 @@ const SynthesizePolygons = () => {
                     }
                 </div>
 
-                <div id = "editorSettings">
+                <div className={STYLES.editorSettings}>
                     <h2>Inputs</h2>
                     {userOptions.map((option) => <CustomizableInput key={option.name} {...option}/>)}
                 </div>
 
-                <div id = "playBack">
+                <div className={STYLES.playback}>
                     <h2>Results</h2>
                     {data
                         ? <>

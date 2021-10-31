@@ -4,13 +4,13 @@
     grid-template-rows: 1fr 1fr 1fr 1fr;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 
-    grid-row-gap: 1px;
-    grid-column-gap: 50px;
+    grid-row-gap: 0px;
+    grid-column-gap: 0px;
     max-height: 100%;
     max-width: 100%;
 }
 
-#polygonEditor {
+.polygonEditor {
     border-style: solid;
     border-color: grey;
     border-width: 3px;
@@ -19,9 +19,10 @@
 
     grid-row-end: 5;
     grid-column-end: 4;
-
 }
-#editorSettings {
+
+
+.editorSettings {
     border-style: solid;
     border-color: grey;
     border-width: 3px;
@@ -33,7 +34,8 @@
     grid-column-end: 7;
 
 }
-#playback {
+
+.playback {
     border-style: solid;
     border-color: grey;
     border-width: 3px;

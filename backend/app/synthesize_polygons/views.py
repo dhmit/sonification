@@ -69,11 +69,11 @@ def synthesize_polygon_general(data):
     polygon points.
     """
     converted_data = convert_data(data)
+    sound, timestamps = synthesize_polygon(**converted_data)
     return Response({
-        "sound": audio_samples_to_wav_base64(
-            synthesize_polygon(**converted_data)
-        ),
-        "points": converted_data['points']
+        "sound": audio_samples_to_wav_base64(sound),
+        "points": converted_data['points'],
+        "timestamps": timestamps,
     })
 
 

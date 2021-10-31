@@ -39,12 +39,12 @@ def angles_of_polygon(points):
     """
     check_valid_polygon(points)
 
-    points.append(points[0])  # Polygon needs to be closed shape.
+    closed_points = points + [points[0]]  # Polygon needs to be closed shape.
     vectors = []
     angles = []
 
-    for i in range(len(points) - 1):
-        arr = [points[i + 1][0] - points[i][0], points[i + 1][1] - points[i][1]]
+    for i in range(len(closed_points) - 1):
+        arr = [closed_points[i + 1][0] - closed_points[i][0], closed_points[i + 1][1] - closed_points[i][1]]
         vectors.append(np.array(arr))
 
     vectors.append(vectors[0])  # Polygon needs to be closed shape.
@@ -214,4 +214,4 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
     time_stamp_list = generate_time_stamps(duration_list, note_delay, sides_as_duration)
     # TODO: return time_stamp_list as tuple with sound once compatible with frontend.
 
-    return sound
+    return sound, time_stamp_list

@@ -3,6 +3,7 @@ import {getCookie} from "../../common";
 import PolygonViewer from "./PolygonViewer";
 import PolygonEditor from "./PolygonEditor";
 import CustomizableInput from "../inputs/CustomizableInput";
+import "./PolygonPageLayout.scss";
 
 const API_ENDPOINT = "/api/synthesize_polygon/";
 const LOW_FREQ = 20;
@@ -11,6 +12,8 @@ const HIGH_FREQ = 10000;
 const SynthesizePolygons = () => {
     const [data, setData] = useState(null);
     const [sound, setSound] = useState(null);
+    const [timestamps, setTimestamps] = useState([]);
+    const [curAudioTime, setCurAudioTime] = useState(0);
     const [noteLength, setNoteLength] = useState(1);
     const [noteDelay, setNoteDelay] = useState(1);
     const [restrictFrequency, setRestrictFrequency] = useState(false);
@@ -21,8 +24,14 @@ const SynthesizePolygons = () => {
     const audioRef = useRef(null);
 
     useEffect(() => {
-        if (data && data["sound"]) {
-            setSound(data["sound"]);
+        if (data) {
+            if (data["sound"]) {
+                setSound(data["sound"]);
+            }
+            if (data["timestamps"]) {
+                setTimestamps(data["timestamps"]);
+                console.log(data["timestamps"]);
+            }
         }
     }, [data]);
 
@@ -148,31 +157,52 @@ const SynthesizePolygons = () => {
     return (
         <div>
             <h1>Synthesize Polygons</h1>
-            <h2>Inputs</h2>
-            {userOptions.map((option) => <CustomizableInput key={option.name} {...option}/>)}
-            <p>
-                Files should be CSVs that have two columns that include x and y coordinates of the
-                points of the polygon with x-coordinates in the first column and the corresponding
-                y-coordinates in the second column.
-            </p>
-            <PolygonEditor
-                width={300}
-                height={300}
-                showSubmit
-                onSubmit={submitPolygon}
-            />
-            <h2>Results</h2>
-            {data
-                ? <>
-                    <audio controls controlsList={"nodownload"} ref={audioRef}>
+            <div className = "pageGrid">
+                <div id = "polygonEditor">
+                    <p>
+                        Files should be CSVs that have two columns that include x and y coordinates of the
+                        points of the polygon with x-coordinates in the first column and the corresponding
+                        y-coordinates in the second column.
+                    </p>
+                    <PolygonEditor
+                        width={300}
+                        height={300}
+                        showSubmit
+                        onSubmit={submitPolygon}
+                    />
+                    {data
+                        ? <>
+                            <PolygonViewer width={300} height={300} rawPoints={data["points"]} currentTime={curAudioTime} timestamps={timestamps}/>
+                        </>
+                        : <p>Upload a CSV or draw a polygon above to get results! </p>
+                    }
+                </div>
+
+                <div id = "editorSettings">
+                    <h2>Inputs</h2>
+                    {userOptions.map((option) => <CustomizableInput key={option.name} {...option}/>)}
+                </div>
+
+                <div id = "playBack">
+                    <h2>Results</h2>
+                    {data
+                        ? <>
+                            <audio
+                        controls
+                        controlsList={"nodownload"}
+                        ref={audioRef}
+                        onTimeUpdate={() => {
+                            setCurAudioTime(audioRef.current.currentTime);
+                        }}
+                    >
                         <source src={`data:audio/wav;base64,${sound}`} type={"audio/wav"}/>
                     </audio>
-                    <br/>
-                    <br/>
-                    <PolygonViewer width={300} height={300} points={data["points"]}/>
-                </>
-                : <p>Upload a CSV or draw a polygon above to get results! </p>
-            }
+                        </>
+                        : <p>Upload a CSV or draw a polygon in the editor to get results! </p>
+                    }
+                </div>
+
+            </div>
         </div>
     );
 };

@@ -1,19 +1,27 @@
 .pageGrid {
     display: grid;
+    //border-color: black;
+    //border-width: 5px;
+    //border-style: solid;
+
+    // This determines internal border color
+    background-color: #444444;
+
+    // These determine the size of internal borders
+    grid-row-gap: 2px;
+    grid-column-gap: 3px;
 
     grid-template-rows: 1fr 1fr 1fr 1fr;
     grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
 
-    grid-row-gap: 0px;
-    grid-column-gap: 0px;
     max-height: 100%;
     max-width: 100%;
 }
 
 .polygonEditor {
-    border-style: solid;
-    border-color: grey;
-    border-width: 3px;
+    background-color: white;
+    padding: 2px 2px 2px 5px;
+
     grid-row-start: 1;
     grid-column-start: 1;
 
@@ -23,9 +31,8 @@
 
 
 .editorSettings {
-    border-style: solid;
-    border-color: grey;
-    border-width: 3px;
+    background-color: white;
+    padding: 2px 2px 2px 5px;
 
     grid-row-start: 1;
     grid-column-start: 4;
@@ -36,9 +43,9 @@
 }
 
 .playback {
-    border-style: solid;
-    border-color: grey;
-    border-width: 3px;
+    background-color: white;
+    padding: 2px 2px 2px 5px;
+
     grid-row-start: 3;
     grid-column-start: 4;
 

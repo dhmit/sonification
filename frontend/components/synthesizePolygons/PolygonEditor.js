@@ -8,7 +8,7 @@ import PropTypes from "prop-types";
  * only if the prop showSubmit is true.
  */
 const PolygonEditor = (
-    {width = 300, height = 300, showSubmit = false, onSubmit}
+    {width = 0, height = 0, showSubmit = false, onSubmit, outerWidth}
 ) => {
     const [loading, setLoading] = useState(false);
     const [points, setPoints] = useState([]);
@@ -60,6 +60,27 @@ const PolygonEditor = (
         fileUploadRef.current.value = null;
         setLoading(false);
     };
+
+
+    const containerRef = useRef(null);
+    const [internalWidth, setInternalWidth] = useState(width);
+    const [internalHeight, setInternalHeight] = useState(height);
+
+    useEffect(() => {
+        if (width === 0) {
+            setInternalWidth(containerRef.current.clientWidth);
+        } else {
+            setInternalWidth(width);
+        }
+    }, [width, outerWidth]);
+
+    useEffect(() => {
+        if (height === 0) {
+            setInternalHeight(containerRef.current.clientHeight);
+        } else {
+            setInternalHeight(height);
+        }
+    }, [height]);
 
     // When fileDownloadUrl is set, if it is not null, download the generated file and revoke
     // the URL to preserve resources.
@@ -120,7 +141,7 @@ const PolygonEditor = (
     ];
 
     return (
-        <div className={STYLES.editorContainer}>
+        <div className={STYLES.editorContainer} ref={containerRef}>
             <div className={STYLES.buttonRow}>
                 <button
                     className={STYLES.editorButton}
@@ -168,8 +189,8 @@ const PolygonEditor = (
             </div>
             <svg
                 className={loading ? STYLES.svgDisplayLoading : STYLES.svgDisplay}
-                width={width}
-                height={height}
+                width={internalWidth}
+                height={internalHeight}
                 onClick={handleClickSvg}
                 onMouseMove={handleMoveSvg}
                 onMouseEnter={handleMoveSvg}
@@ -248,6 +269,7 @@ PolygonEditor.propTypes = {
     onFinishedEditing: PropTypes.func,
     showSubmit: PropTypes.bool,
     onSubmit: PropTypes.func,
+    outerWidth: PropTypes.number,
 };
 
 export default PolygonEditor;

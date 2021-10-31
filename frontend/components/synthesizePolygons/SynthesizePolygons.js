@@ -265,8 +265,7 @@ const SynthesizePolygons = () => {
             <div className={STYLES.splitPane} ref={splitPaneVerticalRef}>
                 <div className={STYLES.leftPane} ref={leftPaneRef}>
                     <PolygonEditor
-                        width={300}
-                        height={300}
+                        outerWidth={leftPaneWidth}
                         showSubmit
                         onSubmit={submitPolygon}
                     />

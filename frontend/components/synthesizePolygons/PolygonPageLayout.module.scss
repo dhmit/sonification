@@ -18,38 +18,54 @@
     max-width: 100%;
 }
 
-.polygonEditor {
-    background-color: white;
-    padding: 2px 2px 2px 5px;
-
-    grid-row-start: 1;
-    grid-column-start: 1;
-
-    grid-row-end: 5;
-    grid-column-end: 4;
+.splitPane {
+    display: flex;
+    flex-direction: row;
+    max-height: 100%;
+    max-width: 100%;
 }
 
+.paneSeparatorVertical, .paneSeparatorHorizontal {
+    border: 3px solid #444444;
+    background-color: #444444;
+    cursor: col-resize;
+}
+
+.paneSeparatorVertical {
+    cursor: col-resize;
+}
+
+.paneSeparatorHorizontal {
+    cursor: row-resize;
+}
+
+.leftPane, .rightPane {
+    flex: 1;
+}
+
+.leftPane {
+    overflow: auto;
+}
+
+.rightPane {
+    display: flex;
+    flex-direction: column;
+    max-height: 100%;
+    overflow: hidden;
+}
 
 .editorSettings {
     background-color: white;
     padding: 2px 2px 2px 5px;
 
-    grid-row-start: 1;
-    grid-column-start: 4;
-
-    grid-row-end: 3;
-    grid-column-end: 7;
-
+    overflow: auto;
+    flex: 1;
 }
 
 .playback {
     background-color: white;
     padding: 2px 2px 2px 5px;
 
-    grid-row-start: 3;
-    grid-column-start: 4;
-
-    grid-row-end: 5;
-    grid-column-end: 7;
-
+    overflow: auto;
+    flex: 2;
 }

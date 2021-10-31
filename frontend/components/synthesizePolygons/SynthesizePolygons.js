@@ -38,6 +38,7 @@ const SynthesizePolygons = () => {
     useEffect(() => {
         const curHeight = rightPaneRef.current.clientHeight;
         rightPaneRef.current.style.maxHeight = `${curHeight}px`;
+        leftPaneRef.current.style.maxHeight = `${curHeight}px`;
     });
 
     useEffect(() => {
@@ -71,13 +72,16 @@ const SynthesizePolygons = () => {
             const newLeftWidth = leftPaneWidth + e.clientX - verticalSeparatorXPos.current;
             verticalSeparatorXPos.current = e.clientX;
 
-            if (newLeftWidth <= 0) {
-                return leftPaneWidth !== 0 && setLeftPaneWidth(0);
+            const totalWidth = splitPaneVerticalRef.current.clientWidth;
+            const minWidth = .1*totalWidth;
+            const maxWidth = .9*totalWidth;
+
+            if (newLeftWidth <= minWidth) {
+                return leftPaneWidth !== minWidth && setLeftPaneWidth(minWidth);
             }
 
-            const totalWidth = splitPaneVerticalRef.current.clientWidth;
-            if (newLeftWidth >= totalWidth) {
-                return leftPaneWidth !== 0 && setLeftPaneWidth(totalWidth);
+            if (newLeftWidth >= maxWidth) {
+                return leftPaneWidth !== maxWidth && setLeftPaneWidth(maxWidth);
             }
 
             setLeftPaneWidth(newLeftWidth);
@@ -86,13 +90,16 @@ const SynthesizePolygons = () => {
             console.log(newTopHeight);
             horizontalSeparatorYPos.current = e.clientY;
 
-            if (newTopHeight <= 0) {
-                return settingsPaneHeight !== 0 && setSettingsPaneHeight(0);
+            const totalHeight = rightPaneRef.current.clientHeight;
+            const minHeight = .1*totalHeight;
+            const maxHeight = .9*totalHeight;
+
+            if (newTopHeight <= minHeight) {
+                return settingsPaneHeight !== minHeight && setSettingsPaneHeight(minHeight);
             }
 
-            const totalHeight = rightPaneRef.current.clientHeight;
-            if (newTopHeight >= totalHeight) {
-                return settingsPaneHeight !== 0 && setSettingsPaneHeight(totalHeight);
+            if (newTopHeight >= maxHeight) {
+                return settingsPaneHeight !== maxHeight && setSettingsPaneHeight(maxHeight);
             }
 
             setSettingsPaneHeight(newTopHeight);
@@ -248,29 +255,21 @@ const SynthesizePolygons = () => {
     return (
         <div>
             <h1>Synthesize Polygons</h1>
+            <p>
+                Welcome to the Polygon Synthesizer! Start by drawing a polygon in the editor below
+                or by uploading a file describing your polygon. Uploaded files should be CSVs that
+                have two columns that include x and y coordinates of the points of the polygon with
+                x-coordinates in the first column and the corresponding y-coordinates in the second
+                column.
+            </p>
             <div className={STYLES.splitPane} ref={splitPaneVerticalRef}>
                 <div className={STYLES.leftPane} ref={leftPaneRef}>
-                    <h2>Polygon Editor</h2>
-                    <p>
-                        Files should be CSVs that have two columns that include x and y coordinates
-                        of the
-                        points of the polygon with x-coordinates in the first column and the
-                        corresponding
-                        y-coordinates in the second column.
-                    </p>
                     <PolygonEditor
                         width={300}
                         height={300}
                         showSubmit
                         onSubmit={submitPolygon}
                     />
-                    {data
-                        ? <>
-                            <PolygonViewer width={300} height={300} rawPoints={data["points"]}
-                                           currentTime={curAudioTime} timestamps={timestamps}/>
-                        </>
-                        : <p>Upload a CSV or draw a polygon above to get results! </p>
-                    }
                 </div>
                 <div className={STYLES.paneSeparatorVertical} onMouseDown={onMouseDownVerticalSeparator}/>
                 <div className={STYLES.rightPane} ref={rightPaneRef}>
@@ -283,16 +282,21 @@ const SynthesizePolygons = () => {
                     <div className={STYLES.rightSubPane}>
                         <h2>Results</h2>
                         {data
-                            ? <audio
-                                controls
-                                controlsList={"nodownload"}
-                                ref={audioRef}
-                                onTimeUpdate={() => {
-                                    setCurAudioTime(audioRef.current.currentTime);
-                                }}
-                            >
-                                <source src={`data:audio/wav;base64,${sound}`} type={"audio/wav"}/>
-                            </audio>
+                            ? <>
+                                <audio
+                                    controls
+                                    controlsList={"nodownload"}
+                                    ref={audioRef}
+                                    onTimeUpdate={() => {
+                                        setCurAudioTime(audioRef.current.currentTime);
+                                    }}
+                                >
+                                    <source src={`data:audio/wav;base64,${sound}`} type={"audio/wav"}/>
+                                </audio>
+                                <br/>
+                                <PolygonViewer width={300} height={300} rawPoints={data["points"]}
+                                           currentTime={curAudioTime} timestamps={timestamps}/>
+                            </>
                             : <p>Upload a CSV or draw a polygon in the editor to get results! </p>
                         }
                     </div>

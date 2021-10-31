@@ -36,6 +36,11 @@ const SynthesizePolygons = () => {
     const horizontalSeparatorYPos = useRef(null);
 
     useEffect(() => {
+        const curHeight = rightPaneRef.current.clientHeight;
+        rightPaneRef.current.style.maxHeight = `${curHeight}px`;
+    });
+
+    useEffect(() => {
         if (!leftPaneWidth) {
             setLeftPaneWidth(leftPaneRef.current.clientWidth);
             leftPaneRef.current.style.flex = "none";
@@ -269,13 +274,13 @@ const SynthesizePolygons = () => {
                 </div>
                 <div className={STYLES.paneSeparatorVertical} onMouseDown={onMouseDownVerticalSeparator}/>
                 <div className={STYLES.rightPane} ref={rightPaneRef}>
-                    <div className={STYLES.editorSettings} ref={settingsRef}>
+                    <div className={STYLES.rightSubPane} ref={settingsRef}>
                         <h2>Settings</h2>
                         {userOptions.map((option) => <CustomizableInput
                             key={option.name} {...option}/>)}
                     </div>
                     <div className={STYLES.paneSeparatorHorizontal} onMouseDown={onMouseDownHorizontalSeparator}/>
-                    <div className={STYLES.playback}>
+                    <div className={STYLES.rightSubPane}>
                         <h2>Results</h2>
                         {data
                             ? <audio

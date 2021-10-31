@@ -1,28 +1,9 @@
-.pageGrid {
-    display: grid;
-    //border-color: black;
-    //border-width: 5px;
-    //border-style: solid;
-
-    // This determines internal border color
-    background-color: #444444;
-
-    // These determine the size of internal borders
-    grid-row-gap: 2px;
-    grid-column-gap: 3px;
-
-    grid-template-rows: 1fr 1fr 1fr 1fr;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-
-    max-height: 100%;
-    max-width: 100%;
-}
-
 .splitPane {
     display: flex;
     flex-direction: row;
     max-height: 100%;
     max-width: 100%;
+    overflow: hidden;
 }
 
 .paneSeparatorVertical, .paneSeparatorHorizontal {
@@ -41,31 +22,20 @@
 
 .leftPane, .rightPane {
     flex: 1;
-}
-
-.leftPane {
-    overflow: auto;
+    //max-height: 100vh;
+    max-width: 100%;
+    overflow: hidden;
 }
 
 .rightPane {
     display: flex;
     flex-direction: column;
-    max-height: 100%;
-    overflow: hidden;
 }
 
-.editorSettings {
+.rightSubPane {
     background-color: white;
     padding: 2px 2px 2px 5px;
 
     overflow: auto;
     flex: 1;
-}
-
-.playback {
-    background-color: white;
-    padding: 2px 2px 2px 5px;
-
-    overflow: auto;
-    flex: 2;
 }

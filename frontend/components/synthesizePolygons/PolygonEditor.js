@@ -112,8 +112,60 @@ const PolygonEditor = (
         setPoints([]);
     }
 
+    const editorIconButtons = [
+        {
+            svg: <svg></svg>,
+            onClick: () => {},
+        },
+    ];
+
     return (
         <div className={STYLES.editorContainer}>
+            <div className={STYLES.buttonRow}>
+                <button
+                    className={STYLES.editorButton}
+                    onClick={clearDrawing}
+                    disabled={points.length === 0}
+                >
+                    Clear
+                </button>
+                <button
+                    className={STYLES.editorButton}
+                    onClick={downloadPolygon}
+                    disabled={points.length === 0}
+                >
+                    Download
+                </button>
+                <button
+                    className={STYLES.editorButton}
+                    onClick={handleClickUpload}
+                >
+                    Upload
+                </button>
+                {showSubmit &&
+                <button
+                    className={STYLES.editorButton}
+                    onClick={() => onSubmit(points)}
+                    disabled={points.length < 3}
+                >
+                    Submit
+                </button>}
+                <a
+                    hidden
+                    style={{display: "hidden"}}
+                    download="points.csv"
+                    ref={fileDownloadRef}
+                    href={fileDownloadUrl}
+                />
+                <input
+                    hidden
+                    style={{display: "hidden"}}
+                    type="file"
+                    ref={fileUploadRef}
+                    accept=".txt,.csv"
+                    onChange={uploadPolygon}
+                />
+            </div>
             <svg
                 className={loading ? STYLES.svgDisplayLoading : STYLES.svgDisplay}
                 width={width}
@@ -183,49 +235,7 @@ const PolygonEditor = (
                 /> }
             </svg>
             <div className={STYLES.buttonRow}>
-                <button
-                    className={STYLES.editorButton}
-                    onClick={clearDrawing}
-                    disabled={points.length === 0}
-                >
-                    Clear
-                </button>
-                <button
-                    className={STYLES.editorButton}
-                    onClick={downloadPolygon}
-                    disabled={points.length === 0}
-                >
-                    Download
-                </button>
-                <button
-                    className={STYLES.editorButton}
-                    onClick={handleClickUpload}
-                >
-                    Upload
-                </button>
-                {showSubmit &&
-                <button
-                    className={STYLES.editorButton}
-                    onClick={() => onSubmit(points)}
-                    disabled={points.length < 3}
-                >
-                    Submit
-                </button>}
-                <a
-                    hidden
-                    style={{display: "hidden"}}
-                    download="points.csv"
-                    ref={fileDownloadRef}
-                    href={fileDownloadUrl}
-                />
-                <input
-                    hidden
-                    style={{display: "hidden"}}
-                    type="file"
-                    ref={fileUploadRef}
-                    accept=".txt,.csv"
-                    onChange={uploadPolygon}
-                />
+                <button className={STYLES.editorButton}>c</button>
             </div>
         </div>
 

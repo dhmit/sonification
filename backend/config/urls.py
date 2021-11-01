@@ -41,6 +41,10 @@ urlpatterns = [
     path('api/get_sentiment_analysis_2/', summer_prototype_views.get_sentiment_analysis_2),
     path('api/image_to_music/', summer_prototype_views.image_to_music),
 
+    # Text shape to music API endpoint
+    path('text-shape-analysis/', views.text_shape_analysis),
+    path('api/get_shape_analysis/', api_views.get_shape_analysis),
+
     # Synthesize polygons view paths and API endpoints
     path('synthesize-polygons/', synthesize_polygons_views.synthesize_polygons),
     path('api/synthesize_polygon/', synthesize_polygons_views.synthesize_polygon_endpoint),
@@ -50,7 +54,6 @@ urlpatterns = [
 
     # time series endpoints
     path('api/generate_instrument_2d/', api_views.generate_instrument_2d),
-
 ]
 
 

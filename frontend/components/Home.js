@@ -3,7 +3,6 @@ import UploadFileInput from "./inputs/UploadFileInput";
 import SliderInstrument from "./instruments/SliderInstrument";
 import TimeSeries from "./timeSeries/TimeSeries";
 
-
 const Home = () => {
     const [instrumentSamples, setInstrumentSamples] = useState(null);
 
@@ -20,7 +19,6 @@ const Home = () => {
             />
             <hr />
             <TimeSeries />
-
         </>
     );
 };

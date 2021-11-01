@@ -16,6 +16,8 @@ const GesturesToSound = () => {
         pitch: {low: 131, high:698}, // range of tenor-alto
         duration: {low: 0.1, high:2},
     });
+    const [hideAxisLabel, setHideAxisLabel] = useState(true);
+    const [buttonText, setButtonText] = useState("Show Axis");
 
     const getCoords = (event) => {
         if (!canvasRef.current) return;
@@ -144,6 +146,16 @@ const GesturesToSound = () => {
         }
     };
 
+    const showAxis = (event) => {
+        if (hideAxisLabel) {
+            setHideAxisLabel(false);
+            setButtonText("Hide Axis");
+        }else{
+            setHideAxisLabel(true);
+            setButtonText("Show Axis");
+        }
+    };
+
     const handleUpdateCompression = (event) => {
         event.preventDefault();
         setGestureParams(prevState =>
@@ -183,7 +195,20 @@ const GesturesToSound = () => {
                         ref={canvasRef}
                         width="500" height="500"
                     />
+                    <div className="row" id="axisLabel" hidden={hideAxisLabel}>
+                        {/*<div className="invisible">*/}
+                        <div className="col align-left">
+                            low pitch
+                        </div>
+                        <div className="col align-right text-right">
+                            high pitch
+                        </div>
+                    </div>
+                    <button className="btn btn-outline-primary"
+                        onClick={showAxis}>{buttonText}</button>
+
                 </div>
+
                 <div className="col mt-3">
                     <p>
                         <button className="btn btn-outline-primary text-right"
@@ -239,6 +264,7 @@ const GesturesToSound = () => {
                             </div>
                         </div>
                     </p>
+
                     {
                         soundData && <p>
                             Gesture Sounds:

@@ -1,5 +1,5 @@
 import React, {useEffect, useRef, useState} from "react";
-import {getCookie} from "../../common";
+import {fetchPost} from "../../common";
 import PolygonViewer from "./PolygonViewer";
 import PolygonEditor from "./PolygonEditor";
 import CustomizableInput from "../inputs/CustomizableInput";
@@ -164,21 +164,9 @@ const SynthesizePolygons = () => {
 
     async function submitPolygon(points) {
         setOutOfSync(SyncStatus.LOADING);
-        const csrftoken = getCookie("csrftoken");
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": csrftoken,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({points, ...createUserOptionObject()}),
-        };
-        await fetch(API_ENDPOINT, requestOptions)
-            .then(response => response.json())
-            .then(data => setData(data));
+        await fetchPost(API_ENDPOINT, {points, ...createUserOptionObject()}, setData);
         setOutOfSync(SyncStatus.SYNCED);
     }
-
 
     function createUserOptionObject() {
         const obj = {};

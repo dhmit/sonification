@@ -54,14 +54,17 @@ const PolygonEditor = (
             }
         });
 
-        const xStretch = 0.9 * internalWidth / (maxX - minX);
-        const yStretch = 0.9 * internalHeight / (maxY - minY);
+        const usedWidth = svgDisplay.current.clientWidth;
+        const usedHeight = svgDisplay.current.clientHeight;
+
+        const xStretch = 0.9 * usedWidth / (maxX - minX);
+        const yStretch = 0.9 * usedHeight / (maxY - minY);
         const stretch = Math.min(xStretch, yStretch);
 
         const scaledPoints = newPoints.map((point) => {
             return [
-                stretch * (point[0] - minX) + 0.05 * internalWidth,
-                stretch * (point[1] - minY) + 0.05 * internalHeight,
+                stretch * (point[0] - minX) + 0.05 * usedWidth,
+                stretch * (point[1] - minY) + 0.05 * usedHeight,
             ];
         });
 

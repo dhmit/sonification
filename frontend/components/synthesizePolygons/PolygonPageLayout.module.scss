@@ -47,3 +47,67 @@
     overflow: auto;
     flex: 1;
 }
+
+.statusDivSynced, .statusDivLoading, .statusDivUnsynced {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-style: italic;
+    vertical-align: center;
+    svg {
+        margin-right: 5px;
+    }
+    p {
+        margin-bottom: 0;
+    }
+}
+
+.statusDivSynced {
+    $color: #43af43;
+    svg {
+        circle {
+            fill: $color;
+        }
+    }
+    p {
+        color: $color;
+    }
+}
+
+.statusDivUnsynced {
+    $color: #a9a91e;
+    svg {
+        circle {
+            fill: $color;
+        }
+    }
+    p {
+        color: $color;
+    }
+}
+
+.statusDivLoading {
+    $color: grey;
+    svg {
+        circle {
+            color: $color;
+            stroke-width: 2;
+            stroke: $color;
+            stroke-dasharray: 10 2.565;
+            fill: none;
+            animation: dash 1s linear infinite;
+        }
+    }
+    p {
+        color: $color;
+    }
+}
+
+@keyframes dash {
+    from {
+        stroke-dashoffset: 0;
+    }
+    to {
+        stroke-dashoffset: 25.13;
+    }
+}

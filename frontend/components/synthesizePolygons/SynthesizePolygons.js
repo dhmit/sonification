@@ -10,10 +10,33 @@ const LOW_FREQ = 20;
 const HIGH_FREQ = 10000;
 
 const SynthesizePolygons = () => {
+    // results
     const [data, setData] = useState(null);
     const [sound, setSound] = useState(null);
     const [timestamps, setTimestamps] = useState([]);
     const [curAudioTime, setCurAudioTime] = useState(0);
+    const audioRef = useRef(null);
+
+    // all valid sync statuses
+    const SyncStatus = {
+        SYNCED: "Synced",
+        LOADING: "Loading...",
+        UNSYNCED: "Unsynced Changes",
+    };
+    const [outOfSync, setOutOfSync] = useState(SyncStatus.SYNCED);
+
+    function switchSync(syncedOption, loadingOption, unsyncedOption) {
+        switch (outOfSync) {
+            case SyncStatus.SYNCED:
+                return syncedOption;
+            case SyncStatus.LOADING:
+                return loadingOption;
+            case SyncStatus.UNSYNCED:
+                return unsyncedOption;
+        }
+    }
+
+    // user settings
     const [noteLength, setNoteLength] = useState(1);
     const [noteDelay, setNoteDelay] = useState(1);
     const [restrictFrequency, setRestrictFrequency] = useState(false);
@@ -21,7 +44,6 @@ const SynthesizePolygons = () => {
     const [baseFrequency, setBaseFrequency] = useState(220);
     const [floorFrequency, setFloorFrequency] = useState(LOW_FREQ);
     const [ceilFrequency, setCeilFrequency] = useState(HIGH_FREQ);
-    const audioRef = useRef(null);
 
     // used for controlling overall pane
     const [leftPaneWidth, setLeftPaneWidth] = useState(null);
@@ -141,6 +163,7 @@ const SynthesizePolygons = () => {
     }, [sound]);
 
     async function submitPolygon(points) {
+        setOutOfSync(SyncStatus.LOADING);
         const csrftoken = getCookie("csrftoken");
         const requestOptions = {
             method: "POST",
@@ -150,9 +173,10 @@ const SynthesizePolygons = () => {
             },
             body: JSON.stringify({points, ...createUserOptionObject()}),
         };
-        fetch(API_ENDPOINT, requestOptions)
+        await fetch(API_ENDPOINT, requestOptions)
             .then(response => response.json())
             .then(data => setData(data));
+        setOutOfSync(SyncStatus.SYNCED);
     }
 
 
@@ -266,6 +290,7 @@ const SynthesizePolygons = () => {
                 <div className={STYLES.leftPane} ref={leftPaneRef}>
                     <PolygonEditor
                         outerWidth={leftPaneWidth}
+                        onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
                         showSubmit
                         onSubmit={submitPolygon}
                     />
@@ -279,7 +304,21 @@ const SynthesizePolygons = () => {
                     </div>
                     <div className={STYLES.paneSeparatorHorizontal} onMouseDown={onMouseDownHorizontalSeparator}/>
                     <div className={STYLES.rightSubPane}>
-                        <h2>Results</h2>
+                        <h2 style={{marginBottom: 0}}>Results</h2>
+                        {/*Highly dependent on CSS for animation*/}
+                        <div className={switchSync(
+                                STYLES.statusDivSynced,
+                                STYLES.statusDivLoading,
+                                STYLES.statusDivUnsynced,
+                            )}>
+                            <svg width={10} height={10}>
+                                <circle cx={5} cy={5} r={switchSync(5, 4, 5)}/>
+                            </svg>
+                            <p className={switchSync(
+                            )}>
+                                {outOfSync}
+                            </p>
+                        </div>
                         {data
                             ? <>
                                 <audio

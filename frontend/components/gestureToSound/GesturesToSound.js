@@ -224,24 +224,26 @@ const GesturesToSound = () => {
                         <input className="slider mx-3" type="range"
                             min="1" max="100" step="1" value={gestureParams.compression}
                             onChange={handleUpdateCompression}/>
-                        {gestureParams.compression}
+                        {gestureParams.compression} {gestureParams.compression === 1
+                            ? 'coordinate'
+                            : 'coordinates'} per note
                     </p>
                     <p>
-                    <b>Pitch:</b>
+                        <b>Pitch:</b>
                         <div className="row">
                             <div className="col">
                                 Low:
-                                <input className="mx-2" type="range" min="75" max="262" step="1" id="low"
-                                    value={gestureParams.pitch.low}
+                                <input className="mx-2" type="range" min="75" max="262"
+                                    step="1" id="low" value={gestureParams.pitch.low}
                                     onChange={handleUpdatePitch}/>
-                                {gestureParams.pitch.low}
+                                {gestureParams.pitch.low} Hz
                             </div>
                             <div className="col">
                                 High:
-                                <input className="mx-2" type="range" min="300" max="1045" step="1" id="high"
-                                    value={gestureParams.pitch.high}
+                                <input className="mx-2" type="range" min="300" max="1045"
+                                    step="1" id="high" value={gestureParams.pitch.high}
                                     onChange={handleUpdatePitch}/>
-                                {gestureParams.pitch.high}
+                                {gestureParams.pitch.high} Hz
                             </div>
                         </div>
                     </p>
@@ -253,14 +255,15 @@ const GesturesToSound = () => {
                                 <input type="range" min="0.01" max="0.5" id="low" step="0.01"
                                     value={gestureParams.duration.low}
                                     onChange={handleUpdateDuration}/>
-                                {gestureParams.duration.low}
+                                {gestureParams.duration.low} secs
                             </div>
                             <div className="col">
                                 High:
                                 <input type="range" min="1" max="2" step="0.01" id="high"
                                     value={gestureParams.duration.high}
                                     onChange={handleUpdateDuration}/>
-                                {gestureParams.duration.high}
+                                {gestureParams.duration.high} {gestureParams.duration.high === 1
+                                    ? 'sec' : 'secs'}
                             </div>
                         </div>
                     </p>

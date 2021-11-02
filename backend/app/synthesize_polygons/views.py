@@ -78,20 +78,6 @@ def synthesize_polygon_general(data):
 
 
 @api_view(['POST'])
-def synthesize_polygon_csv_endpoint(request):
-    """
-    Endpoint for synthesizing a polygon from a csv file.
-    :param request: the HttpRequest
-    :return: an HttpResponse
-    """
-    temp_file = request.FILES.get('points')
-    data = request.POST.copy()
-    data['points'] = csv_processing.parse_csv_upload(temp_file, dictionary=False)
-
-    return synthesize_polygon_general(data)
-
-
-@api_view(['POST'])
 def synthesize_polygon_endpoint(request):
     """
     Endpoint for synthesizing a polygon from a list of points.

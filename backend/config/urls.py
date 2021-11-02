@@ -42,7 +42,6 @@ urlpatterns = [
     # Synthesize polygons view paths and API endpoints
     path('synthesize-polygons/', synthesize_polygons_views.synthesize_polygons),
     path('api/synthesize_polygon/', synthesize_polygons_views.synthesize_polygon_endpoint),
-    path('api/synthesize_polygon_csv/', synthesize_polygons_views.synthesize_polygon_csv_endpoint),
     # Color encoding to sound paths and API endpoints
     path('color_encode_to_sound/', color_encoding_to_sound_views.base_page),
 

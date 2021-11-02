@@ -8,7 +8,14 @@ import PropTypes from "prop-types";
  * only if the prop showSubmit is true.
  */
 const PolygonEditor = (
-    {width = 0, height = 0, showSubmit = false, onSubmit, outerWidth}
+    {
+        width = 0,
+        height = 0,
+        onEdit,
+        showSubmit = false,
+        onSubmit,
+        outerWidth,
+    }
 ) => {
     const [loading, setLoading] = useState(false);
     const [points, setPoints] = useState([]);
@@ -18,12 +25,15 @@ const PolygonEditor = (
     const fileUploadRef = useRef(null);
     const svgDisplay = useRef(null);
 
-    const fileReader = new FileReader();
+    function handleEdit() {
+        onEdit();
+    }
 
+    const fileReader = new FileReader();
     fileReader.onloadstart = (e) => {
         setLoading(true);
     };
-
+    // parse the file
     fileReader.onloadend = (e) => {
         const content = fileReader.result;
 
@@ -44,19 +54,19 @@ const PolygonEditor = (
             }
         });
 
-        const xStretch = 0.9 * width / (maxX - minX);
-        const yStretch = 0.9 * height / (maxY - minY);
+        const xStretch = 0.9 * internalWidth / (maxX - minX);
+        const yStretch = 0.9 * internalHeight / (maxY - minY);
         const stretch = Math.min(xStretch, yStretch);
 
         const scaledPoints = newPoints.map((point) => {
             return [
-                stretch * (point[0] - minX) + 0.05 * width,
-                stretch * (point[1] - minY) + 0.05 * height,
+                stretch * (point[0] - minX) + 0.05 * internalWidth,
+                stretch * (point[1] - minY) + 0.05 * internalHeight,
             ];
         });
 
         setPoints(scaledPoints);
-
+        handleEdit();
         fileUploadRef.current.value = null;
         setLoading(false);
     };
@@ -114,6 +124,7 @@ const PolygonEditor = (
         const x = e.clientX - rect.left; // x position within the element.
         const y = e.clientY - rect.top;  // y position within the element.
         setPoints([...points, [x, y]]);
+        handleEdit();
     }
 
     // move the cursor
@@ -131,6 +142,14 @@ const PolygonEditor = (
 
     function clearDrawing() {
         setPoints([]);
+        handleEdit();
+    }
+
+    function handleSubmit() {
+        setLoading(true);
+        onSubmit(points).then(() => {
+            setLoading(false);
+        });
     }
 
     const editorIconButtons = [
@@ -166,7 +185,7 @@ const PolygonEditor = (
                 {showSubmit &&
                 <button
                     className={STYLES.editorButton}
-                    onClick={() => onSubmit(points)}
+                    onClick={handleSubmit}
                     disabled={points.length < 3}
                 >
                     Submit
@@ -266,7 +285,7 @@ const PolygonEditor = (
 PolygonEditor.propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
-    onFinishedEditing: PropTypes.func,
+    onEdit: PropTypes.func,
     showSubmit: PropTypes.bool,
     onSubmit: PropTypes.func,
     outerWidth: PropTypes.number,

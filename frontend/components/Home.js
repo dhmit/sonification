@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import UploadFileInput from "./inputs/UploadFileInput";
 import SliderInstrument from "./instruments/SliderInstrument";
-
+import TimeSeries from "./timeSeries/TimeSeries";
 
 const Home = () => {
     const [instrumentSamples, setInstrumentSamples] = useState(null);
@@ -12,11 +12,13 @@ const Home = () => {
             <UploadFileInput
                 id={0}
                 uploadSuccessfulCallback={setInstrumentSamples}
-                apiEndpoint={'api/generate_instrument/'}
+                apiEndpoint={'/api/generate_instrument/'}
             />
             <SliderInstrument
                 samples={instrumentSamples}
             />
+            <hr />
+            <TimeSeries />
         </>
     );
 };

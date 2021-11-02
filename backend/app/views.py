@@ -41,6 +41,29 @@ def index(request):
 
     return render(request, 'index.html', context)
 
+def gestures_to_sound(request):
+    """ Gestures to Sound page"""
+
+    context = {
+        'page_metadata': {
+            'title': 'Gestures to Sound'
+        },
+        'component_name': 'GesturesToSound'
+    }
+
+    return render(request, 'index.html', context)
+
+def text_shape_analysis(request):
+    """ Text Shape Analysis Page """
+
+    context = {
+        'page_metadata': {
+            'title': 'Shape Analysis'
+        },
+        'component_name': 'TextShapeAnalysis'
+    }
+
+    return render(request, 'index.html', context)
 
 ################################################################################
 # Boilerplate - just for examples

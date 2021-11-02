@@ -2,9 +2,11 @@ import React, {useEffect, useState, useRef} from "react";
 import PropTypes from "prop-types";
 import Slider from "../inputs/Slider";
 
+/*
+ * Takes base64-encoded wav files and converts them to an ArrayBuffer
+ * of the decoded data, which what AudioBufferSourceNode needs to consume
+ */
 const sampleBase64StrToArrayBuffer = (sampleStr) => {
-    // Load sample using createBufferSource of audio sample
-    // NOTE(ra): Could do this via createMediaElementSource instead - maybe simpler. Not sure.
     const byte_str = atob(sampleStr);
     const buffer = new ArrayBuffer(byte_str.length * 2);
     const buffer_view = new Uint8Array(buffer);
@@ -14,12 +16,18 @@ const sampleBase64StrToArrayBuffer = (sampleStr) => {
     return buffer;
 };
 
+
+/*
+ * An audio playback component that plays a single sample using the Web Audio API
+ */
 const SamplePlayer = ({
     isPlaying,
     loop,
     sample,
     volume,
 }) => {
+    // TODO(ra): probably we want the AudioContext to live in the container component,
+    //           so we can apply compression to the whole thing.
     const audioContextRef = useRef(new AudioContext());
     const audioSourceRef = useRef(null);
     const audioGainNodeRef = useRef(audioContextRef.current.createGain());
@@ -32,10 +40,14 @@ const SamplePlayer = ({
         const audioGainNode = audioGainNodeRef.current;
         audioGainNode.connect(audioContext.destination);
 
+        // NOTE(ra): Could do this via createMediaElementSource instead - maybe simpler. Not sure.
         const audioSource = audioContext.createBufferSource();
         audioSourceRef.current = audioSource;
         audioSource.loop = loop;
         audioSource.connect(audioGainNode);
+
+        // AudioBufferSourceNode is a single-use object: once the buffer plays once, we have to
+        // throw it away and do this audio setup again.
         audioSource.onended = () => setShouldSetupAudio(true);
 
         const audioBuffer = sampleBase64StrToArrayBuffer(sample);
@@ -60,8 +72,7 @@ const SamplePlayer = ({
         audioGainNode.gain.setValueAtTime(volume / 100, audioContext.currentTime);
     }, [volume]);
 
-
-    return null;  // this component doesn't render anything!
+    return null;  // this component doesn't render any UI!
 };
 
 SamplePlayer.propTypes = {
@@ -72,7 +83,10 @@ SamplePlayer.propTypes = {
 };
 
 
-const SamplePlayerSliderPlayer = ({
+/*
+ * A simple playback component with a slider volume control
+ */
+const SliderPlayer = ({
     sample,
     isPlaying,
     index,
@@ -91,58 +105,17 @@ const SamplePlayerSliderPlayer = ({
         />
     </>);
 };
-SamplePlayerSliderPlayer.propTypes = {
+SliderPlayer.propTypes = {
     sample: PropTypes.string,
     index: PropTypes.number,
     isPlaying: PropTypes.bool,
 };
 
 
-const AudioTagSliderPlayer = ({
-    sample,
-    isPlaying,
-    index,
-}) => {
-    const audioTagRef = useRef(null);
-
-    const adjustAudioVolume = (newValue) => {
-        const audioTag = audioTagRef.current;
-        audioTag.volume = newValue / 100;
-    };
-
-    const audioElementId = `audio-${index}`;
-
-    const audioTag = audioTagRef.current;
-    if (audioTag) {
-        if (isPlaying && audioTag.paused) {
-            audioTag.play();
-        } else {
-            audioTag.pause();
-            audioTag.currentTime = 0;
-        }
-    }
-
-    return (<>
-        <audio
-            loop
-            id={audioElementId}
-            src={`data:audio/wav;base64,${sample}`}
-            controlsList="nodownload"
-            ref={audioTagRef}
-        />
-        <Slider
-            id={index}
-            onChangeFunction={(newValue) => adjustAudioVolume(newValue)}
-        />
-    </>);
-};
-AudioTagSliderPlayer.propTypes = {
-    sample: PropTypes.string,
-    index: PropTypes.number,
-    isPlaying: PropTypes.bool,
-};
-
-
+/*
+ * A basic instrument: takes in a bunch of samples, and
+ * provides sliders for playing loops with stop/start controls.
+ */
 const SliderInstrument = ({samples}) => {
     if (samples === null) { return ('Waiting to load data to create an instrument.'); }
 
@@ -153,7 +126,7 @@ const SliderInstrument = ({samples}) => {
     for (let i = 0; i < samples.length; i++) {
         controllers.push(
             <li className="list-inline-item" key={i} >
-                <SamplePlayerSliderPlayer
+                <SliderPlayer
                     key={i}
                     index={i}
                     sample={samples[i]}

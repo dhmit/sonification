@@ -72,17 +72,10 @@ def gesture_to_sound(request):
     based on the horizontal and vertical components of the gestures
     """
     gestures = request.data['gestures']
+    gestures_params = request.data['parameters']
     # pitch_range and duration_range are hardcoded for now
     # TODO: allow variable pitch/duration range inputs in the frontend
-    pitch_range = {
-        "low": 440,
-        "high": 880
-    }
-    duration_range = {
-        "low": 0.1,
-        "high": 2
-    }
-    audio = convert_gesture_to_audio(gestures, pitch_range, duration_range)
+    audio = convert_gesture_to_audio(gestures, gestures_params)
     res = {
         'sound': audio_samples_to_wav_base64(audio)
     }

@@ -251,6 +251,7 @@ const PolygonEditor = (
         }
     }
 
+    // TODO: fix styling of this
     function handleMouseEnterLine(index) {
         if (focusPoint === null && editorMode !== EditorModes.ADD) {
             setFocusLine(index);
@@ -417,14 +418,6 @@ const PolygonEditor = (
                     />
                 </>
                 }
-                {cursorLocation && (editorMode === EditorModes.ADD || (editorMode === EditorModes.EDIT && focusLine !== null)) &&
-                <circle
-                    key="point-cursor"
-                    cx={cursorLocation[0]}
-                    cy={cursorLocation[1]}
-                    r={5}
-                    className={STYLES.focusAddPoint}
-                /> }
                 {(!cursorLocation || editorMode !== EditorModes.ADD) && points.length >= 3 &&
                 <line
                     key={`line-${points.length-1}`}
@@ -464,6 +457,14 @@ const PolygonEditor = (
                         />
                     </React.Fragment>
                 ))}
+                {cursorLocation && (editorMode === EditorModes.ADD) &&
+                <circle
+                    key="point-cursor"
+                    cx={cursorLocation[0]}
+                    cy={cursorLocation[1]}
+                    r={5}
+                    className={STYLES.focusAddPoint}
+                /> }
                 {loading && <circle cx="50%" cy="50%" r={20} className={STYLES.svgLoadingCircle}/>}
             </svg>
             <div className={STYLES.buttonRow}>

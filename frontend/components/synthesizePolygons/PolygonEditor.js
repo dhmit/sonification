@@ -25,6 +25,33 @@ const PolygonEditor = (
     const fileUploadRef = useRef(null);
     const svgDisplay = useRef(null);
 
+    const EditorModes = {
+        ADD: 'add',
+        EDIT: 'edit',
+        DELETE: 'delete',
+    };
+    const [editorMode, setEditorMode] = useState(EditorModes.ADD);
+
+    function switchEditorMode(addOption, editOption, deleteOption) {
+        switch (editorMode) {
+            case EditorModes.ADD:
+                return addOption;
+            case EditorModes.EDIT:
+                return editOption;
+            case EditorModes.DELETE:
+                return deleteOption;
+        }
+    }
+
+    const [focusPoint, setFocusPoint] = useState(null);
+    const [focusLine, setFocusLine] = useState(null);
+
+    function handleChangeEditorMode(newMode) {
+        setEditorMode(newMode);
+        setFocusPoint(null);
+        setFocusLine(null);
+    }
+
     function handleEdit() {
         onEdit();
     }
@@ -121,13 +148,35 @@ const PolygonEditor = (
         fileReader.readAsText(file);
     }
 
+    function handleClickLine(index) {
+        if (editorMode === EditorModes.EDIT) {
+
+        }
+    }
+
+    function handleClickPoint(index) {
+        if (editorMode === EditorModes.EDIT) {
+            if (focusPoint === index) {
+                setFocusPoint(null);
+            } else {
+                setFocusPoint(index);
+            }
+        } else if (editorMode === EditorModes.DELETE) {
+            const editedPoints = points.filter((v, i) => i !== index);
+            handleEdit();
+            setPoints(editedPoints);
+        }
+    }
+
     // add a new point to polygon
     function handleClickSvg(e) {
-        const rect = svgDisplay.current.getBoundingClientRect();
-        const x = e.clientX - rect.left; // x position within the element.
-        const y = e.clientY - rect.top;  // y position within the element.
-        setPoints([...points, [x, y]]);
-        handleEdit();
+        if (editorMode === EditorModes.ADD) {
+            const rect = svgDisplay.current.getBoundingClientRect();
+            const x = e.clientX - rect.left; // x position within the element.
+            const y = e.clientY - rect.top;  // y position within the element.
+            setPoints([...points, [x, y]]);
+            handleEdit();
+        }
     }
 
     // move the cursor
@@ -136,6 +185,13 @@ const PolygonEditor = (
         const x = e.clientX - rect.left; // x position within the element.
         const y = e.clientY - rect.top;  // y position within the element.
         setCursorLocation([x, y]);
+        if (editorMode === EditorModes.EDIT && focusPoint !== null) {
+            onEdit();
+            const editedPoints = points;
+            editedPoints[focusPoint][0] = x;
+            editedPoints[focusPoint][1] = y;
+            setPoints(editedPoints);
+        }
     }
 
     // remove the cursor
@@ -157,8 +213,19 @@ const PolygonEditor = (
 
     const editorIconButtons = [
         {
-            svg: <svg></svg>,
-            onClick: () => {},
+            svg: "A",
+            onClick: () => handleChangeEditorMode(EditorModes.ADD),
+            tooltip: "Add new points. Shortcut: a",
+        },
+        {
+            svg: "E",
+            onClick: () => handleChangeEditorMode(EditorModes.EDIT),
+            tooltip: "Edit points and lines. Shortcut: e",
+        },
+        {
+            svg: "D",
+            onClick: () => handleChangeEditorMode(EditorModes.DELETE),
+            tooltip: "Delete points. Shortcut: d",
         },
     ];
 
@@ -210,7 +277,9 @@ const PolygonEditor = (
                 />
             </div>
             <svg
-                className={loading ? STYLES.svgDisplayLoading : STYLES.svgDisplay}
+                className={loading ? STYLES.svgDisplayLoading :
+                    ((editorMode === EditorModes.ADD || focusPoint !== null)
+                        ? STYLES.svgDisplayNoCursor : STYLES.svgDisplay)}
                 width={internalWidth}
                 height={internalHeight}
                 onClick={handleClickSvg}
@@ -219,7 +288,7 @@ const PolygonEditor = (
                 onMouseLeave={handleLeaveSvg}
                 ref={svgDisplay}
             >
-                {cursorLocation && points.length > 0 &&
+                {cursorLocation && points.length > 0 && editorMode === EditorModes.ADD &&
                 <>
                     <line
                         key="line-cursor-1"
@@ -239,7 +308,7 @@ const PolygonEditor = (
                     />
                 </>
                 }
-                {!cursorLocation && points.length >= 3 &&
+                {(!cursorLocation || editorMode !== EditorModes.ADD) && points.length >= 3 &&
                 <line
                     key="line-0"
                     x1={points[points.length - 1][0]}
@@ -263,25 +332,32 @@ const PolygonEditor = (
                             key={`point-${i}`}
                             cx={p[0]}
                             cy={p[1]}
-                            r={5}
-                            className={STYLES.point}
+                            // r={5}
+                            className={i === focusPoint
+                                ? switchEditorMode(STYLES.addPoint, STYLES.focusEditPoint, STYLES.focusDeletePoint)
+                                : switchEditorMode(STYLES.addPoint, STYLES.editPoint, STYLES.deletePoint)
+                            }
+                            onClick={() => handleClickPoint(i)}
                         />
                     </React.Fragment>
                 ))}
-                {cursorLocation &&
+                {cursorLocation && editorMode === EditorModes.ADD &&
                 <circle
                     key="point-cursor"
                     cx={cursorLocation[0]}
                     cy={cursorLocation[1]}
                     r={5}
-                    className={STYLES.cursorPoint}
+                    className={STYLES.focusAddPoint}
                 /> }
-
-
                 {loading && <circle cx="50%" cy="50%" r={20} className={STYLES.svgLoadingCircle}/>}
             </svg>
             <div className={STYLES.buttonRow}>
-                <button className={STYLES.editorButton}>c</button>
+                {editorIconButtons.map((button, i) => (
+                    <button className={STYLES.editorButton} {...button} key={`editor-icon-${i}`}>
+                        {button.svg}
+                        <span className={STYLES.editorTooltip}>{button.tooltip}</span>
+                    </button>
+                ))}
             </div>
         </div>
 

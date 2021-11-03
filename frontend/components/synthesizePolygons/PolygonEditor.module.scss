@@ -23,11 +23,31 @@
     display: inline-block;
     margin: 5px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    position: relative;
+    .editorTooltip {
+        visibility: hidden;
+
+        // Position the tooltip
+        position: absolute;
+        bottom: 110%;
+        left: 0;
+        z-index: 1;
+        width: 100px;
+
+        background-color: #d7d7d7;
+        color: #000000;
+        border-style: solid;
+        border-color: black;
+        text-align: center;
+    }
 }
 
 .editorButton:hover {
     background-color: #0069d9;
     border-color: #0062cc;
+    .editorTooltip {
+        visibility: visible;
+    }
 }
 
 .editorButton:disabled {
@@ -35,8 +55,11 @@
     border: 1px solid #8a8a8a;
 }
 
-.svgDisplay, .svgDisplayLoading {
+.svgDisplay, .svgDisplayLoading, .svgDisplayNoCursor {
     border: 1px solid black;
+}
+
+.svgDisplayNoCursor {
     cursor: none;
 }
 
@@ -63,17 +86,31 @@
     animation: spin 1s linear infinite;
 }
 
-.point {
+.addPoint, .editPoint, .deletePoint, .focusAddPoint, .focusEditPoint, .focusDeletePoint {
     stroke: black;
-    stroke-width: 3;
-    fill: aqua;
+    r: 6;
 }
 
-.cursorPoint {
-    stroke: #8a8a8a;
-    stroke-width: 2;
+.addPoint, .editPoint, .deletePoint {
     fill: aqua;
-    r: 5;
+    stroke-width: 3;
+}
+
+.editPoint:hover, .focusEditPoint {
+    //stroke: #8a8a8a;
+    fill: #ffff88;
+    stroke-width: 2;
+}
+
+.deletePoint:hover, .focusDeletePoint {
+    fill: #ee4f4f;
+    stroke-width: 2;
+}
+
+.focusAddPoint {
+    //stroke: #8a8a8a;
+    stroke-width: 2;
+    fill: #5ddc40;
 }
 
 .line {

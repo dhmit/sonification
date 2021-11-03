@@ -109,7 +109,6 @@ const SynthesizePolygons = () => {
             setLeftPaneWidth(newLeftWidth);
         } else if (horizontalSeparatorYPos.current) {
             const newTopHeight = settingsPaneHeight + e.clientY- horizontalSeparatorYPos.current;
-            console.log(newTopHeight);
             horizontalSeparatorYPos.current = e.clientY;
 
             const totalHeight = rightPaneRef.current.clientHeight;

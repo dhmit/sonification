@@ -7,8 +7,14 @@ import STYLES from "./CustomizableInput.module.scss";
  * input component.
  */
 const CustomizableInput = (
-    {type, name, display, getValue, setValue, enabled=true, options=[], ...rest}
+    {type, name, display, getValue, setValue, enabled=true, options=[], onEdit, ...rest}
 ) => {
+
+    function handleChange(e) {
+        setValue(e.target.value);
+        onEdit();
+    }
+
     return (
         <div key={name} className={STYLES.customizableInputDiv} hidden={!enabled}>
             {display}
@@ -16,7 +22,7 @@ const CustomizableInput = (
                 ? <select
                     name={name}
                     className={STYLES.customizableInput}
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={handleChange}
                     value={getValue()}
                     {...rest}
                 >
@@ -30,7 +36,7 @@ const CustomizableInput = (
                     type={type}
                     name={name}
                     className={STYLES.customizableInput}
-                    onChange={(e) => setValue(e.target.value)}
+                    onChange={handleChange}
                     value={getValue()}
                     {...rest}
                 />
@@ -47,6 +53,7 @@ CustomizableInput.propTypes = {
     setValue: PropTypes.func,
     enabled: PropTypes.bool,
     options: PropTypes.array,
+    onEdit: PropTypes.func,
 };
 
 export default CustomizableInput;

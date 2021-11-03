@@ -147,6 +147,7 @@ const GesturesToSound = () => {
     };
 
     const showAxis = (event) => {
+        event.preventDefault();
         if (hideAxisLabel) {
             setHideAxisLabel(false);
             setButtonText("Hide Axis");
@@ -196,7 +197,6 @@ const GesturesToSound = () => {
                         width="500" height="500"
                     />
                     <div className="row" id="axisLabel" hidden={hideAxisLabel}>
-                        {/*<div className="invisible">*/}
                         <div className="col align-left">
                             low pitch
                         </div>
@@ -206,9 +206,15 @@ const GesturesToSound = () => {
                     </div>
                     <button className="btn btn-outline-primary"
                         onClick={showAxis}>{buttonText}</button>
-
                 </div>
-
+                <div className={`col-1 my-5 flex-column ${STYLES.yAxis}`} hidden={hideAxisLabel}>
+                    <div className="mb-auto">
+                        short notes
+                    </div>
+                    <div className="my-3">
+                        long notes
+                    </div>
+                </div>
                 <div className="col mt-3">
                     <p>
                         <button className="btn btn-outline-primary text-right"

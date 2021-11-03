@@ -25,6 +25,32 @@ const PolygonEditor = (
     const fileUploadRef = useRef(null);
     const svgDisplay = useRef(null);
 
+    // keyboard shortcuts
+    const keyboardShortcuts = {
+        KeyA: () => setEditorMode(EditorModes.ADD),
+        KeyE: () => setEditorMode(EditorModes.EDIT),
+        KeyD: () => setEditorMode(EditorModes.DELETE),
+    };
+
+    useEffect(() => {
+        window.addEventListener("keydown", handleKeyDown);
+        return () => window.removeEventListener("keydown", handleKeyDown);
+    });
+
+    function handleKeyDown(e) {
+        // Handle Ctrl+S
+        if (e.code === 'KeyS' && e.ctrlKey) {
+            e.preventDefault();
+            handleSubmit();
+            return;
+        }
+
+        if (keyboardShortcuts[e.code]) {
+            keyboardShortcuts[e.code]();
+        }
+    }
+
+    // editor modes and edit handling
     const EditorModes = {
         ADD: 'add',
         EDIT: 'edit',
@@ -56,6 +82,7 @@ const PolygonEditor = (
         onEdit();
     }
 
+    // file reader for upload
     const fileReader = new FileReader();
     fileReader.onloadstart = (e) => {
         setLoading(true);
@@ -101,7 +128,7 @@ const PolygonEditor = (
         setLoading(false);
     };
 
-
+    //
     const containerRef = useRef(null);
     const [internalWidth, setInternalWidth] = useState(width);
     const [internalHeight, setInternalHeight] = useState(height);
@@ -216,16 +243,19 @@ const PolygonEditor = (
             svg: "A",
             onClick: () => handleChangeEditorMode(EditorModes.ADD),
             tooltip: "Add new points. Shortcut: a",
+            disabled: editorMode === EditorModes.ADD,
         },
         {
             svg: "E",
             onClick: () => handleChangeEditorMode(EditorModes.EDIT),
             tooltip: "Edit points and lines. Shortcut: e",
+            disabled: editorMode === EditorModes.EDIT,
         },
         {
             svg: "D",
             onClick: () => handleChangeEditorMode(EditorModes.DELETE),
             tooltip: "Delete points. Shortcut: d",
+            disabled: editorMode === EditorModes.DELETE,
         },
     ];
 

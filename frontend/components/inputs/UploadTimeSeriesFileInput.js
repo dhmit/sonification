@@ -3,7 +3,6 @@ import {fetchPost} from "../../common";
 import PropTypes from "prop-types";
 import {handleSubmitFile, handleFileInput, clearFile} from "./UploadFileInput";
 
-
 const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
     const [submitted, setSubmitted] = useState({"file": false});
     const [tempFile, setTempFile] = useState(null);

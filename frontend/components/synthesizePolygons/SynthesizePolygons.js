@@ -132,7 +132,7 @@ const SynthesizePolygons = () => {
         horizontalSeparatorYPos.current = null;
     };
 
-    React.useEffect(() => {
+    useEffect(() => {
         document.addEventListener("mousemove", onMouseMove);
         document.addEventListener("mouseup", onMouseUp);
 
@@ -287,7 +287,7 @@ const SynthesizePolygons = () => {
                     <div className={STYLES.rightSubPane} ref={settingsRef}>
                         <h2>Settings</h2>
                         {userOptions.map((option) => <CustomizableInput
-                            key={option.name} {...option}/>)}
+                            key={option.name} {...option} onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}/>)}
                     </div>
                     <div className={STYLES.paneSeparatorHorizontal} onMouseDown={onMouseDownHorizontalSeparator}/>
                     <div className={STYLES.rightSubPane}>

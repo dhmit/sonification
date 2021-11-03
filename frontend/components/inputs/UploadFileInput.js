@@ -25,7 +25,7 @@ const UploadFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
     const [tempFile, setTempFile] = useState(null);
     const fileRef = useRef(null);
 
-    const submitFileToAPI = (file, id, apiEndpoint, uploadSuccessfulCallback) => {
+    const submitFileToAPI = (file) => {
         const formData = new FormData();
         formData.append("type", "file");
         formData.append("id", id);
@@ -43,7 +43,8 @@ const UploadFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
                     {tempFile &&
                     <button className="btn btn-secondary ml-1"
                         type="button"
-                        onClick={(e) => clearFile(fileRef, setTempFile, setSubmitted)} disabled={tempFile === null}
+                        onClick={() => clearFile(fileRef, setTempFile, setSubmitted)}
+                        disabled={tempFile === null}
                         data-dismiss="fileupload">Clear</button>
                     }
                 </div>

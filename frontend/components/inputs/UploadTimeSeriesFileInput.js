@@ -1,7 +1,7 @@
 import React, {useRef, useState} from "react";
 import {fetchPost} from "../../common";
 import PropTypes from "prop-types";
-import { handleSubmitFile, handleFileInput, clearFile, renderInputForm } from "./UploadFileInput";
+import {handleSubmitFile, handleFileInput, clearFile} from "./UploadFileInput";
 
 
 const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
@@ -66,11 +66,11 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
         <div key={i + key["label"]}>
             <label>{constants[i][key]["label"]}</label>
             <input className="form-control my-3" type="number"
-                    min={constants[i][key]["min"]}
-                    max={constants[i][key]["max"]}
-                    step={constants[i][key]["step"]}
-                    onChange={e => updateConstant(i, key, e.target.value)}
-                    value={constants[i][key]["value"]}
+                min={constants[i][key]["min"]}
+                max={constants[i][key]["max"]}
+                step={constants[i][key]["step"]}
+                onChange={e => updateConstant(i, key, e.target.value)}
+                value={constants[i][key]["value"]}
             />
         </div>
     );
@@ -80,11 +80,11 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
             <div className={"time-series-input"}>
                 <label>Duration of each step (sec)</label>
                 <input className="form-control my-3" type="number"
-                        min={0.1}
-                        max={10}
-                        step={.1}
-                        onChange={e => setDuration(e.target.value)}
-                       value={duration}
+                    min={0.1}
+                    max={10}
+                    step={.1}
+                    onChange={e => setDuration(e.target.value)}
+                    value={duration}
                 />
             </div>
             <div className="form-inline">
@@ -100,20 +100,21 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
             <form className="form-inline">
                 <div className="form-group">
                     <input className="form-control my-3" type="file" ref={fileRef}
-                           accept="text/csv" disabled={submitted.file}
-                           onChange={(e) => handleFileInput(e, setTempFile)}/>
+                        accept="text/csv" disabled={submitted.file}
+                        onChange={(e) => handleFileInput(e, setTempFile)}/>
                     {tempFile &&
                     <button className="btn btn-secondary ml-1"
-                            type="button"
-                            onClick={(e) => clearFile(fileRef, setTempFile, setSubmitted)} disabled={tempFile === null}
-                            data-dismiss="fileupload">Clear</button>
+                        type="button"
+                        onClick={() => clearFile(fileRef, setTempFile, setSubmitted)}
+                        disabled={tempFile === null}
+                        data-dismiss="fileupload">Clear</button>
                     }
                 </div>
                 {tempFile &&
                 <button id="upload-file" className="btn btn-primary ml-1"
-                        disabled={tempFile === null}
-                        type={"submit"}
-                        onClick={(e) => handleSubmitFile(e, setSubmitted, submitFileToAPI, tempFile)}>
+                    disabled={tempFile === null}
+                    type={"submit"}
+                    onClick={(e) => handleSubmitFile(e, setSubmitted, submitFileToAPI, tempFile)}>
                     Upload file
                 </button>
                 }

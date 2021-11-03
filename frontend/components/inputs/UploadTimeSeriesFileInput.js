@@ -1,11 +1,9 @@
-import React, {useRef, useState} from "react";
+import React, {useState} from "react";
 import {fetchPost} from "../../common";
 import PropTypes from "prop-types";
-import {handleSubmitFile, handleFileInput, clearFile} from "./UploadFileInput";
+import UploadFileInput from "./UploadFileInput";
 
-const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) => {
-    const [submitted, setSubmitted] = useState({"file": false});
-    const [tempFile, setTempFile] = useState(null);
+const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
     const [duration, setDuration] = useState(.2);
     const [constants, setConstants] = useState(
         [
@@ -13,34 +11,31 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
                 "base_frequency": {"value": 100, "label": "Base Frequency"},
                 "multiplier": {"value": 20, "label": "Multiplier"},
                 "offset": {"value": 0, "label": "Offset"},
-                "a_percentage": {"value": 0, "label": "A", "min": 0, "max": 1, "step": .1},
-                "d_percentage": {"value": 0, "label": "D", "min": 0, "max": 1, "step": .1},
-                "s_percentage": {"value": 1, "label": "S", "min": 0, "max": 1, "step": .1},
-                "r_percentage": {"value": 0, "label": "R", "min": 0, "max": 1, "step": .1},
+                "a_percentage": {"value": 0, "label": "A", "min": 0, "max": 100, "step": 1},
+                "d_percentage": {"value": 0, "label": "D", "min": 0, "max": 100, "step": 1},
+                "s_percentage": {"value": 100, "label": "S", "min": 0, "max": 100, "step": 1},
+                "r_percentage": {"value": 0, "label": "R", "min": 0, "max": 100, "step": 1},
             },
             {
                 "base_frequency": {"value": 150, "label": "Base Frequency"},
                 "multiplier": {"value": 20, "label": "Multiplier"},
                 "offset": {"value": 0, "label": "Offset"},
-                "a_percentage": {"value": 0, "label": "A", "min": 0, "max": 1, "step": .1},
-                "d_percentage": {"value": 0, "label": "D", "min": 0, "max": 1, "step": .1},
-                "s_percentage": {"value": 1, "label": "S", "min": 0, "max": 1, "step": .1},
-                "r_percentage": {"value": 0, "label": "R", "min": 0, "max": 1, "step": .1},
+                "a_percentage": {"value": 0, "label": "A", "min": 0, "max": 100, "step": 1},
+                "d_percentage": {"value": 0, "label": "D", "min": 0, "max": 100, "step": 1},
+                "s_percentage": {"value": 100, "label": "S", "min": 0, "max": 100, "step": 1},
+                "r_percentage": {"value": 0, "label": "R", "min": 0, "max": 100, "step": 1},
             },
             {
                 "base_frequency": {"value": 225, "label": "Base Frequency"},
                 "multiplier": {"value": 20, "label": "Multiplier"},
                 "offset": {"value": 0, "label": "Offset"},
-                "a_percentage": {"value": 0, "label": "A", "min": 0, "max": 1, "step": .1},
-                "d_percentage": {"value": 0, "label": "D", "min": 0, "max": 1, "step": .1},
-                "s_percentage": {"value": 1, "label": "S", "min": 0, "max": 1, "step": .1},
-                "r_percentage": {"value": 0, "label": "R", "min": 0, "max": 1, "step": .1},
+                "a_percentage": {"value": 0, "label": "A", "min": 0, "max": 100, "step": 1},
+                "d_percentage": {"value": 0, "label": "D", "min": 0, "max": 100, "step": 1},
+                "s_percentage": {"value": 100, "label": "S", "min": 0, "max": 100, "step": 1},
+                "r_percentage": {"value": 0, "label": "R", "min": 0, "max": 100, "step": 1},
             },
         ]
     );
-
-    const fileRef = useRef(null);
-
 
     const updateConstant = (col, name, val) => {
         setConstants(prevState => {
@@ -53,7 +48,6 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
     const submitFileToAPI = (file) => {
         const formData = new FormData();
         formData.append("type", "file");
-        formData.append("id", id);
         formData.append("value", file, "tempfile.csv");
         formData.append("constants", JSON.stringify(constants));
         formData.append("duration", duration.toString());
@@ -96,34 +90,11 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
                     </div>;
                 })}
             </div>
-            <form className="form-inline">
-                <div className="form-group">
-                    <input className="form-control my-3" type="file" ref={fileRef}
-                        accept="text/csv" disabled={submitted.file}
-                        onChange={(e) => handleFileInput(e, setTempFile)}/>
-                    {tempFile &&
-                    <button className="btn btn-secondary ml-1"
-                        type="button"
-                        onClick={() => clearFile(fileRef, setTempFile, setSubmitted)}
-                        disabled={tempFile === null}
-                        data-dismiss="fileupload">Clear</button>
-                    }
-                </div>
-                {tempFile &&
-                <button id="upload-file" className="btn btn-primary ml-1"
-                    disabled={tempFile === null}
-                    type={"submit"}
-                    onClick={(e) => handleSubmitFile(e, setSubmitted, submitFileToAPI, tempFile)}>
-                    Upload file
-                </button>
-                }
-            </form>
+            <UploadFileInput onSubmitFunction={submitFileToAPI} />
         </>
     );
 };
-
 UploadTimeSeriesFileInput.propTypes = {
-    id: PropTypes.number,
     uploadSuccessfulCallback: PropTypes.func,
     apiEndpoint: PropTypes.string,
 };

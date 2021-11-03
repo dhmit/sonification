@@ -27,10 +27,16 @@ const PolygonEditor = (
 
     // keyboard shortcuts
     const keyboardShortcuts = {
-        KeyA: () => setEditorMode(EditorModes.ADD),
-        KeyE: () => setEditorMode(EditorModes.EDIT),
-        KeyD: () => setEditorMode(EditorModes.DELETE),
+        'KeyA': () => setEditorMode(EditorModes.ADD),
+        'KeyE': () => setEditorMode(EditorModes.EDIT),
+        'KeyD': () => setEditorMode(EditorModes.DELETE),
+        'ArrowUp': (e) => handleMovePoint(0, -POINT_MOVEMENT_SPEED, e),
+        'ArrowLeft': (e) => handleMovePoint(-POINT_MOVEMENT_SPEED, 0, e),
+        'ArrowDown': (e) => handleMovePoint(0, POINT_MOVEMENT_SPEED, e),
+        'ArrowRight': (e) => handleMovePoint(POINT_MOVEMENT_SPEED, 0, e),
     };
+
+    const [keyboardMode, setKeyboardMode] = useState(false);
 
     useEffect(() => {
         window.addEventListener("keydown", handleKeyDown);
@@ -38,15 +44,54 @@ const PolygonEditor = (
     });
 
     function handleKeyDown(e) {
-        // Handle Ctrl+S
+        // console.log(e);
+        // handle Ctrl+S
         if (e.code === 'KeyS' && e.ctrlKey) {
             e.preventDefault();
             handleSubmit();
             return;
         }
 
+        // handle Ctrl+O
+        if (e.code === 'KeyO' && e.ctrlKey) {
+            e.preventDefault();
+            handleClickUpload();
+            return;
+        }
+
+        // handle enter/space
+        if (e.code === 'Space' || e.code === 'Enter') {
+            if (editorMode === EditorModes.EDIT) {
+                if (focusPoint !== null) {
+                    e.preventDefault();
+                    setFocusPoint(null);
+                } else if (focusLine !== null) {
+                    e.preventDefault();
+                    // TODO: split line
+                }
+            } else if (editorMode === EditorModes.ADD && cursorLocation) {
+                addPoint(cursorLocation[0], cursorLocation[1]);
+                e.preventDefault();
+            }
+            return;
+        }
+
         if (keyboardShortcuts[e.code]) {
-            keyboardShortcuts[e.code]();
+            setKeyboardMode(true);
+            keyboardShortcuts[e.code](e);
+        }
+    }
+
+    const POINT_MOVEMENT_SPEED = 5;
+    function handleMovePoint(dx, dy, event) {
+        if (editorMode === EditorModes.EDIT && focusPoint !== null) {
+            event.preventDefault();
+            const newPoints = points.map((p, i) => (
+                i === focusPoint
+                    ? [p[0] + dx, p[1] + dy]
+                    : p
+            ));
+            setPoints(newPoints);
         }
     }
 
@@ -82,13 +127,51 @@ const PolygonEditor = (
         onEdit();
     }
 
-    // file reader for upload
+    // handle setting width/height automatically
+    const containerRef = useRef(null);
+    const [internalWidth, setInternalWidth] = useState(width);
+    const [internalHeight, setInternalHeight] = useState(height);
+
+    useEffect(() => {
+        if (width === 0) {
+            setInternalWidth(containerRef.current.clientWidth);
+        } else {
+            setInternalWidth(width);
+        }
+    }, [width, outerWidth]);
+
+    useEffect(() => {
+        if (height === 0) {
+            setInternalHeight(containerRef.current.clientHeight);
+        } else {
+            setInternalHeight(height);
+        }
+    }, [height]);
+
+    // When fileDownloadUrl is set, if it is not null, download the generated file and revoke
+    // the URL to preserve resources.
+    useEffect(() => {
+        if (fileDownloadUrl) {
+            fileDownloadRef.current.click();
+            URL.revokeObjectURL(fileDownloadUrl);
+            setFileDownloadUrl(null);
+        }
+    }, [fileDownloadUrl]);
+
+    // download the polygon as csv
+    function downloadPolygon() {
+        const csvContent = points.map(e => e.join(",")).join("\n");
+        const blob = new Blob([csvContent]);
+        setFileDownloadUrl(URL.createObjectURL(blob));
+    }
+
+    // uploading a file
     const fileReader = new FileReader();
-    fileReader.onloadstart = (e) => {
+    fileReader.onloadstart = () => {
         setLoading(true);
     };
     // parse the file
-    fileReader.onloadend = (e) => {
+    fileReader.onloadend = () => {
         const content = fileReader.result;
 
         let minX = Number.MAX_VALUE;
@@ -127,45 +210,6 @@ const PolygonEditor = (
         fileUploadRef.current.value = null;
         setLoading(false);
     };
-
-    //
-    const containerRef = useRef(null);
-    const [internalWidth, setInternalWidth] = useState(width);
-    const [internalHeight, setInternalHeight] = useState(height);
-
-    useEffect(() => {
-        if (width === 0) {
-            setInternalWidth(containerRef.current.clientWidth);
-        } else {
-            setInternalWidth(width);
-        }
-    }, [width, outerWidth]);
-
-    useEffect(() => {
-        if (height === 0) {
-            setInternalHeight(containerRef.current.clientHeight);
-        } else {
-            setInternalHeight(height);
-        }
-    }, [height]);
-
-    // When fileDownloadUrl is set, if it is not null, download the generated file and revoke
-    // the URL to preserve resources.
-    useEffect(() => {
-        if (fileDownloadUrl) {
-            fileDownloadRef.current.click();
-            URL.revokeObjectURL(fileDownloadUrl);
-            setFileDownloadUrl(null);
-        }
-    }, [fileDownloadUrl]);
-
-    // download the polygon as csv
-    function downloadPolygon() {
-        const csvContent = points.map(e => e.join(",")).join("\n");
-        const blob = new Blob([csvContent]);
-        setFileDownloadUrl(URL.createObjectURL(blob));
-    }
-
     function handleClickUpload() {
         fileUploadRef.current.click();
     }
@@ -175,6 +219,8 @@ const PolygonEditor = (
         fileReader.readAsText(file);
     }
 
+
+    // mouse events
     function handleClickLine(index) {
         if (editorMode === EditorModes.EDIT) {
 
@@ -195,19 +241,24 @@ const PolygonEditor = (
         }
     }
 
+    function addPoint(x, y) {
+        setPoints([...points, [x, y]]);
+        handleEdit();
+    }
+
     // add a new point to polygon
     function handleClickSvg(e) {
         if (editorMode === EditorModes.ADD) {
             const rect = svgDisplay.current.getBoundingClientRect();
             const x = e.clientX - rect.left; // x position within the element.
             const y = e.clientY - rect.top;  // y position within the element.
-            setPoints([...points, [x, y]]);
-            handleEdit();
+            addPoint(x, y);
         }
     }
 
     // move the cursor
     function handleMoveSvg(e) {
+        setKeyboardMode(false);
         const rect = svgDisplay.current.getBoundingClientRect();
         const x = e.clientX - rect.left; // x position within the element.
         const y = e.clientY - rect.top;  // y position within the element.
@@ -226,6 +277,8 @@ const PolygonEditor = (
         setCursorLocation(null);
     }
 
+
+    // handle editor buttons
     function clearDrawing() {
         setPoints([]);
         handleEdit();
@@ -242,19 +295,19 @@ const PolygonEditor = (
         {
             svg: "A",
             onClick: () => handleChangeEditorMode(EditorModes.ADD),
-            tooltip: "Add new points. Shortcut: a",
+            tooltip: "Add new points. Shortcut: z",
             disabled: editorMode === EditorModes.ADD,
         },
         {
             svg: "E",
             onClick: () => handleChangeEditorMode(EditorModes.EDIT),
-            tooltip: "Edit points and lines. Shortcut: e",
+            tooltip: "Edit points and lines. Shortcut: x",
             disabled: editorMode === EditorModes.EDIT,
         },
         {
             svg: "D",
             onClick: () => handleChangeEditorMode(EditorModes.DELETE),
-            tooltip: "Delete points. Shortcut: d",
+            tooltip: "Delete points. Shortcut: c",
             disabled: editorMode === EditorModes.DELETE,
         },
     ];
@@ -308,7 +361,7 @@ const PolygonEditor = (
             </div>
             <svg
                 className={loading ? STYLES.svgDisplayLoading :
-                    ((editorMode === EditorModes.ADD || focusPoint !== null)
+                    ((editorMode === EditorModes.ADD || focusPoint !== null || keyboardMode)
                         ? STYLES.svgDisplayNoCursor : STYLES.svgDisplay)}
                 width={internalWidth}
                 height={internalHeight}
@@ -364,7 +417,7 @@ const PolygonEditor = (
                             cy={p[1]}
                             // r={5}
                             className={i === focusPoint
-                                ? switchEditorMode(STYLES.addPoint, STYLES.focusEditPoint, STYLES.focusDeletePoint)
+                                ? switchEditorMode(STYLES.addPoint, STYLES.focusEditPoint, STYLES.deletePoint)
                                 : switchEditorMode(STYLES.addPoint, STYLES.editPoint, STYLES.deletePoint)
                             }
                             onClick={() => handleClickPoint(i)}

@@ -86,14 +86,18 @@
     animation: spin 1s linear infinite;
 }
 
-.addPoint, .editPoint, .deletePoint, .focusAddPoint, .focusEditPoint, .focusDeletePoint {
+.addPoint, .editPoint, .deletePoint, .focusAddPoint, .focusEditPoint, .displayPoint {
     stroke: black;
     r: 6;
 }
 
-.addPoint, .editPoint, .deletePoint {
+.addPoint, .editPoint, .deletePoint, .displayPoint {
     fill: aqua;
     stroke-width: 3;
+}
+.displayPoint {
+    r: 3;
+    stroke-width: 1;
 }
 
 .editPoint:hover, .focusEditPoint {
@@ -102,7 +106,7 @@
     stroke-width: 2;
 }
 
-.deletePoint:hover, .focusDeletePoint {
+.deletePoint:hover {
     fill: #ee4f4f;
     stroke-width: 2;
 }

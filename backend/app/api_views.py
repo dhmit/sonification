@@ -147,6 +147,25 @@ def get_shape_analysis(request):
 
     return Response(res)
 
+
+@api_view(['POST'])
+def playback_demo(_request):
+    wav_files = []
+    for i in range(1, 11):
+        freq_to_generate = 100 * i
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=1
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
+
+    return Response(wav_files)
+
+
+
+
+
 ################################################################################
 # Example views
 ################################################################################

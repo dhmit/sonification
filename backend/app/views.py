@@ -77,7 +77,18 @@ def time_series(request):
         },
         'component_name': 'TimeSeries'
     }
+    return render(request, 'index.html', context)
 
+
+def playback_demo(request):
+    """ Page for demoing all of the playback options """
+
+    context = {
+        'page_metadata': {
+            'title': 'Playback Demo'
+        },
+        'component_name': 'PlaybackDemo'
+    }
     return render(request, 'index.html', context)
 
 

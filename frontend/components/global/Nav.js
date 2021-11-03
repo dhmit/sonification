@@ -9,6 +9,11 @@ const Nav = () => {
             <ul className="navbar-nav mr-auto">
                 <li className="nav-item">
                     <a className="nav-link" href="/colors/">
+                        Colors
+                    </a>
+                </li>
+                <li className="nav-item">
+                    <a className="nav-link" href="/gestures/">
                         Gestures
                     </a>
                 </li>

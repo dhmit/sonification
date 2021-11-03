@@ -151,7 +151,7 @@ const GesturesToSound = () => {
         if (hideAxisLabel) {
             setHideAxisLabel(false);
             setButtonText("Hide Axis");
-        }else{
+        } else{
             setHideAxisLabel(true);
             setButtonText("Show Axis");
         }

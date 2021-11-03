@@ -64,6 +64,7 @@ def generate_instrument(request):
 
     return Response(wav_files)
 
+
 @api_view(['POST'])
 def gesture_to_sound(request):
     """
@@ -71,21 +72,15 @@ def gesture_to_sound(request):
     based on the horizontal and vertical components of the gestures
     """
     gestures = request.data['gestures']
+    gestures_params = request.data['parameters']
     # pitch_range and duration_range are hardcoded for now
     # TODO: allow variable pitch/duration range inputs in the frontend
-    pitch_range = {
-        "low": 440,
-        "high": 880
-    }
-    duration_range = {
-        "low": 0.1,
-        "high": 2
-    }
-    audio = convert_gesture_to_audio(gestures, pitch_range, duration_range)
+    audio = convert_gesture_to_audio(gestures, gestures_params)
     res = {
         'sound': audio_samples_to_wav_base64(audio)
     }
     return Response(res)
+
 
 @api_view(['POST'])
 def generate_instrument_2d(request):
@@ -112,10 +107,10 @@ def generate_instrument_2d(request):
             note = synths.generate_sine_wave_with_envelope(
                 frequency=freq_to_generate,
                 duration=duration,
-                a_percentage=column_constant["a_percentage"]["value"],
-                d_percentage=column_constant["d_percentage"]["value"],
-                s_percentage=column_constant["s_percentage"]["value"],
-                r_percentage=column_constant["r_percentage"]["value"]
+                a_percentage=int(column_constant["a_percentage"]["value"]) / 100,
+                d_percentage=int(column_constant["d_percentage"]["value"]) / 100,
+                s_percentage=int(column_constant["s_percentage"]["value"]) / 100,
+                r_percentage=int(column_constant["r_percentage"]["value"]) / 100
             )
             if sound is None:
                 sound = note

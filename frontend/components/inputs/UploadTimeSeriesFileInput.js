@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {fetchPost} from "../../common";
 import PropTypes from "prop-types";
-import UploadFileInput from "./UploadFileInput";
+import FileInput from "./FileInput";
 
 const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
     const [duration, setDuration] = useState(.2);
@@ -54,7 +54,6 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
         fetchPost(apiEndpoint, formData, uploadSuccessfulCallback, false);
     };
 
-
     const makeControl = (i, key) => (
         <div key={i + key["label"]}>
             <label>{constants[i][key]["label"]}</label>
@@ -90,7 +89,7 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                     </div>;
                 })}
             </div>
-            <UploadFileInput onSubmitFunction={submitFileToAPI} />
+            <FileInput onSubmit={submitFileToAPI} />
         </>
     );
 };

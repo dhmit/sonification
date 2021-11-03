@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import UploadFileInput from "./inputs/UploadFileInput";
+import FileInput from "./inputs/FileInput";
 import SliderInstrument from "./instruments/SliderInstrument";
 import {fetchPost} from "../common";
 
@@ -17,8 +17,8 @@ const Home = () => {
     return (
         <>
             <h2>Welcome to our Sonification toolkit!</h2>
-            <UploadFileInput
-                onSubmitFunction={submitFileToAPI}
+            <FileInput
+                onSubmit={submitFileToAPI}
                 uploadSuccessfulCallback={setInstrumentSamples}
             />
             <SliderInstrument

@@ -42,8 +42,8 @@ const SynthesizePolygons = () => {
     const [restrictFrequency, setRestrictFrequency] = useState(false);
     const [sidesAsDuration, setSidesAsDuration] = useState(false);
     const [baseFrequency, setBaseFrequency] = useState(220);
-    const [floorFrequency, setFloorFrequency] = useState(LOW_FREQ);
-    const [ceilFrequency, setCeilFrequency] = useState(HIGH_FREQ);
+    const [floorFrequency, setFloorFrequency] = useState(220);
+    const [ceilFrequency, setCeilFrequency] = useState(440);
 
     // used for controlling overall pane
     const [leftPaneWidth, setLeftPaneWidth] = useState(null);

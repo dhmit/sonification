@@ -35,17 +35,32 @@
     border: 1px solid #8a8a8a;
 }
 
-.svgDisplay {
+.svgDisplay, .svgDisplayLoading {
     border: 1px solid black;
     cursor: none;
 }
 
 .svgDisplayLoading {
-    border: 1px solid black;
-    cursor: none;
     pointer-events: none;
     filter: grayscale(100%);
-    opacity: 0.6;
+    opacity: 1;
+}
+
+@keyframes spin {
+    from {
+        stroke-dashoffset: 0;
+    }
+    to {
+        stroke-dashoffset: 125.66;
+    }
+}
+
+.svgLoadingCircle {
+    fill: none;
+    stroke: #484848;
+    stroke-width: 3;
+    stroke-dasharray: 55 7;
+    animation: spin 1s linear infinite;
 }
 
 .point {

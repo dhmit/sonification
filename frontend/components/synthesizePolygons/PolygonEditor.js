@@ -276,6 +276,9 @@ const PolygonEditor = (
                     r={5}
                     className={STYLES.cursorPoint}
                 /> }
+
+
+                {loading && <circle cx="50%" cy="50%" r={20} className={STYLES.svgLoadingCircle}/>}
             </svg>
             <div className={STYLES.buttonRow}>
                 <button className={STYLES.editorButton}>c</button>

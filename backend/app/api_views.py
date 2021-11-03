@@ -150,6 +150,10 @@ def get_shape_analysis(request):
 
 @api_view(['POST'])
 def playback_demo(_request):
+    """
+    API endpoint for playback demo page, so generates some arbitrary samples
+    to send to the instruments on that page
+    """
     wav_files = []
     for i in range(1, 11):
         freq_to_generate = 100 * i

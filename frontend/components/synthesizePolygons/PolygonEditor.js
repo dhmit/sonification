@@ -27,9 +27,9 @@ const PolygonEditor = (
 
     // keyboard shortcuts
     const keyboardShortcuts = {
-        'KeyA': () => setEditorMode(EditorModes.ADD),
-        'KeyE': () => setEditorMode(EditorModes.EDIT),
-        'KeyD': () => setEditorMode(EditorModes.DELETE),
+        'KeyA': () => handleChangeEditorMode(EditorModes.ADD),
+        'KeyE': () => handleChangeEditorMode(EditorModes.EDIT),
+        'KeyD': () => handleChangeEditorMode(EditorModes.DELETE),
         'ArrowUp': (e) => handleMovePoint(0, -POINT_MOVEMENT_SPEED, e),
         'ArrowLeft': (e) => handleMovePoint(-POINT_MOVEMENT_SPEED, 0, e),
         'ArrowDown': (e) => handleMovePoint(0, POINT_MOVEMENT_SPEED, e),
@@ -67,11 +67,11 @@ const PolygonEditor = (
                     setFocusPoint(null);
                 } else if (focusLine !== null) {
                     e.preventDefault();
-                    // TODO: split line
+                    insertPointAtCursor(focusLine);
                 }
-            } else if (editorMode === EditorModes.ADD && cursorLocation) {
-                addPoint(cursorLocation[0], cursorLocation[1]);
+            } else if (editorMode === EditorModes.ADD) {
                 e.preventDefault();
+                addPointAtCursor();
             }
             return;
         }
@@ -219,12 +219,46 @@ const PolygonEditor = (
         fileReader.readAsText(file);
     }
 
+    // point addition / insertion
+    function insertPointAtCursor(lineIndex) {
+        if (lineIndex >= points.length) return;
+        // if (lineIndex === points.length - 1) return addPointAtCursor();
+        if (cursorLocation && cursorLocation.length === 2) {
+            const editedPoints = points.slice(0, lineIndex + 1);
+            editedPoints.push([cursorLocation[0], cursorLocation[1]]);
+            setPoints(editedPoints.concat(points.slice(lineIndex + 1, points.length)));
+
+            // change focus to new point
+            setFocusLine(null);
+            setFocusPoint(lineIndex + 1);
+            handleEdit();
+        }
+    }
+
+    function addPointAtCursor() {
+        if (cursorLocation && cursorLocation.length === 2) {
+            setPoints([...points, [cursorLocation[0], cursorLocation[1]]]);
+            handleEdit();
+        }
+    }
 
     // mouse events
     function handleClickLine(index) {
         if (editorMode === EditorModes.EDIT) {
+            insertPointAtCursor(index);
+        } else if (editorMode === EditorModes.DELETE) {
 
         }
+    }
+
+    function handleMouseEnterLine(index) {
+        if (focusPoint === null && editorMode !== EditorModes.ADD) {
+            setFocusLine(index);
+        }
+    }
+
+    function handleMouseLeaveLine() {
+        setFocusLine(null);
     }
 
     function handleClickPoint(index) {
@@ -233,6 +267,7 @@ const PolygonEditor = (
                 setFocusPoint(null);
             } else {
                 setFocusPoint(index);
+                setFocusLine(null);
             }
         } else if (editorMode === EditorModes.DELETE) {
             const editedPoints = points.filter((v, i) => i !== index);
@@ -241,18 +276,10 @@ const PolygonEditor = (
         }
     }
 
-    function addPoint(x, y) {
-        setPoints([...points, [x, y]]);
-        handleEdit();
-    }
-
     // add a new point to polygon
     function handleClickSvg(e) {
         if (editorMode === EditorModes.ADD) {
-            const rect = svgDisplay.current.getBoundingClientRect();
-            const x = e.clientX - rect.left; // x position within the element.
-            const y = e.clientY - rect.top;  // y position within the element.
-            addPoint(x, y);
+            addPointAtCursor();
         }
     }
 
@@ -276,7 +303,6 @@ const PolygonEditor = (
     function handleLeaveSvg() {
         setCursorLocation(null);
     }
-
 
     // handle editor buttons
     function clearDrawing() {
@@ -391,14 +417,25 @@ const PolygonEditor = (
                     />
                 </>
                 }
+                {cursorLocation && (editorMode === EditorModes.ADD || (editorMode === EditorModes.EDIT && focusLine !== null)) &&
+                <circle
+                    key="point-cursor"
+                    cx={cursorLocation[0]}
+                    cy={cursorLocation[1]}
+                    r={5}
+                    className={STYLES.focusAddPoint}
+                /> }
                 {(!cursorLocation || editorMode !== EditorModes.ADD) && points.length >= 3 &&
                 <line
-                    key="line-0"
+                    key={`line-${points.length-1}`}
                     x1={points[points.length - 1][0]}
                     y1={points[points.length - 1][1]}
                     x2={points[0][0]}
                     y2={points[0][1]}
-                    className={STYLES.line}
+                    className={focusLine === points.length - 1 ? STYLES.editLine : STYLES.line}
+                    onMouseEnter={() => handleMouseEnterLine(points.length - 1)}
+                    onMouseLeave={handleMouseLeaveLine}
+                    onClick={() => handleClickLine(points.length - 1)}
                 />}
                 {points.map((p, i) => (
                     <React.Fragment key={`fragment-${i}`}>
@@ -409,7 +446,10 @@ const PolygonEditor = (
                             y1={points[i][1]}
                             x2={points[i + 1][0]}
                             y2={points[i + 1][1]}
-                            className={STYLES.line}
+                            className={focusLine === i ? STYLES.editLine : STYLES.line}
+                            onMouseEnter={() => handleMouseEnterLine(i)}
+                            onMouseLeave={handleMouseLeaveLine}
+                            onClick={() => handleClickLine(i)}
                         />}
                         <circle
                             key={`point-${i}`}
@@ -424,14 +464,6 @@ const PolygonEditor = (
                         />
                     </React.Fragment>
                 ))}
-                {cursorLocation && editorMode === EditorModes.ADD &&
-                <circle
-                    key="point-cursor"
-                    cx={cursorLocation[0]}
-                    cy={cursorLocation[1]}
-                    r={5}
-                    className={STYLES.focusAddPoint}
-                /> }
                 {loading && <circle cx="50%" cy="50%" r={20} className={STYLES.svgLoadingCircle}/>}
             </svg>
             <div className={STYLES.buttonRow}>

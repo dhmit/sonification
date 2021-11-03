@@ -88,7 +88,7 @@
 
 .addPoint, .editPoint, .deletePoint, .focusAddPoint, .focusEditPoint, .displayPoint {
     stroke: black;
-    r: 6;
+    r: 7;
 }
 
 .addPoint, .editPoint, .deletePoint, .displayPoint {
@@ -119,14 +119,20 @@
 
 .line {
     stroke: black;
-    stroke-width: 2;
+    stroke-width: 4;
+}
+
+.editLine {
+    stroke: aqua;
+    stroke-width: 4;
 }
 
 .playedLine {
     stroke: #f50808;
-    stroke-width: 3;
+    stroke-width: 5;
 }
 
 .tempLine {
     stroke: #8a8a8a;
+    stroke-width: 2;
 }

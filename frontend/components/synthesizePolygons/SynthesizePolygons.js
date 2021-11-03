@@ -149,14 +149,12 @@ const SynthesizePolygons = () => {
             }
             if (data["timestamps"]) {
                 setTimestamps(data["timestamps"]);
-                console.log(data["timestamps"]);
             }
         }
     }, [data]);
 
     useEffect(() => {
         if (data && sound) {
-            console.log("updated sound");
             audioRef.current.load();
         }
     }, [sound]);
@@ -171,7 +169,7 @@ const SynthesizePolygons = () => {
         const obj = {};
         userOptions.forEach((option) => {
             if (typeof option.enabled === "undefined" || option.enabled) {
-                console.log(`${option.name}: ${option.getValue().toString()}`);
+                // console.log(`${option.name}: ${option.getValue().toString()}`);
                 obj[option.name] = option.getValue();
             }
         });

@@ -59,8 +59,7 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
                         key={`point-${i}`}
                         cx={p[0]}
                         cy={p[1]}
-                        r={5}
-                        className={STYLES.point}
+                        className={STYLES.displayPoint}
                     />
                 </React.Fragment>
             ))}

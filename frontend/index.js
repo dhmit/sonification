@@ -10,8 +10,10 @@ import ErrorNotFoundComponent from "./components/global/ErrorNotFoundComponent";
 import ExampleId from "./components/global/ExampleId";
 import SummerPrototypes from "./components/summerPrototypes/SummerPrototypes";
 import Home from "./components/Home";
+import TextShapeAnalysis from "./components/textShapeToSound/TextShapeAnalysis";
 import GesturesToSound from "./components/gestureToSound/GesturesToSound";
 import SynthesizePolygons from './components/synthesizePolygons/SynthesizePolygons';
+import TimeSeries from "./components/timeSeries/TimeSeries";
 import BasePage from "./components/color_encoding_to_sound/BasePage";
 
 // Register each new view component here
@@ -20,8 +22,10 @@ const COMPONENTS = {
     ExampleId,
     Home,
     SummerPrototypes,
+    TextShapeAnalysis,
     GesturesToSound,
     SynthesizePolygons,
+    TimeSeries,
     BasePage,
 };
 

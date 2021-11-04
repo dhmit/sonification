@@ -165,6 +165,7 @@ const PolygonEditor = (
 
     // download the polygon as csv
     function handleClickDownload() {
+        if (points.length === 0) return;
         const csvContent = points.map(e => e.join(",")).join("\n");
         const blob = new Blob([csvContent]);
         setFileDownloadUrl(URL.createObjectURL(blob));
@@ -314,6 +315,7 @@ const PolygonEditor = (
     }
 
     function handleSubmit() {
+        if (points.length < 3) return;
         setLoading(true);
         onSubmit(points).then(() => {
             setLoading(false);
@@ -358,7 +360,7 @@ const PolygonEditor = (
                 svg: "C",
                 onClick: () => handleClearDrawing(),
                 tooltip: "Clear all points. Shortcut: c",
-                disabled: !points || points.length === 0,
+                disabled: false,
             },
         ],
         [
@@ -493,12 +495,16 @@ const PolygonEditor = (
                 {editorIconButtonGroups.map((buttonGroup, bgi) => (
                     <div key={`button-group-${bgi}`} className={STYLES.buttonGroup}>
                         {buttonGroup.map((button, i) => (
-                            <button className={STYLES.editorButton} {...button}
-                                    key={`editor-icon-${bgi}-${i}`}>
+                            <button
+                                className={STYLES.editorButton + ' ' + STYLES.tooltipContainer}
+                                {...button}
+                                key={`editor-icon-${bgi}-${i}`}
+                            >
                                 {button.svg}
-                                <span className={button.tooltipLeft ?
-                                    STYLES.editorTooltipLeft:
-                                    STYLES.editorTooltip}>
+                                <span className={button.tooltipLeft
+                                    ? STYLES.editorTooltipLeft
+                                    : STYLES.editorTooltip}
+                                >
                                     {button.tooltip}
                                 </span>
                             </button>

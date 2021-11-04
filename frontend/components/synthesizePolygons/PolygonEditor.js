@@ -58,6 +58,7 @@ const PolygonEditor = (
             return;
         }
 
+        // handle Ctrl+D
         if (e.code === 'KeyD' && e.ctrlKey) {
             e.preventDefault();
             handleClickDownload();
@@ -319,72 +320,61 @@ const PolygonEditor = (
         });
     }
 
-    const editorIconButtons = [
-        {
-            svg: "A",
-            onClick: () => handleChangeEditorMode(EditorModes.ADD),
-            tooltip: "Add new points. Shortcut: a",
-            disabled: editorMode === EditorModes.ADD,
-        },
-        {
-            svg: "E",
-            onClick: () => handleChangeEditorMode(EditorModes.EDIT),
-            tooltip: "Edit points and lines. Shortcut: e",
-            disabled: editorMode === EditorModes.EDIT,
-        },
-        {
-            svg: "D",
-            onClick: () => handleChangeEditorMode(EditorModes.DELETE),
-            tooltip: "Delete points. Shortcut: d",
-            disabled: editorMode === EditorModes.DELETE,
-        },
-        {
-            svg: "C",
-            onClick: handleClearDrawing,
-            tooltip: "Clear all points. Shortcut: c",
-            disabled: !points || points.length === 0,
-        }
+    const editorIconButtonGroups = [
+        [
+            {
+                svg: "U",
+                onClick: () => handleClickUpload(),
+                tooltip: "Upload polygon. Shortcut: Ctrl+O",
+                disabled: false,
+            },
+            {
+                svg: "D",
+                onClick: () => handleClickDownload(),
+                tooltip: "Download polygon. Shortcut: Ctrl+D",
+                disabled: points.length === 0,
+            },
+        ],
+        [
+            {
+                svg: "A",
+                onClick: () => handleChangeEditorMode(EditorModes.ADD),
+                tooltip: "Add new points. Shortcut: a",
+                disabled: editorMode === EditorModes.ADD,
+            },
+            {
+                svg: "E",
+                onClick: () => handleChangeEditorMode(EditorModes.EDIT),
+                tooltip: "Edit points and lines. Shortcut: e",
+                disabled: editorMode === EditorModes.EDIT,
+            },
+            {
+                svg: "D",
+                onClick: () => handleChangeEditorMode(EditorModes.DELETE),
+                tooltip: "Delete points. Shortcut: d",
+                disabled: editorMode === EditorModes.DELETE,
+            },
+            {
+                svg: "C",
+                onClick: () => handleClearDrawing(),
+                tooltip: "Clear all points. Shortcut: c",
+                disabled: !points || points.length === 0,
+            },
+        ],
+        [
+            {
+                svg: "S",
+                onClick: () => handleSubmit(),
+                tooltip: "Submit polygon. Shortcut: Ctrl+S",
+                disabled: points.length < 3,
+                tooltipLeft: true,
+            },
+        ],
     ];
 
     return (
         <div className={STYLES.editorContainer} ref={containerRef}>
             <div className={STYLES.buttonRow}>
-                <button
-                    className={STYLES.editorButton}
-                    onClick={handleClickDownload}
-                    disabled={points.length === 0}
-                >
-                    Download
-                </button>
-                <button
-                    className={STYLES.editorButton}
-                    onClick={handleClickUpload}
-                >
-                    Upload
-                </button>
-                {showSubmit &&
-                <button
-                    className={STYLES.editorButton}
-                    onClick={handleSubmit}
-                    disabled={points.length < 3}
-                >
-                    Submit
-                </button>}
-                <a
-                    hidden
-                    style={{display: "hidden"}}
-                    download="points.csv"
-                    ref={fileDownloadRef}
-                    href={fileDownloadUrl}
-                />
-                <input
-                    hidden
-                    style={{display: "hidden"}}
-                    type="file"
-                    ref={fileUploadRef}
-                    accept=".txt,.csv"
-                    onChange={uploadPolygon}
-                />
             </div>
             <svg
                 className={loading ? STYLES.svgDisplayLoading :
@@ -500,13 +490,37 @@ const PolygonEditor = (
                 {loading && <circle cx="50%" cy="50%" r={20} className={STYLES.svgLoadingCircle}/>}
             </svg>
             <div className={STYLES.buttonRow}>
-                {editorIconButtons.map((button, i) => (
-                    <button className={STYLES.editorButton} {...button} key={`editor-icon-${i}`}>
-                        {button.svg}
-                        <span className={STYLES.editorTooltip}>{button.tooltip}</span>
-                    </button>
+                {editorIconButtonGroups.map((buttonGroup, bgi) => (
+                    <div key={`button-group-${bgi}`} className={STYLES.buttonGroup}>
+                        {buttonGroup.map((button, i) => (
+                            <button className={STYLES.editorButton} {...button}
+                                    key={`editor-icon-${bgi}-${i}`}>
+                                {button.svg}
+                                <span className={button.tooltipLeft ?
+                                    STYLES.editorTooltipLeft:
+                                    STYLES.editorTooltip}>
+                                    {button.tooltip}
+                                </span>
+                            </button>
+                        ))}
+                    </div>
                 ))}
             </div>
+            <a
+                hidden
+                style={{display: "hidden"}}
+                download="points.csv"
+                ref={fileDownloadRef}
+                href={fileDownloadUrl}
+            />
+            <input
+                hidden
+                style={{display: "hidden"}}
+                type="file"
+                ref={fileUploadRef}
+                accept=".txt,.csv"
+                onChange={uploadPolygon}
+            />
         </div>
 
     );

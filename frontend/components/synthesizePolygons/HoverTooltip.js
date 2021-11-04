@@ -2,11 +2,11 @@ import React from "react";
 import STYLES from "./PolygonEditor.module.scss";
 import PropTypes from "prop-types";
 
-const HoverTooltip = ({tooltip, tooltipLeft}) => {
+const HoverTooltip = ({tooltip=""}) => {
     return (
         <div className={STYLES.tooltipDiv + ' ' + STYLES.tooltipContainer}>
             <div>?</div>
-            <span className={tooltipLeft ? STYLES.editorTooltipLeft : STYLES.editorTooltip}>
+            <span className={STYLES.editorTooltipRight}>
                 {tooltip}
             </span>
         </div>
@@ -15,7 +15,6 @@ const HoverTooltip = ({tooltip, tooltipLeft}) => {
 
 HoverTooltip.propTypes = {
     tooltip: PropTypes.string,
-    tooltipLeft: PropTypes.bool,
 };
 
 export default HoverTooltip;

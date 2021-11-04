@@ -1,10 +1,10 @@
 .tooltipContainer {
-    .editorTooltip, .editorTooltipLeft {
+    position: relative;
+    .editorTooltip, .editorTooltipLeft, .editorTooltipRight {
         visibility: hidden;
 
         // Position the tooltip
         position: absolute;
-        bottom: 110%;
         z-index: 1;
         width: 100px;
         padding: 2px;
@@ -14,17 +14,25 @@
         border-style: solid;
         border-color: black;
         text-align: center;
+
+        line-height: 1;
     }
     .editorTooltip {
+        bottom: 110%;
         left: 0;
     }
     .editorTooltipLeft {
+        bottom: 110%;
         right: 0;
+    }
+    .editorTooltipRight {
+        left: 120%;
+        top: 0;
     }
 }
 
 .tooltipContainer:hover, .tooltipDiv:hover {
-    .editorTooltip, .editorTooltipLeft {
+    .editorTooltip, .editorTooltipLeft, .editorTooltipRight {
         visibility: visible;
     }
 }
@@ -39,10 +47,9 @@
     width: $size;
     height: $size;
 
-    font-size: 8pt;
-    font-weight: bolder;
-
     div {
+        font-size: 8pt;
+        font-weight: bolder;
         display: flex;
         height: 100%;
         width: 100%;
@@ -88,7 +95,6 @@
     display: inline-block;
     margin: 5px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-    position: relative;
 }
 
 .editorButton:hover {

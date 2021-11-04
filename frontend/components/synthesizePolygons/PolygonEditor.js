@@ -494,18 +494,18 @@ const PolygonEditor = (
             <div className={STYLES.buttonRow}>
                 {editorIconButtonGroups.map((buttonGroup, bgi) => (
                     <div key={`button-group-${bgi}`} className={STYLES.buttonGroup}>
-                        {buttonGroup.map((button, i) => (
+                        {buttonGroup.map(({svg, tooltip, tooltipLeft, ...button}, i) => (
                             <button
                                 className={STYLES.editorButton + ' ' + STYLES.tooltipContainer}
                                 {...button}
                                 key={`editor-icon-${bgi}-${i}`}
                             >
-                                {button.svg}
-                                <span className={button.tooltipLeft
+                                {svg}
+                                <span className={tooltipLeft
                                     ? STYLES.editorTooltipLeft
                                     : STYLES.editorTooltip}
                                 >
-                                    {button.tooltip}
+                                    {tooltip}
                                 </span>
                             </button>
                         ))}

@@ -9,6 +9,7 @@ const API_ENDPOINT = "/api/synthesize_polygon/";
 const LOW_FREQ = 20;
 const HIGH_FREQ = 10000;
 
+// TODO: add error reporting for file upload, backend stuff, etc
 const SynthesizePolygons = () => {
     // results
     const [data, setData] = useState(null);

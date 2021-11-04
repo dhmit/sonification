@@ -10,6 +10,12 @@
 .buttonRow {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+}
+
+.buttonGroup {
+    display: flex;
+    flex-direction: row;
 }
 
 .editorButton {
@@ -24,15 +30,15 @@
     margin: 5px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
     position: relative;
-    .editorTooltip {
+    .editorTooltip, .editorTooltipLeft {
         visibility: hidden;
 
         // Position the tooltip
         position: absolute;
         bottom: 110%;
-        left: 0;
         z-index: 1;
         width: 100px;
+        padding: 2px;
 
         background-color: #d7d7d7;
         color: #000000;
@@ -40,12 +46,18 @@
         border-color: black;
         text-align: center;
     }
+    .editorTooltip {
+        left: 0;
+    }
+    .editorTooltipLeft {
+        right: 0;
+    }
 }
 
 .editorButton:hover {
     background-color: #0069d9;
     border-color: #0062cc;
-    .editorTooltip {
+    .editorTooltip, .editorTooltipLeft {
         visibility: visible;
     }
 }

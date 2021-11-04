@@ -7,7 +7,6 @@ import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
-from app.data_processing import csv_files as csv_processing
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 
 from app.synthesize_polygons.synthesize_polygon import synthesize_polygon
@@ -47,12 +46,12 @@ def convert_data(data):
     }
 
     converted_data = {}
-    for float_val in float_values:
-        if float_val in data:
-            converted_data[float_values[float_val]] = float(data[float_val])
-    for bool_val in bool_values:
-        if bool_val in data:
-            converted_data[bool_values[bool_val]] = str(data[bool_val]).lower() == 'true'
+    for old_name, new_name in float_values.items():
+        if old_name in data:
+            converted_data[new_name] = float(data[old_name])
+    for old_name, new_name in bool_values.items():
+        if old_name in data:
+            converted_data[new_name] = str(data[old_name]).lower() == 'true'
     if 'points' in data:
         converted_data['points'] = [tuple(map(float, p)) for p in data['points']]
 

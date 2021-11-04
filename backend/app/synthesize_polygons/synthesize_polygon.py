@@ -44,7 +44,10 @@ def angles_of_polygon(points):
     angles = []
 
     for i in range(len(closed_points) - 1):
-        arr = [closed_points[i + 1][0] - closed_points[i][0], closed_points[i + 1][1] - closed_points[i][1]]
+        arr = [
+            closed_points[i + 1][0] - closed_points[i][0],
+            closed_points[i + 1][1] - closed_points[i][1]
+        ]
         vectors.append(np.array(arr))
 
     vectors.append(vectors[0])  # Polygon needs to be closed shape.

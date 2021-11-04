@@ -194,6 +194,7 @@ const SynthesizePolygons = () => {
             display: "Use side lengths as:",
             getValue: () => sidesAsDuration,
             setValue: (v) => setSidesAsDuration(v === "true"),
+            tooltip: "How to interpret side lengths of the polygon.",
             options: [
                 {
                     name: "false",
@@ -211,6 +212,7 @@ const SynthesizePolygons = () => {
             display: "Note length (seconds):",
             getValue: () => noteLength,
             setValue: setNoteLength,
+            tooltip: "Duration of each note.",
         },
         {
             type: "number",
@@ -219,6 +221,7 @@ const SynthesizePolygons = () => {
             getValue: () => noteDelay,
             setValue: setNoteDelay,
             enabled: !sidesAsDuration,
+            tooltip: "Delay between each note. Changing this can allow for note overlap.",
         },
         {
             type: "number",
@@ -229,6 +232,7 @@ const SynthesizePolygons = () => {
             onBlur: () => capFrequency(baseFrequency, setBaseFrequency),
             min: LOW_FREQ,
             max: HIGH_FREQ,
+            tooltip: "The frequency of the first note.",
         },
         {
             type: "checkbox",
@@ -236,6 +240,7 @@ const SynthesizePolygons = () => {
             display: "Restrict frequencies:",
             getValue: () => restrictFrequency,
             setValue: () => setRestrictFrequency(!restrictFrequency),
+            tooltip: "Whether to cap the frequencies of notes.",
         },
         {
             type: "number",
@@ -247,6 +252,7 @@ const SynthesizePolygons = () => {
             min: LOW_FREQ,
             max: HIGH_FREQ,
             enabled: restrictFrequency,
+            tooltip: "Lowest allowed frequency.",
         },
         {
             type: "number",
@@ -258,6 +264,7 @@ const SynthesizePolygons = () => {
             min: LOW_FREQ,
             max: HIGH_FREQ,
             enabled: restrictFrequency,
+            tooltip: "Highest allowed frequency.",
         },
     ];
 
@@ -280,14 +287,23 @@ const SynthesizePolygons = () => {
                         onSubmit={submitPolygon}
                     />
                 </div>
-                <div className={STYLES.paneSeparatorVertical} onMouseDown={onMouseDownVerticalSeparator}/>
+                <div className={STYLES.paneSeparatorVertical} onMouseDown={onMouseDownVerticalSeparator}>
+                    <div className={STYLES.triangleLeft}/>
+                    <div className={STYLES.triangleRight}/>
+                </div>
                 <div className={STYLES.rightPane} ref={rightPaneRef}>
                     <div className={STYLES.rightSubPane} ref={settingsRef}>
-                        <h2>Settings</h2>
+                        <h2>Audio Settings</h2>
                         {userOptions.map((option) => <CustomizableInput
-                            key={option.name} {...option} onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}/>)}
+                            key={option.name}
+                            {...option}
+                            onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
+                        />)}
                     </div>
-                    <div className={STYLES.paneSeparatorHorizontal} onMouseDown={onMouseDownHorizontalSeparator}/>
+                    <div className={STYLES.paneSeparatorHorizontal} onMouseDown={onMouseDownHorizontalSeparator}>
+                        <div className={STYLES.triangleTop}/>
+                        <div className={STYLES.triangleBottom}/>
+                    </div>
                     <div className={STYLES.rightSubPane}>
                         <h2 style={{marginBottom: 0}}>Results</h2>
                         {/*Highly dependent on CSS for animation*/}

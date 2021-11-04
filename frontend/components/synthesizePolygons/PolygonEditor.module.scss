@@ -1,3 +1,69 @@
+.tooltipContainer {
+    position: relative;
+    .editorTooltip, .editorTooltipLeft, .editorTooltipRight {
+        visibility: hidden;
+
+        // Position the tooltip
+        position: absolute;
+        z-index: 1;
+        width: 100px;
+        padding: 2px;
+
+        background-color: #d7d7d7;
+        color: #000000;
+        border-style: solid;
+        border-color: black;
+        text-align: center;
+
+        line-height: 1;
+    }
+    .editorTooltip {
+        bottom: 110%;
+        left: 0;
+    }
+    .editorTooltipLeft {
+        bottom: 110%;
+        right: 0;
+    }
+    .editorTooltipRight {
+        left: 120%;
+        top: 0;
+    }
+}
+
+.tooltipContainer:hover, .tooltipDiv:hover {
+    .editorTooltip, .editorTooltipLeft, .editorTooltipRight {
+        visibility: visible;
+    }
+}
+
+.tooltipDiv {
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 50%;
+
+    $size: 15px;
+    width: $size;
+    height: $size;
+
+    div {
+        font-size: 8pt;
+        font-weight: bolder;
+        display: flex;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    margin: 0px 1px;
+
+    display: inline-block;
+
+    background-color: #d7d7d7;
+}
+
 .editorContainer {
     display: flex;
     flex-direction: column;
@@ -29,37 +95,11 @@
     display: inline-block;
     margin: 5px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
-    position: relative;
-    .editorTooltip, .editorTooltipLeft {
-        visibility: hidden;
-
-        // Position the tooltip
-        position: absolute;
-        bottom: 110%;
-        z-index: 1;
-        width: 100px;
-        padding: 2px;
-
-        background-color: #d7d7d7;
-        color: #000000;
-        border-style: solid;
-        border-color: black;
-        text-align: center;
-    }
-    .editorTooltip {
-        left: 0;
-    }
-    .editorTooltipLeft {
-        right: 0;
-    }
 }
 
 .editorButton:hover {
     background-color: #0069d9;
     border-color: #0062cc;
-    .editorTooltip, .editorTooltipLeft {
-        visibility: visible;
-    }
 }
 
 .editorButton:disabled {

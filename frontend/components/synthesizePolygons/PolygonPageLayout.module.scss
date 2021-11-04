@@ -10,18 +10,55 @@
     border-width: 2px;
 }
 
+$separator-color: #444444;
 .paneSeparatorVertical, .paneSeparatorHorizontal {
-    border: 3px solid #444444;
-    background-color: #444444;
+    border: 3px solid $separator-color;
+    background-color: $separator-color;
     cursor: col-resize;
+    position: relative;
 }
 
+.triangleLeft, .triangleRight, .triangleTop, .triangleBottom {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+}
+
+$tri-size: 8px;
 .paneSeparatorVertical {
     cursor: col-resize;
+    .triangleLeft, .triangleRight {
+        top: 40%;
+    }
+    .triangleLeft {
+        right: 100%;
+        border-width: $tri-size $tri-size $tri-size 0px;
+        border-color: transparent $separator-color transparent transparent;
+    }
+    .triangleRight {
+        left: 100%;
+        border-width: $tri-size 0px $tri-size $tri-size;
+        border-color: transparent transparent transparent $separator-color;
+    }
 }
 
 .paneSeparatorHorizontal {
     cursor: row-resize;
+
+    .triangleTop, .triangleBottom {
+        left: 50%;
+    }
+    .triangleTop {
+        bottom: 100%;
+        border-width: 0px $tri-size $tri-size $tri-size;
+        border-color: transparent transparent $separator-color transparent ;
+    }
+    .triangleBottom {
+        top: 100%;
+        border-width: $tri-size $tri-size 0px $tri-size;
+        border-color: $separator-color transparent transparent transparent;
+    }
 }
 
 .leftPane, .rightPane {

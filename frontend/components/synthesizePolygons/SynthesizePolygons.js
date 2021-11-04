@@ -287,7 +287,10 @@ const SynthesizePolygons = () => {
                         onSubmit={submitPolygon}
                     />
                 </div>
-                <div className={STYLES.paneSeparatorVertical} onMouseDown={onMouseDownVerticalSeparator}/>
+                <div className={STYLES.paneSeparatorVertical} onMouseDown={onMouseDownVerticalSeparator}>
+                    <div className={STYLES.triangleLeft}/>
+                    <div className={STYLES.triangleRight}/>
+                </div>
                 <div className={STYLES.rightPane} ref={rightPaneRef}>
                     <div className={STYLES.rightSubPane} ref={settingsRef}>
                         <h2>Audio Settings</h2>
@@ -297,7 +300,10 @@ const SynthesizePolygons = () => {
                             onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
                         />)}
                     </div>
-                    <div className={STYLES.paneSeparatorHorizontal} onMouseDown={onMouseDownHorizontalSeparator}/>
+                    <div className={STYLES.paneSeparatorHorizontal} onMouseDown={onMouseDownHorizontalSeparator}>
+                        <div className={STYLES.triangleTop}/>
+                        <div className={STYLES.triangleBottom}/>
+                    </div>
                     <div className={STYLES.rightSubPane}>
                         <h2 style={{marginBottom: 0}}>Results</h2>
                         {/*Highly dependent on CSS for animation*/}

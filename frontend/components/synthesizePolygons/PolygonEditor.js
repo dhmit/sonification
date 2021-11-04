@@ -7,7 +7,6 @@ import MoveIcon from "../../images/MoveIcon.svg";
 import DownloadIcon from "../../images/DownloadIcon.svg";
 import UploadIcon from "../../images/UploadIcon.svg";
 import TrashIcon from "../../images/TrashIcon.svg";
-// import DH_LOGO from "../../images/dh_logo.svg";
 
 /**
  * A simple polygon editor with specified width and height. A custom callback onSubmit can be

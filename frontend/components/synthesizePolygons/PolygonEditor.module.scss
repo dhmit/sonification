@@ -95,14 +95,16 @@
     fill: aqua;
     stroke-width: 3;
 }
+
 .displayPoint {
-    r: 3;
-    stroke-width: 1;
+    r: 5;
+    stroke-width: 2;
 }
 
+$edit-color: #ffff88;
 .editPoint:hover, .focusEditPoint {
     //stroke: #8a8a8a;
-    fill: #ffff88;
+    fill: $edit-color;
     stroke-width: 2;
 }
 
@@ -123,7 +125,12 @@
 }
 
 .editLine {
-    stroke: aqua;
+    stroke: black;
+    stroke-width: 8;
+}
+
+.editLineInner {
+    stroke: $edit-color;
     stroke-width: 4;
 }
 

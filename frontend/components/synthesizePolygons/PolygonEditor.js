@@ -36,8 +36,6 @@ const PolygonEditor = (
         'ArrowRight': (e) => handleMovePoint(POINT_MOVEMENT_SPEED, 0, e),
     };
 
-    const [keyboardMode, setKeyboardMode] = useState(false);
-
     useEffect(() => {
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
@@ -77,7 +75,6 @@ const PolygonEditor = (
         }
 
         if (keyboardShortcuts[e.code]) {
-            setKeyboardMode(true);
             keyboardShortcuts[e.code](e);
         }
     }
@@ -286,7 +283,6 @@ const PolygonEditor = (
 
     // move the cursor
     function handleMoveSvg(e) {
-        setKeyboardMode(false);
         const rect = svgDisplay.current.getBoundingClientRect();
         const x = e.clientX - rect.left; // x position within the element.
         const y = e.clientY - rect.top;  // y position within the element.
@@ -388,7 +384,7 @@ const PolygonEditor = (
             </div>
             <svg
                 className={loading ? STYLES.svgDisplayLoading :
-                    ((editorMode === EditorModes.ADD || focusPoint !== null || keyboardMode)
+                    ((editorMode === EditorModes.ADD || focusPoint !== null)
                         ? STYLES.svgDisplayNoCursor : STYLES.svgDisplay)}
                 width={internalWidth}
                 height={internalHeight}
@@ -419,31 +415,63 @@ const PolygonEditor = (
                 </>
                 }
                 {(!cursorLocation || editorMode !== EditorModes.ADD) && points.length >= 3 &&
-                <line
-                    key={`line-${points.length-1}`}
-                    x1={points[points.length - 1][0]}
-                    y1={points[points.length - 1][1]}
-                    x2={points[0][0]}
-                    y2={points[0][1]}
-                    className={focusLine === points.length - 1 ? STYLES.editLine : STYLES.line}
-                    onMouseEnter={() => handleMouseEnterLine(points.length - 1)}
-                    onMouseLeave={handleMouseLeaveLine}
-                    onClick={() => handleClickLine(points.length - 1)}
-                />}
+                    <>
+                        <line
+                            key={`line-${points.length-1}`}
+                            x1={points[points.length - 1][0]}
+                            y1={points[points.length - 1][1]}
+                            x2={points[0][0]}
+                            y2={points[0][1]}
+                            className={focusLine === points.length - 1 ? STYLES.editLine : STYLES.line}
+                            onMouseEnter={() => handleMouseEnterLine(points.length - 1)}
+                            onMouseLeave={handleMouseLeaveLine}
+                            onClick={() => handleClickLine(points.length - 1)}
+                        />
+                        {focusLine === points.length - 1 &&
+                            <line
+                                key={`internal-line-${points.length-1}`}
+                                x1={points[points.length - 1][0]}
+                                y1={points[points.length - 1][1]}
+                                x2={points[0][0]}
+                                y2={points[0][1]}
+                                className={STYLES.editLineInner}
+                                onMouseEnter={() => handleMouseEnterLine(points.length - 1)}
+                                onMouseLeave={handleMouseLeaveLine}
+                                onClick={() => handleClickLine(points.length - 1)}
+                            />
+                        }
+                    </>
+                }
                 {points.map((p, i) => (
                     <React.Fragment key={`fragment-${i}`}>
                         {i < points.length - 1 &&
-                        <line
-                            key={`line-${i}`}
-                            x1={points[i][0]}
-                            y1={points[i][1]}
-                            x2={points[i + 1][0]}
-                            y2={points[i + 1][1]}
-                            className={focusLine === i ? STYLES.editLine : STYLES.line}
-                            onMouseEnter={() => handleMouseEnterLine(i)}
-                            onMouseLeave={handleMouseLeaveLine}
-                            onClick={() => handleClickLine(i)}
-                        />}
+                            <>
+                                <line
+                                    key={`line-${i}`}
+                                    x1={points[i][0]}
+                                    y1={points[i][1]}
+                                    x2={points[i + 1][0]}
+                                    y2={points[i + 1][1]}
+                                    className={focusLine === i ? STYLES.editLine : STYLES.line}
+                                    onMouseEnter={() => handleMouseEnterLine(i)}
+                                    onMouseLeave={handleMouseLeaveLine}
+                                    onClick={() => handleClickLine(i)}
+                                />
+                                {focusLine === i &&
+                                    <line
+                                        key={`internal-line-${i}`}
+                                        x1={points[i][0]}
+                                        y1={points[i][1]}
+                                        x2={points[i + 1][0]}
+                                        y2={points[i + 1][1]}
+                                        className={STYLES.editLineInner}
+                                        onMouseEnter={() => handleMouseEnterLine(i)}
+                                        onMouseLeave={handleMouseLeaveLine}
+                                        onClick={() => handleClickLine(i)}
+                                    />
+                                }
+                            </>
+                        }
                         <circle
                             key={`point-${i}`}
                             cx={p[0]}

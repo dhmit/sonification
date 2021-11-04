@@ -30,6 +30,7 @@ const PolygonEditor = (
         'KeyA': () => handleChangeEditorMode(EditorModes.ADD),
         'KeyE': () => handleChangeEditorMode(EditorModes.EDIT),
         'KeyD': () => handleChangeEditorMode(EditorModes.DELETE),
+        'KeyC': () => handleClearDrawing(),
         'ArrowUp': (e) => handleMovePoint(0, -POINT_MOVEMENT_SPEED, e),
         'ArrowLeft': (e) => handleMovePoint(-POINT_MOVEMENT_SPEED, 0, e),
         'ArrowDown': (e) => handleMovePoint(0, POINT_MOVEMENT_SPEED, e),
@@ -302,7 +303,7 @@ const PolygonEditor = (
     }
 
     // handle editor buttons
-    function clearDrawing() {
+    function handleClearDrawing() {
         setPoints([]);
         handleEdit();
     }
@@ -318,33 +319,32 @@ const PolygonEditor = (
         {
             svg: "A",
             onClick: () => handleChangeEditorMode(EditorModes.ADD),
-            tooltip: "Add new points. Shortcut: z",
+            tooltip: "Add new points. Shortcut: a",
             disabled: editorMode === EditorModes.ADD,
         },
         {
             svg: "E",
             onClick: () => handleChangeEditorMode(EditorModes.EDIT),
-            tooltip: "Edit points and lines. Shortcut: x",
+            tooltip: "Edit points and lines. Shortcut: e",
             disabled: editorMode === EditorModes.EDIT,
         },
         {
             svg: "D",
             onClick: () => handleChangeEditorMode(EditorModes.DELETE),
-            tooltip: "Delete points. Shortcut: c",
+            tooltip: "Delete points. Shortcut: d",
             disabled: editorMode === EditorModes.DELETE,
         },
+        {
+            svg: "C",
+            onClick: handleClearDrawing,
+            tooltip: "Clear all points. Shortcut: c",
+            disabled: !points || points.length === 0,
+        }
     ];
 
     return (
         <div className={STYLES.editorContainer} ref={containerRef}>
             <div className={STYLES.buttonRow}>
-                <button
-                    className={STYLES.editorButton}
-                    onClick={clearDrawing}
-                    disabled={points.length === 0}
-                >
-                    Clear
-                </button>
                 <button
                     className={STYLES.editorButton}
                     onClick={downloadPolygon}

@@ -13,6 +13,7 @@ import Home from "./components/Home";
 import TextShapeAnalysis from "./components/textShapeToSound/TextShapeAnalysis";
 import GesturesToSound from "./components/gestureToSound/GesturesToSound";
 import SynthesizePolygons from './components/synthesizePolygons/SynthesizePolygons';
+import TimeSeries from "./components/timeSeries/TimeSeries";
 import BasePage from "./components/color_encoding_to_sound/BasePage";
 
 // Register each new view component here
@@ -24,6 +25,7 @@ const COMPONENTS = {
     TextShapeAnalysis,
     GesturesToSound,
     SynthesizePolygons,
+    TimeSeries,
     BasePage,
 };
 

@@ -30,6 +30,7 @@ const SynthesizePolygons = () => {
     }, [sound]);
 
     async function submitPolygonFile(file) {
+        // TODO: refactor me using fetchPost from common.js
         const formData = createUserOptionFormData();
         formData.append("points", file, "tempfile.csv");
         const csrftoken = getCookie("csrftoken");
@@ -109,9 +110,7 @@ const SynthesizePolygons = () => {
             <h1>Synthesize Polygons</h1>
             <h2>Inputs</h2>
             {userOptions.map((option) => <CustomizableInput key={option.name} {...option}/>)}
-            <FileInput
-                onSubmit={submitPolygonFile}
-            />
+            <FileInput onSubmit={submitPolygonFile} />
             <p>
                 Files should be CSVs that have two columns that include x and y coordinates of the
                 points of the polygon with x-coordinates in the first column and the corresponding

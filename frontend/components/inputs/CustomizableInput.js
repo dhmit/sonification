@@ -1,13 +1,24 @@
 import React from "react";
 import PropTypes from "prop-types";
 import STYLES from "./CustomizableInput.module.scss";
+import HoverTooltip from "../synthesizePolygons/HoverTooltip";
 
 /**
  * A customizable input component. Consists of a wrapper div, a display description, and an
  * input component.
  */
 const CustomizableInput = (
-    {type, name, display, getValue, setValue, enabled=true, options=[], onEdit, ...rest}
+    {
+        type,
+        name,
+        display,
+        getValue, setValue,
+        enabled=true,
+        options=[],
+        onEdit,
+        tooltip,
+        ...rest
+    }
 ) => {
 
     function handleChange(e) {
@@ -41,6 +52,7 @@ const CustomizableInput = (
                     {...rest}
                 />
             }
+            <HoverTooltip tooltip={tooltip}/>
         </div>
     );
 };
@@ -54,6 +66,7 @@ CustomizableInput.propTypes = {
     enabled: PropTypes.bool,
     options: PropTypes.array,
     onEdit: PropTypes.func,
+    tooltip: PropTypes.string,
 };
 
 export default CustomizableInput;

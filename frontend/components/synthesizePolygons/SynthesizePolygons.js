@@ -194,6 +194,7 @@ const SynthesizePolygons = () => {
             display: "Use side lengths as:",
             getValue: () => sidesAsDuration,
             setValue: (v) => setSidesAsDuration(v === "true"),
+            tooltip: "How to interpret side lengths of the polygon.",
             options: [
                 {
                     name: "false",
@@ -285,7 +286,10 @@ const SynthesizePolygons = () => {
                     <div className={STYLES.rightSubPane} ref={settingsRef}>
                         <h2>Settings</h2>
                         {userOptions.map((option) => <CustomizableInput
-                            key={option.name} {...option} onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}/>)}
+                            key={option.name}
+                            {...option}
+                            onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
+                        />)}
                     </div>
                     <div className={STYLES.paneSeparatorHorizontal} onMouseDown={onMouseDownHorizontalSeparator}/>
                     <div className={STYLES.rightSubPane}>

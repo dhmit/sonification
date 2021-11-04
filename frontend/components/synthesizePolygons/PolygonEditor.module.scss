@@ -23,7 +23,7 @@
     }
 }
 
-.tooltipContainer:hover {
+.tooltipContainer:hover, .tooltipDiv:hover {
     .editorTooltip, .editorTooltipLeft {
         visibility: visible;
     }
@@ -35,9 +35,20 @@
     border-width: 1px;
     border-radius: 50%;
 
-    $size: 12px;
+    $size: 15px;
     width: $size;
     height: $size;
+
+    font-size: 8pt;
+    font-weight: bolder;
+
+    div {
+        display: flex;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+    }
 
     margin: 0px 1px;
 

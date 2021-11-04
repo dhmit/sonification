@@ -15,6 +15,7 @@ import GesturesToSound from "./components/gestureToSound/GesturesToSound";
 import SynthesizePolygons from './components/synthesizePolygons/SynthesizePolygons';
 import TimeSeries from "./components/timeSeries/TimeSeries";
 import BasePage from "./components/color_encoding_to_sound/BasePage";
+import PlaybackDemo from "./components/instruments/PlaybackDemo";
 
 // Register each new view component here
 const COMPONENTS = {
@@ -27,6 +28,7 @@ const COMPONENTS = {
     SynthesizePolygons,
     TimeSeries,
     BasePage,
+    PlaybackDemo,
 };
 
 // Here, we take the data for our components specified by Django in our views.py file,

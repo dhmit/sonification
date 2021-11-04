@@ -34,6 +34,7 @@ urlpatterns = [
     path('api/get_shape_analysis/', api_views.get_shape_analysis),
     path('api/synthesize_polygon/', synthesize_polygons_views.synthesize_polygon_endpoint),
     path('api/synthesize_polygon_csv/', synthesize_polygons_views.synthesize_polygon_csv_endpoint),
+    path('api/playback_demo/', api_views.playback_demo),
 
     # View paths
     path('', views.index, name='index'),
@@ -42,6 +43,7 @@ urlpatterns = [
     path('gestures/', views.gestures_to_sound, name='gestures-to-sound'),
     path('polygons/', synthesize_polygons_views.synthesize_polygons),
     path('text-shape/', views.text_shape_analysis),
+    path('playback-demo/', views.playback_demo),
 ]
 
 

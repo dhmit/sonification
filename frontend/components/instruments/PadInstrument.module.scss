@@ -1,0 +1,9 @@
+.pad {
+    width: 50px;
+    height: 25px;
+    background-color: blue;
+    border: 1px solid black;
+    &:active {
+        background-color: red;
+    }
+}

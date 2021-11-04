@@ -89,10 +89,12 @@
     border: 1px solid #007bff;
     border-radius: 0.25rem;
     color: white;
-    padding: 0.4rem 0.35rem;
+    padding: 0.5rem 0.5rem;
+    min-height: 40px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
+    font-size: 15pt;
     margin: 5px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }

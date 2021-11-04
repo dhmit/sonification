@@ -108,7 +108,7 @@ def amplitude_decay(frequency):
     if frequency < 700:
         return 1
     # exponential decay based on frequency
-    return 0.5 ** ((frequency - 700) / 4900)
+    return 0.5 ** ((frequency - 700) / 2000)
 
 
 def generate_note_with_amplitude(frequency, duration, amplitude):

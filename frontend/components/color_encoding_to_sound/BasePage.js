@@ -9,63 +9,32 @@ class BasePage extends React.Component {
         super(props);
 
         this.handlePaletteClick = this.handlePaletteClick.bind(this);
+
+        // TODO(ra): can we make a nicer starting palette?
+        const NUM_COLORS = 7;
+        const initialColors = [];
+        for (let i = 0; i < NUM_COLORS; i++) {
+            const grey = {r: 125, g: 125, b: 125};
+            initialColors.push(grey);
+        }
+
         this.state = {
             result: [],
             selected: 0,
             instrumentGenerated: false,
-            colorPickerColor: {
-                    r: 51,
-                    g: 51,
-                    b: 51,
-            },
-            listOfColors: [
-                {
-                    r: 0,
-                    g: 0,
-                    b: 0,
-                },
-                {
-                    r: 0,
-                    g: 0,
-                    b: 0,
-                },
-                {
-                    r: 0,
-                    g: 0,
-                    b: 0,
-                },
-                {
-                    r: 0,
-                    g: 0,
-                    b: 0,
-                },
-                {
-                    r: 0,
-                    g: 0,
-                    b: 0,
-                },
-                {
-                    r: 0,
-                    g: 0,
-                    b: 0,
-                },
-                {
-                    r: 0,
-                    g: 0,
-                    b: 0,
-                }
-            ],
+            colorPickerColor: {r: 51, g: 51, b: 51},
+            listOfColors: initialColors,
         };
     }
 
     handlePaletteClick = (e) => {
-        this.setState({ selected: Number(e.target.id) });
+        this.setState({selected: Number(e.target.id)});
     }
 
     handleChangeComplete = (color) => {
-        const currentColorState = [ ...this.state.listOfColors ];
+        const currentColorState = [...this.state.listOfColors];
         currentColorState[this.state.selected] = color.rgb;
-        this.setState({ listOfColors: [ ...currentColorState ], colorPickerColor: color.rgb });
+        this.setState({listOfColors: [...currentColorState], colorPickerColor: color.rgb});
     };
 
     handleSubmit = () => {
@@ -73,7 +42,7 @@ class BasePage extends React.Component {
         const responseCallbackFunc = responseDict => {
             this.setState({
                 result: responseDict,
-                instrumentGenerated: true
+                instrumentGenerated: true,
             });
             alert("Instrument has been updated!");
         };
@@ -81,16 +50,19 @@ class BasePage extends React.Component {
     };
 
     render() {
-        const colorDisplay = this.state.listOfColors.map( (color, i) =>
-            <div key={i}>
-                    <PaletteColor id={i} color={color} selected={i===Number(this.state.selected)} handlePaletteClick={this.handlePaletteClick}/>
-            </div>
+        const colorDisplay = this.state.listOfColors.map((color, i) =>
+            <PaletteColor
+                key={i} id={i}
+                color={color}
+                selected={i === Number(this.state.selected)}
+                handlePaletteClick={this.handlePaletteClick}
+            />
         );
         return (<div>
             <h1> Color Encoding to Sound </h1>
             <p> Use the color picker below to choose a color, and hit the <b>submit</b> button
-            to add up to seven colors to your palette. When you're ready to  hear them together,
-            click the <b>Generate Instrument</b> button to hear them together!</p>
+                to add up to seven colors to your palette. When you're ready to hear them together,
+                click the <b>Generate Instrument</b> button to hear them together!</p>
             <div className="row">
                 <SketchPicker
                     color={this.state.colorPickerColor}
@@ -99,28 +71,21 @@ class BasePage extends React.Component {
                     className="col-sm"
                 />
 
-                {/*<audio controls controlsList={"nodownload"}>*/}
-                {/*        <source src={`data:audio/wav;base64,${this.state.result}`} type={"audio/wav"}/>*/}
-                {/*</audio>*/}
-                {/*<audio controls="controls"*/}
-                {/*       src={`data:audio/wav;base64, ${this.state.result}`}*/}
-                {/*       controlsList="nodownload"/>*/}
-
                 <div className="col-sm-2">
-                    { colorDisplay }
+                    {colorDisplay}
                     <button onClick={this.handleSubmit}>
-                        {this.state.instrumentGenerated ? "Update Instrument" : "Generate Instrument"}
+                        {this.state.instrumentGenerated
+                            ? "Update Instrument"
+                            : "Generate Instrument"}
                     </button>
                 </div>
 
                 <div className="col-sm">
-                    {this.state.result.length !== 0 && <SliderInstrument
-                        samples={this.state.result}
-                    />}
+                    {this.state.result.length !== 0 &&
+                    <SliderInstrument samples={this.state.result}/>}
                 </div>
             </div>
         </div>);
     }
-};
-
+}
 export default BasePage;

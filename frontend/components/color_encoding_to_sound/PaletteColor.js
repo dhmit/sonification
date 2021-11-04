@@ -1,41 +1,32 @@
 import React from "react";
 import PropTypes from "prop-types";
-import SliderInstrument from "../instruments/SliderInstrument";
 
-class PaletteColor extends React.Component {
-    render() {
-        const selected = this.props.selected;
-        const color = this.props.color;
-        const styleString = `background-color: rgb(${color.r},${color.g},${color.b})`;
-        const id = this.props.id;
-        let style = {
-            backgroundColor: `rgb(${color.r},${color.g},${color.b}`,
-            height: "15px",
-            width: "100px"
-        };
+const PaletteColor = ({id, color, handlePaletteClick, selected}) => {
+    const style = {
+        backgroundColor: `rgb(${color.r},${color.g},${color.b})`,
+        height: "15px",
+        width: "100px",
+        float: "left",
+        border: 0,
+    };
 
-        if (selected) {
-            style = {
-                    ...style,
-                    boxShadow: "5px 5px 4px gray"};
-        }
-
-        return (<div>
-                <div
-                    className='float-left'
-                    id={id}
-                    style={style}
-                    onClick={this.props.handlePaletteClick}/>
-                <br />
-        </div>);
+    if (selected) {
+        style.boxShadow = "5px 5px 4px gray";
     }
-}
 
+    return (<div className="row mb-2"><div className="col">
+        <button
+            id={id}
+            style={style}
+            onClick={handlePaletteClick}
+        />
+    </div></div>);
+};
 PaletteColor.propTypes = {
-    selected: PropTypes.bool,
-    color: PropTypes.object,
     id: PropTypes.number,
-    handlePaletteClick: PropTypes.func
+    color: PropTypes.object,
+    handlePaletteClick: PropTypes.func,
+    selected: PropTypes.bool,
 };
 
 export default PaletteColor;

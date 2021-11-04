@@ -317,6 +317,7 @@ const PolygonEditor = (
 
     // handle editor buttons
     function handleClearDrawing() {
+        if (points.length === 0) return;
         setPoints([]);
         handleEdit();
     }

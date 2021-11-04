@@ -1,6 +1,12 @@
 import React, {useEffect, useRef, useState} from "react";
 import STYLES from "./PolygonEditor.module.scss";
 import PropTypes from "prop-types";
+import AddIcon from "../../images/AddIcon.svg";
+import EraserIcon from "../../images/EraserIcon.svg";
+import MoveIcon from "../../images/MoveIcon.svg";
+import DownloadIcon from "../../images/DownloadIcon.svg";
+import UploadIcon from "../../images/UploadIcon.svg";
+// import DH_LOGO from "../../images/dh_logo.svg";
 
 /**
  * A simple polygon editor with specified width and height. A custom callback onSubmit can be
@@ -323,13 +329,13 @@ const PolygonEditor = (
     const editorIconButtonGroups = [
         [
             {
-                svg: "U",
+                svg: <img alt="Upload Icon" src={UploadIcon} width={"auto"} height={"100%"} />,
                 onClick: () => handleClickUpload(),
                 tooltip: "Upload polygon. Shortcut: Ctrl+O",
                 disabled: false,
             },
             {
-                svg: "D",
+                svg: <img alt="Download Icon" src={DownloadIcon} width={"auto"} height={"100%"} />,
                 onClick: () => handleClickDownload(),
                 tooltip: "Download polygon. Shortcut: Ctrl+D",
                 disabled: points.length === 0,
@@ -337,19 +343,19 @@ const PolygonEditor = (
         ],
         [
             {
-                svg: "A",
+                svg: <img alt="Add Icon" src={AddIcon} width={"auto"} height={"100%"} />,
                 onClick: () => handleChangeEditorMode(EditorModes.ADD),
                 tooltip: "Add new points. Shortcut: a",
                 disabled: editorMode === EditorModes.ADD,
             },
             {
-                svg: "E",
+                svg: <img alt="Move Icon" src={MoveIcon} width={"auto"} height={"100%"} />,
                 onClick: () => handleChangeEditorMode(EditorModes.EDIT),
                 tooltip: "Edit points and lines. Shortcut: e",
                 disabled: editorMode === EditorModes.EDIT,
             },
             {
-                svg: "D",
+                svg: <img alt="Eraser Icon" src={EraserIcon} width={"auto"} height={"100%"} />,
                 onClick: () => handleChangeEditorMode(EditorModes.DELETE),
                 tooltip: "Delete points. Shortcut: d",
                 disabled: editorMode === EditorModes.DELETE,
@@ -363,7 +369,7 @@ const PolygonEditor = (
         ],
         [
             {
-                svg: "S",
+                svg: "Submit",
                 onClick: () => handleSubmit(),
                 tooltip: "Submit polygon. Shortcut: Ctrl+S",
                 disabled: points.length < 3,
@@ -521,10 +527,12 @@ const PolygonEditor = (
                 accept=".txt,.csv"
                 onChange={uploadPolygon}
             />
-        </div>
 
+        </div>
     );
+
 };
+
 
 PolygonEditor.propTypes = {
     width: PropTypes.number,

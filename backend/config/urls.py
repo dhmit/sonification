@@ -27,28 +27,33 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API endpoints
-    path('api/generate_instrument/', api_views.generate_instrument),
     path('api/color/', api_views.color),
+    path('api/generate_instrument/', api_views.generate_instrument),
+    path('api/generate_instrument_2d/', api_views.generate_instrument_2d),
+    path('api/gesture_to_sound/', api_views.gesture_to_sound),
+    path('api/get_shape_analysis/', api_views.get_shape_analysis),
+    path('api/synthesize_polygon/', synthesize_polygons_views.synthesize_polygon_endpoint),
+    path('api/playback_demo/', api_views.playback_demo),
 
     # View paths
     path('', views.index, name='index'),
+    path('time-series/', views.time_series, name='time_series'),
+    path('colors/', color_encoding_to_sound_views.base_page),
+    path('gestures/', views.gestures_to_sound, name='gestures-to-sound'),
+    path('polygons/', synthesize_polygons_views.synthesize_polygons),
+    path('text-shape/', views.text_shape_analysis),
+    path('playback-demo/', views.playback_demo),
+]
 
-    # Summer prototype view paths and API endpoints
+
+# Summer prototype view paths and API endpoints
+summer_prototype_urlpatterns = [
     path('summer-prototypes/', summer_prototype_views.summer_prototypes),
     path('api/get_sentiment_analysis/', summer_prototype_views.get_sentiment_analysis),
     path('api/get_sentiment_analysis_2/', summer_prototype_views.get_sentiment_analysis_2),
     path('api/image_to_music/', summer_prototype_views.image_to_music),
-
-    # Synthesize polygons view paths and API endpoints
-    path('synthesize-polygons/', synthesize_polygons_views.synthesize_polygons),
-    path('api/synthesize_polygon/', synthesize_polygons_views.synthesize_polygon_endpoint),
-    # Color encoding to sound paths and API endpoints
-    path('color_encode_to_sound/', color_encoding_to_sound_views.base_page),
-
-    # time series endpoints
-    path('api/generate_instrument_2d/', api_views.generate_instrument_2d),
-
 ]
+urlpatterns += summer_prototype_urlpatterns
 
 
 ################################################################################

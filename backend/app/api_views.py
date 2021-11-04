@@ -7,6 +7,10 @@ from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
 from app.data_processing import csv_files as csv_processing
 
+from app.data_processing.gesture import convert_gesture_to_audio
+
+from app.text_shape_to_sound.text_shape_to_sound import text_shape_to_sound
+
 
 @api_view(['POST'])
 def color(request):
@@ -14,27 +18,32 @@ def color(request):
     :param request: colorpicker's rgb values stored as a dictionary when the user hits submit
     :return: wav file, sine wave with frequency corresponds to energy of the color
     """
-    response_object = request.data['color']
-    r = response_object["r"]
-    g = response_object["g"]
-    b = response_object["b"]
-    energy = round(0.299*r + .587*g + .114*b) # color energy calculation
+    response_object = request.data['listOfColors']
 
-    freq_to_generate = ((200*energy) / 255 ) + 150 # frequency based on energy, scaled for 150-350hz
-    audio_samples = synths.generate_sine_wave_with_envelope(
-        frequency=freq_to_generate,
-        duration=500,
-        a_percentage=0,
-        d_percentage=0,
-        s_percentage=1,
-        r_percentage=0
-    )
-    wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+    wav_files = []
+    for response in response_object:
+        r = response["r"]
+        g = response["g"]
+        b = response["b"]
 
-    # return Response({
-    #     "text": str(energy)
-    # })
-    return Response([wav_file_base64])
+        # color energy calculation
+        energy = round(0.299 * r + .587 * g + .114 * b)
+
+        # frequency based on energy, scaled for 150-350hz
+        freq_to_generate = ((200 * energy) / 255) + 150
+
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=50,
+            a_percentage=0,
+            d_percentage=0,
+            s_percentage=1,
+            r_percentage=0
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
+
+    return Response(wav_files)
 
 
 @api_view(['POST'])
@@ -62,6 +71,23 @@ def generate_instrument(request):
 
 
 @api_view(['POST'])
+def gesture_to_sound(request):
+    """
+    Takes in gestures as a list of list of (x,y) coordinates and constructs audio sample
+    based on the horizontal and vertical components of the gestures
+    """
+    gestures = request.data['gestures']
+    gestures_params = request.data['parameters']
+    # pitch_range and duration_range are hardcoded for now
+    # TODO: allow variable pitch/duration range inputs in the frontend
+    audio = convert_gesture_to_audio(gestures, gestures_params)
+    res = {
+        'sound': audio_samples_to_wav_base64(audio)
+    }
+    return Response(res)
+
+
+@api_view(['POST'])
 def generate_instrument_2d(request):
     """
     Takes a 2-D CSV with the header and constructs samples based on those ratios.
@@ -86,10 +112,10 @@ def generate_instrument_2d(request):
             note = synths.generate_sine_wave_with_envelope(
                 frequency=freq_to_generate,
                 duration=duration,
-                a_percentage=column_constant["a_percentage"]["value"],
-                d_percentage=column_constant["d_percentage"]["value"],
-                s_percentage=column_constant["s_percentage"]["value"],
-                r_percentage=column_constant["r_percentage"]["value"]
+                a_percentage=int(column_constant["a_percentage"]["value"]) / 100,
+                d_percentage=int(column_constant["d_percentage"]["value"]) / 100,
+                s_percentage=int(column_constant["s_percentage"]["value"]) / 100,
+                r_percentage=int(column_constant["r_percentage"]["value"]) / 100
             )
             if sound is None:
                 sound = note
@@ -103,6 +129,50 @@ def generate_instrument_2d(request):
     sound = audio_samples_to_wav_base64(audio_samples)
 
     return Response(sound)
+
+@api_view(['GET'])
+def get_shape_analysis(request):
+    """
+    API endpoint for generating audio based on the shape analysis of the given text
+    """
+    text = request.query_params.get('text')
+    secs_per_line = float(request.query_params.get('secondsPerLine'))
+    base_freq = float(request.query_params.get('baseFreq'))
+    max_beat_freq = float(request.query_params.get('maxBeatFreq'))
+    higher_second_freq = False
+    if request.query_params.get('higherSecondFreq') == 'true':
+        higher_second_freq = True
+
+    audio_data = text_shape_to_sound(text, secs_per_line, base_freq, max_beat_freq,
+                                     higher_second_freq)
+
+    res = {
+        'sound': audio_samples_to_wav_base64(audio_data)
+    }
+
+    return Response(res)
+
+
+@api_view(['POST'])
+def playback_demo(_request):
+    """
+    API endpoint for playback demo page, so generates some arbitrary samples
+    to send to the instruments on that page
+    """
+    wav_files = []
+    for i in range(1, 11):
+        freq_to_generate = 100 * i
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=1
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
+
+    return Response(wav_files)
+
+
+
 
 
 ################################################################################

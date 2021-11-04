@@ -42,6 +42,56 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+def gestures_to_sound(request):
+    """ Gestures to Sound page"""
+
+    context = {
+        'page_metadata': {
+            'title': 'Gestures to Sound'
+        },
+        'component_name': 'GesturesToSound'
+    }
+
+    return render(request, 'index.html', context)
+
+
+def text_shape_analysis(request):
+    """ Text Shape Analysis Page """
+
+    context = {
+        'page_metadata': {
+            'title': 'Shape Analysis'
+        },
+        'component_name': 'TextShapeAnalysis'
+    }
+
+    return render(request, 'index.html', context)
+
+
+def time_series(request):
+    """ Text Shape Analysis Page """
+
+    context = {
+        'page_metadata': {
+            'title': 'Time Series'
+        },
+        'component_name': 'TimeSeries'
+    }
+    return render(request, 'index.html', context)
+
+
+def playback_demo(request):
+    """ Page for demoing all of the playback options """
+
+    context = {
+        'page_metadata': {
+            'title': 'Playback Demo'
+        },
+        'component_name': 'PlaybackDemo'
+    }
+    return render(request, 'index.html', context)
+
+
 ################################################################################
 # Boilerplate - just for examples
 ################################################################################

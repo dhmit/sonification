@@ -48,3 +48,34 @@ def clean_text(text):
     lower_case = text.lower()
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
     return cleaned_text
+
+
+def get_average_length_of_whitespace_per_line(text):
+    """
+    Get an array containing average lengths of contiguous whitespaces per line in given text.
+    :param text: String of text
+    :return: Array of floats, where the ith entry represents the average length of contiguous
+    spaces in the ith line.
+    """
+
+    # Initial processing of text
+    cleaned_text = clean_text(text)
+    cleaned_text_lines = cleaned_text.split('\n')
+
+    # Store the average length of contiguous blocks of whitespace per line in text
+    average_length_of_whitespace_per_line = []
+
+    for line in cleaned_text_lines:
+        # Count number of whitespaces in a line, with tabs being equivalent to four spaces
+        num_whitespaces = line.count(' ') + 4 * line.count('\t')
+
+        # Count number of whitespace blocks, making sure to count leading/trailing whitespaces
+        num_whitespace_blocks = len(line.split()) - 1 + \
+                                int(line != line.rstrip()) + \
+                                int(line != line.lstrip())
+
+        # Calculate average length of whitespace and store in output
+        average_length_of_whitespace = num_whitespaces / max(num_whitespace_blocks, 1)
+        average_length_of_whitespace_per_line.append(average_length_of_whitespace)
+
+    return average_length_of_whitespace_per_line

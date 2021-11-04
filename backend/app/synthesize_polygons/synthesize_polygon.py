@@ -98,6 +98,19 @@ def sides_to_duration(sides, base_duration):
     return duration_list, total_duration
 
 
+def amplitude_decay(frequency):
+    """
+    Decays the amplitude to counterbalance psycho-acoustic effects in which we hear higher
+    pitches as louder. Returns the decay as a scaling factor for amplitude.
+    :param frequency: frequency of the note in Hz
+    :return: an amplitude scaling factor
+    """
+    if frequency < 700:
+        return 1
+    # exponential decay based on frequency
+    return 0.5 ** ((frequency - 700) / 4900)
+
+
 def generate_note_with_amplitude(frequency, duration, amplitude):
     """
     Generates a note with the given frequency, duration, and amplitude.
@@ -107,7 +120,7 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
     :return: numpy array which represents the note
     """
     time_steps = np.linspace(0, duration, int(duration * WAV_SAMPLE_RATE), False)
-    note = np.sin(frequency * time_steps * 2 * np.pi) * amplitude
+    note = np.sin(frequency * time_steps * 2 * np.pi) * amplitude * amplitude_decay(frequency)
     return note
 
 

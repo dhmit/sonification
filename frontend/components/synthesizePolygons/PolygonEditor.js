@@ -58,6 +58,12 @@ const PolygonEditor = (
             return;
         }
 
+        if (e.code === 'KeyD' && e.ctrlKey) {
+            e.preventDefault();
+            handleClickDownload();
+            return;
+        }
+
         // handle enter/space
         if (e.code === 'Space' || e.code === 'Enter') {
             if (editorMode === EditorModes.EDIT) {
@@ -157,7 +163,7 @@ const PolygonEditor = (
     }, [fileDownloadUrl]);
 
     // download the polygon as csv
-    function downloadPolygon() {
+    function handleClickDownload() {
         const csvContent = points.map(e => e.join(",")).join("\n");
         const blob = new Blob([csvContent]);
         setFileDownloadUrl(URL.createObjectURL(blob));
@@ -244,14 +250,12 @@ const PolygonEditor = (
     function handleClickLine(index) {
         if (editorMode === EditorModes.EDIT) {
             insertPointAtCursor(index);
-        } else if (editorMode === EditorModes.DELETE) {
-
         }
     }
 
     // TODO: fix styling of this
     function handleMouseEnterLine(index) {
-        if (focusPoint === null && editorMode !== EditorModes.ADD) {
+        if (focusPoint === null && editorMode === EditorModes.EDIT) {
             setFocusLine(index);
         }
     }
@@ -347,7 +351,7 @@ const PolygonEditor = (
             <div className={STYLES.buttonRow}>
                 <button
                     className={STYLES.editorButton}
-                    onClick={downloadPolygon}
+                    onClick={handleClickDownload}
                     disabled={points.length === 0}
                 >
                     Download

@@ -6,6 +6,7 @@ import EraserIcon from "../../images/EraserIcon.svg";
 import MoveIcon from "../../images/MoveIcon.svg";
 import DownloadIcon from "../../images/DownloadIcon.svg";
 import UploadIcon from "../../images/UploadIcon.svg";
+import TrashIcon from "../../images/TrashIcon.svg";
 // import DH_LOGO from "../../images/dh_logo.svg";
 
 /**
@@ -363,7 +364,7 @@ const PolygonEditor = (
                 disabled: editorMode === EditorModes.DELETE,
             },
             {
-                svg: "C",
+                svg: <img alt="Trash Icon" src={TrashIcon} width={"auto"} height={"100%"} />,
                 onClick: () => handleClearDrawing(),
                 tooltip: "Clear all points. Shortcut: c",
                 disabled: false,

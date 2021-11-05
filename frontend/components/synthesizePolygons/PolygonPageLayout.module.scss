@@ -1,0 +1,150 @@
+.splitPane {
+    display: flex;
+    flex-direction: row;
+    max-height: 70vh;
+    height: 70vh;
+    max-width: 100%;
+    overflow: hidden;
+    border-style: solid;
+    border-color: black;
+    border-width: 2px;
+}
+
+$separator-color: #444444;
+.paneSeparatorVertical, .paneSeparatorHorizontal {
+    border: 3px solid $separator-color;
+    background-color: $separator-color;
+    cursor: col-resize;
+    position: relative;
+}
+
+.triangleLeft, .triangleRight, .triangleTop, .triangleBottom {
+    position: absolute;
+    width: 0px;
+    height: 0px;
+    border-style: solid;
+}
+
+$tri-size: 8px;
+.paneSeparatorVertical {
+    cursor: col-resize;
+    .triangleLeft, .triangleRight {
+        top: 40%;
+    }
+    .triangleLeft {
+        right: 100%;
+        border-width: $tri-size $tri-size $tri-size 0px;
+        border-color: transparent $separator-color transparent transparent;
+    }
+    .triangleRight {
+        left: 100%;
+        border-width: $tri-size 0px $tri-size $tri-size;
+        border-color: transparent transparent transparent $separator-color;
+    }
+}
+
+.paneSeparatorHorizontal {
+    cursor: row-resize;
+
+    .triangleTop, .triangleBottom {
+        left: 50%;
+    }
+    .triangleTop {
+        bottom: 100%;
+        border-width: 0px $tri-size $tri-size $tri-size;
+        border-color: transparent transparent $separator-color transparent ;
+    }
+    .triangleBottom {
+        top: 100%;
+        border-width: $tri-size $tri-size 0px $tri-size;
+        border-color: $separator-color transparent transparent transparent;
+    }
+}
+
+.leftPane, .rightPane {
+    flex: 1;
+    max-height: 100%;
+    max-width: 100%;
+    overflow: auto;
+}
+
+.leftPane {
+    padding: 0px 5px;
+}
+
+.rightPane {
+    display: flex;
+    flex-direction: column;
+}
+
+.rightSubPane {
+    background-color: white;
+    padding: 2px 2px 2px 5px;
+
+    overflow: auto;
+    flex: 1;
+}
+
+.statusDivSynced, .statusDivLoading, .statusDivUnsynced {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-style: italic;
+    vertical-align: center;
+    svg {
+        margin-right: 5px;
+    }
+    p {
+        margin-bottom: 0;
+    }
+}
+
+.statusDivSynced {
+    $color: #43af43;
+    svg {
+        circle {
+            fill: $color;
+        }
+    }
+    p {
+        color: $color;
+    }
+}
+
+.statusDivUnsynced {
+    $color: #a9a91e;
+    svg {
+        circle {
+            fill: $color;
+        }
+    }
+    p {
+        color: $color;
+    }
+}
+
+.statusDivLoading {
+    $color: grey;
+    svg {
+        circle {
+            color: $color;
+            stroke-width: 2;
+            stroke: $color;
+            stroke-dasharray: 10 2.565;
+            fill: none;
+            animation: spin 1s linear infinite;
+        }
+    }
+    p {
+        color: $color;
+    }
+}
+
+@keyframes spin {
+    from {
+        stroke-dashoffset: 0;
+    }
+    to {
+        stroke-dashoffset: 25.13;
+    }
+}

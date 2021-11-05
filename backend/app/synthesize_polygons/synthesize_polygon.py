@@ -39,12 +39,15 @@ def angles_of_polygon(points):
     """
     check_valid_polygon(points)
 
-    points.append(points[0])  # Polygon needs to be closed shape.
+    closed_points = points + [points[0]]  # Polygon needs to be closed shape.
     vectors = []
     angles = []
 
-    for i in range(len(points) - 1):
-        arr = [points[i + 1][0] - points[i][0], points[i + 1][1] - points[i][1]]
+    for i in range(len(closed_points) - 1):
+        arr = [
+            closed_points[i + 1][0] - closed_points[i][0],
+            closed_points[i + 1][1] - closed_points[i][1]
+        ]
         vectors.append(np.array(arr))
 
     vectors.append(vectors[0])  # Polygon needs to be closed shape.
@@ -83,15 +86,32 @@ def sides_of_polygon(points):
     return side_lengths
 
 
-# for future feature
-# def durations_from_sides(sides, base_duration):
-#     """
-#     Comptue the duration of each side based on the ratio to the first side and the base duration.
-#     :param sides: a list of the side lengths
-#     :param base_duration: the duration (in seconds) of the first side
-#     :return: a list of durations of each side
-#     """
-#     return [(side/side[0])*base_duration for side in sides]
+def sides_to_duration(sides, base_duration):
+    """
+    Compute the duration of each side based on the ratio to the first side and the base duration.
+    :param sides: a list of the side lengths
+    :param base_duration: the duration (in seconds) of the first side
+    :return: a tuple consisting of a list of durations of each side as well as the total length
+    of the sound as an integer
+    """
+    duration_list = [(side/sides[0])*base_duration for side in sides]
+    total_duration = 0
+    for duration in duration_list:
+        total_duration += duration
+    return duration_list, total_duration
+
+
+def amplitude_decay(frequency):
+    """
+    Decays the amplitude to counterbalance psycho-acoustic effects in which we hear higher
+    pitches as louder. Returns the decay as a scaling factor for amplitude.
+    :param frequency: frequency of the note in Hz
+    :return: an amplitude scaling factor
+    """
+    if frequency < 700:
+        return 1
+    # exponential decay based on frequency
+    return 0.5 ** ((frequency - 700) / 2000)
 
 
 def generate_note_with_amplitude(frequency, duration, amplitude):
@@ -103,29 +123,56 @@ def generate_note_with_amplitude(frequency, duration, amplitude):
     :return: numpy array which represents the note
     """
     time_steps = np.linspace(0, duration, int(duration * WAV_SAMPLE_RATE), False)
-    note = np.sin(frequency * time_steps * 2 * np.pi) * amplitude
+    note = np.sin(frequency * time_steps * 2 * np.pi) * amplitude * amplitude_decay(frequency)
     return note
+
+
+def generate_time_stamps(duration_list, note_delay, sides_as_duration=False):
+    """
+    Generates a list indicating when the sound associated with each line of the polygon should
+    start and end in seconds.
+    :param duration_list: a list of durations of each side
+    :param note_delay: delay between each note in seconds
+    :param sides_as_duration: whether to use side lengths to determine duration. if False, then use
+    side lengths to determine amplitude.
+    :return: list of tuples signifying the time in which each line starts and ends in seconds
+    """
+
+    time_stamps = []
+    start = 0
+    for duration in duration_list:
+        end = start + duration
+        time_stamps.append((start, end))
+        if sides_as_duration:
+            start += duration
+        else:
+            start += note_delay
+
+    return time_stamps
 
 
 # pylint: disable=too-many-arguments
 # pylint: disable=too-many-locals
-# TODO: Fill in for and use restrict_octave
-# TODO: Fill in for and use sides_as_duration along with sides_as_duration function
-def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=False,
-                       sides_as_duration=False, base_frequency=220):
+def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=False,
+                       sides_as_duration=False, base_frequency=220, floor_frequency=20,
+                       ceil_frequency=10000):
     """
     Synthesizes a polygon. The polygon is represented as a list of points
     where each point is a tuple of length 2.
     :param points: list of points representing a polygon.
     :param note_length: length of each note in seconds.
     :param note_delay: delay between each note in seconds.
-    :param restrict_octave: whether to restrict the notes to a single octave
+    :param restrict_frequency: whether to restrict the notes to a specified frequency range
     :param sides_as_duration: whether to use side lengths to determine duration. if False, then use
     side lengths to determine amplitude.
     :param base_frequency: the frequency of the first note of the polygon
+    :param floor_frequency: the lowest allowable frequency for any note
+    :param ceil_frequency: the highest allowable frequency for any note
     :return: numpy array which represents the sound.
     """
     check_valid_polygon(points)
+    assert ceil_frequency >= 2*floor_frequency, \
+        "the ceiling frequency must be at least an octave above the floor frequency"
 
     # Compute number of notes, note length and delay in samples
     num_notes = len(points)
@@ -138,7 +185,10 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
     # Compute sides and angles of polygon
     sides_list = sides_of_polygon(points)
     angles_list = angles_of_polygon(points)
-    # duration_list = sides_to_duration(sides_list)
+    cur_time = 0
+    if sides_as_duration:
+        duration_list, total_length = sides_to_duration(sides_list, note_length)
+        total_length = int(total_length * WAV_SAMPLE_RATE)
     freq_change = change_in_frequency(angles_list)
     cur_freq = base_frequency
 
@@ -147,16 +197,37 @@ def synthesize_polygon(points, note_length=1, note_delay=0, restrict_octave=Fals
     # add each note to the sound
     for note_ind in range(num_notes):
         # generate note and ensure it has correct length
-        note = generate_note_with_amplitude(
-            cur_freq, note_length, sides_list[note_ind] / sides_list[0]
-        )
-        assert len(note) == note_length_samples, "Incorrect note length computation"
+        if sides_as_duration:
+            # base amplitude of 1
+            note = generate_note_with_amplitude(cur_freq, duration_list[note_ind], 1)
+            duration_samples = len(note)
 
-        #  append note samples
-        for i in range(0, note_length_samples):
-            sound[note_ind * note_delay_samples + i] += note[i]
+            #  append note samples
+            for i in range(0, duration_samples):
+                sound[cur_time + i] += note[i]
+
+            # update the current time
+            cur_time += duration_samples
+        else:
+            note = generate_note_with_amplitude(
+                cur_freq, note_length, sides_list[note_ind] / sides_list[0]
+            )
+            assert len(note) == note_length_samples, "Incorrect note length computation"
+            #  append note samples
+            for i in range(0, note_length_samples):
+                sound[note_ind * note_delay_samples + i] += note[i]
 
         # update current frequency
         cur_freq *= freq_change[note_ind]
+        if restrict_frequency:
+            while cur_freq > ceil_frequency:
+                cur_freq /= 2
+            while cur_freq < floor_frequency:
+                cur_freq *= 2
 
-    return sound
+    if not sides_as_duration:
+        duration_list = [note_length]*num_notes
+    time_stamp_list = generate_time_stamps(duration_list, note_delay, sides_as_duration)
+    # TODO: return time_stamp_list as tuple with sound once compatible with frontend.
+
+    return sound, time_stamp_list

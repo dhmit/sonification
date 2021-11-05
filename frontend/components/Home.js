@@ -15,6 +15,12 @@ const ProjectCard = ({title, description, route}) => {
         </div>
     );
 };
+ProjectCard.propTypes = {
+    title: PropTypes.string,
+    description: PropTypes.string,
+    route: PropTypes.string,
+};
+
 
 
 const Home = () => {

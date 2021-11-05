@@ -262,5 +262,3 @@ def parse_polygon_data(data):
         converted_data['points'] = [tuple(map(float, p)) for p in data['points']]
 
     return converted_data
-
-

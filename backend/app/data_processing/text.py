@@ -5,8 +5,8 @@ that we can plug into the parameters of our synthesis modules.
 
 """
 
-import numpy as np
 import string
+import numpy as np
 
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer

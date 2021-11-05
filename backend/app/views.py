@@ -100,7 +100,8 @@ def numbers(request):
         'page_metadata': {
             'title': 'Numbers'
         },
-        'component_name': 'RatioCSV'
+        'component_name': 'NumbersDemoBefore'
+        # 'component_name': 'NumbersDemoAfter'
     }
     return render(request, 'index.html', context)
 

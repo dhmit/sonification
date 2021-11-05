@@ -16,7 +16,7 @@ import SynthesizePolygons from './components/synthesizePolygons/SynthesizePolygo
 import TimeSeries from "./components/timeSeries/TimeSeries";
 import ColorSonifier from "./components/color/ColorSonifier";
 import PlaybackDemo from "./components/instruments/PlaybackDemo";
-import RatioCSV from "./components/timeSeries/RatioCSV";
+import {NumbersDemoBefore, NumbersDemoAfter} from "./components/numbersDemo/Numbers";
 
 // Register each new view component here
 const COMPONENTS = {
@@ -30,7 +30,8 @@ const COMPONENTS = {
     TimeSeries,
     ColorSonifier,
     PlaybackDemo,
-    RatioCSV,
+    NumbersDemoBefore,
+    NumbersDemoAfter,
 };
 
 // Here, we take the data for our components specified by Django in our views.py file,

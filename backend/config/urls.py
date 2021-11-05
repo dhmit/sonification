@@ -26,12 +26,13 @@ urlpatterns = [
 
     # API endpoints
     path('api/color/', api_views.color),
-    path('api/generate_instrument/', api_views.generate_instrument),
     path('api/generate_instrument_2d/', api_views.generate_instrument_2d),
     path('api/gesture_to_sound/', api_views.gesture_to_sound),
     path('api/get_shape_analysis/', api_views.get_shape_analysis),
     path('api/synthesize_polygon/', api_views.synthesize_polygons),
     path('api/playback_demo/', api_views.playback_demo),
+    path('api/numbers_to_samples/', api_views.numbers_to_samples),
+    path('api/numbers_to_audio/', api_views.numbers_to_audio),
 
     # View paths
     path('', views.index, name='index'),

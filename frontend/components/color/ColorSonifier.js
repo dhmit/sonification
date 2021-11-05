@@ -2,9 +2,9 @@ import React from "react";
 import {SketchPicker} from 'react-color';
 import {fetchPost} from "../../common";
 import SliderInstrument from "../instruments/SliderInstrument";
-import PaletteColor from "../color_encoding_to_sound/PaletteColor";
+import PaletteColor from "./PaletteColor";
 
-class BasePage extends React.Component {
+class ColorSonifier extends React.Component {
     constructor(props) {
         super(props);
 
@@ -88,4 +88,4 @@ class BasePage extends React.Component {
         </div>);
     }
 }
-export default BasePage;
+export default ColorSonifier;

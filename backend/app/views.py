@@ -49,7 +49,7 @@ def colors(request):
         'page_metadata': {
             'title': 'Colors'
         },
-        'component_name': 'BasePage'
+        'component_name': 'ColorSonifier'
     }
 
     return render(request, 'index.html', context)

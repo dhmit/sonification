@@ -14,7 +14,7 @@ import TextShapeAnalysis from "./components/textShapeToSound/TextShapeAnalysis";
 import GesturesToSound from "./components/gestureToSound/GesturesToSound";
 import SynthesizePolygons from './components/synthesizePolygons/SynthesizePolygons';
 import TimeSeries from "./components/timeSeries/TimeSeries";
-import BasePage from "./components/color_encoding_to_sound/BasePage";
+import ColorSonifier from "./components/color/ColorSonifier";
 import PlaybackDemo from "./components/instruments/PlaybackDemo";
 import RatioCSV from "./components/timeSeries/RatioCSV";
 
@@ -28,7 +28,7 @@ const COMPONENTS = {
     GesturesToSound,
     SynthesizePolygons,
     TimeSeries,
-    BasePage,
+    ColorSonifier,
     PlaybackDemo,
     RatioCSV,
 };

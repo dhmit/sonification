@@ -3,7 +3,10 @@ import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./PadInstrument.module.scss";
 
-
+/* TODO:
+    - add a parameter to the pad that allows it to take a keyboard input
+    - make the pads prettier with rounded corners
+ */
 const Pad = ({sample, audioContext}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
 

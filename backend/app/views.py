@@ -40,6 +40,21 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+def colors(request):
+    """
+    Landing page for Colors part of project
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Colors'
+        },
+        'component_name': 'BasePage'
+    }
+
+    return render(request, 'index.html', context)
+
+
 def gestures(request):
     """ Gestures page"""
 
@@ -87,6 +102,21 @@ def numbers(request):
         },
         'component_name': 'RatioCSV'
     }
+    return render(request, 'index.html', context)
+
+
+def polygons(request):
+    """
+    Page showing the synthesize polygon tool
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Synthesize Polygons'
+        },
+        'component_name': 'SynthesizePolygons'
+    }
+
     return render(request, 'index.html', context)
 
 

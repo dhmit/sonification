@@ -22,7 +22,7 @@ const SynthesizePolygons = () => {
     const SyncStatus = {
         SYNCED: "Synced",
         LOADING: "Loading...",
-        UNSYNCED: "Unsynced Changes",
+        UNSYNCED: "Unsynced changes - click submit to sonify",
     };
     const [outOfSync, setOutOfSync] = useState(SyncStatus.SYNCED);
 

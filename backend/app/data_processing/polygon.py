@@ -231,3 +231,36 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
     # TODO: return time_stamp_list as tuple with sound once compatible with frontend.
 
     return sound, time_stamp_list
+
+
+def parse_polygon_data(data):
+    """
+    Converts parameters for a synthesize_polygon call into correct formats.
+    :param data: a dict containing parameters for synthesize_polygon as strings/files
+    :return: a dict containing the parameters for synthesize_polygon in correct format
+    """
+    float_values = {
+        'noteLength': 'note_length',
+        'noteDelay': 'note_delay',
+        'baseFrequency': 'base_frequency',
+        'floorFrequency': 'floor_frequency',
+        'ceilFrequency': 'ceil_frequency',
+    }
+    bool_values = {
+        'restrictFrequency': 'restrict_frequency',
+        'sidesAsDuration': 'sides_as_duration',
+    }
+
+    converted_data = {}
+    for old_name, new_name in float_values.items():
+        if old_name in data:
+            converted_data[new_name] = float(data[old_name])
+    for old_name, new_name in bool_values.items():
+        if old_name in data:
+            converted_data[new_name] = str(data[old_name]).lower() == 'true'
+    if 'points' in data:
+        converted_data['points'] = [tuple(map(float, p)) for p in data['points']]
+
+    return converted_data
+
+

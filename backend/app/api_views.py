@@ -5,17 +5,19 @@ import numpy as np
 
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
-from app.data_processing import csv_files as csv_processing
 
-from app.data_processing.gesture import convert_gesture_to_audio
-
-from app.text_shape_to_sound.text_shape_to_sound import text_shape_to_sound
+from app.data_processing import (
+    csv_files as csv_processing,
+    gesture as gesture_processing,
+    polygon as polygon_processing,
+    text as text_processing,
+)
 
 
 @api_view(['POST'])
 def color(request):
     """
-    :param request: colorpicker's rgb values stored as a dictionary when the user hits submit
+    :param request: color picker's rgb values stored as a dictionary when the user hits submit
     :return: wav file, sine wave with frequency corresponds to energy of the color
     """
     response_object = request.data['listOfColors']
@@ -80,7 +82,7 @@ def gesture_to_sound(request):
     gestures_params = request.data['parameters']
     # pitch_range and duration_range are hardcoded for now
     # TODO: allow variable pitch/duration range inputs in the frontend
-    audio = convert_gesture_to_audio(gestures, gestures_params)
+    audio = gesture_processing.convert_gesture_to_audio(gestures, gestures_params)
     res = {
         'sound': audio_samples_to_wav_base64(audio)
     }
@@ -130,6 +132,7 @@ def generate_instrument_2d(request):
 
     return Response(sound)
 
+
 @api_view(['GET'])
 def get_shape_analysis(request):
     """
@@ -143,8 +146,9 @@ def get_shape_analysis(request):
     if request.query_params.get('higherSecondFreq') == 'true':
         higher_second_freq = True
 
-    audio_data = text_shape_to_sound(text, secs_per_line, base_freq, max_beat_freq,
-                                     higher_second_freq)
+    audio_data = text_processing.text_shape_to_sound(
+        text, secs_per_line, base_freq, max_beat_freq, higher_second_freq
+    )
 
     res = {
         'sound': audio_samples_to_wav_base64(audio_data)
@@ -172,34 +176,24 @@ def playback_demo(_request):
     return Response(wav_files)
 
 
-
-
-
-################################################################################
-# Example views
-################################################################################
-@api_view(['GET'])
-def get_example(_request, api_example_id):
-    """
-    API example endpoint.
-    """
-
-    data = {
-        'name': 'Example',
-        'id': api_example_id,
-    }
-    return Response(data)
-
-
 @api_view(['POST'])
-def post_example(request):
+def synthesize_polygons(request):
     """
-    API example endpoint.
-    """
-    api_example_id = request.data['api_example_id']
+    Endpoint for synthesizing a polygon from a list of points.
 
-    data = {
-        'name': 'Example',
-        'id': api_example_id,
-    }
-    return Response(data)
+    The request should have as its data dictionary the input for synthesis. data
+    should have a field "points" with the polygon points.
+    It may also contain fields for the other arguments that synthesize_polygon takes.
+    :param request: the HttpRequest
+    :return: a Response object to send back to the client with the generated sound and the
+    polygon points.
+    """
+
+    converted_data = polygon_processing.parse_polygon_data(json.loads(request.body))
+    sound, timestamps = polygon_processing.synthesize_polygon(**converted_data)
+
+    return Response({
+        "sound": audio_samples_to_wav_base64(sound),
+        "points": converted_data['points'],
+        "timestamps": timestamps,
+    })

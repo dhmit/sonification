@@ -49,6 +49,7 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
         "s_percentage": {"label": "S", "min": 0, "max": 1, "step": .1},
         "r_percentage": {"label": "R", "min": 0, "max": 1, "step": .1},
     };
+
     const fileRef = useRef(null);
     const handleSubmitFile = (event) => {
         event.preventDefault();
@@ -104,6 +105,7 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
     const submitFileToAPI = (file) => {
         const formData = new FormData();
         formData.append("type", "file");
+        formData.append("id", id);
         formData.append("value", file, "tempfile.csv");
         formData.append("constants", JSON.stringify(constants));
         formData.append("duration", duration.toString());
@@ -122,6 +124,7 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
             .then(data => uploadSuccessfulCallback(data));
     };
 
+
     const makeControl = (i, key) => {
         return (
             <div key={i + constantsDefaults[key]["label"]}>
@@ -139,7 +142,6 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
 
     return (
         <>
-            <FileInput onSubmit={submitFileToAPI} />
             <div className={"time-series-input"}>
                 <label>Use every nth value</label>
                 <input className="form-control my-3" type="number"
@@ -152,11 +154,11 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
             <div className={"time-series-input"}>
                 <label>Duration of each step (sec)</label>
                 <input className="form-control my-3" type="number"
-                    min={0.1}
-                    max={10}
-                    step={.1}
-                    onChange={e => setDuration(e.target.value)}
-                    value={duration}
+                        min={0.1}
+                        max={10}
+                        step={.1}
+                        onChange={e => setDuration(e.target.value)}
+                       value={duration}
                 />
             </div>
             <label>
@@ -200,7 +202,9 @@ const UploadTimeSeriesFileInput = ({id, uploadSuccessfulCallback, apiEndpoint}) 
         </>
     );
 };
+
 UploadTimeSeriesFileInput.propTypes = {
+    id: PropTypes.number,
     uploadSuccessfulCallback: PropTypes.func,
     apiEndpoint: PropTypes.string,
 };

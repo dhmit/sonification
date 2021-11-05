@@ -7,7 +7,6 @@ import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.shortcuts import render
-from app.data_processing import csv_files as csv_processing
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 
 from app.synthesize_polygons.synthesize_polygon import synthesize_polygon
@@ -34,13 +33,25 @@ def convert_data(data):
     :param data: a dict containing parameters for synthesize_polygon as strings/files
     :return: a dict containing the parameters for synthesize_polygon in correct format
     """
+    float_values = {
+        'noteLength': 'note_length',
+        'noteDelay': 'note_delay',
+        'baseFrequency': 'base_frequency',
+        'floorFrequency': 'floor_frequency',
+        'ceilFrequency': 'ceil_frequency',
+    }
+    bool_values = {
+        'restrictFrequency': 'restrict_frequency',
+        'sidesAsDuration': 'sides_as_duration',
+    }
+
     converted_data = {}
-    if 'noteLength' in data:
-        converted_data['note_length'] = float(data['noteLength'])
-    if 'noteDelay' in data:
-        converted_data['note_delay'] = float(data['noteDelay'])
-    if 'restrictOctave' in data:
-        converted_data['restrict_octave'] = str(data['restrictOctave']).lower() == 'true'
+    for old_name, new_name in float_values.items():
+        if old_name in data:
+            converted_data[new_name] = float(data[old_name])
+    for old_name, new_name in bool_values.items():
+        if old_name in data:
+            converted_data[new_name] = str(data[old_name]).lower() == 'true'
     if 'points' in data:
         converted_data['points'] = [tuple(map(float, p)) for p in data['points']]
 
@@ -57,26 +68,12 @@ def synthesize_polygon_general(data):
     polygon points.
     """
     converted_data = convert_data(data)
+    sound, timestamps = synthesize_polygon(**converted_data)
     return Response({
-        "sound": audio_samples_to_wav_base64(
-            synthesize_polygon(**converted_data)
-        ),
-        "points": converted_data['points']
+        "sound": audio_samples_to_wav_base64(sound),
+        "points": converted_data['points'],
+        "timestamps": timestamps,
     })
-
-
-@api_view(['POST'])
-def synthesize_polygon_csv_endpoint(request):
-    """
-    Endpoint for synthesizing a polygon from a csv file.
-    :param request: the HttpRequest
-    :return: an HttpResponse
-    """
-    temp_file = request.FILES.get('points')
-    data = request.POST.copy()
-    data['points'] = csv_processing.parse_csv_upload(temp_file, dictionary=False)
-
-    return synthesize_polygon_general(data)
 
 
 @api_view(['POST'])

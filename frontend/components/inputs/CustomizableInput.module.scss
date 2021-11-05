@@ -1,7 +1,10 @@
 .customizableInput {
     margin-left: 10px;
+    margin-right: 5px;
 }
 
 .customizableInputDiv {
+    display: flex;
     margin: 5px;
+    align-items: center;
 }

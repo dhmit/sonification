@@ -1,14 +1,87 @@
+.tooltipContainer {
+    position: relative;
+    .editorTooltip, .editorTooltipLeft, .editorTooltipRight {
+        visibility: hidden;
+
+        // Position the tooltip
+        position: absolute;
+        z-index: 1;
+        width: 100px;
+        padding: 2px;
+
+        background-color: #d7d7d7;
+        color: #000000;
+        border-style: solid;
+        border-color: black;
+        text-align: center;
+
+        line-height: 1;
+    }
+    .editorTooltip {
+        bottom: 110%;
+        left: 0;
+    }
+    .editorTooltipLeft {
+        bottom: 110%;
+        right: 0;
+    }
+    .editorTooltipRight {
+        left: 120%;
+        top: 0;
+    }
+}
+
+.tooltipContainer:hover, .tooltipDiv:hover {
+    .editorTooltip, .editorTooltipLeft, .editorTooltipRight {
+        visibility: visible;
+    }
+}
+
+.tooltipDiv {
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 50%;
+
+    $size: 15px;
+    width: $size;
+    height: $size;
+
+    div {
+        font-size: 8pt;
+        font-weight: bolder;
+        display: flex;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    margin: 0px 1px;
+
+    display: inline-block;
+
+    background-color: #d7d7d7;
+}
+
 .editorContainer {
     display: flex;
     flex-direction: column;
     flex-wrap: nowrap;
     //align-items: center;
+    width: 100%;
+    height: 100%;
 }
 
 .buttonRow {
     display: flex;
     flex-direction: row;
-    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.buttonGroup {
+    display: flex;
+    flex-direction: row;
 }
 
 .editorButton {
@@ -16,10 +89,12 @@
     border: 1px solid #007bff;
     border-radius: 0.25rem;
     color: white;
-    padding: 0.5rem 0.75rem;
+    padding: 0.5rem 0.5rem;
+    min-height: 40px;
     text-align: center;
     text-decoration: none;
     display: inline-block;
+    font-size: 15pt;
     margin: 5px;
     transition: background-color 0.15s ease-in-out, border-color 0.15s ease-in-out;
 }
@@ -34,35 +109,91 @@
     border: 1px solid #8a8a8a;
 }
 
-.svgDisplay {
+.svgDisplay, .svgDisplayLoading, .svgDisplayNoCursor {
     border: 1px solid black;
+}
+
+.svgDisplayNoCursor {
     cursor: none;
 }
 
-.svgDisplayFinished {
-    border: 1px solid black;
+.svgDisplayLoading {
+    pointer-events: none;
+    filter: grayscale(100%);
+    opacity: 1;
 }
 
-.point {
-    stroke: black;
+@keyframes spin {
+    from {
+        stroke-dashoffset: 0;
+    }
+    to {
+        stroke-dashoffset: 125.66;
+    }
+}
+
+.svgLoadingCircle {
+    fill: none;
+    stroke: #484848;
     stroke-width: 3;
-    fill: aqua;
+    stroke-dasharray: 55 7;
+    animation: spin 1s linear infinite;
 }
 
-.cursorPoint {
-    stroke: #8a8a8a;
-    stroke-width: 2;
+.addPoint, .editPoint, .deletePoint, .focusAddPoint, .focusEditPoint, .displayPoint {
+    stroke: black;
+    r: 7;
+}
+
+.addPoint, .editPoint, .deletePoint, .displayPoint {
     fill: aqua;
+    stroke-width: 3;
+}
+
+.displayPoint {
     r: 5;
+    stroke-width: 2;
+}
+
+$edit-color: #ffff88;
+.editPoint:hover, .focusEditPoint {
+    //stroke: #8a8a8a;
+    fill: $edit-color;
+    stroke-width: 2;
+}
+
+.deletePoint:hover {
+    fill: #ee4f4f;
+    stroke-width: 2;
+}
+
+.focusAddPoint {
+    //stroke: #8a8a8a;
+    stroke-width: 2;
+    fill: #5ddc40;
 }
 
 .line {
     stroke: black;
-    stroke-width: 2;
+    stroke-width: 4;
+}
+
+.editLine {
+    stroke: black;
+    stroke-width: 8;
+}
+
+.editLineInner {
+    stroke: $edit-color;
+    stroke-width: 4;
+}
+
+.playedLine {
+    stroke: #f50808;
+    stroke-width: 5;
 }
 
 .tempLine {
     stroke: #8a8a8a;
+    stroke-width: 2;
 }
-
-

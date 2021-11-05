@@ -33,7 +33,6 @@ urlpatterns = [
     path('api/gesture_to_sound/', api_views.gesture_to_sound),
     path('api/get_shape_analysis/', api_views.get_shape_analysis),
     path('api/synthesize_polygon/', synthesize_polygons_views.synthesize_polygon_endpoint),
-    path('api/synthesize_polygon_csv/', synthesize_polygons_views.synthesize_polygon_csv_endpoint),
     path('api/playback_demo/', api_views.playback_demo),
 
     # View paths

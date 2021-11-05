@@ -1,5 +1,5 @@
 import React from "react";
-
+import PropTypes from "prop-types";
 
 const ProjectCard = ({title, description, route}) => {
     return (
@@ -20,7 +20,6 @@ ProjectCard.propTypes = {
     description: PropTypes.string,
     route: PropTypes.string,
 };
-
 
 
 const Home = () => {

@@ -9,7 +9,7 @@ const TimeSeries = () => {
             <h2>Time Series Data</h2>
             <UploadTimeSeriesFileInput
                 uploadSuccessfulCallback={setInstrumentSamples}
-                apiEndpoint={'/api/generate_instrument_2d/'}
+                apiEndpoint={'/api/time_series_to_music/'}
             />
             <p>
                 Upload a .csv file with <code>m</code> rows and <code>n = 3</code> columns, and

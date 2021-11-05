@@ -1,6 +1,7 @@
 import json
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 import numpy as np
 
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
@@ -14,8 +15,77 @@ from app.data_processing import (
 )
 
 
+def not_implemented_error():
+    return Response(
+        {"detail": "This API endpoint is not yet implemented"},
+        status=status.HTTP_501_NOT_IMPLEMENTED
+    )
+
+
+################################################################################
+# NUMBERS -- this is Ryaan's demo; delete me eventually!
+################################################################################
 @api_view(['POST'])
-def color(request):
+def numbers_to_samples(request):
+    """
+    Expects a single string in the "numbers" field of data,
+    and produces samples based on that.
+
+    This is purely demo code by Ryaan!
+    """
+    number_str = request.data['numberStr']
+    numbers = [float(x) for x in number_str.split()]
+
+    base_frequency = 220
+    wav_files = []
+    for number in numbers:
+        freq_to_generate = base_frequency * number
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=1
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
+
+    return Response(wav_files)
+
+
+@api_view(['POST'])
+def numbers_to_music(request):
+    """
+    Expects a single string in the "numbers" field of data,
+    and produces a single audio out of that.
+
+    This is purely demo code by Ryaan!
+    """
+    number_str = request.data['numberStr']
+    numbers = [float(x) for x in number_str.split()]
+
+    base_frequency = 220
+    raw_samples = []
+    for number in numbers:
+        freq_to_generate = base_frequency * number
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=1
+        )
+        raw_samples.append(audio_samples)
+
+    raw_audio = np.hstack(raw_samples)
+    wav_file_base64 = audio_samples_to_wav_base64(raw_audio)
+    return Response(wav_file_base64)
+
+
+################################################################################
+# COLOR
+################################################################################
+@api_view(['POST'])
+def color_to_music(_request):
+    return not_implemented_error()
+
+
+@api_view(['POST'])
+def color_to_samples(request):
     """
     :param request: color picker's rgb values stored as a dictionary when the user hits submit
     :return: wav file, sine wave with frequency corresponds to energy of the color
@@ -48,59 +118,11 @@ def color(request):
     return Response(wav_files)
 
 
+################################################################################
+# GESTURE
+################################################################################
 @api_view(['POST'])
-def numbers_to_samples(request):
-    """
-    Expects a single string in the "numbers" field of data,
-    and produces samples based on that.
-
-    This is purely demo code by Ryaan!
-    """
-    number_str = request.data['numberStr']
-    numbers = [float(x) for x in number_str.split()]
-
-    base_frequency = 220
-    wav_files = []
-    for number in numbers:
-        freq_to_generate = base_frequency * number
-        audio_samples = synths.generate_sine_wave_with_envelope(
-            frequency=freq_to_generate,
-            duration=1
-        )
-        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
-        wav_files.append(wav_file_base64)
-
-    return Response(wav_files)
-
-
-@api_view(['POST'])
-def numbers_to_audio(request):
-    """
-    Expects a single string in the "numbers" field of data,
-    and produces a single audio out of that.
-
-    This is purely demo code by Ryaan!
-    """
-    number_str = request.data['numberStr']
-    numbers = [float(x) for x in number_str.split()]
-
-    base_frequency = 220
-    raw_samples = []
-    for number in numbers:
-        freq_to_generate = base_frequency * number
-        audio_samples = synths.generate_sine_wave_with_envelope(
-            frequency=freq_to_generate,
-            duration=1
-        )
-        raw_samples.append(audio_samples)
-
-    raw_audio = np.hstack(raw_samples)
-    wav_file_base64 = audio_samples_to_wav_base64(raw_audio)
-    return Response(wav_file_base64)
-
-
-@api_view(['POST'])
-def gesture_to_sound(request):
+def gesture_to_music(request):
     """
     Takes in gestures as a list of list of (x,y) coordinates and constructs audio sample
     based on the horizontal and vertical components of the gestures
@@ -117,7 +139,15 @@ def gesture_to_sound(request):
 
 
 @api_view(['POST'])
-def generate_instrument_2d(request):
+def gesture_to_samples(request):
+    return not_implemented_error()
+
+
+################################################################################
+# TIME SERIES DATA
+################################################################################
+@api_view(['POST'])
+def time_series_to_music(request):
     """
     Takes a 2-D CSV with the header and constructs samples based on those ratios.
     """
@@ -160,8 +190,16 @@ def generate_instrument_2d(request):
     return Response(sound)
 
 
+@api_view(['POST'])
+def time_series_to_samples(request):
+    return not_implemented_error()
+
+
+################################################################################
+# TEXT SHAPE
+################################################################################
 @api_view(['GET'])
-def get_shape_analysis(request):
+def text_shape_to_music(request):
     """
     API endpoint for generating audio based on the shape analysis of the given text
     """
@@ -185,26 +223,15 @@ def get_shape_analysis(request):
 
 
 @api_view(['POST'])
-def playback_demo(_request):
-    """
-    API endpoint for playback demo page, so generates some arbitrary samples
-    to send to the instruments on that page
-    """
-    wav_files = []
-    for i in range(1, 11):
-        freq_to_generate = 100 * i
-        audio_samples = synths.generate_sine_wave_with_envelope(
-            frequency=freq_to_generate,
-            duration=1
-        )
-        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
-        wav_files.append(wav_file_base64)
-
-    return Response(wav_files)
+def text_shape_to_samples(request):
+    return not_implemented_error()
 
 
+################################################################################
+# POLYGONS
+################################################################################
 @api_view(['POST'])
-def synthesize_polygons(request):
+def polygon_to_music(request):
     """
     Endpoint for synthesizing a polygon from a list of points.
 
@@ -224,3 +251,30 @@ def synthesize_polygons(request):
         "points": converted_data['points'],
         "timestamps": timestamps,
     })
+
+
+@api_view(['POST'])
+def polygon_to_samples(request):
+    return not_implemented_error()
+
+
+################################################################################
+# MISC!
+################################################################################
+@api_view(['POST'])
+def playback_demo(_request):
+    """
+    API endpoint for playback demo page, so generates some arbitrary samples
+    to send to the instruments on that page
+    """
+    wav_files = []
+    for i in range(1, 11):
+        freq_to_generate = 100 * i
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=1
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
+
+    return Response(wav_files)

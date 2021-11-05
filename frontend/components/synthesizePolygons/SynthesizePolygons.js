@@ -5,7 +5,7 @@ import PolygonEditor from "./PolygonEditor";
 import CustomizableInput from "../inputs/CustomizableInput";
 import STYLES from "./PolygonPageLayout.module.scss";
 
-const API_ENDPOINT = "/api/synthesize_polygon/";
+const API_ENDPOINT = "/api/polygon_to_music/";
 const LOW_FREQ = 20;
 const HIGH_FREQ = 10000;
 
@@ -44,7 +44,7 @@ const SynthesizePolygons = () => {
     const [sidesAsDuration, setSidesAsDuration] = useState(false);
     const [baseFrequency, setBaseFrequency] = useState(220);
     const [floorFrequency, setFloorFrequency] = useState(220);
-    const [ceilFrequency, setCeilFrequency] = useState(440);
+    const [ceilFrequency, setCeilFrequency] = useState(880);
 
     // used for controlling overall pane
     const [leftPaneWidth, setLeftPaneWidth] = useState(null);
@@ -309,10 +309,10 @@ const SynthesizePolygons = () => {
                         <h2 style={{marginBottom: 0}}>Results</h2>
                         {/*Highly dependent on CSS for animation*/}
                         <div className={switchSync(
-                                STYLES.statusDivSynced,
-                                STYLES.statusDivLoading,
-                                STYLES.statusDivUnsynced,
-                            )}>
+                            STYLES.statusDivSynced,
+                            STYLES.statusDivLoading,
+                            STYLES.statusDivUnsynced,
+                        )}>
                             <svg width={10} height={10}>
                                 <circle cx={5} cy={5} r={switchSync(5, 4, 5)}/>
                             </svg>

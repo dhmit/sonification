@@ -25,27 +25,37 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API endpoints
-    path('api/color/', api_views.color),
-    path('api/generate_instrument_2d/', api_views.generate_instrument_2d),
-    path('api/gesture_to_sound/', api_views.gesture_to_sound),
-    path('api/get_shape_analysis/', api_views.get_shape_analysis),
-    path('api/synthesize_polygon/', api_views.synthesize_polygons),
+    path('api/color_to_music/', api_views.color_to_music),
+    path('api/color_to_samples/', api_views.color_to_samples),
+
+    path('api/gesture_to_music/', api_views.gesture_to_music),
+    path('api/gesture_to_samples/', api_views.gesture_to_samples),
+
+    path('api/polygon_to_music/', api_views.polygon_to_music),
+    path('api/polygon_to_samples/', api_views.polygon_to_samples),
+
+    path('api/text_shape_to_music/', api_views.text_shape_to_music),
+    path('api/text_shape_to_samples/', api_views.text_shape_to_samples),
+
+    path('api/time_series_to_music/', api_views.time_series_to_music),
+    path('api/time_series_to_samples/', api_views.time_series_to_samples),
+
     path('api/playback_demo/', api_views.playback_demo),
 
     # View paths
     path('', views.index, name='index'),
-    path('time-series/', views.time_series),
     path('colors/', views.colors),
     path('gestures/', views.gestures),
+    path('playback-demo/', views.playback_demo),
     path('polygons/', views.polygons),
     path('text-shape/', views.text_shape_analysis),
-    path('playback-demo/', views.playback_demo),
+    path('time-series/', views.time_series),
 
     # Ryaan demo code - eventually delete me!
     path('numbers-before/', views.numbers_before),
     path('numbers-after/', views.numbers_after),
+    path('api/numbers_to_music/', api_views.numbers_to_music),
     path('api/numbers_to_samples/', api_views.numbers_to_samples),
-    path('api/numbers_to_audio/', api_views.numbers_to_audio),
 ]
 
 

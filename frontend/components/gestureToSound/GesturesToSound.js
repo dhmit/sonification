@@ -114,7 +114,7 @@ const GesturesToSound = () => {
             gestures: allMouseCoords,
             parameters: gestureParams,
         };
-        const apiURL = "/api/gesture_to_sound/";
+        const apiURL = "/api/gesture_to_music/";
         const responseCallbackFunc = (data) => {
             setSoundData((data.sound));
         };

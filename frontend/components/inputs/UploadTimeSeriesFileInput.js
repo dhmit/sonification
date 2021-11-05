@@ -10,31 +10,31 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
     const [constants, setConstants] = useState(
         [
             {
-                "base_frequency": 100,
-                "multiplier": 20,
+                "base_frequency": 0,
+                "multiplier": 1,
                 "offset": 0,
-                "a_percentage": 0,
-                "d_percentage": 0,
-                "s_percentage": 1,
-                "r_percentage": 0,
+                "a_percentage": .2,
+                "d_percentage": .1,
+                "s_percentage": .5,
+                "r_percentage": .2,
             },
             {
-                "base_frequency": 150,
-                "multiplier": 20,
+                "base_frequency": 0,
+                "multiplier": 1,
                 "offset": 0,
-                "a_percentage": 0,
-                "d_percentage": 0,
-                "s_percentage": 1,
-                "r_percentage": 0,
+                "a_percentage": .2,
+                "d_percentage": .1,
+                "s_percentage": .5,
+                "r_percentage": .2,
             },
             {
-                "base_frequency": 225,
-                "multiplier": 20,
+                "base_frequency": 0,
+                "multiplier": 1,
                 "offset": 0,
-                "a_percentage": 0,
-                "d_percentage": 0,
-                "s_percentage": 1,
-                "r_percentage": 0,
+                "a_percentage": .2,
+                "d_percentage": .1,
+                "s_percentage": .5,
+                "r_percentage": .2,
             },
         ]
     );
@@ -60,13 +60,13 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
         setConstants(prevState => {
             let temp = Object.assign([], prevState);
             temp.push({
-                "base_frequency": 100,
-                "multiplier": 20,
+                "base_frequency": 0,
+                "multiplier": 1,
                 "offset": 0,
-                "a_percentage": 0,
-                "d_percentage": 0,
-                "s_percentage": 1,
-                "r_percentage": 0,
+                "a_percentage": .2,
+                "d_percentage": .1,
+                "s_percentage": .5,
+                "r_percentage": .2,
             },);
             return temp;
         });

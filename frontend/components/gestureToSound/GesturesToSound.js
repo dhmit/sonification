@@ -177,7 +177,7 @@ const GesturesToSound = () => {
 
     return (
         <>
-            <h1>Gestures to Sound</h1>
+            <h1>Gestures</h1>
             <div className="row">
                 <div className="col-12 col-sm-5">
                     <p>

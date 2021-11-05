@@ -8,12 +8,12 @@ from django.shortcuts import render
 
 def base_page(request):
     """
-    Landing page for Color Encoding to Sound part of project
+    Landing page for Color part of project
     """
 
     context = {
         'page_metadata': {
-            'title': 'Color Encoding to Sound'
+            'title': 'Colors'
         },
         'component_name': 'BasePage'
     }

@@ -32,22 +32,20 @@ from django.shortcuts import render
 def index(request):
     """ Home page """
 
+    # NOTE(ra): no page title for homepage, as it's taken care of in the index.html template
     context = {
-        'page_metadata': {
-            'title': 'Home page'
-        },
         'component_name': 'Home'
     }
 
     return render(request, 'index.html', context)
 
 
-def gestures_to_sound(request):
-    """ Gestures to Sound page"""
+def gestures(request):
+    """ Gestures page"""
 
     context = {
         'page_metadata': {
-            'title': 'Gestures to Sound'
+            'title': 'Gestures'
         },
         'component_name': 'GesturesToSound'
     }
@@ -56,11 +54,11 @@ def gestures_to_sound(request):
 
 
 def text_shape_analysis(request):
-    """ Text Shape Analysis Page """
+    """ Text Shape Page """
 
     context = {
         'page_metadata': {
-            'title': 'Shape Analysis'
+            'title': 'Text Shape'
         },
         'component_name': 'TextShapeAnalysis'
     }
@@ -69,13 +67,25 @@ def text_shape_analysis(request):
 
 
 def time_series(request):
-    """ Text Shape Analysis Page """
+    """ Time Series Page """
 
     context = {
         'page_metadata': {
             'title': 'Time Series'
         },
         'component_name': 'TimeSeries'
+    }
+    return render(request, 'index.html', context)
+
+
+def numbers(request):
+    """ Page for demoing all of the playback options """
+
+    context = {
+        'page_metadata': {
+            'title': 'Numbers'
+        },
+        'component_name': 'RatioCSV'
     }
     return render(request, 'index.html', context)
 

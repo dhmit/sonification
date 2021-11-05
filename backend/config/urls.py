@@ -37,11 +37,12 @@ urlpatterns = [
 
     # View paths
     path('', views.index, name='index'),
-    path('time-series/', views.time_series, name='time_series'),
+    path('time-series/', views.time_series),
     path('colors/', color_encoding_to_sound_views.base_page),
-    path('gestures/', views.gestures_to_sound, name='gestures-to-sound'),
+    path('gestures/', views.gestures),
     path('polygons/', synthesize_polygons_views.synthesize_polygons),
     path('text-shape/', views.text_shape_analysis),
+    path('numbers/', views.numbers),
     path('playback-demo/', views.playback_demo),
 ]
 

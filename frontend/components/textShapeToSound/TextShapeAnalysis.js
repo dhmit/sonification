@@ -107,7 +107,7 @@ const TextShapeAnalysis = () => {
 
     return (
         <div className="container-fluid">
-            <h1>Text Shape Analysis</h1>
+            <h1>Text Shape</h1>
             <p>
                 This sonificiation produces sequence of beat frequencies based on the shape of the text.<br/>
                 Each beat frequency, based on the base frequency, represents a line by taking into

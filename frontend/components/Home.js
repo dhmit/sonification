@@ -3,10 +3,10 @@ import React from "react";
 
 const ProjectCard = ({title, description, route}) => {
     return (
-        <div className="card mb-4">
+        <div className="col-3 card mb-4 mr-4">
             <div className="card-body">
-                <h2 className="card-title">
-                    <a href={route}>{title}</a>
+                <h2 className="card-title text-center">
+                    <a href={route} className="stretched-link">{title}</a>
                 </h2>
                 {description &&
                     <h3 className="card-subtitle">{description}</h3>
@@ -22,7 +22,6 @@ const Home = () => {
         {
             title: 'Colors',
             route: '/colors/',
-            description: 'This is my description',
         },
         {
             title: 'Gestures',
@@ -40,6 +39,10 @@ const Home = () => {
             title: 'Text Shape',
             route: '/text-shape/',
         },
+        {
+            title: 'Numbers',
+            route: '/numbers/',
+        },
     ];
 
     const projectCards = projects.map((project, i) => (
@@ -51,7 +54,7 @@ const Home = () => {
         />
     ));
 
-    return (<>{projectCards}</>);
+    return (<div className="row">{projectCards}</div>);
 };
 
 export default Home;

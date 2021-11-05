@@ -271,7 +271,7 @@ const SynthesizePolygons = () => {
 
     return (
         <div>
-            <h1>Synthesize Polygons</h1>
+            <h1>Polygons</h1>
             <p>
                 Welcome to the Polygon Synthesizer! Start by drawing a polygon in the editor below
                 or by uploading a file describing your polygon. Uploaded files should be CSVs that

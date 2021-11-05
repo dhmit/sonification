@@ -17,7 +17,13 @@ const RatioCSV = () => {
 
     return (
         <>
-            <h2>Welcome to our Sonification toolkit!</h2>
+            <h1>Numbers</h1>
+            <p>
+                This component sonifies a CSV file with a single column of floats.
+            </p>
+            <p>
+                This is for demoing only. Please don't ship me.
+            </p>
             <FileInput
                 onSubmit={submitFileToAPI}
                 uploadSuccessfulCallback={setSamples}

@@ -24,7 +24,7 @@ const Nav = () => {
                 </li>
                 <li className="nav-item">
                     <a className="nav-link" href="/time-series/">
-                        Time series data
+                        Time Series Data
                     </a>
                 </li>
                 <li className="nav-item">

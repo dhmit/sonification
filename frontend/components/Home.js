@@ -44,10 +44,6 @@ const Home = () => {
             title: 'Text Shape',
             route: '/text-shape/',
         },
-        {
-            title: 'Numbers',
-            route: '/numbers/',
-        },
     ];
 
     const projectCards = projects.map((project, i) => (
@@ -59,7 +55,20 @@ const Home = () => {
         />
     ));
 
-    return (<div className="row">{projectCards}</div>);
+    return (
+        <div className="row">
+            {projectCards}
+            <div className="col-3 card mb-4 mr-4">
+                <div className="card-body text-center">
+                    <h2 className="card-title">
+                        Numbers Demo
+                    </h2>
+                    <a href="/numbers-before/" className="card-link">Before</a>
+                    <a href="/numbers-after/" className="card-link">After</a>
+                </div>
+            </div>
+        </div>
+    );
 };
 
 export default Home;

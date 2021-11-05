@@ -69,6 +69,7 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
 
     return (
         <>
+            <FileInput onSubmit={submitFileToAPI} />
             <div className={"time-series-input"}>
                 <label>Duration of each step (sec)</label>
                 <input className="form-control my-3" type="number"
@@ -89,7 +90,6 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                     </div>;
                 })}
             </div>
-            <FileInput onSubmit={submitFileToAPI} />
         </>
     );
 };

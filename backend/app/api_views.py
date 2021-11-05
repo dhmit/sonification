@@ -49,19 +49,20 @@ def color(request):
 
 
 @api_view(['POST'])
-def generate_instrument(request):
+def numbers_to_samples(request):
     """
-    Takes a 1-D CSV with the 'ratio' header and constructs samples based on those ratios.
-    TODO(ra): this is way too hardcoded! Move out of here.
+    Expects a single string in the "numbers" field of data,
+    and produces samples based on that.
+
+    This is purely demo code by Ryaan!
     """
-    temp_file = request.FILES.get('value')
-    csv_data = csv_processing.parse_csv_upload(temp_file)
-    ratios = [float(row['ratio']) for row in csv_data]
+    number_str = request.data['numberStr']
+    numbers = [float(x) for x in number_str.split()]
 
     base_frequency = 220
     wav_files = []
-    for ratio in ratios:
-        freq_to_generate = base_frequency * ratio
+    for number in numbers:
+        freq_to_generate = base_frequency * number
         audio_samples = synths.generate_sine_wave_with_envelope(
             frequency=freq_to_generate,
             duration=1
@@ -70,6 +71,32 @@ def generate_instrument(request):
         wav_files.append(wav_file_base64)
 
     return Response(wav_files)
+
+
+@api_view(['POST'])
+def numbers_to_audio(request):
+    """
+    Expects a single string in the "numbers" field of data,
+    and produces a single audio out of that.
+
+    This is purely demo code by Ryaan!
+    """
+    number_str = request.data['numberStr']
+    numbers = [float(x) for x in number_str.split()]
+
+    base_frequency = 220
+    raw_samples = []
+    for number in numbers:
+        freq_to_generate = base_frequency * number
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=1
+        )
+        raw_samples.append(audio_samples)
+
+    raw_audio = np.hstack(raw_samples)
+    wav_file_base64 = audio_samples_to_wav_base64(raw_audio)
+    return Response(wav_file_base64)
 
 
 @api_view(['POST'])

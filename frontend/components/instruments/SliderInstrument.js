@@ -1,46 +1,59 @@
-import React, {useState} from "react";
+import React, {useState, useRef} from "react";
 import PropTypes from "prop-types";
 import Slider from "../inputs/Slider";
+import SamplePlayer from "./SamplePlayer";
 
+/*
+ * A simple playback component with a slider volume control
+ */
+const SliderPlayer = ({
+    sample,
+    isPlaying,
+    index,
+}) => {
+    const [volume, setVolume] = useState(0);
+    const audioContextRef = useRef(new AudioContext());
+
+    return (<>
+        <SamplePlayer
+            loop={true}
+            sample={sample}
+            volume={volume}
+            shouldPlay={isPlaying}
+            audioContext={audioContextRef.current}
+        />
+        <Slider
+            id={index}
+            initialValue={volume}
+            onChangeFunction={(newValue) => setVolume(parseFloat(newValue))}
+        />
+    </>);
+};
+SliderPlayer.propTypes = {
+    sample: PropTypes.string,
+    index: PropTypes.number,
+    isPlaying: PropTypes.bool,
+};
+
+
+/*
+ * A basic instrument: takes in a bunch of samples, and
+ * provides sliders for playing loops with stop/start controls.
+ */
 const SliderInstrument = ({samples}) => {
-    if (samples === null) { return ('Waiting to load data to create an instrument.'); }
-
-    const [isPlaying, setIsPlaying] = useState(true);
-
-    const adjustAudioVolume = (audioElementId, newValue) => {
-        const audioTag = document.getElementById(audioElementId);
-        audioTag.volume = newValue / 100;
-    };
-
-    const toggleAudio = () => {
-        const audios = document.querySelectorAll('audio');
-        for (const audio of audios) {
-            if (isPlaying) {
-                audio.pause();
-                audio.currentTime = 0;
-                setIsPlaying(false);
-            } else {
-                audio.play();
-                setIsPlaying(true);
-            }
-        }
-    };
+    const [isPlaying, setIsPlaying] = useState(false);
+    const toggleAudio = () => setIsPlaying(!isPlaying);
 
     const controllers = [];
     for (let i = 0; i < samples.length; i++) {
-        const audioElementId = `audio-${i}`;
         controllers.push(
-            <li className="list-inline-item" key={i} >
-                <audio
-                    autoPlay
-                    loop
-                    id={audioElementId}
-                    src={`data:audio/wav;base64,${samples[i]}`}
-                    controlsList="nodownload"
-                />
-                <Slider
-                    id={i}
-                    onChangeFunction={(newValue) => adjustAudioVolume(audioElementId, newValue)}
+            <li className="list-unstyled" key={i} >
+                <SliderPlayer
+                    key={i}
+                    index={i}
+                    sample={samples[i]}
+                    isPlaying={isPlaying}
+                    loop={true}
                 />
             </li>);
     }

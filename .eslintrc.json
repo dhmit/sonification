@@ -42,6 +42,7 @@
         "quote-props": ["error", "consistent"],
         "radix": ["off"],
         "react/no-unescaped-entities": [ "error", { "forbid": [">", "}"] }],
+        "react/prop-types": ["warn"],
         "semi": ["error", "always"]
     },
 

@@ -4,7 +4,11 @@
 <html lang="en">
     <head>
         <meta charset="utf-8" />
-        <title>{{page_metadata.title}}</title>
+        <title>Sonification Toolkit
+            {% if page_metadata.title %}
+            : {{ page_metadata.title }}
+            {% endif %}
+        </title>
         <link rel="shortcut icon" href="data:image/x-icon;," type="image/x-icon" />
         <link
                 rel="stylesheet"
@@ -14,7 +18,7 @@
         <meta name="theme-color" content="#000000" />
         {% render_bundle 'index' 'css' %}
     </head>
-    
+
     <body>
         <noscript>You need to enable JavaScript to run this app.</noscript>
         <div id="app_root">

@@ -64,7 +64,7 @@ def _audio_samples_to_wav_base64(audio_samples, sample_rate):
               as an argument, rather than assuming 44.1 kHz in order to be able
               to write human-readable, sensible tests. (See tests.WavToBase64TestCase)
 
-              The public interface to this is the above function wav_samples_to_base64, which
+              The public interface to this is the above function audio_samples_to_wav_base64, which
               assumes 44.1 kHz sampling.
 
     :param audio_samples: NumPy array representing the list of samples.
@@ -75,5 +75,5 @@ def _audio_samples_to_wav_base64(audio_samples, sample_rate):
     wavfile.write(byte_io, sample_rate, audio_samples)  # write audio into this buffer in WAV format
     wav_bytes = byte_io.read()  # read the buffer
     base64_wav = base64.b64encode(wav_bytes)  # base64 encode the wav file
-    utf8_base64_wav = base64_wav.decode('UTF-8')  # UTF-8 decode the base64 encoded wav file
-    return utf8_base64_wav
+    base64_wav_str = base64_wav.decode('UTF-8')  # read the base64 encoded wav file as a UTF-8 str
+    return base64_wav_str

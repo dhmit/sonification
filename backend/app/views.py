@@ -32,27 +32,117 @@ from django.shortcuts import render
 def index(request):
     """ Home page """
 
+    # NOTE(ra): no page title for homepage, as it's taken care of in the index.html template
     context = {
-        'page_metadata': {
-            'title': 'Home page'
-        },
         'component_name': 'Home'
     }
 
     return render(request, 'index.html', context)
 
 
-def gestures_to_sound(request):
-    """ Gestures to Sound page"""
+def colors(request):
+    """
+    Landing page for Colors part of project
+    """
 
     context = {
         'page_metadata': {
-            'title': 'Gestures to Sound'
+            'title': 'Colors'
+        },
+        'component_name': 'ColorSonifier'
+    }
+
+    return render(request, 'index.html', context)
+
+
+def gestures(request):
+    """ Gestures page"""
+
+    context = {
+        'page_metadata': {
+            'title': 'Gestures'
         },
         'component_name': 'GesturesToSound'
     }
 
     return render(request, 'index.html', context)
+
+
+def text_shape_analysis(request):
+    """ Text Shape Page """
+
+    context = {
+        'page_metadata': {
+            'title': 'Text Shape'
+        },
+        'component_name': 'TextShapeAnalysis'
+    }
+
+    return render(request, 'index.html', context)
+
+
+def time_series(request):
+    """ Time Series Page """
+
+    context = {
+        'page_metadata': {
+            'title': 'Time Series'
+        },
+        'component_name': 'TimeSeries'
+    }
+    return render(request, 'index.html', context)
+
+
+def numbers_before(request):
+    """ Page for demoing refactor possibilities  """
+
+    context = {
+        'page_metadata': {
+            'title': 'Numbers'
+        },
+        'component_name': 'NumbersDemoBefore'
+    }
+    return render(request, 'index.html', context)
+
+
+def numbers_after(request):
+    """ Page for demoing refactor possibilities  """
+
+    context = {
+        'page_metadata': {
+            'title': 'Numbers'
+        },
+        'component_name': 'NumbersDemoAfter'
+    }
+    return render(request, 'index.html', context)
+
+
+def polygons(request):
+    """
+    Page showing the synthesize polygon tool
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Synthesize Polygons'
+        },
+        'component_name': 'SynthesizePolygons'
+    }
+
+    return render(request, 'index.html', context)
+
+
+def playback_demo(request):
+    """ Page for demoing all of the playback options """
+
+    context = {
+        'page_metadata': {
+            'title': 'Playback Demo'
+        },
+        'component_name': 'PlaybackDemo'
+    }
+    return render(request, 'index.html', context)
+
 
 ################################################################################
 # Boilerplate - just for examples

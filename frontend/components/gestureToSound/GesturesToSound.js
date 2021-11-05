@@ -1,6 +1,6 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
-import {getCookie, fetchPost} from "../../common";
+import {fetchPost} from "../../common";
 
 
 const GesturesToSound = () => {
@@ -11,6 +11,13 @@ const GesturesToSound = () => {
     const [submitted, setSubmitted] = useState(false);
     const [soundData, setSoundData] = useState(null);
     const [undoneGestures, setUndoneGestures] = useState([]);
+    const [gestureParams, setGestureParams] = useState({
+        compression: 10,
+        pitch: {low: 131, high:698}, // range of tenor-alto
+        duration: {low: 0.1, high:2},
+    });
+    const [hideAxisLabel, setHideAxisLabel] = useState(true);
+    const [buttonText, setButtonText] = useState("Show Axis");
 
     const getCoords = (event) => {
         if (!canvasRef.current) return;
@@ -105,8 +112,9 @@ const GesturesToSound = () => {
         event.preventDefault();
         const apiBody = {
             gestures: allMouseCoords,
+            parameters: gestureParams,
         };
-        const apiURL = "/api/gesture_to_sound/";
+        const apiURL = "/api/gesture_to_music/";
         const responseCallbackFunc = (data) => {
             setSoundData((data.sound));
         };
@@ -138,17 +146,46 @@ const GesturesToSound = () => {
         }
     };
 
+    const showAxis = (event) => {
+        event.preventDefault();
+        if (hideAxisLabel) {
+            setHideAxisLabel(false);
+            setButtonText("Hide Axis");
+        } else{
+            setHideAxisLabel(true);
+            setButtonText("Show Axis");
+        }
+    };
+
+    const handleUpdateCompression = (event) => {
+        event.preventDefault();
+        setGestureParams(prevState =>
+            ({...prevState, compression: parseInt(event.target.value)}));
+    };
+
+    const handleUpdatePitch = (event) => {
+        event.preventDefault();
+        setGestureParams(prevParams => ({...prevParams,
+            pitch:{...prevParams.pitch, [event.target.id]: parseInt(event.target.value)}}));
+    };
+
+    const handleUpdateDuration = (event) => {
+        event.preventDefault();
+        setGestureParams(prevParams => ({...prevParams,
+            duration:{...prevParams.duration, [event.target.id]: parseFloat(event.target.value)}}));
+    };
+
     return (
         <>
-            <h1>Gestures to Sound</h1>
+            <h1>Gestures</h1>
             <div className="row">
                 <div className="col-12 col-sm-5">
                     <p>
                         <button className="btn btn-outline-primary text-right"
-                            onClick={undoGesture} disabled={submitted}>
+                            onClick={undoGesture} disabled={allMouseCoords.length === 0}>
                             Undo</button>
                         <button className="btn btn-outline-primary mx-3"
-                            onClick={redoGesture} disabled={submitted}>
+                            onClick={redoGesture} disabled={undoneGestures.length === 0}>
                             Redo</button>
                     </p>
                     <canvas
@@ -159,6 +196,24 @@ const GesturesToSound = () => {
                         ref={canvasRef}
                         width="500" height="500"
                     />
+                    <div className="row" id="axisLabel" hidden={hideAxisLabel}>
+                        <div className="col align-left">
+                            low pitch
+                        </div>
+                        <div className="col align-right text-right">
+                            high pitch
+                        </div>
+                    </div>
+                    <button className="btn btn-outline-primary"
+                        onClick={showAxis}>{buttonText}</button>
+                </div>
+                <div className={`col-1 my-5 flex-column ${STYLES.yAxis}`} hidden={hideAxisLabel}>
+                    <div className="mb-auto">
+                        short notes
+                    </div>
+                    <div className="my-3">
+                        long notes
+                    </div>
                 </div>
                 <div className="col mt-3">
                     <p>
@@ -170,6 +225,55 @@ const GesturesToSound = () => {
                         <button className="btn btn-outline-secondary"
                             onClick={handleNewGestures}>New Canvas</button>
                     </p>
+                    <p>
+                        <b>Compression:</b>
+                        <input className="slider mx-3" type="range"
+                            min="1" max="100" step="1" value={gestureParams.compression}
+                            onChange={handleUpdateCompression}/>
+                        {gestureParams.compression} {gestureParams.compression === 1
+                            ? 'coordinate'
+                            : 'coordinates'} per note
+                    </p>
+                    <p>
+                        <b>Pitch:</b>
+                        <div className="row">
+                            <div className="col">
+                                Low:
+                                <input className="mx-2" type="range" min="75" max="262"
+                                    step="1" id="low" value={gestureParams.pitch.low}
+                                    onChange={handleUpdatePitch}/>
+                                {gestureParams.pitch.low} Hz
+                            </div>
+                            <div className="col">
+                                High:
+                                <input className="mx-2" type="range" min="300" max="1045"
+                                    step="1" id="high" value={gestureParams.pitch.high}
+                                    onChange={handleUpdatePitch}/>
+                                {gestureParams.pitch.high} Hz
+                            </div>
+                        </div>
+                    </p>
+                    <p>
+                        <b>Duration:</b>
+                        <div className="row">
+                            <div className="col">
+                                Low:
+                                <input type="range" min="0.01" max="0.5" id="low" step="0.01"
+                                    value={gestureParams.duration.low}
+                                    onChange={handleUpdateDuration}/>
+                                {gestureParams.duration.low} secs
+                            </div>
+                            <div className="col">
+                                High:
+                                <input type="range" min="1" max="2" step="0.01" id="high"
+                                    value={gestureParams.duration.high}
+                                    onChange={handleUpdateDuration}/>
+                                {gestureParams.duration.high} {gestureParams.duration.high === 1
+                                    ? 'sec' : 'secs'}
+                            </div>
+                        </div>
+                    </p>
+
                     {
                         soundData && <p>
                             Gesture Sounds:

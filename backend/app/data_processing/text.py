@@ -6,9 +6,12 @@ that we can plug into the parameters of our synthesis modules.
 """
 
 import string
+import numpy as np
 
 import nltk
 from nltk.sentiment import SentimentIntensityAnalyzer
+
+from app.synthesis.synthesizers import generate_sine_wave
 
 # These functions run when the system imports this module: i.e,. when you start the application
 # by running the backend. Normally, don't put code that executes at import time into a module!
@@ -48,3 +51,62 @@ def clean_text(text):
     lower_case = text.lower()
     cleaned_text = lower_case.translate(str.maketrans('', '', string.punctuation))
     return cleaned_text
+
+
+def get_average_length_of_whitespace_per_line(text):
+    """
+    Get an array containing average lengths of contiguous whitespaces per line in given text.
+    :param text: String of text
+    :return: Array of floats, where the ith entry represents the average length of contiguous
+    spaces in the ith line.
+    """
+
+    # Initial processing of text
+    cleaned_text = clean_text(text)
+    cleaned_text_lines = cleaned_text.split('\n')
+
+    # Store the average length of contiguous blocks of whitespace per line in text
+    average_length_of_whitespace_per_line = []
+
+    for line in cleaned_text_lines:
+        # Count number of whitespaces in a line, with tabs being equivalent to four spaces
+        num_whitespaces = line.count(' ') + 4 * line.count('\t')
+
+        # Count number of whitespace blocks, making sure to count leading/trailing whitespaces
+        num_whitespace_blocks = len(line.split()) - 1 + \
+                                int(line != line.rstrip()) + \
+                                int(line != line.lstrip())
+
+        # Calculate average length of whitespace and store in output
+        average_length_of_whitespace = num_whitespaces / max(num_whitespace_blocks, 1)
+        average_length_of_whitespace_per_line.append(average_length_of_whitespace)
+
+    return average_length_of_whitespace_per_line
+
+
+def text_shape_to_sound(text, secs_per_line=1, base_freq=440, max_beat_freq=20,
+                        higher_second_freq=False):
+    """
+    :param text: String of text
+    :param base_freq: number representing the base frequency in Hertz
+    :param max_beat_freq: number representing the maximum beat frequency in Hertz
+    :param secs_per_line: number representing the length of the sound of each line in seconds
+    :param higher_second_freq: boolean representing whether the second frequency will be higher
+    than the base frequency
+    :return: Numpy array of samples representing the sonification of a text based on its shape
+    """
+    samples = np.array([])
+
+    base_audio_freq = base_freq
+    average_length_of_whitespace_per_line = get_average_length_of_whitespace_per_line(text)
+    base_wave = generate_sine_wave(base_audio_freq, secs_per_line)
+
+    for average_length_of_whitespace in average_length_of_whitespace_per_line:
+        delta_freq = max(max_beat_freq - average_length_of_whitespace, 0)
+        secondary_freq = base_audio_freq - (1 - int(higher_second_freq)) * delta_freq + int(
+            higher_second_freq) * delta_freq
+        secondary_wave = generate_sine_wave(secondary_freq, secs_per_line)
+        combined_wave = base_wave + secondary_wave
+        samples = np.hstack((samples, combined_wave))
+
+    return samples

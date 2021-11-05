@@ -44,6 +44,10 @@ const Home = () => {
             title: 'Text Shape',
             route: '/text-shape/',
         },
+        {
+            title: 'Playback Demos',
+            route: '/playback-demo/',
+        },
     ];
 
     const projectCards = projects.map((project, i) => (

@@ -46,7 +46,7 @@ class ColorSonifier extends React.Component {
             });
             alert("Instrument has been updated!");
         };
-        fetchPost('/api/color/', requestBody, responseCallbackFunc);
+        fetchPost('/api/color_to_samples/', requestBody, responseCallbackFunc);
     };
 
     render() {

@@ -54,7 +54,6 @@ const SamplePlayer = ({
     };
 
     useEffect(() => {
-        console.log('setting up initial audio routing!');
         setupAudioRouting();
     }, [sample]);
 

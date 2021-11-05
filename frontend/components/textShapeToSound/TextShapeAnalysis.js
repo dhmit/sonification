@@ -94,7 +94,7 @@ const TextShapeAnalysis = () => {
         const encodedBaseFreq = encodeURIComponent(baseFreq);
         const encodedMaxBeatFreq = encodeURIComponent(maxBeatFreq);
         const encodedHigherSecondFreq = encodeURIComponent(higherSecondFreq);
-        fetch(`/api/get_shape_analysis/?text=${encodedText}
+        fetch(`/api/text_shape_to_music/?text=${encodedText}
         &secondsPerLine=${encodedSecondsPerLine}&baseFreq=${encodedBaseFreq}
         &maxBeatFreq=${encodedMaxBeatFreq}
         &higherSecondFreq=${encodedHigherSecondFreq}`)

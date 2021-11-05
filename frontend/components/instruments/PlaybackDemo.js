@@ -11,13 +11,11 @@ const PlaybackDemo = () => {
         fetchPost(apiEndpoint, {}, setSamples, false);
     }, []);
 
-    console.log(samples);
-
     return (
         <>
             <h2>Playback Demo Page</h2>
-            {samples &&<>
 
+            {samples &&<>
                 <section className="mb-4">
                     <h3>Slider Player</h3>
                     <SliderInstrument samples={samples}/>
@@ -27,6 +25,17 @@ const PlaybackDemo = () => {
                     <h3>Pad Instrument</h3>
                     <PadInstrument samples={samples}/>
                 </section>
+
+                <section className="mb-4">
+                    <h3>A Bunch of Audio Tags</h3>
+                    {samples.map((sample, i) => (
+                        <audio key={i}
+                            controls="controls"
+                            src={`data:audio/wav;base64, ${sample}`}
+                            controlsList="nodownload"/>
+                    ))}
+                </section>
+
             </>}
         </>
     );

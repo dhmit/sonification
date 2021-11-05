@@ -4,12 +4,12 @@ import PropTypes from "prop-types";
 import {fetchPost} from "../../common";
 import SliderInstrument from "../instruments/SliderInstrument";
 import NumbersToSamples from "./NumbersToSamples";
-import NumbersToAudio from "./NumbersToAudio";
+import NumbersToMusic from "./NumbersToMusic";
 
 export const NumbersDemoBefore = () => {
     return <>
         <NumbersToSamples />
-        <NumbersToAudio />
+        <NumbersToMusic />
     </>;
 };
 
@@ -23,7 +23,7 @@ const NumbersInput = ({handleSubmitAudio, handleSubmitInstrument}) => {
                 onChange={(e) => setNumberStr(e.target.value)}
             />
             <button onClick={(e) => handleSubmitAudio(e, numberStr)}>
-                Generate Audio
+                Generate Music
             </button>
             <button onClick={(e) => handleSubmitInstrument(e, numberStr)}>
                 Generate Instrument
@@ -42,7 +42,7 @@ export const NumbersDemoAfter = () => {
 
     const handleSubmitAudio = (e, numberStr) => {
         e.preventDefault();
-        const apiEndpoint = '/api/numbers_to_audio/';
+        const apiEndpoint = '/api/numbers_to_music/';
         const callback = (data) => {
             setAudio(data);
             setSamples(null);

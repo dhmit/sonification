@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import FileInput from "./FileInput";
 
 const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
-    const [duration, setDuration] = useState(.2);
+    const [duration, setDuration] = useState(.75);
     const [constants, setConstants] = useState(
         [
             {

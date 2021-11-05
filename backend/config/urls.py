@@ -31,8 +31,6 @@ urlpatterns = [
     path('api/get_shape_analysis/', api_views.get_shape_analysis),
     path('api/synthesize_polygon/', api_views.synthesize_polygons),
     path('api/playback_demo/', api_views.playback_demo),
-    path('api/numbers_to_samples/', api_views.numbers_to_samples),
-    path('api/numbers_to_audio/', api_views.numbers_to_audio),
 
     # View paths
     path('', views.index, name='index'),
@@ -41,8 +39,13 @@ urlpatterns = [
     path('gestures/', views.gestures),
     path('polygons/', views.polygons),
     path('text-shape/', views.text_shape_analysis),
-    path('numbers/', views.numbers),
     path('playback-demo/', views.playback_demo),
+
+    # Ryaan demo code - eventually delete me!
+    path('numbers-before/', views.numbers_before),
+    path('numbers-after/', views.numbers_after),
+    path('api/numbers_to_samples/', api_views.numbers_to_samples),
+    path('api/numbers_to_audio/', api_views.numbers_to_audio),
 ]
 
 

@@ -1,6 +1,10 @@
 import React, {useState} from "react";
-import SliderInstrument from "../instruments/SliderInstrument";
+import PropTypes from "prop-types";
+
 import {fetchPost} from "../../common";
+import SliderInstrument from "../instruments/SliderInstrument";
+import NumbersToSamples from "./NumbersToSamples";
+import NumbersToAudio from "./NumbersToAudio";
 
 export const NumbersDemoBefore = () => {
     return <>
@@ -9,74 +13,80 @@ export const NumbersDemoBefore = () => {
     </>;
 };
 
+
+const NumbersInput = ({handleSubmitAudio, handleSubmitInstrument}) => {
+    const [numberStr, setNumberStr] = useState('');
+    return (
+        <form>
+            <input
+                value={numberStr}
+                onChange={(e) => setNumberStr(e.target.value)}
+            />
+            <button onClick={(e) => handleSubmitAudio(e, numberStr)}>
+                Generate Audio
+            </button>
+            <button onClick={(e) => handleSubmitInstrument(e, numberStr)}>
+                Generate Instrument
+            </button>
+        </form>
+    );
+};
+NumbersInput.propTypes = {
+    handleSubmitAudio: PropTypes.func,
+    handleSubmitInstrument: PropTypes.func,
+};
+
 export const NumbersDemoAfter = () => {
-    return <>
-        <NumbersToSamples />
-        <NumbersToAudio />
-    </>;
-};
-
-const NumbersToSamples = () => {
     const [samples, setSamples] = useState(null);
-    const [numberStr, setNumberStr] = useState('');
+    const [audio, setAudio] = useState(null);
 
-    const apiEndpoint = '/api/numbers_to_samples/';
-    const handleSubmit = (e) => {
+    const handleSubmitAudio = (e, numberStr) => {
         e.preventDefault();
-        fetchPost(apiEndpoint, {numberStr}, setSamples);
+        const apiEndpoint = '/api/numbers_to_audio/';
+        const callback = (data) => {
+            setAudio(data);
+            setSamples(null);
+        };
+        fetchPost(apiEndpoint, {numberStr}, callback);
     };
 
-    return (<div className="mb-5">
-        <h1>Numbers to Samples</h1>
-        <p>
-            This component sonifies a bunch of numbers separated by spaces.
-        </p>
-        <p>
-            This is for demoing only. Please don't ship me.
-        </p>
-        <form onSubmit={handleSubmit}>
-            <input
-                value={numberStr}
-                onChange={(e) => setNumberStr(e.target.value)}
-            />
-            <button type="submit">Generate Instrument</button>
-        </form>
-
-        {samples && <SliderInstrument samples={samples} />}
-    </div>);
-};
-
-const NumbersToAudio = () => {
-    const [audioData, setAudioData] = useState(null);
-    const [numberStr, setNumberStr] = useState('');
-
-    const apiEndpoint = '/api/numbers_to_audio/';
-    const handleSubmit = (e) => {
+    const handleSubmitInstrument = (e, numberStr) => {
         e.preventDefault();
-        fetchPost(apiEndpoint, {numberStr}, setAudioData);
+        const callback = (data) => {
+            setAudio(null);
+            setSamples(data);
+        };
+        const apiEndpoint = '/api/numbers_to_samples/';
+        fetchPost(apiEndpoint, {numberStr}, callback);
     };
 
-    return (<>
-        <h1>Numbers to Audio</h1>
-        <p>
-            This component sonifies a bunch of numbers separated by spaces.
-        </p>
-        <p>
-            This is for demoing only. Please don't ship me.
-        </p>
-        <form onSubmit={handleSubmit}>
-            <input
-                value={numberStr}
-                onChange={(e) => setNumberStr(e.target.value)}
-            />
-            <button type="submit">Generate Audio</button>
-        </form>
+    return <div>
+        <div className="mb-2">
+            <h1>Numbers to Samples</h1>
+            <p>
+                This component sonifies a bunch of numbers separated by spaces and can either
+                generate its own audio track or samples that you can play or download.
+            </p>
+            <p>
+                This is for demoing only. Please don't ship me.
+            </p>
 
-        {audioData &&
+            <NumbersInput
+                handleSubmitAudio={handleSubmitAudio}
+                handleSubmitInstrument={handleSubmitInstrument}
+            />
+        </div>
+
+        {audio &&
             <audio
                 controls="controls"
-                src={`data:audio/wav;base64, ${audioData}`}
+                src={`data:audio/wav;base64, ${audio}`}
             />
         }
-    </>);
+        {samples && <SliderInstrument samples={samples} />}
+
+    </div>;
+
 };
+
+

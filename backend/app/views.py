@@ -93,15 +93,26 @@ def time_series(request):
     return render(request, 'index.html', context)
 
 
-def numbers(request):
-    """ Page for demoing all of the playback options """
+def numbers_before(request):
+    """ Page for demoing refactor possibilities  """
 
     context = {
         'page_metadata': {
             'title': 'Numbers'
         },
         'component_name': 'NumbersDemoBefore'
-        # 'component_name': 'NumbersDemoAfter'
+    }
+    return render(request, 'index.html', context)
+
+
+def numbers_after(request):
+    """ Page for demoing refactor possibilities  """
+
+    context = {
+        'page_metadata': {
+            'title': 'Numbers'
+        },
+        'component_name': 'NumbersDemoAfter'
     }
     return render(request, 'index.html', context)
 

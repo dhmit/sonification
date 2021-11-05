@@ -1,33 +1,57 @@
-import React, {useState} from "react";
-import FileInput from "./inputs/FileInput";
-import SliderInstrument from "./instruments/SliderInstrument";
-import PadInstrument from "./instruments/PadInstrument";
-import {fetchPost} from "../common";
+import React from "react";
+
+
+const ProjectCard = ({title, description, route}) => {
+    return (
+        <div className="card mb-4">
+            <div className="card-body">
+                <h2 className="card-title">
+                    <a href={route}>{title}</a>
+                </h2>
+                {description &&
+                    <h3 className="card-subtitle">{description}</h3>
+                }
+            </div>
+        </div>
+    );
+};
+
 
 const Home = () => {
-    const [samples, setSamples] = useState(null);
+    const projects = [
+        {
+            title: 'Colors',
+            route: '/colors/',
+            description: 'This is my description',
+        },
+        {
+            title: 'Gestures',
+            route: '/gestures/',
+        },
+        {
+            title: 'Time Series',
+            route: '/time-series/',
+        },
+        {
+            title: 'Polygons',
+            route: '/polygons/',
+        },
+        {
+            title: 'Text Shape',
+            route: '/text-shape/',
+        },
+    ];
 
-    const apiEndpoint = '/api/generate_instrument/';
-    const submitFileToAPI = (file) => {
-        const formData = new FormData();
-        formData.append("type", "file");
-        formData.append("value", file, "tempfile.csv");
-        fetchPost(apiEndpoint, formData, setSamples, false);
-    };
+    const projectCards = projects.map((project, i) => (
+        <ProjectCard
+            key={i}
+            title={project.title}
+            description={project.description}
+            route={project.route}
+        />
+    ));
 
-    return (
-        <>
-            <h2>Welcome to our Sonification toolkit!</h2>
-            <FileInput
-                onSubmit={submitFileToAPI}
-                uploadSuccessfulCallback={setSamples}
-            />
-            {samples && <>
-                <SliderInstrument samples={samples} />
-                <PadInstrument samples={samples} />
-            </>}
-        </>
-    );
+    return (<>{projectCards}</>);
 };
 
 export default Home;

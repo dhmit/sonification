@@ -1,9 +1,11 @@
+// could I make a list of pads that could be iterated through and returned?
 .pad {
+    border-radius: 10px;
     width: 50px;
-    height: 25px;
-    background-color: blue;
+    height: 50px;
+    background-color: white;
     border: 1px solid black;
     &:active {
-        background-color: red;
+        background-color: cyan;
     }
 }

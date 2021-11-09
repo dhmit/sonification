@@ -5,7 +5,9 @@ import STYLES from "./PadInstrument.module.scss";
 
 /* TODO:
     - add a parameter to the pad that allows it to take a keyboard input
-    - make the pads prettier with rounded corners
+    - space out the pads
+    MVP:
+    - one working pad that takes keyboard input
  */
 const Pad = ({sample, audioContext}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
@@ -20,6 +22,7 @@ const Pad = ({sample, audioContext}) => {
         <button
             className={STYLES.pad}
             onClick={handleClick}
+            // onKeyUp
         />
         <SamplePlayer
             sample={sample}

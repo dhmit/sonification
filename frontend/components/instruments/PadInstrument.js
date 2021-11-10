@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./PadInstrument.module.scss";
@@ -9,14 +9,26 @@ import STYLES from "./PadInstrument.module.scss";
     MVP:
     - one working pad that takes keyboard input
  */
-const Pad = ({sample, audioContext}) => {
+const Pad = ({sample, audioContext, keyBind}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
 
-    const handleClick = () => {
+    const playSample = () => {
         setShouldPlay(true);
         // TODO(ra): dynamically set to length of sample, or allow retriggers shorter than that
         setTimeout(() => {setShouldPlay(false); }, 1000);
     };
+
+    const handleClick = () => playSample();
+
+    // register your keydown handler
+    useEffect(() => {
+        document.addEventListener('keydown', (event) => {
+            if (event.key === keyBind) {
+                playSample();
+            }
+        });
+    }, []);
+
 
     return (<>
         <button
@@ -46,10 +58,12 @@ Pad.propTypes = {
 const PadInstrument = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
 
+    const keyBinds = ['q', 'w', 'e', 'r', 'a', 's', 'd', 'f', 'u', 'i', 'o', 'p'];
     return (
         <div id="step-sequencer">
             {samples.map((sample, i) => (
                 <Pad
+                    keyBind={keyBinds[i]}
                     key={i}
                     sample={sample}
                     audioContext={audioContextRef.current}

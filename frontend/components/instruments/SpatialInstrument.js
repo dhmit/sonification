@@ -27,7 +27,8 @@ const SpatialInstrument = ({soundPoints}) => {
         if (mouseX === null || mouseY === null) {
             return 0;
         }
-        return 100/(sqDist(point.x, point.y, mouseX, mouseY) + 1);
+        const halfRange = 20;
+        return 100/(sqDist(point.x, point.y, mouseX, mouseY)/(halfRange*halfRange) + 1);
     }
 
     function handleMouseLeave() {

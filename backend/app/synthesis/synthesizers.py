@@ -115,3 +115,31 @@ def convert_piano_key_num_to_sin_wave(piano_key):
     duration = 1
     frequency = a4_note * (2 ** ((piano_key + 1 - 49) / 12))
     return generate_sine_wave(frequency, duration)
+
+def generate_sine_wave_harmonics(frequency, duration, harmonics=0):
+    """
+    Generates audio samples for a sine wave at a given frequency and duration
+
+    :param frequency:  frequency in Hz
+    :param duration:   duration in seconds
+    :param harmonics: number of desired harmonics
+    :return: audio samples for the sine wave
+    """
+    num_samples = int(duration * WAV_SAMPLE_RATE)
+    time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
+    sine_wave_samples = np.sin(frequency * 2 * np.pi * time_steps)
+
+    if harmonics != 0:
+        for i in range(harmonics):
+            harmonic = np.sin(frequency * 2 * np.pi * time_steps * (i + 2))
+            for i in range(len(sine_wave_samples)):
+                sine_wave_samples[i] += harmonic[i]
+
+    pyplot.plot(sine_wave_samples)
+    pyplot.xlim(0, 1/frequency*WAV_SAMPLE_RATE)
+    pyplot.show()
+
+
+    return sine_wave_samples
+
+

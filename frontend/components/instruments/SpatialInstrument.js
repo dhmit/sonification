@@ -4,6 +4,10 @@ import SoundPoint from "./SoundPoint";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./SpatialInstrument.module.scss";
 
+/* TODO: there is a bug in which the player crashes
+    not sure how to reproduce.
+    'cannot call start more than once' in SamplePlayer.
+*/
 const SpatialInstrument = ({soundPoints}) => {
     const audioContextRef = useRef(new AudioContext());
 
@@ -16,7 +20,7 @@ const SpatialInstrument = ({soundPoints}) => {
     }
 
     function sampleShouldPlay(point) {
-        const maxDist = 20;
+        const maxDist = 200;
         if (mouseX === null || mouseY === null) {
             return false;
         }
@@ -46,23 +50,27 @@ const SpatialInstrument = ({soundPoints}) => {
 
     return (
         <>
-            {soundPoints.map((soundPoint, i) => (
-                <SamplePlayer
-                    key={`point-${i}`}
-                    sample={soundPoint.sample}
-                    loop
-                    shouldPlay={sampleShouldPlay(soundPoint)}
-                    volume={sampleVolume(soundPoint)}
-                    audioContext={audioContextRef.current}
-                />
-            ))}
-            <div
+            <svg
                 className={STYLES.spatialInstrument}
                 onMouseLeave={handleMouseLeave}
                 onMouseMove={handleMouseMove}
                 onMouseEnter={handleMouseMove}
                 ref={instrumentDiv}
-            />
+            >
+                {soundPoints.map((soundPoint, i) => (
+                    <>
+                        <SamplePlayer
+                            key={`point-${i}`}
+                            sample={soundPoint.sample}
+                            loop
+                            shouldPlay={sampleShouldPlay(soundPoint)}
+                            volume={sampleVolume(soundPoint)}
+                            audioContext={audioContextRef.current}
+                        />
+                        <circle cx={soundPoint.x} cy={soundPoint.y} r={2}/>
+                    </>
+                ))}
+            </svg>
         </>
     );
 };

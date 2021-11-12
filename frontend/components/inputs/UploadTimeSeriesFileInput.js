@@ -141,31 +141,49 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                     </div>
                 </div>
 
-                <div>
-                    <label>Use every nth value</label>
-                    <input
-                        className="form-control my-3" type="number"
-                        min={1}
-                        step={1}
-                        onChange={e => setEveryN(e.target.value)}
-                        value={everyN}
-                    />
-                </div>
-                <div>
-                    <label>Duration of each step (sec)</label>
-                    <input
-                        className="form-control my-3" type="number"
-                        min={0.1}
-                        max={10}
-                        step={.1}
-                        onChange={e => setDuration(e.target.value)}
-                        value={duration}
-                    />
-                </div>
-                <label>
-                    <input type="checkbox" onClick={e => setMapToNote(e.target.checked)}/>
-                    <span> Map numbers to note?</span>
-                </label>
+                <hr />
+
+                <p className="mb-0">
+                    Global parameters
+                </p>
+                <br />
+
+                <form>
+                    <div className="row">
+                        <div className="col">
+                            <div className="form-group col-md-6">
+                                <label htmlFor="step_size">Step size</label>
+                                <input
+                                    className="form-control" type="number" id="step_size"
+                                    min={1}
+                                    step={1}
+                                    onChange={e => setEveryN(e.target.value)}
+                                    value={everyN}
+                                />
+                            </div>
+                        </div>
+                        <div className="col">
+                            <div className="form-group col-md-6">
+                                <label htmlFor="duration">Duration of each step (sec)</label>
+                                <input
+                                    className="form-control" type="number" id="duration"
+                                    min={0.1}
+                                    max={10}
+                                    step={.1}
+                                    onChange={e => setDuration(e.target.value)}
+                                    value={duration}
+                                />
+                            </div>
+                        </div>
+                        <div className="col">
+                            <label>
+                                <input type="checkbox" onClick={e => setMapToNote(e.target.checked)}/>
+                                <span> Map numbers to note?</span>
+                            </label>
+                        </div>
+                    </div>
+                </form>
+
                 <button
                     className="btn btn-primary"
                     onClick={() => submitToAPI()}

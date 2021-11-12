@@ -167,15 +167,29 @@ def gesture_to_samples(request):
 # TIME SERIES DATA
 ################################################################################
 @api_view(['POST'])
+def parse_csv(request):
+    """
+    Takes a 2-D CSV, with or without textual headers, parses it, and returns
+    a list of dicts to the frontend.
+    This is a helper API call for the time_series project.
+    """
+    temp_file = request.FILES.get('value')
+    csv_data = csv_processing.parse_csv_upload_as_floats(temp_file)
+    return Response(csv_data)
+
+
+@api_view(['POST'])
 def time_series_to_music(request):
     """
     Takes a 2-D CSV with the header and constructs samples based on those ratios.
     """
+    csv_data = request.data['parsedCSV']
+    column_constants = request.data['constants']
+    duration = request.data['duration']
+    every_n = request.data['everyN']
+    csv_data = csv_data[::every_n]
+    map_to_note = request.data['mapToNote']
 
-    temp_file = request.FILES.get('value')
-    csv_data = csv_processing.parse_csv_upload(temp_file, False)
-    column_constants = json.loads(request.data['constants'])
-    duration = float(request.data['duration'])
     audio_samples = None
 
     for i, row in enumerate(csv_data):
@@ -184,16 +198,23 @@ def time_series_to_music(request):
             if frequency == "":
                 continue
             column_constant = column_constants[j]
-            freq_to_generate = column_constant["base_frequency"]["value"] + (
-                    float(frequency) + column_constant["offset"]["value"]) * column_constant[
-                                   "multiplier"]["value"]
+
+            frequency =\
+                (float(frequency) + column_constant["offset"]) * column_constant["multiplier"]
+
+            if map_to_note:
+                # map number [0,88] to a note
+                frequency = (2 ** ((frequency - 49) / 12)) * 440
+
+            frequency += column_constant["base_frequency"]
+
             note = synths.generate_sine_wave_with_envelope(
-                frequency=freq_to_generate,
+                frequency=frequency,
                 duration=duration,
-                a_percentage=int(column_constant["a_percentage"]["value"]) / 100,
-                d_percentage=int(column_constant["d_percentage"]["value"]) / 100,
-                s_percentage=int(column_constant["s_percentage"]["value"]) / 100,
-                r_percentage=int(column_constant["r_percentage"]["value"]) / 100
+                a_percentage=column_constant["a_percentage"],
+                d_percentage=column_constant["d_percentage"],
+                s_percentage=column_constant["s_percentage"],
+                r_percentage=column_constant["r_percentage"]
             )
             if sound is None:
                 sound = note

@@ -73,9 +73,9 @@ const PolygonEditor = (
         // handle enter/space
         if (e.code === 'Space' || e.code === 'Enter') {
             if (editorMode === EditorModes.EDIT) {
-                if (focusPoint !== null) {
+                if (focusPointIndex !== -1) {
                     e.preventDefault();
-                    setFocusPoint(null);
+                    setFocusPointIndex(-1);
                 } else if (focusLine !== null) {
                     e.preventDefault();
                     insertPointAtCursor(focusLine);
@@ -94,14 +94,12 @@ const PolygonEditor = (
 
     const POINT_MOVEMENT_SPEED = 5;
     function handleMovePoint(dx, dy, event) {
-        if (editorMode === EditorModes.EDIT && focusPoint !== null) {
+        if (editorMode === EditorModes.EDIT && focusPointIndex !== -1) {
             event.preventDefault();
-            const newPoints = points.map((p, i) => (
-                i === focusPoint
-                    ? [p[0] + dx, p[1] + dy]
-                    : p
-            ));
-            setPoints(newPoints);
+            setPoints(
+                prevPoints => [...prevPoints.slice(0, focusPointIndex),
+                    {focusPointIndex : [prevPoints[focusPointIndex][0] + dx, prevPoints[focusPointIndex][1] + dy]},
+                    prevPoints.slice(focusPointIndex + 1)]);
         }
     }
 
@@ -124,12 +122,12 @@ const PolygonEditor = (
         }
     }
 
-    const [focusPoint, setFocusPoint] = useState(null);
+    const [focusPointIndex, setFocusPointIndex] = useState(-1);
     const [focusLine, setFocusLine] = useState(null);
 
     function handleChangeEditorMode(newMode) {
         setEditorMode(newMode);
-        setFocusPoint(null);
+        setFocusPointIndex(-1);
         setFocusLine(null);
     }
 
@@ -241,7 +239,7 @@ const PolygonEditor = (
 
             // change focus to new point
             setFocusLine(null);
-            setFocusPoint(lineIndex + 1);
+            setFocusPointIndex(lineIndex + 1);
             handleEdit();
         }
     }
@@ -262,7 +260,7 @@ const PolygonEditor = (
 
     // TODO: fix styling of this
     function handleMouseEnterLine(index) {
-        if (focusPoint === null && editorMode === EditorModes.EDIT) {
+        if (focusPointIndex === -1 && editorMode === EditorModes.EDIT) {
             setFocusLine(index);
         }
     }
@@ -273,10 +271,10 @@ const PolygonEditor = (
 
     function handleClickPoint(index) {
         if (editorMode === EditorModes.EDIT) {
-            if (focusPoint === index) {
+            if (focusPointIndex === index) {
                 setFocusPoint(null);
             } else {
-                setFocusPoint(index);
+                setFocusPointIndex(index);
                 setFocusLine(null);
             }
         } else if (editorMode === EditorModes.DELETE) {
@@ -299,11 +297,11 @@ const PolygonEditor = (
         const x = e.clientX - rect.left; // x position within the element.
         const y = e.clientY - rect.top;  // y position within the element.
         setCursorLocation([x, y]);
-        if (editorMode === EditorModes.EDIT && focusPoint !== null) {
+        if (editorMode === EditorModes.EDIT && focusPointIndex !== -1) {
             onEdit();
             const editedPoints = points;
-            editedPoints[focusPoint][0] = x;
-            editedPoints[focusPoint][1] = y;
+            editedPoints[focusPointIndex][0] = x;
+            editedPoints[focusPointIndex][1] = y;
             setPoints(editedPoints);
         }
     }
@@ -391,7 +389,7 @@ const PolygonEditor = (
             </div>
             <svg
                 className={loading ? STYLES.svgDisplayLoading :
-                    ((editorMode === EditorModes.ADD || focusPoint !== null)
+                    ((editorMode === EditorModes.ADD || focusPointIndex !== -1)
                         ? STYLES.svgDisplayNoCursor : STYLES.svgDisplay)}
                 width={internalWidth}
                 height={internalHeight}
@@ -484,7 +482,7 @@ const PolygonEditor = (
                             cx={p[0]}
                             cy={p[1]}
                             // r={5}
-                            className={i === focusPoint
+                            className={i === focusPointIndex
                                 ? switchEditorMode(STYLES.addPoint, STYLES.focusEditPoint, STYLES.deletePoint)
                                 : switchEditorMode(STYLES.addPoint, STYLES.editPoint, STYLES.deletePoint)
                             }

@@ -105,9 +105,25 @@ const TextShapeAnalysis = () => {
     };
 
 
+       const makeTextInput = (heading, id, value, title, onChange, unit) => (
+        <div className="form-inline">
+            <label className="mr-1" htmlFor={id}>{heading}</label>
+            <input
+                className="form-control mr-1" id={id} type="number"
+                value={value}
+                data-toggle="tooltip"
+                data-placement="top"
+                title={title}
+                onChange={onChange}
+                required
+            />
+            <strong>{unit}</strong>
+        </div>
+    );
+
     return (
         <div className="container-fluid">
-            <h1>Text Shape Analysis</h1>
+            <h1>Text Shape</h1>
             <p>
                 Welcome to the Text Shape Synthesizer! Start by typing or uploading a text file and hit submit to generate sound.<br/>
                 The sound is based on the amount of linebreaks and whitespace in the text.
@@ -145,38 +161,31 @@ const TextShapeAnalysis = () => {
                     </div>
                     <div className="col">
                         <p><b>Edit Default Parameters</b></p>
-                        <div className="form-inline">
-                            Seconds Per Line: &nbsp;
-                            <input className="form-control" id="secondsPerLine" type="number"
-                                   value={secondsPerLine}
-                                   data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="the duration of each beat frequency in seconds"
-                                   onChange={handleSecondsPerLineChange}
-                                   required/>
-                            &nbsp;<b>s</b>
-                        </div>
-                        <div className="form-inline">
-                            Base Frequency: &nbsp;
-                            <input className="form-control" id="baseFreq" type="number"
-                                   data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="the frequency that the beat frequencies will be based on
-                                   in Hertz"
-                                   value={baseFreq} onChange={handleBaseFreqChange}
-                                   required/>
-                            &nbsp;<b>Hz</b>
-                        </div>
-                        <div className="form-inline">
-                            Max Beat Frequency:&nbsp;
-                            <input className="form-control" id="maxBeatFreq" type="number"
-                                   data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="the maximum possible beat frequency in Hertz"
-                                   value={maxBeatFreq} onChange={handleMaxBeatFreqChange}
-                                   required/>&nbsp;
-                            <b>Hz</b>
-                        </div>
+                        {makeTextInput(
+                            "Seconds Per Line:",
+                            "secondsPerLine",
+                            secondsPerLine,
+                            "the duration of each beat frequency in seconds",
+                            handleSecondsPerLineChange,
+                            "s"
+                        )}
+                        {makeTextInput(
+                            "Base Frequency:",
+                            "baseFreq",
+                            baseFreq,
+                            "the frequency that the beat frequencies will be based on\n" +
+                            "                                   in Hertz",
+                            handleBaseFreqChange,
+                            "Hz"
+                        )}
+                        {makeTextInput(
+                            "Max Beat Frequency:",
+                            "maxBeatFreq",
+                            maxBeatFreq,
+                            "the maximum possible beat frequency in Hertz",
+                            handleMaxBeatFreqChange,
+                            "Hz"
+                        )}
                          <div className="form-inline">
                              Second Frequency Relative to Base Frequency: &nbsp;
                              <div className="form-check form-switch">

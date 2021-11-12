@@ -1,4 +1,7 @@
-// could I make a list of pads that could be iterated through and returned?
+/* TODO:
+ * set multiple background colors (will this involve creating multiple pads?
+ *
+ */
 .pad {
     border-radius: 10px;
     width: 50px;
@@ -7,5 +10,30 @@
     border: 1px solid black;
     &:active {
         background-color: cyan;
+        transition: background-color 1s linear;
+    }
+}
+
+.pad2 {
+    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border: 1px solid black;
+    &:active {
+        background-color: magenta;
+        transition: background-color 1s linear;
+    }
+}
+
+.pad3 {
+    border-radius: 10px;
+    width: 50px;
+    height: 50px;
+    background-color: white;
+    border: 1px solid black;
+    &:active {
+        background-color: chartreuse;
+        transition: background-color 1s linear;
     }
 }

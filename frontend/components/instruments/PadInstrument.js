@@ -3,11 +3,13 @@ import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./PadInstrument.module.scss";
 
-/* TODO:
-    - add a parameter to the pad that allows it to take a keyboard input
-    - space out the pads
-    MVP:
-    - one working pad that takes keyboard input
+/*
+    CURRENTLY:
+    - pads are mapped to keyboard inputs
+
+    TODO:
+    - space out pads on the screen
+    - active = true on keydown, active = false on keyup
  */
 const Pad = ({sample, audioContext, keyBind}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
@@ -20,11 +22,11 @@ const Pad = ({sample, audioContext, keyBind}) => {
 
     const handleClick = () => playSample();
 
-    // register your keydown handler
     useEffect(() => {
         document.addEventListener('keydown', (event) => {
             if (event.key === keyBind) {
                 playSample();
+
             }
         });
     }, []);

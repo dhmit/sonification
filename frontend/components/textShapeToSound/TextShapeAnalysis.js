@@ -171,26 +171,24 @@ const TextShapeAnalysis = () => {
                             handleSecondsPerLineChange,
                             "s"
                         )}
-                        <div className="form-inline">
-                            Base Frequency: &nbsp;
-                            <input className="form-control" id="baseFreq" type="number"
-                                   data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="the frequency that the beat frequencies will be based on
-                                   in Hertz"
-                                   value={baseFreq} onChange={handleBaseFreqChange}
-                                   required/>
-                            &nbsp;<b>Hz</b>
-                        </div>
-                        <div className="form-inline">
-                            Max Beat Frequency:&nbsp;
-                            <input className="form-control" id="maxBeatFreq" type="number"
-                                   data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="the maximum possible beat frequency in Hertz"
-                                   value={maxBeatFreq} onChange={handleMaxBeatFreqChange}
-                                   required/>&nbsp;
-                            <b>Hz</b>
+
+                        {makeTextInput(
+                            "Base Frequency:",
+                            "baseFreq",
+                            baseFreq,
+                            "the frequency that the beat frequencies will be based on\n" +
+                            "                                   in Hertz",
+                            handleBaseFreqChange,
+                            "Hz"
+                        )}
+                        {makeTextInput(
+                            "Max Beat Frequency:",
+                            "maxBeatFreq",
+                            maxBeatFreq,
+                            "the maximum possible beat frequency in Hertz",
+                            handleMaxBeatFreqChange,
+                            "Hz"
+                        )}
                         </div>
                          <div className="form-inline">
                              Second Frequency Relative to Base Frequency: &nbsp;

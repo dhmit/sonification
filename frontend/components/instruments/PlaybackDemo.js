@@ -2,9 +2,20 @@ import React, {useEffect, useState} from "react";
 import SliderInstrument from "./SliderInstrument";
 import PadInstrument from "./PadInstrument";
 import {fetchPost} from "../../common";
+import SoundPoint from "./SoundPoint";
+import SpatialInstrument from "./SpatialInstrument";
 
 const PlaybackDemo = () => {
-    const [samples, setSamples] = useState();
+    const [samples, setSamples] = useState([]);
+    const [soundPoints, setSoundPoints] = useState([]);
+
+    useEffect(() => {
+        console.log(soundPoints);
+    }, [soundPoints]);
+
+    useEffect(() => {
+        setSoundPoints(samples.map((sample, i) => new SoundPoint(20*i, 20*i, sample)));
+    }, [samples]);
 
     useEffect(() => {
         const apiEndpoint = '/api/playback_demo/';
@@ -34,6 +45,11 @@ const PlaybackDemo = () => {
                             src={`data:audio/wav;base64, ${sample}`}
                             controlsList="nodownload"/>
                     ))}
+                </section>
+
+                <section className="mb-4">
+                    <h3>Spatial Instrument</h3>
+                    <SpatialInstrument soundPoints={soundPoints}/>
                 </section>
 
             </>}

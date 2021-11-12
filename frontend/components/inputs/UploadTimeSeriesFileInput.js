@@ -1,43 +1,27 @@
 import React, {useState} from "react";
-import {getCookie} from "../../common";
+import {fetchPost, getCookie} from "../../common";
 import PropTypes from "prop-types";
 import FileInput from "./FileInput";
 
+
+const DEFAULT_COLUMN_CONSTANTS = {
+    "base_frequency": 220,
+    "multiplier": 1,
+    "offset": 0,
+    "a_percentage": .2,
+    "d_percentage": .1,
+    "s_percentage": .5,
+    "r_percentage": .2,
+};
+
 const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
+    const [parsedCSV, setParsedCSV] = useState(null);
     const [duration, setDuration] = useState(.2);
     const [everyN, setEveryN] = useState(1);
     const [mapToNote, setMapToNote] = useState(false);
-    const [constants, setConstants] = useState(
-        [
-            {
-                "base_frequency": 220,
-                "multiplier": 1,
-                "offset": 0,
-                "a_percentage": .2,
-                "d_percentage": .1,
-                "s_percentage": .5,
-                "r_percentage": .2,
-            },
-            {
-                "base_frequency": 220,
-                "multiplier": 1,
-                "offset": 0,
-                "a_percentage": .2,
-                "d_percentage": .1,
-                "s_percentage": .5,
-                "r_percentage": .2,
-            },
-            {
-                "base_frequency": 220,
-                "multiplier": 1,
-                "offset": 0,
-                "a_percentage": .2,
-                "d_percentage": .1,
-                "s_percentage": .5,
-                "r_percentage": .2,
-            },
-        ]
-    );
+    const [constants, setConstants] = useState([]);
+    const [activeColumn, setActiveColumn] = useState(0);
+
     const constantsDefaults = {
         "base_frequency": {"label": "Base Frequency", "min": null, "max": null, "step": null},
         "multiplier": {"label": "Multiplier", "min": null, "max": null, "step": null},
@@ -48,42 +32,25 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
         "r_percentage": {"label": "R", "min": 0, "max": 1, "step": .1},
     };
 
-    const updateConstant = (col, name, val) => {
-        setConstants(prevState => {
-            let temp = Object.assign([], prevState);
-            temp[col][name] = parseFloat(val);
-            return temp;
-        });
+    const setParsedCsvAndUpdateConstants = (parsedData) => {
+        // NOTE(RA): This wipes out old constants with the default settings whenever we upload
+        //           a new CSV. It might be nice to retain settings between uploads. Not sure.
+        console.log(parsedData);
+        const newColumnConstants = [];
+        parsedData[0].forEach(() => newColumnConstants.push({...DEFAULT_COLUMN_CONSTANTS}));
+        console.log(newColumnConstants);
+        setConstants(newColumnConstants);
+        setParsedCSV(parsedData);  // we set this last because the UI if's on its presence
     };
 
-    const addColumn = () => {
-        setConstants(prevState => {
-            let temp = Object.assign([], prevState);
-            temp.push({
-                "base_frequency": 0,
-                "multiplier": 1,
-                "offset": 0,
-                "a_percentage": .2,
-                "d_percentage": .1,
-                "s_percentage": .5,
-                "r_percentage": .2,
-            },);
-            return temp;
-        });
-    };
-
-    const removeColumn = () => {
-        setConstants(prevState => {
-            let temp = Object.assign([], prevState);
-            temp.pop();
-            return temp;
-        });
-    };
-
-    const submitFileToAPI = (file) => {
+    const csvParse = (file) => {
         const formData = new FormData();
         formData.append("type", "file");
         formData.append("value", file, "tempfile.csv");
+        fetchPost('/api/parse_csv/', formData, setParsedCsvAndUpdateConstants, false);
+    };
+
+    const submitFileToAPI = () => {
         formData.append("constants", JSON.stringify(constants));
         formData.append("duration", duration.toString());
         formData.append("everyN", everyN.toString());
@@ -101,17 +68,41 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
             .then(data => uploadSuccessfulCallback(data));
     };
 
-    const makeControl = (i, key) => {
+    const updateConstant = (colNumber, constantName, val) => {
+        setConstants(prevState => {
+            let temp = Object.assign([], prevState);
+            temp[colNumber][constantName] = parseFloat(val);
+            return temp;
+        });
+    };
+
+    const makeColumnControls = (columnNumber) => {
+        const columnConstants = constants[columnNumber];
+        // const controls = (<>
+        //     <div className="row">
+        //         ["base_frequency", "multiplier", "
+        //     </div>
+        // </>
+
+        return Object.keys(columnConstants).map((constantName) => {
+            return makeControl(columnNumber, constantName);
+        });
+    };
+
+    const makeControl = (columnNumber, constantName) => {
         return (
-            <div key={i + constantsDefaults[key]["label"]}>
-                <label>{constantsDefaults[key]["label"]}</label>
+            <div key={constantsDefaults[constantName]["label"]}>
+                <label>{constantsDefaults[constantName]["label"]}</label>
                 <input
                     className="form-control my-3" type="number"
-                    min={constantsDefaults[key]["min"]}
-                    max={constantsDefaults[key]["max"]}
-                    step={constantsDefaults[key]["step"]}
-                    onChange={e => updateConstant(i, key, e.target.value)}
-                    value={constants[i][key]}
+                    min={constantsDefaults[constantName]["min"]}
+                    max={constantsDefaults[constantName]["max"]}
+                    step={constantsDefaults[constantName]["step"]}
+                    onChange={e => {
+                        console.log('all the stuff!', columnNumber, constantName, e.target.value);
+                        updateConstant(columnNumber, constantName, e.target.value);
+                    }}
+                    value={constants[columnNumber][constantName]}
                 />
             </div>
         );
@@ -119,47 +110,69 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
 
     return (
         <>
-            <FileInput onSubmit={submitFileToAPI} />
-            <div className={"time-series-input"}>
-                <label>Use every nth value</label>
-                <input
-                    className="form-control my-3" type="number"
-                    min={1}
-                    step={1}
-                    onChange={e => setEveryN(e.target.value)}
-                    value={everyN}
-                />
-            </div>
-            <div className={"time-series-input"}>
-                <label>Duration of each step (sec)</label>
-                <input className="form-control my-3" type="number"
-                    min={0.1}
-                    max={10}
-                    step={.1}
-                    onChange={e => setDuration(e.target.value)}
-                    value={duration}
-                />
-            </div>
-            <label>
-                <input type="checkbox" onClick={e => setMapToNote(e.target.checked)}/>
-                <span> Map numbers to note?</span>
-            </label>
-            <p>Column Constants:</p>
-            <button className="btn btn-secondary ml-1" onClick={addColumn}>+</button>
-            <button className="btn btn-secondary ml-1" onClick={removeColumn}>-</button>
-            <div className="form-inline">
-                {constants.map((col, i) => {
-                    return <div className={"time-series-input"} key={i}>
-                        <p>Column {i+1}: </p>
-                        {Object.keys(col).map(constant => {
-                            return makeControl(i,constant);
-                        })}
-                    </div>;
-                })}
-            </div>
+            {!parsedCSV && <>
+                <p className="mb-0">
+                    First, upload a CSV file that has numeric values in its columns:
+                </p>
+                <FileInput onSubmit={csvParse} />
+            </>}
+
+            {parsedCSV && constants && <>
+                <p>Great! We detected {parsedCSV[0].length} columns of numeric data.</p>
+                <p>
+                    We're going to turn your data into sound, based on the values below,
+                    which you can edit.
+                </p>
+
+                <ul className="nav nav-tabs">
+                    {constants.map((col, i) => (
+                        <li className="nav-item" key={i}>
+                            <a
+                                onClick={() => setActiveColumn(i)}
+                                href="#"
+                                className={activeColumn === i ? "nav-link active" : "nav-link"}>
+                                Column {i+1}
+                            </a>
+                        </li>
+                    ))}
+                </ul>
+
+                <div className="form-inline">
+                    <div className="time-series-input">
+                        {makeColumnControls(activeColumn)}
+                    </div>
+                </div>
+
+                <div className={"time-series-input"}>
+                    <label>Use every nth value</label>
+                    <input
+                        className="form-control my-3" type="number"
+                        min={1}
+                        step={1}
+                        onChange={e => setEveryN(e.target.value)}
+                        value={everyN}
+                    />
+                </div>
+                <div className={"time-series-input"}>
+                    <label>Duration of each step (sec)</label>
+                    <input
+                        className="form-control my-3" type="number"
+                        min={0.1}
+                        max={10}
+                        step={.1}
+                        onChange={e => setDuration(e.target.value)}
+                        value={duration}
+                    />
+                </div>
+                <label>
+                    <input type="checkbox" onClick={e => setMapToNote(e.target.checked)}/>
+                    <span> Map numbers to note?</span>
+                </label>
+            </>}
         </>
     );
 };
+
 UploadTimeSeriesFileInput.propTypes = {
     uploadSuccessfulCallback: PropTypes.func,
     apiEndpoint: PropTypes.string,

@@ -6,7 +6,10 @@ import STYLES from "./SpatialInstrument.module.scss";
 
 /* TODO: there is a bug in which the player crashes
     not sure how to reproduce.
-    'cannot call start more than once' in SamplePlayer.
+    Probably has something to do with toggling based on maxDist.
+    "Uncaught DOMException: Failed to execute 'start' on 'AudioBufferSourceNode':
+    cannot call start more than once."
+    Caused when on border between two sounds based on maxDist.
 */
 const SpatialInstrument = ({soundPoints}) => {
     const audioContextRef = useRef(new AudioContext());
@@ -60,14 +63,14 @@ const SpatialInstrument = ({soundPoints}) => {
                 {soundPoints.map((soundPoint, i) => (
                     <>
                         <SamplePlayer
-                            key={`point-${i}`}
+                            key={`sound-point-${i}`}
                             sample={soundPoint.sample}
                             loop
                             shouldPlay={sampleShouldPlay(soundPoint)}
                             volume={sampleVolume(soundPoint)}
                             audioContext={audioContextRef.current}
                         />
-                        <circle cx={soundPoint.x} cy={soundPoint.y} r={2}/>
+                        <circle key={`circle-${i}`} cx={soundPoint.x} cy={soundPoint.y} r={2}/>
                     </>
                 ))}
             </svg>

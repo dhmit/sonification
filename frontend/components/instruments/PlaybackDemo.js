@@ -9,8 +9,24 @@ const PlaybackDemo = () => {
     const [samples, setSamples] = useState([]);
     const [soundPoints, setSoundPoints] = useState([]);
 
+    function unityPoint(i, n) {
+        const r = 70;
+        const dx = 100;
+        const dy = 100;
+        return [
+            r * Math.cos(2*Math.PI * i/n) + dx,
+            r * Math.sin(2*Math.PI * i/n) + dy,
+        ];
+    }
+
     useEffect(() => {
-        setSoundPoints(samples.map((sample, i) => new SoundPoint(20*i, 20*i, sample)));
+        console.log(soundPoints);
+    }, [soundPoints]);
+
+    useEffect(() => {
+        setSoundPoints(samples.map(
+            (samp, i) => new SoundPoint(...unityPoint(i, samples.length), samp)
+        ));
     }, [samples]);
 
     useEffect(() => {

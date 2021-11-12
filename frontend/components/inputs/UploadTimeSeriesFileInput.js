@@ -10,7 +10,7 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
     const [constants, setConstants] = useState(
         [
             {
-                "base_frequency": 0,
+                "base_frequency": 220,
                 "multiplier": 1,
                 "offset": 0,
                 "a_percentage": .2,
@@ -19,7 +19,7 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                 "r_percentage": .2,
             },
             {
-                "base_frequency": 0,
+                "base_frequency": 220,
                 "multiplier": 1,
                 "offset": 0,
                 "a_percentage": .2,
@@ -28,7 +28,7 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                 "r_percentage": .2,
             },
             {
-                "base_frequency": 0,
+                "base_frequency": 220,
                 "multiplier": 1,
                 "offset": 0,
                 "a_percentage": .2,
@@ -105,12 +105,13 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
         return (
             <div key={i + constantsDefaults[key]["label"]}>
                 <label>{constantsDefaults[key]["label"]}</label>
-                <input className="form-control my-3" type="number"
-                        min={constantsDefaults[key]["min"]}
-                        max={constantsDefaults[key]["max"]}
-                        step={constantsDefaults[key]["step"]}
-                        onChange={e => updateConstant(i, key, e.target.value)}
-                        value={constants[i][key]}
+                <input
+                    className="form-control my-3" type="number"
+                    min={constantsDefaults[key]["min"]}
+                    max={constantsDefaults[key]["max"]}
+                    step={constantsDefaults[key]["step"]}
+                    onChange={e => updateConstant(i, key, e.target.value)}
+                    value={constants[i][key]}
                 />
             </div>
         );
@@ -121,11 +122,12 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
             <FileInput onSubmit={submitFileToAPI} />
             <div className={"time-series-input"}>
                 <label>Use every nth value</label>
-                <input className="form-control my-3" type="number"
-                        min={1}
-                        step={1}
-                        onChange={e => setEveryN(e.target.value)}
-                       value={everyN}
+                <input
+                    className="form-control my-3" type="number"
+                    min={1}
+                    step={1}
+                    onChange={e => setEveryN(e.target.value)}
+                    value={everyN}
                 />
             </div>
             <div className={"time-series-input"}>

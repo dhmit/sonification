@@ -170,13 +170,6 @@ def time_series_to_music(request):
     csv_data = csv_data[::every_n]
     map_to_note = request.data['mapToNote']
 
-    print(csv_data)
-    print(column_constants)
-    print(duration)
-    print(every_n)
-    print(csv_data)
-    print(map_to_note)
-
     audio_samples = None
     for i, row in enumerate(csv_data):
         sound = None

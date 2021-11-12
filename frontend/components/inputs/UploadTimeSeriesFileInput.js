@@ -71,52 +71,37 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
         const columnConstants = constants[columnNumber];
         const controls = (<form>
             <div className="row">
-                <div className="col">
-                    {makeControl(columnNumber, "base_frequency")}
-                </div>
-                <div className="col">
-                    {makeControl(columnNumber, "multiplier")}
-                </div>
-                <div className="col">
-                    {makeControl(columnNumber, "offset")}
-                </div>
+                {makeControl(columnNumber, "base_frequency")}
+                {makeControl(columnNumber, "multiplier")}
+                {makeControl(columnNumber, "offset")}
             </div>
             <div className="row">
-                <div className="col">
-                    {makeControl(columnNumber, "a_percentage")}
-                </div>
-                <div className="col">
-                    {makeControl(columnNumber, "d_percentage")}
-                </div>
-                <div className="col">
-                    {makeControl(columnNumber, "s_percentage")}
-                </div>
-                <div className="col">
-                    {makeControl(columnNumber, "r_percentage")}
-                </div>
+                {makeControl(columnNumber, "a_percentage")}
+                {makeControl(columnNumber, "d_percentage")}
+                {makeControl(columnNumber, "s_percentage")}
+                {makeControl(columnNumber, "r_percentage")}
             </div>
         </form>);
 
-        // return Object.keys(columnConstants).map((constantName) => {
-        //     return makeControl(columnNumber, constantName);
-        // });
         return controls;
     };
 
     const makeControl = (columnNumber, constantName) => {
         return (
-            <div className="form-group col-md-6" key={constantsDefaults[constantName]["label"]}>
-                <label htmlFor="input">{constantsDefaults[constantName]["label"]}</label>
-                <input
-                    className="form-control my-3" type="number" id="input"
-                    min={constantsDefaults[constantName]["min"]}
-                    max={constantsDefaults[constantName]["max"]}
-                    step={constantsDefaults[constantName]["step"]}
-                    onChange={e => {
-                        updateConstant(columnNumber, constantName, e.target.value);
-                    }}
-                    value={constants[columnNumber][constantName]}
-                />
+            <div className="col">
+                <div className="form-group col-md-6" key={constantsDefaults[constantName]["label"]}>
+                    <label htmlFor="input">{constantsDefaults[constantName]["label"]}</label>
+                    <input
+                        className="form-control my-3" type="number" id="input"
+                        min={constantsDefaults[constantName]["min"]}
+                        max={constantsDefaults[constantName]["max"]}
+                        step={constantsDefaults[constantName]["step"]}
+                        onChange={e => {
+                            updateConstant(columnNumber, constantName, e.target.value);
+                        }}
+                        value={constants[columnNumber][constantName]}
+                    />
+                </div>
             </div>
         );
     };

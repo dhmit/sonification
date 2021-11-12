@@ -10,6 +10,18 @@ from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
+def generate_wave(frequency, duration, function=np.sin):
+    num_samples = int(duration * WAV_SAMPLE_RATE)
+    time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
+    wave_samples = function(frequency * 2 * np.pi * time_steps)
+
+    # pyplot.plot(sine_wave_samples)
+    # pyplot.xlim(0, 1/frequency*WAV_SAMPLE_RATE)
+    # pyplot.show()
+
+    return wave_samples
+
+
 def generate_sine_wave(frequency, duration):
     """
     Generates audio samples for a sine wave at a given frequency and duration
@@ -18,15 +30,44 @@ def generate_sine_wave(frequency, duration):
     :param duration:   duration in seconds
     :return: audio samples for the sine wave
     """
-    num_samples = int(duration * WAV_SAMPLE_RATE)
-    time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
-    sine_wave_samples = signal.sawtooth(frequency * 2 * np.pi * time_steps)
-
-    # pyplot.plot(sine_wave_samples)
-    # pyplot.xlim(0, 1/frequency*WAV_SAMPLE_RATE)
-    # pyplot.show()
-
+    sine_wave_samples = generate_wave(frequency, duration, np.sin)
     return sine_wave_samples
+
+
+def generate_square_wave(frequency, duration):
+    """
+        Generates audio samples for a square wave at a given frequency and duration
+
+        :param frequency:  frequency in Hz
+        :param duration:   duration in seconds
+        :return: audio samples for the sine wave
+        """
+    square_wave_samples = generate_wave(frequency, duration, signal.square)
+    return square_wave_samples
+
+
+def generate_sawtooth_wave(frequency, duration):
+    """
+        Generates audio samples for a sawtooth wave at a given frequency and duration
+
+        :param frequency:  frequency in Hz
+        :param duration:   duration in seconds
+        :return: audio samples for the sine wave
+        """
+    sawtooth_wave_samples = generate_wave(frequency, duration, signal.sawtooth)
+    return sawtooth_wave_samples
+
+
+def generate_triangle_wave(frequency, duration):
+    """
+        Generates audio samples for a triangle wave at a given frequency and duration
+
+        :param frequency:  frequency in Hz
+        :param duration:   duration in seconds
+        :return: audio samples for the sine wave
+        """
+    square_wave_samples = generate_wave(frequency, duration, signal.square)
+    return square_wave_samples
 
 
 # pylint: disable-msg=R0913

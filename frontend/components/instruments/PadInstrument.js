@@ -9,7 +9,8 @@ import STYLES from "./PadInstrument.module.scss";
 
     TODO:
     - space out pads on the screen
-    - active = true on keydown, active = false on keyup
+    - pseudo-class for keydown?
+    - how to print a variable within the pads
  */
 const Pad = ({sample, audioContext, keyBind}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
@@ -22,11 +23,14 @@ const Pad = ({sample, audioContext, keyBind}) => {
 
     const handleClick = () => playSample();
 
+    // const handleKey = () = {
+
+
+
     useEffect(() => {
         document.addEventListener('keydown', (event) => {
             if (event.key === keyBind) {
                 playSample();
-
             }
         });
     }, []);
@@ -59,20 +63,25 @@ Pad.propTypes = {
  */
 const PadInstrument = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
-
     const keyBinds = ['q', 'w', 'e', 'r', 'a', 's', 'd', 'f', 'u', 'i', 'o', 'p'];
-    return (
-        <div id="step-sequencer">
-            {samples.map((sample, i) => (
-                <Pad
-                    keyBind={keyBinds[i]}
-                    key={i}
-                    sample={sample}
-                    audioContext={audioContextRef.current}
-                />
-            ))}
-        </div>
-    );
+
+    int counter = 0;
+    do while(counter!=4) {
+        return (
+            <div id="pad-line1">
+                {samples.map((sample, i) => (
+                    <Pad
+                        keyBind={keyBinds[i]}
+                        // ><p id="keybind"></p>
+                        key={i}
+                        sample={sample}
+                        audioContext={audioContextRef.current}
+                    />
+                ))}
+            </div>
+        );
+        counter++;
+    };
 };
 
 PadInstrument.propTypes = {

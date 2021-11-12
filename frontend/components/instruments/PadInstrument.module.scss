@@ -1,5 +1,5 @@
 /* TODO:
- * set multiple background colors (will this involve creating multiple pads?
+ * add text within each pad that says what it is
  *
  */
 .pad {
@@ -10,7 +10,10 @@
     border: 1px solid black;
     &:active {
         background-color: cyan;
-        transition: background-color 1s linear;
+    }
+    &:hover {
+        background-color: palegreen;
+        transition: background-color 1s;
     }
 }
 
@@ -22,7 +25,11 @@
     border: 1px solid black;
     &:active {
         background-color: magenta;
-        transition: background-color 1s linear;
+
+    }
+    &:hover {
+        background-color: palegreen;
+        transition: background-color 1s;
     }
 }
 
@@ -33,7 +40,10 @@
     background-color: white;
     border: 1px solid black;
     &:active {
-        background-color: chartreuse;
-        transition: background-color 1s linear;
+        background-color: lime;
+    }
+    &:hover {
+        background-color: palegreen;
+        transition: background-color 1s;
     }
 }

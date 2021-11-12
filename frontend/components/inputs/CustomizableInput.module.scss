@@ -8,3 +8,30 @@
     margin: 5px;
     align-items: center;
 }
+
+.tooltipDiv {
+    border-style: solid;
+    border-color: black;
+    border-width: 1px;
+    border-radius: 50%;
+
+    $size: 15px;
+    width: $size;
+    height: $size;
+
+    div {
+        font-size: 8pt;
+        font-weight: bolder;
+        display: flex;
+        height: 100%;
+        width: 100%;
+        align-items: center;
+        justify-content: center;
+    }
+
+    margin: 0px 1px;
+
+    display: inline-block;
+
+    background-color: #d7d7d7;
+}

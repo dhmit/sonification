@@ -284,7 +284,6 @@ const SynthesizePolygons = () => {
                     <PolygonEditor
                         outerWidth={leftPaneWidth}
                         onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
-                        showSubmit
                         onSubmit={submitPolygon}
                     />
                 </div>

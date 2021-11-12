@@ -7,18 +7,17 @@ import MoveIcon from "../../images/MoveIcon.svg";
 import DownloadIcon from "../../images/DownloadIcon.svg";
 import UploadIcon from "../../images/UploadIcon.svg";
 import TrashIcon from "../../images/TrashIcon.svg";
+import ReactTooltipDefaultExport from "react-tooltip";
 
 /**
  * A simple polygon editor with specified width and height. A custom callback onSubmit can be
- * specified, which is called when the submit button is clicked. The submit button is shown
- * only if the prop showSubmit is true.
+ * specified, which is called when the submit button is clicked.
  */
 const PolygonEditor = (
     {
         width = 0,
         height = 0,
         onEdit,
-        showSubmit = false,
         onSubmit,
         outerWidth,
     }
@@ -332,13 +331,15 @@ const PolygonEditor = (
     const editorIconButtonGroups = [
         [
             {
-                svg: <img alt="Upload Icon" src={UploadIcon} width={"auto"} height={"100%"} />,
+                name: "upload",
+                svg: <img alt="Upload Icon" src={UploadIcon} width={"auto"} height="100%" />,
                 onClick: () => handleClickUpload(),
                 tooltip: "Upload polygon. Shortcut: Ctrl+O",
                 disabled: false,
             },
             {
-                svg: <img alt="Download Icon" src={DownloadIcon} width={"auto"} height={"100%"} />,
+                name: "download",
+                svg: <img alt="Download Icon" src={DownloadIcon} width={"auto"} height="100%" />,
                 onClick: () => handleClickDownload(),
                 tooltip: "Download polygon. Shortcut: Ctrl+D",
                 disabled: points.length === 0,
@@ -346,25 +347,29 @@ const PolygonEditor = (
         ],
         [
             {
-                svg: <img alt="Add Icon" src={AddIcon} width={"auto"} height={"100%"} />,
+                name: "add",
+                svg: <img alt="Add Icon" src={AddIcon} width="auto" height="100%" />,
                 onClick: () => handleChangeEditorMode(EditorModes.ADD),
                 tooltip: "Add new points. Shortcut: a",
                 disabled: editorMode === EditorModes.ADD,
             },
             {
-                svg: <img alt="Move Icon" src={MoveIcon} width={"auto"} height={"100%"} />,
+                name: "move",
+                svg: <img alt="Move Icon" src={MoveIcon} width="auto" height="100%" />,
                 onClick: () => handleChangeEditorMode(EditorModes.EDIT),
                 tooltip: "Edit points and lines. Shortcut: e",
                 disabled: editorMode === EditorModes.EDIT,
             },
             {
-                svg: <img alt="Eraser Icon" src={EraserIcon} width={"auto"} height={"100%"} />,
+                name: "erase",
+                svg: <img alt="Eraser Icon" src={EraserIcon} width="auto" height="100%" />,
                 onClick: () => handleChangeEditorMode(EditorModes.DELETE),
                 tooltip: "Delete points. Shortcut: d",
                 disabled: editorMode === EditorModes.DELETE,
             },
             {
-                svg: <img alt="Trash Icon" src={TrashIcon} width={"auto"} height={"100%"} />,
+                name: "trash",
+                svg: <img alt="Trash Icon" src={TrashIcon} width="auto" height="100%" />,
                 onClick: () => handleClearDrawing(),
                 tooltip: "Clear all points. Shortcut: c",
                 disabled: false,
@@ -376,7 +381,6 @@ const PolygonEditor = (
                 onClick: () => handleSubmit(),
                 tooltip: "Submit polygon. Shortcut: Ctrl+S",
                 disabled: points.length < 3,
-                tooltipLeft: true,
             },
         ],
     ];
@@ -501,19 +505,20 @@ const PolygonEditor = (
             <div className={STYLES.buttonRow}>
                 {editorIconButtonGroups.map((buttonGroup, bgi) => (
                     <div key={`button-group-${bgi}`} className={STYLES.buttonGroup}>
-                        {buttonGroup.map(({svg, tooltip, tooltipLeft, ...button}, i) => (
+                        {buttonGroup.map(({svg, tooltip, name, ...button}, i) => (
                             <button
-                                className={STYLES.editorButton + ' ' + STYLES.tooltipContainer}
+                                className={STYLES.editorButton}
                                 {...button}
                                 key={`editor-icon-${bgi}-${i}`}
                             >
-                                {svg}
-                                <span className={tooltipLeft
-                                    ? STYLES.editorTooltipLeft
-                                    : STYLES.editorTooltip}
-                                >
+                                <div data-tip data-for={name}>
+                                    <span>
+                                        {svg}
+                                    </span>
+                                </div>
+                                <ReactTooltipDefaultExport id={name} place="top">
                                     {tooltip}
-                                </span>
+                                </ReactTooltipDefaultExport>
                             </button>
                         ))}
                     </div>

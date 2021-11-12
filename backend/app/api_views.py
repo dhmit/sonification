@@ -232,11 +232,10 @@ def time_series_to_music(request):
 
 @api_view(['POST'])
 def time_series_to_samples(request):
-
-    temp_file = request.FILES.get('value')
-    csv_data = csv_processing.parse_csv_upload(temp_file, False)
-    column_constants = json.loads(request.data['constants'])
-    duration = float(request.data['duration'])
+    csv_data = request.data['parsedCSV']
+    column_constants = request.data['constants']
+    every_n = request.data['everyN']
+    csv_data = csv_data[::every_n]
 
     csv_np_array = np.array(csv_data).astype(np.float)
 
@@ -249,7 +248,7 @@ def time_series_to_samples(request):
                                "multiplier"]["value"]
         note = synths.generate_sine_wave_with_envelope(
             frequency=freq_to_generate,
-            duration=duration,
+            duration=1,
             a_percentage=int(column_constant["a_percentage"]["value"]) / 100,
             d_percentage=int(column_constant["d_percentage"]["value"]) / 100,
             s_percentage=int(column_constant["s_percentage"]["value"]) / 100,

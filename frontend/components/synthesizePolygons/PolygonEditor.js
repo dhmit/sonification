@@ -22,13 +22,29 @@ const PolygonEditor = (
         outerWidth,
     }
 ) => {
+    const fileDownloadRef = useRef(null);
+    const fileUploadRef = useRef(null);
+    const svgDisplay = useRef(null);
+    const containerRef = useRef(null);
+
     const [loading, setLoading] = useState(false);
     const [points, setPoints] = useState([]);
     const [cursorLocation, setCursorLocation] = useState(null);
     const [fileDownloadUrl, setFileDownloadUrl] = useState(null);
-    const fileDownloadRef = useRef(null);
-    const fileUploadRef = useRef(null);
-    const svgDisplay = useRef(null);
+    const [editorMode, setEditorMode] = useState(EditorModes.ADD);
+    const [internalWidth, setInternalWidth] = useState(width);
+    const [internalHeight, setInternalHeight] = useState(height);
+    const [focusPointIndex, setFocusPointIndex] = useState(-1);
+    const [focusLine, setFocusLine] = useState(null);
+    
+    // editor modes and edit handling
+    const EditorModes = {
+        ADD: 'add',
+        EDIT: 'edit',
+        DELETE: 'delete',
+    };
+
+    const POINT_MOVEMENT_SPEED = 5;
 
     // keyboard shortcuts
     const keyboardShortcuts = {
@@ -92,7 +108,6 @@ const PolygonEditor = (
         }
     }
 
-    const POINT_MOVEMENT_SPEED = 5;
     function handleMovePoint(dx, dy, event) {
         if (editorMode === EditorModes.EDIT && focusPointIndex !== -1) {
             event.preventDefault();
@@ -102,14 +117,6 @@ const PolygonEditor = (
                     prevPoints.slice(focusPointIndex + 1)]);
         }
     }
-
-    // editor modes and edit handling
-    const EditorModes = {
-        ADD: 'add',
-        EDIT: 'edit',
-        DELETE: 'delete',
-    };
-    const [editorMode, setEditorMode] = useState(EditorModes.ADD);
 
     function switchEditorMode(addOption, editOption, deleteOption) {
         switch (editorMode) {
@@ -122,9 +129,6 @@ const PolygonEditor = (
         }
     }
 
-    const [focusPointIndex, setFocusPointIndex] = useState(-1);
-    const [focusLine, setFocusLine] = useState(null);
-
     function handleChangeEditorMode(newMode) {
         setEditorMode(newMode);
         setFocusPointIndex(-1);
@@ -134,11 +138,6 @@ const PolygonEditor = (
     function handleEdit() {
         onEdit();
     }
-
-    // handle setting width/height automatically
-    const containerRef = useRef(null);
-    const [internalWidth, setInternalWidth] = useState(width);
-    const [internalHeight, setInternalHeight] = useState(height);
 
     useEffect(() => {
         if (width === 0) {

@@ -109,10 +109,8 @@ const TextShapeAnalysis = () => {
         <div className="container-fluid">
             <h1>Text Shape Analysis</h1>
             <p>
-                This sonificiation produces sequence of beat frequencies based on the shape of the text.<br/>
-                Each beat frequency, based on the base frequency, represents a line by taking into
-                account the average length of spaces in it.<br/>
-                As the average length of spaces in a line increases, the beat frequency decreases.
+                Welcome to the Text Shape Synthesizer! Start by typing or uploading a text file and hit submit to generate sound.<br/>
+                The sound is based on the amount of linebreaks and whitespace in the text.
             </p>
             <form onSubmit={handleSubmit}>
                 <div className="row mb-3">

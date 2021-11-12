@@ -10,10 +10,6 @@ const PlaybackDemo = () => {
     const [soundPoints, setSoundPoints] = useState([]);
 
     useEffect(() => {
-        console.log(soundPoints);
-    }, [soundPoints]);
-
-    useEffect(() => {
         setSoundPoints(samples.map((sample, i) => new SoundPoint(20*i, 20*i, sample)));
     }, [samples]);
 

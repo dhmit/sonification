@@ -22,21 +22,6 @@ const PolygonEditor = (
         outerWidth,
     }
 ) => {
-    const fileDownloadRef = useRef(null);
-    const fileUploadRef = useRef(null);
-    const svgDisplay = useRef(null);
-    const containerRef = useRef(null);
-
-    const [loading, setLoading] = useState(false);
-    const [points, setPoints] = useState([]);
-    const [cursorLocation, setCursorLocation] = useState(null);
-    const [fileDownloadUrl, setFileDownloadUrl] = useState(null);
-    const [editorMode, setEditorMode] = useState(EditorModes.ADD);
-    const [internalWidth, setInternalWidth] = useState(width);
-    const [internalHeight, setInternalHeight] = useState(height);
-    const [focusPointIndex, setFocusPointIndex] = useState(-1);
-    const [focusLine, setFocusLine] = useState(null);
-    
     // editor modes and edit handling
     const EditorModes = {
         ADD: 'add',
@@ -57,6 +42,21 @@ const PolygonEditor = (
         'ArrowDown': (e) => handleMovePoint(0, POINT_MOVEMENT_SPEED, e),
         'ArrowRight': (e) => handleMovePoint(POINT_MOVEMENT_SPEED, 0, e),
     };
+
+    const fileDownloadRef = useRef(null);
+    const fileUploadRef = useRef(null);
+    const svgDisplay = useRef(null);
+    const containerRef = useRef(null);
+
+    const [loading, setLoading] = useState(false);
+    const [points, setPoints] = useState([]);
+    const [cursorLocation, setCursorLocation] = useState(null);
+    const [fileDownloadUrl, setFileDownloadUrl] = useState(null);
+    const [editorMode, setEditorMode] = useState(EditorModes.ADD);
+    const [internalWidth, setInternalWidth] = useState(width);
+    const [internalHeight, setInternalHeight] = useState(height);
+    const [focusPointIndex, setFocusPointIndex] = useState(-1);
+    const [focusLine, setFocusLine] = useState(null);
 
     useEffect(() => {
         window.addEventListener("keydown", handleKeyDown);

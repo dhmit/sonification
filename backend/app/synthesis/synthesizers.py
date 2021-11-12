@@ -58,18 +58,6 @@ def generate_sawtooth_wave(frequency, duration):
     return sawtooth_wave_samples
 
 
-def generate_triangle_wave(frequency, duration):
-    """
-        Generates audio samples for a triangle wave at a given frequency and duration
-
-        :param frequency:  frequency in Hz
-        :param duration:   duration in seconds
-        :return: audio samples for the sine wave
-        """
-    square_wave_samples = generate_wave(frequency, duration, signal.square)
-    return square_wave_samples
-
-
 # pylint: disable-msg=R0913
 def generate_sine_wave_with_envelope(frequency, duration,
                                      a_percentage=0.1, d_percentage=0.1,

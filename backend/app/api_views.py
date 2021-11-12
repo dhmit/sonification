@@ -216,7 +216,6 @@ def time_series_to_samples(request):
     csv_data = csv_processing.parse_csv_upload(temp_file, False)
     column_constants = json.loads(request.data['constants'])
     duration = float(request.data['duration'])
-    audio_samples = None
 
     csv_np_array = np.array(csv_data).astype(np.float)
 

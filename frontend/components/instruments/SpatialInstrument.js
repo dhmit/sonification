@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import PropTypes from "prop-types";
 import SoundPoint from "./SoundPoint";
 import SamplePlayer from "./SamplePlayer";
@@ -10,6 +10,11 @@ import STYLES from "./SpatialInstrument.module.scss";
     "Uncaught DOMException: Failed to execute 'start' on 'AudioBufferSourceNode':
     cannot call start more than once."
     Caused when on border between two sounds based on maxDist.
+    *
+    Also crashes when using Pad instrument at same time.
+    probably caused by reusing AudioBufferSourceNode - retriggering sound SamplePlayer before
+     the old AudioBufferSourceNode is thrown away.
+     https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode
 */
 const SpatialInstrument = ({soundPoints}) => {
     const audioContextRef = useRef(new AudioContext());
@@ -17,6 +22,14 @@ const SpatialInstrument = ({soundPoints}) => {
     const instrumentDiv = useRef(null);
     const [mouseX, setMouseX] = useState(null);
     const [mouseY, setMouseY] = useState(null);
+
+    const [instrumentWidth, setInstrumentWidth] = useState(null);
+    const [instrumentHeight, setInstrumentHeight] = useState(null);
+
+    useEffect(() => {
+        setInstrumentWidth(instrumentDiv.current.clientWidth);
+        setInstrumentHeight(instrumentDiv.current.clientHeight);
+    });
 
     function sqDist(x1, y1, x2, y2) {
         return (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2);
@@ -34,7 +47,7 @@ const SpatialInstrument = ({soundPoints}) => {
         if (mouseX === null || mouseY === null) {
             return 0;
         }
-        const halfRange = 20;
+        const halfRange = 40;
         return 100/(sqDist(point.x, point.y, mouseX, mouseY)/(halfRange*halfRange) + 1);
     }
 
@@ -70,7 +83,12 @@ const SpatialInstrument = ({soundPoints}) => {
                             volume={sampleVolume(soundPoint)}
                             audioContext={audioContextRef.current}
                         />
-                        <circle key={`circle-${i}`} cx={soundPoint.x} cy={soundPoint.y} r={2}/>
+                        <circle
+                            key={`circle-${i}`}
+                            cx={soundPoint.x}
+                            cy={soundPoint.y}
+                            r={2 + 3*sampleVolume(soundPoint)/100}
+                        />
                     </>
                 ))}
             </svg>

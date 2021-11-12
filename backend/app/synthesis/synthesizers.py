@@ -3,7 +3,8 @@ Methods for creating sound!
 """
 import math
 import numpy as np
-
+from scipy import signal
+from matplotlib import pyplot
 
 from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
@@ -19,7 +20,12 @@ def generate_sine_wave(frequency, duration):
     """
     num_samples = int(duration * WAV_SAMPLE_RATE)
     time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
-    sine_wave_samples = np.sin(frequency * 2 * np.pi * time_steps)
+    sine_wave_samples = signal.sawtooth(frequency * 2 * np.pi * time_steps)
+
+    # pyplot.plot(sine_wave_samples)
+    # pyplot.xlim(0, 1/frequency*WAV_SAMPLE_RATE)
+    # pyplot.show()
+
     return sine_wave_samples
 
 

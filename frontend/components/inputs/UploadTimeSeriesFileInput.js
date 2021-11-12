@@ -78,23 +78,46 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
 
     const makeColumnControls = (columnNumber) => {
         const columnConstants = constants[columnNumber];
-        // const controls = (<>
-        //     <div className="row">
-        //         ["base_frequency", "multiplier", "
-        //     </div>
-        // </>
+        const controls = (<form>
+            <div className="row">
+                <div className="col">
+                    {makeControl(columnNumber, "base_frequency")}
+                </div>
+                <div className="col">
+                    {makeControl(columnNumber, "multiplier")}
+                </div>
+                <div className="col">
+                    {makeControl(columnNumber, "offset")}
+                </div>
+            </div>
+            <div className="row">
+                <div className="col">
+                    {makeControl(columnNumber, "a_percentage")}
+                </div>
+                <div className="col">
+                    {makeControl(columnNumber, "d_percentage")}
+                </div>
+                <div className="col">
+                    {makeControl(columnNumber, "s_percentage")}
+                </div>
+                <div className="col">
+                    {makeControl(columnNumber, "r_percentage")}
+                </div>
+            </div>
+        </form>);
 
-        return Object.keys(columnConstants).map((constantName) => {
-            return makeControl(columnNumber, constantName);
-        });
+        // return Object.keys(columnConstants).map((constantName) => {
+        //     return makeControl(columnNumber, constantName);
+        // });
+        return controls;
     };
 
     const makeControl = (columnNumber, constantName) => {
         return (
-            <div key={constantsDefaults[constantName]["label"]}>
-                <label>{constantsDefaults[constantName]["label"]}</label>
+            <div className="form-group col-md-6" key={constantsDefaults[constantName]["label"]}>
+                <label htmlFor="input">{constantsDefaults[constantName]["label"]}</label>
                 <input
-                    className="form-control my-3" type="number"
+                    className="form-control my-3" type="number" id="input"
                     min={constantsDefaults[constantName]["min"]}
                     max={constantsDefaults[constantName]["max"]}
                     step={constantsDefaults[constantName]["step"]}
@@ -138,12 +161,12 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                 </ul>
 
                 <div className="form-inline">
-                    <div className="time-series-input">
+                    <div>
                         {makeColumnControls(activeColumn)}
                     </div>
                 </div>
 
-                <div className={"time-series-input"}>
+                <div>
                     <label>Use every nth value</label>
                     <input
                         className="form-control my-3" type="number"
@@ -153,7 +176,7 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                         value={everyN}
                     />
                 </div>
-                <div className={"time-series-input"}>
+                <div>
                     <label>Duration of each step (sec)</label>
                     <input
                         className="form-control my-3" type="number"

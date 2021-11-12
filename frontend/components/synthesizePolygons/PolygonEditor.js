@@ -56,7 +56,7 @@ const PolygonEditor = (
     const [internalWidth, setInternalWidth] = useState(width);
     const [internalHeight, setInternalHeight] = useState(height);
     const [focusPointIndex, setFocusPointIndex] = useState(-1);
-    const [focusLine, setFocusLine] = useState(null);
+    const [focusLine, setFocusLine] = useState(-1);
 
     useEffect(() => {
         window.addEventListener("keydown", handleKeyDown);
@@ -92,7 +92,7 @@ const PolygonEditor = (
                 if (focusPointIndex !== -1) {
                     e.preventDefault();
                     setFocusPointIndex(-1);
-                } else if (focusLine !== null) {
+                } else if (focusLine !== -1) {
                     e.preventDefault();
                     insertPointAtCursor(focusLine);
                 }
@@ -132,7 +132,7 @@ const PolygonEditor = (
     function handleChangeEditorMode(newMode) {
         setEditorMode(newMode);
         setFocusPointIndex(-1);
-        setFocusLine(null);
+        setFocusLine(-1);
     }
 
     function handleEdit() {
@@ -237,7 +237,7 @@ const PolygonEditor = (
             setPoints(editedPoints.concat(points.slice(lineIndex + 1, points.length)));
 
             // change focus to new point
-            setFocusLine(null);
+            setFocusLine(-1);
             setFocusPointIndex(lineIndex + 1);
             handleEdit();
         }
@@ -265,16 +265,16 @@ const PolygonEditor = (
     }
 
     function handleMouseLeaveLine() {
-        setFocusLine(null);
+        setFocusLine(-1);
     }
 
     function handleClickPoint(index) {
         if (editorMode === EditorModes.EDIT) {
             if (focusPointIndex === index) {
-                setFocusPoint(null);
+                setFocusPointIndex(-1);
             } else {
                 setFocusPointIndex(index);
-                setFocusLine(null);
+                setFocusLine(-1);
             }
         } else if (editorMode === EditorModes.DELETE) {
             const editedPoints = points.filter((v, i) => i !== index);
@@ -426,12 +426,12 @@ const PolygonEditor = (
                             y1={points[points.length - 1][1]}
                             x2={points[0][0]}
                             y2={points[0][1]}
-                            className={focusLine === points.length - 1 ? STYLES.editLine : STYLES.line}
+                            className={(focusLine !== -1 && focusLine === (points.length - 1)) ? STYLES.editLine : STYLES.line}
                             onMouseEnter={() => handleMouseEnterLine(points.length - 1)}
                             onMouseLeave={handleMouseLeaveLine}
                             onClick={() => handleClickLine(points.length - 1)}
                         />
-                        {focusLine === points.length - 1 &&
+                        {(focusLine !== -1 && focusLine === points.length - 1) &&
                             <line
                                 key={`internal-line-${points.length-1}`}
                                 x1={points[points.length - 1][0]}
@@ -480,7 +480,7 @@ const PolygonEditor = (
                             key={`point-${i}`}
                             cx={p[0]}
                             cy={p[1]}
-                            // r={5}
+                            r={5}
                             className={i === focusPointIndex
                                 ? switchEditorMode(STYLES.addPoint, STYLES.focusEditPoint, STYLES.deletePoint)
                                 : switchEditorMode(STYLES.addPoint, STYLES.editPoint, STYLES.deletePoint)

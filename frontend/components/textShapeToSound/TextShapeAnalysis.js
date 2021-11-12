@@ -105,6 +105,22 @@ const TextShapeAnalysis = () => {
     };
 
 
+    const makeTextInput = (heading, id, value, title, onChange, unit) => (
+        <div className="form-inline">
+            <label className="mr-1" htmlFor={id}>{heading}</label>
+            <input
+                className="form-control mr-1" id={id} type="number"
+                value={value}
+                data-toggle="tooltip"
+                data-placement="top"
+                title={title}
+                onChange={onChange}
+                required
+            />
+            <strong>{unit}</strong>
+        </div>
+    );
+
     return (
         <div className="container-fluid">
             <h1>Text Shape</h1>
@@ -147,17 +163,14 @@ const TextShapeAnalysis = () => {
                     </div>
                     <div className="col">
                         <p><b>Edit Default Parameters</b></p>
-                        <div className="form-inline">
-                            Seconds Per Line: &nbsp;
-                            <input className="form-control" id="secondsPerLine" type="number"
-                                   value={secondsPerLine}
-                                   data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="the duration of each beat frequency in seconds"
-                                   onChange={handleSecondsPerLineChange}
-                                   required/>
-                            &nbsp;<b>s</b>
-                        </div>
+                        {makeTextInput(
+                            "Seconds Per Line:",
+                            "secondsPerLine",
+                            secondsPerLine,
+                            "the duration of each beat frequency in seconds",
+                            handleSecondsPerLineChange,
+                            "s"
+                        )}
                         <div className="form-inline">
                             Base Frequency: &nbsp;
                             <input className="form-control" id="baseFreq" type="number"

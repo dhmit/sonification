@@ -148,11 +148,7 @@ const PolygonEditor = (
     }, [width, outerWidth]);
 
     useEffect(() => {
-        if (height === 0) {
-            setInternalHeight(containerRef.current.clientHeight);
-        } else {
-            setInternalHeight(height);
-        }
+        setInternalHeight(containerRef.current.clientHeight);
     }, [height]);
 
     // When fileDownloadUrl is set, if it is not null, download the generated file and revoke

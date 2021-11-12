@@ -140,8 +140,27 @@ def gesture_to_music(request):
 
 @api_view(['POST'])
 def gesture_to_samples(request):
-    # comment for first commit
-    return not_implemented_error()
+    # commit #1 on 11/12/2021
+    """
+    Takes in gestures as a list of list of (x,y) coordinates and constructs an
+    instrument slider based on the sum of coordinates of each gesture
+    """
+    gestures = request.data['gestures']
+    gestures_params = request.data['parameters']
+    coordinate_sums = gesture_processing.get_instrument_sliders(gestures, gestures_params)
+    wav_files = []
+    for coordinate_sum in coordinate_sums:
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=coordinate_sum,
+            duration=50,
+            a_percentage=0,
+            d_percentage=0,
+            s_percentage=1,
+            r_percentage=0
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
+    return Response(wav_files)
 
 
 ################################################################################

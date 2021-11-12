@@ -500,11 +500,11 @@ const PolygonEditor = (
                     <div key={`button-group-${bgi}`} className={STYLES.buttonGroup}>
                         {buttonGroup.map(({svg, tooltip, name, ...button}, i) => (
                             <button
-                                className={STYLES.editorButton}
+                                className={`btn btn-primary ${STYLES.editorButton} p-0 m-1`}
                                 {...button}
                                 key={`editor-icon-${bgi}-${i}`}
                             >
-                                <div data-tip data-for={name}>
+                                <div className="p-2" data-tip data-for={name}>
                                     <span>
                                         {svg}
                                     </span>

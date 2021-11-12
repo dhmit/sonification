@@ -35,10 +35,8 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
     const setParsedCsvAndUpdateConstants = (parsedData) => {
         // NOTE(RA): This wipes out old constants with the default settings whenever we upload
         //           a new CSV. It might be nice to retain settings between uploads. Not sure.
-        console.log(parsedData);
         const newColumnConstants = [];
         parsedData[0].forEach(() => newColumnConstants.push({...DEFAULT_COLUMN_CONSTANTS}));
-        console.log(newColumnConstants);
         setConstants(newColumnConstants);
         setParsedCSV(parsedData);  // we set this last because the UI if's on its presence
     };
@@ -50,22 +48,15 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
         fetchPost('/api/parse_csv/', formData, setParsedCsvAndUpdateConstants, false);
     };
 
-    const submitFileToAPI = () => {
-        formData.append("constants", JSON.stringify(constants));
-        formData.append("duration", duration.toString());
-        formData.append("everyN", everyN.toString());
-        formData.append("mapToNote", mapToNote.toString());
-        const csrftoken = getCookie("csrftoken");
-        const requestOptions = {
-            method: "POST",
-            headers: {
-                "X-CSRFToken": csrftoken,
-            },
-            body: formData,
+    const submitToAPI = () => {
+        const requestBody = {
+            constants,
+            duration,
+            everyN,
+            mapToNote,
+            parsedCSV,
         };
-        fetch(apiEndpoint, requestOptions)
-            .then(response => response.json())
-            .then(data => uploadSuccessfulCallback(data));
+        fetchPost(apiEndpoint, requestBody, uploadSuccessfulCallback);
     };
 
     const updateConstant = (colNumber, constantName, val) => {
@@ -122,7 +113,6 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                     max={constantsDefaults[constantName]["max"]}
                     step={constantsDefaults[constantName]["step"]}
                     onChange={e => {
-                        console.log('all the stuff!', columnNumber, constantName, e.target.value);
                         updateConstant(columnNumber, constantName, e.target.value);
                     }}
                     value={constants[columnNumber][constantName]}
@@ -191,6 +181,12 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                     <input type="checkbox" onClick={e => setMapToNote(e.target.checked)}/>
                     <span> Map numbers to note?</span>
                 </label>
+                <button
+                    className="btn btn-primary"
+                    onClick={() => submitToAPI()}
+                >
+                    Sonify my data!
+                </button>
             </>}
         </>
     );

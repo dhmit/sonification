@@ -163,12 +163,19 @@ def time_series_to_music(request):
     """
     Takes a 2-D CSV with the header and constructs samples based on those ratios.
     """
-    csv_data = None
-    column_constants = json.loads(request.data['constants'])
-    duration = float(request.data['duration'])
-    every_n = int(request.data['everyN'])
+    csv_data = request.data['parsedCSV']
+    column_constants = request.data['constants']
+    duration = request.data['duration']
+    every_n = request.data['everyN']
     csv_data = csv_data[::every_n]
-    map_to_note = request.data['mapToNote'] == "true"
+    map_to_note = request.data['mapToNote']
+
+    print(csv_data)
+    print(column_constants)
+    print(duration)
+    print(every_n)
+    print(csv_data)
+    print(map_to_note)
 
     audio_samples = None
     for i, row in enumerate(csv_data):

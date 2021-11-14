@@ -61,7 +61,7 @@ const DrumPlayer = ({sample, audioContext}) => {
     };
 
     return (<>
-        <button className={STYLES.dropzone}
+        <button className={STYLES.dragSample}
                 id="draggable" draggable="true"
                 onDragStart="event.dataTransfer.setData('text/plain',null)"
                 onClick={handleClick}/>
@@ -98,11 +98,11 @@ const DrumMachine = ({samples}) => {
                     audioContext={audioContextRef.current}
                 />
             ))}
-            <br></br>
-            <button className="dropzone"/>
-            <button className="dropzone"/>
-            <button className="dropzone"/>
-            <button className="dropzone"/>
+            <br></br>&emsp;&emsp;
+            <button className="dropzone"/>&emsp;&emsp;&emsp;&emsp;
+            <button className="dropzone"/>&emsp;&emsp;&emsp;&emsp;
+            <button className="dropzone"/>&emsp;&emsp;&emsp;&emsp;
+            <button className="dropzone"/>&emsp;&emsp;
         </div>
     );
 };

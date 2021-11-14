@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import SliderInstrument from "./SliderInstrument";
 import PadInstrument from "./PadInstrument";
+import DrumMachine from "./DrumMachine";
 import {fetchPost} from "../../common";
 
 const PlaybackDemo = () => {
@@ -25,6 +26,12 @@ const PlaybackDemo = () => {
                     <h3>Pad Instrument</h3>
                     <PadInstrument samples={samples}/>
                 </section>
+
+                <section className="mb-4">
+                    <h3>Drum Machine</h3>
+                    <DrumMachine samples={samples}/>
+                </section>
+
 
                 <section className="mb-4">
                     <h3>A Bunch of Audio Tags</h3>

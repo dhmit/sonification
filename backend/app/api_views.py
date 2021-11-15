@@ -147,18 +147,28 @@ def gesture_to_samples(request):
 # TIME SERIES DATA
 ################################################################################
 @api_view(['POST'])
+def parse_csv(request):
+    """
+    Takes a 2-D CSV, with or without textual headers, parses it, and returns
+    a list of lists to the frontend.
+    This is a helper API call for the time_series project.
+    """
+    temp_file = request.FILES.get('value')
+    csv_data = csv_processing.parse_csv_upload_as_floats(temp_file)
+    return Response(csv_data)
+
+
+@api_view(['POST'])
 def time_series_to_music(request):
     """
     Takes a 2-D CSV with the header and constructs samples based on those ratios.
     """
-
-    temp_file = request.FILES.get('value')
-    csv_data = csv_processing.parse_csv_upload(temp_file, False)
-    column_constants = json.loads(request.data['constants'])
-    duration = float(request.data['duration'])
-    every_n = int(request.data['everyN'])
+    csv_data = request.data['parsedCSV']
+    column_constants = request.data['constants']
+    duration = request.data['duration']
+    every_n = request.data['everyN']
     csv_data = csv_data[::every_n]
-    map_to_note = request.data['mapToNote'] == "true"
+    map_to_note = request.data['mapToNote']
 
     audio_samples = None
     for i, row in enumerate(csv_data):
@@ -169,8 +179,9 @@ def time_series_to_music(request):
                 continue
             column_constant = column_constants[j]
 
-            frequency = (float(frequency) + column_constant["offset"]) * column_constant[
-                                   "multiplier"]
+            frequency =\
+                (float(frequency) + column_constant["offset"]) * column_constant["multiplier"]
+
             if map_to_note:
                 # map number [0,88] to a note
                 frequency = (2 ** ((frequency - 49) / 12)) * 440

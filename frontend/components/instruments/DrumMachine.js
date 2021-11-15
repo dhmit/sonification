@@ -49,6 +49,10 @@ let newDraggedCopy;
         //dragged.parentNode.appendChild(newDraggedCopy);
         //dragged.parentNode.removeChild(dragged);
         event.target.appendChild(newDraggedCopy);
+      } else if (dragged.parentNode.className === "dropzone") {
+          //allows user to remove a sample from the drum machine player
+          event.target.style.background = "";
+          dragged.parentNode.removeChild(dragged);
       }
     }, false);
 

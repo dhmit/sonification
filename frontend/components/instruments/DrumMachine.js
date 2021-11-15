@@ -4,12 +4,14 @@ import SamplePlayer from "./SamplePlayer";
 import STYLES from "./DrumMachine.module.scss";
 
 let dragged;
+let newDraggedCopy;
     document.addEventListener("drag", function(event) {
     }, false);
 
     document.addEventListener("dragstart", function(event) {
       // store a ref. on the dragged elem
       dragged = event.target;
+      newDraggedCopy = dragged.cloneNode(true);
       // make it half transparent
       event.target.style.opacity = .5;
     }, false);
@@ -44,15 +46,14 @@ let dragged;
       // move dragged elem to the selected drop target
       if (event.target.className === "dropzone") {
         event.target.style.background = "";
-        dragged.parentNode.removeChild(dragged);
-        event.target.appendChild(dragged);
+        //dragged.parentNode.appendChild(newDraggedCopy);
+        //dragged.parentNode.removeChild(dragged);
+        event.target.appendChild(newDraggedCopy);
       }
     }, false);
 
 const DrumPlayer = ({sample, audioContext}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
-
-
 
     const handleClick = () => {
         setShouldPlay(true);
@@ -61,10 +62,12 @@ const DrumPlayer = ({sample, audioContext}) => {
     };
 
     return (<>
+        <button>
         <button className={STYLES.dragSample}
                 id="draggable" draggable="true"
                 onDragStart="event.dataTransfer.setData('text/plain',null)"
                 onClick={handleClick}/>
+        </button>
 
         <SamplePlayer
             sample={sample}
@@ -87,7 +90,6 @@ DrumPlayer.propTypes = {
  */
 const DrumMachine = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
-
 
     return (
         <div id="step-sequencer">

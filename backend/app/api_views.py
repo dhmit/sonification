@@ -150,7 +150,7 @@ def gesture_to_samples(request):
 def parse_csv(request):
     """
     Takes a 2-D CSV, with or without textual headers, parses it, and returns
-    a list of dicts to the frontend.
+    a list of lists to the frontend.
     This is a helper API call for the time_series project.
     """
     temp_file = request.FILES.get('value')

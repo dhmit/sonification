@@ -44,8 +44,6 @@ export const fetchPost = (
         body = JSON.stringify(body);
     }
 
-    console.log(body);
-
     const requestOptions = {
         method: "POST",
         body,

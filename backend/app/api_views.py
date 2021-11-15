@@ -81,7 +81,41 @@ def numbers_to_music(request):
 ################################################################################
 @api_view(['POST'])
 def color_to_music(_request):
-    return not_implemented_error()
+    """
+    :param request: color picker's rgb values stored as a dictionary when the user hits submit
+    :return: wav file, sine wave with frequency corresponds to energy of the colors
+    """
+    response_object = request.data['listOfColors']
+
+    sound = None
+    for response in response_object:
+        r = response["r"]
+        g = response["g"]
+        b = response["b"]
+
+        # color energy calculation
+        energy = round(0.299 * r + .587 * g + .114 * b)
+
+        # frequency based on energy, scaled for 150-350hz
+        freq_to_generate = ((200 * energy) / 255) + 150
+
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=50,
+            a_percentage=0,
+            d_percentage=0,
+            s_percentage=1,
+            r_percentage=0
+        )
+
+        if sound is None:
+            sound = audio_samples
+        else:
+            sound += audio_samples
+
+    wav_file_base64 = [audio_samples_to_wav_base64(sound)]
+
+    return Response(wav_file_base64)
 
 
 @api_view(['POST'])

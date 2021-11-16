@@ -10,10 +10,24 @@ from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
-def generate_wave(frequency, duration, function=np.sin):
+def generate_wave(frequency, duration, harmonics=0, function=np.sin):
+    """
+    Generates audio samples for various wave types
+    :param frequency: frequency in Hz
+    :param duration:  duration in seconds
+    :param harmonics: number of desired harmonics
+    :param function:  wave type
+    :return: audio samples for wave of the given wave type
+    """
     num_samples = int(duration * WAV_SAMPLE_RATE)
     time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
     wave_samples = function(frequency * 2 * np.pi * time_steps)
+
+    if harmonics != 0:
+        for i in range(harmonics):
+            harmonic = np.sin(frequency * 2 * np.pi * time_steps * (i + 2))
+            for i in range(len(wave_samples)):
+                wave_samples[i] += harmonic[i]
 
     # pyplot.plot(sine_wave_samples)
     # pyplot.xlim(0, 1/frequency*WAV_SAMPLE_RATE)
@@ -22,39 +36,42 @@ def generate_wave(frequency, duration, function=np.sin):
     return wave_samples
 
 
-def generate_sine_wave(frequency, duration):
+def generate_sine_wave(frequency, duration, harmonics=0):
     """
     Generates audio samples for a sine wave at a given frequency and duration
 
     :param frequency:  frequency in Hz
     :param duration:   duration in seconds
+    :param harmonics: number of desired harmonics
     :return: audio samples for the sine wave
     """
-    sine_wave_samples = generate_wave(frequency, duration, np.sin)
+    sine_wave_samples = generate_wave(frequency, duration, harmonics, np.sin)
     return sine_wave_samples
 
 
-def generate_square_wave(frequency, duration):
+def generate_square_wave(frequency, duration, harmonics=0):
     """
         Generates audio samples for a square wave at a given frequency and duration
 
         :param frequency:  frequency in Hz
         :param duration:   duration in seconds
+        :param harmonics: number of desired harmonics
         :return: audio samples for the sine wave
         """
-    square_wave_samples = generate_wave(frequency, duration, signal.square)
+    square_wave_samples = generate_wave(frequency, duration, harmonics, signal.square)
     return square_wave_samples
 
 
-def generate_sawtooth_wave(frequency, duration):
+def generate_sawtooth_wave(frequency, duration, harmonics=0):
     """
         Generates audio samples for a sawtooth wave at a given frequency and duration
 
         :param frequency:  frequency in Hz
         :param duration:   duration in seconds
+        :param harmonics: number of desired harmonics
         :return: audio samples for the sine wave
         """
-    sawtooth_wave_samples = generate_wave(frequency, duration, signal.sawtooth)
+    sawtooth_wave_samples = generate_wave(frequency, duration, harmonics, signal.sawtooth)
     return sawtooth_wave_samples
 
 

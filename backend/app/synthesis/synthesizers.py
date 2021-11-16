@@ -149,24 +149,9 @@ def generate_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percent
 
 
 def generate_sawtooth_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
-                                         s_percentage=0.1, r_percentage=0.7):
-    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
-                                       s_percentage, r_percentage, 0, signal.sawtooth)
-
-
-def generate_square_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
-                                       s_percentage=0.1, r_percentage=0.7):
-    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
-                                       s_percentage, r_percentage, 0, signal.square)
-
-
-# pylint: disable-msg=R0913
-def generate_sine_wave_with_envelope(frequency, duration,
-                                     a_percentage=0.1, d_percentage=0.1,
-                                     s_percentage=0.1, r_percentage=0.7):
-    # pylint: disable-msg=R0914
+                                         s_percentage=0.1, r_percentage=0.7, harmonics=0):
     """
-    Uses the ADSR (Attack, Decay, Sustain, Release) envelope
+    For a sawtooth wave uses the ADSR (Attack, Decay, Sustain, Release) envelope
     to generate a note that fades in and out
     Adapted from example in https://towardsdatascience.com/music-in-python-2f054deb41f4
     :param frequency: frequency of the note in Hz
@@ -175,11 +160,52 @@ def generate_sine_wave_with_envelope(frequency, duration,
     :param d_percentage: decay
     :param s_percentage: sustain
     :param r_percentage: release
+    :param harmonics: number of desired harmonics
+    :return audio_samples: list of samples for the note
+    """
+    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
+                                       s_percentage, r_percentage, harmonics, signal.sawtooth)
+
+
+def generate_square_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
+                                       s_percentage=0.1, r_percentage=0.7, harmonics=0):
+    """
+    For a square wave uses the ADSR (Attack, Decay, Sustain, Release) envelope
+    to generate a note that fades in and out
+    Adapted from example in https://towardsdatascience.com/music-in-python-2f054deb41f4
+    :param frequency: frequency of the note in Hz
+    :param duration: duration in seconds
+    :param a_percentage: attack
+    :param d_percentage: decay
+    :param s_percentage: sustain
+    :param r_percentage: release
+    :param harmonics: number of desired harmonics
+    :return audio_samples: list of samples for the note
+    """
+    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
+                                       s_percentage, r_percentage, harmonics, signal.square)
+
+
+# pylint: disable-msg=R0913
+def generate_sine_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
+                                     s_percentage=0.1, r_percentage=0.7, harmonics=0):
+    # pylint: disable-msg=R0914
+    """
+    For a sine wave uses the ADSR (Attack, Decay, Sustain, Release) envelope
+    to generate a note that fades in and out
+    Adapted from example in https://towardsdatascience.com/music-in-python-2f054deb41f4
+    :param frequency: frequency of the note in Hz
+    :param duration: duration in seconds
+    :param a_percentage: attack
+    :param d_percentage: decay
+    :param s_percentage: sustain
+    :param r_percentage: release
+    :param harmonics: number of desired harmonics
     :return audio_samples: list of samples for the note
     """
 
     return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
-                                       s_percentage, r_percentage, 0, np.sin)
+                                       s_percentage, r_percentage, harmonics, np.sin)
     # peak_weight = 1
     # sustain_weight = peak_weight * 0.7
     # final_weight = 0

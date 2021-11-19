@@ -46,6 +46,9 @@
     "webpack-dev-server": "^3.11.2"
   },
   "dependencies": {
+    "@emotion/react": "^11.6.0",
+    "@emotion/styled": "^11.6.0",
+    "@mui/material": "^5.1.1",
     "bootstrap": "^4.6.0",
     "css-loader": "^5.2.6",
     "normalize.css": "^8.0.1",

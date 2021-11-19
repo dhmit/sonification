@@ -189,7 +189,7 @@ const TextShapeAnalysis = () => {
                             handleMaxBeatFreqChange,
                             "Hz"
                         )}
-                        </div>
+                    </div>
                          <div className="form-inline">
                              Second Frequency Relative to Base Frequency: &nbsp;
                              <div className="form-check form-switch">
@@ -214,7 +214,6 @@ const TextShapeAnalysis = () => {
                                  </label>
                              </div>
                         </div>
-                    </div>
                 </div>
             </form>
             {results && (<>

@@ -501,20 +501,20 @@ const PolygonEditor = (
                 {editorIconButtonGroups.map((buttonGroup, bgi) => (
                     <div key={`button-group-${bgi}`} className={STYLES.buttonGroup}>
                         {buttonGroup.map(({svg, tooltip, name, ...button}, i) => (
-                            <button
-                                className={`btn btn-primary ${STYLES.editorButton} p-0 m-1`}
-                                {...button}
-                                key={`editor-icon-${bgi}-${i}`}
-                            >
-                                <div className="p-2" data-tip data-for={name}>
-                                    <span>
-                                        {svg}
-                                    </span>
-                                </div>
-                                <ReactTooltipDefaultExport id={name} place="top">
+                            <>
+                            <span data-tip data-for={name} data-tip-disable={false}>
+                                <button
+                                    className={`btn btn-primary ${STYLES.editorButton} p-2 m-1`}
+                                    {...button}
+                                    key={`editor-icon-${bgi}-${i}`}
+                                >
+                                    {svg}
+                                </button>
+                            </span>
+                            <ReactTooltipDefaultExport id={name} place="top">
                                     {tooltip}
-                                </ReactTooltipDefaultExport>
-                            </button>
+                            </ReactTooltipDefaultExport>
+                            </>
                         ))}
                     </div>
                 ))}

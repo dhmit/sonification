@@ -16,8 +16,15 @@ import CustomizableInput from "../inputs/CustomizableInput";
     probably caused by reusing AudioBufferSourceNode - retriggering sound SamplePlayer before
      the old AudioBufferSourceNode is thrown away.
      https://developer.mozilla.org/en-US/docs/Web/API/AudioBufferSourceNode
+   fixed by keeping everything playing at all times, just using 0 volume to "turn off" nodes.
 */
-const SpatialInstrument = ({soundPoints}) => {
+
+/*
+svgRender should be a function which takes 4 arguments (instrument width, instrument height,
+current mouseX, current mouseY) and returns svg components to render (doesn't need wrapping svg
+ tag, since this will be placed into the main svg tag of the instrument itself).
+ */
+const SpatialInstrument = ({soundPoints, svgRender=(w,h,x,y) => <></>}) => {
     const audioContextRef = useRef(new AudioContext());
 
     const instrumentDiv = useRef(null);
@@ -126,8 +133,9 @@ const SpatialInstrument = ({soundPoints}) => {
                 onMouseEnter={handleMouseMove}
                 ref={instrumentDiv}
             >
+                {/*{svgRender(instrumentWidth, instrumentHeight, mouseX, mouseY)}*/}
                 {soundPoints.map((soundPoint, i) => (
-                    <>
+                    <React.Fragment key={`fragment-${i}`}>
                         <SamplePlayer
                             key={`sound-point-${i}`}
                             sample={soundPoint.sample}
@@ -143,7 +151,7 @@ const SpatialInstrument = ({soundPoints}) => {
                             cy={soundPoint.y}
                             r={sampleRadius(soundPoint)}
                         />
-                    </>
+                    </React.Fragment>
                 ))}
                 {visualizeRange && mouseActive() && <>
                     <circle
@@ -170,6 +178,7 @@ const SpatialInstrument = ({soundPoints}) => {
 
 SpatialInstrument.propTypes = {
     soundPoints: PropTypes.arrayOf(SoundPoint),
+    svgRender: PropTypes.func,
 };
 
 export default SpatialInstrument;

@@ -80,7 +80,7 @@ def numbers_to_music(request):
 # COLOR
 ################################################################################
 @api_view(['POST'])
-def color_to_music(_request):
+def color_to_music(request):
     """
     :param request: color picker's rgb values stored as a dictionary when the user hits submit
     :return: wav file, sine wave with frequency corresponds to energy of the colors
@@ -215,7 +215,8 @@ def parse_csv(request):
 @api_view(['POST'])
 def time_series_to_music(request):
     """
-    Takes a 2-D CSV with the header and constructs samples based on those ratios.
+    Takes a dictionary representing a parsed CSV and constructs samples based on
+    those ratios.
     """
     csv_data = request.data['parsedCSV']
     column_constants = request.data['constants']
@@ -266,6 +267,10 @@ def time_series_to_music(request):
 
 @api_view(['POST'])
 def time_series_to_samples(request):
+    """
+    Takes a dictionary representing a parsed CSV file and constructs samples
+    based on the column averages.
+    """
     csv_data = request.data['parsedCSV']
     column_constants = request.data['constants']
     every_n = request.data['everyN']

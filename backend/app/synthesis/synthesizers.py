@@ -316,20 +316,22 @@ def wave_with_vibrato(frequency, duration):
     copy1 = []
     copy2 = []
     for i in range(len(wave_samples)):
-        if i < 2000:
+        if i < 10000:
             copy1.append(wave_samples[0])
         else:
-            copy1.append(wave_samples[i-2000])
+            copy1.append(wave_samples[i-10000])
 
     for i in range(len(wave_samples)):
-        if i < 40000:
+        if i < 20000:
             copy2.append(wave_samples[0])
         else:
-            copy2.append(wave_samples[i - 40000])
+            copy2.append(wave_samples[i - 20000])
 
     for k in range(len(wave_samples)):
-        wave_samples[k] += copy1[k]
-        # wave_samples[k] += copy2[k]
+        if k%2 == 0:
+            wave_samples[k] += copy1[k]
+        else:
+            wave_samples[k] += copy2[k]
 
     # print("1", copy1)
     # print('2', copy2)

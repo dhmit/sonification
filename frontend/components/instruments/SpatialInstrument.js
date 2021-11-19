@@ -34,10 +34,10 @@ const SpatialInstrument = ({soundPoints}) => {
     });
 
     // Instrument properties
-    const maxDist = 200;
-    const halfRange = 40;
-    const minRadius = 2;
-    const maxRadius = 5;
+    const [maxDist, setMaxDist] = useState(200);
+    const [halfRange, setHalfRange] = useState(200);
+    const [minRadius, setMinRadius] = useState(2);
+    const [maxRadius, setMaxRadius] = useState(5);
 
     function sqDist(x1, y1, x2, y2) {
         return (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2);

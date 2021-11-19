@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
+import PitchDurationSliderInput from "../inputs/PitchDurationSliderInput";
 
 
 const GesturesToSound = () => {
@@ -273,7 +274,7 @@ const GesturesToSound = () => {
                             </div>
                         </div>
                     </p>
-
+                    <PitchDurationSliderInput minPitch={1} maxPitch={40} minDuration={0} maxDuration={3}/>
                     {
                         soundData && <p>
                             Gesture Sounds:

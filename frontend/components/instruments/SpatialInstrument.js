@@ -22,34 +22,11 @@ const SpatialInstrument = ({samples}) => {
 
     useEffect(() => {
         setSoundPoints(samples.map(
-            (samp, i) => {
-                const p1 = unityPoint(i, samples.length);
-                const p2 = unityPoint(i + 1, samples.length);
-                return new SoundPoint((p1[0] + p2[0]) / 2, (p1[1] + p2[1]) / 2, samp);
-            }
+            (samp, i) => new SoundPoint(...unityPoint(i, samples.length), samp)
         ));
     }, [samples]);
 
-    function SvgRender({width, height, x, y}) {
-        return (<>
-            {samples.map(
-                (samp, i) => {
-                    const p1 = unityPoint(i, samples.length);
-                    const p2 = unityPoint(i + 1, samples.length);
-                    return <line
-                        style={{strokeWidth: 1, stroke: "black"}}
-                        key={`line-${i}`}
-                        x1={p1[0]}
-                        y1={p1[1]}
-                        x2={p2[0]}
-                        y2={p2[1]}
-                    />;
-                }
-            )}
-        </>);
-    }
-
-    return <SpatialInstrumentInternal soundPoints={soundPoints} SvgRender={SvgRender}/>;
+    return <SpatialInstrumentInternal soundPoints={soundPoints}/>;
 };
 
 SpatialInstrument.propTypes = {

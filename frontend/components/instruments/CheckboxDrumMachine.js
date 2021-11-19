@@ -8,6 +8,20 @@ class CheckboxDrumMachine extends React.Component {
             drums: [false, true, false]
         };
     }
+
+    updateDrum = () => {
+        //stop playing
+    }
+    playSound = () => {
+        for (let i = 0; i < this.state.drums.length; i++) {
+            if (this.state.drums[i] === 1) {
+                audio.play()
+            } else {
+                setTimeout(doNothing(), 500)
+            }
+        }
+    }
+    
 }
 
 

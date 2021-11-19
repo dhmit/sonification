@@ -52,7 +52,6 @@ const CustomizableInput = (
                     onChange={handleChange}
                     value={getValue()}
                     {...rest}
-                    style={{hover: type === "range" ? "asd" : ""}}
                 />
             }
             {/*{type === "range" && <label className={STYLES.rangeLabelRight}>{rest.max}</label>}*/}

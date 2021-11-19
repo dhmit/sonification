@@ -40,7 +40,7 @@ const SpatialInstrument = ({soundPoints}) => {
     // Instrument properties
     const [maxDist, setMaxDist] = useState(100);
     const [halfRange, setHalfRange] = useState(40);
-    const [visualizeRange, setVisualizeRange] = useState(true);
+    const [visualizeRange, setVisualizeRange] = useState(false);
 
     const [minRadius, setMinRadius] = useState(2);
     const [maxRadius, setMaxRadius] = useState(5);
@@ -112,7 +112,7 @@ const SpatialInstrument = ({soundPoints}) => {
             name: "visualizeRange",
             display: "Visualize range: ",
             getValue: () => visualizeRange,
-            setValue: setVisualizeRange,
+            setValue: () => setVisualizeRange(!visualizeRange),
             tooltip: "Whether to visualize the audible range.",
         }
     ];

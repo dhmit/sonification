@@ -33,10 +33,6 @@ const PlaybackDemo = () => {
                     <DrumMachine samples={samples}/>
                 </section>
 
-                <section className="mb-4">
-                    <h3>Checkbox Drum Machine</h3>
-                    <CheckboxDrumMachine samples={{samples}/>
-                </section>
 
 
                 <section className="mb-4">

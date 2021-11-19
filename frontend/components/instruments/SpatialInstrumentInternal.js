@@ -51,9 +51,9 @@ const SpatialInstrumentInternal = (
     }, [instrumentWidth, instrumentHeight]);
 
     // Instrument properties
-    const [maxDist, setMaxDist] = useState(100);
-    const [halfRange, setHalfRange] = useState(40);
-    const [visualizeRange, setVisualizeRange] = useState(false);
+    const maxDist = 100;
+    const halfRange = 40;
+    const visualizeRange = true;
 
     const [minRadius, setMinRadius] = useState(2);
     const [maxRadius, setMaxRadius] = useState(5);
@@ -98,37 +98,6 @@ const SpatialInstrumentInternal = (
         setMouseX(x);
         setMouseY(y);
     }
-
-    const userOptions = [
-        {
-            type: "range",
-            name: "maxDist",
-            display: "Maximum range:",
-            getValue: () => maxDist,
-            setValue: setMaxDist,
-            tooltip: "Maximum distance at which a sample is audible.",
-            min: 0,
-            max: instrumentDiagonal,
-        },
-        {
-            type: "range",
-            name: "halfRange",
-            display: "Half range:",
-            getValue: () => halfRange,
-            setValue: setHalfRange,
-            tooltip: "Distance at which sample is at 50% volume.",
-            min: 0,
-            max: instrumentDiagonal,
-        },
-        {
-            type: "checkbox",
-            name: "visualizeRange",
-            display: "Visualize range: ",
-            getValue: () => visualizeRange,
-            setValue: () => setVisualizeRange(!visualizeRange),
-            tooltip: "Whether to visualize the audible range.",
-        }
-    ];
 
     return (
         <>
@@ -181,10 +150,6 @@ const SpatialInstrumentInternal = (
                     />
                 </>}
             </svg>
-            {userOptions.map((option) => <CustomizableInput
-                key={option.name}
-                {...option}
-            />)}
         </>
     );
 };

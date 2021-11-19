@@ -12,7 +12,7 @@ import STYLES from "./PadInstrument.module.scss";
     - pseudo-class for keydown?
     - how to print a variable within the pads
  */
-const Pad = ({sample, audioContext, keyBind}) => {
+const Pad = ({sample, audioContext, keyBind, padClassName}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
 
     const playSample = () => {
@@ -25,8 +25,6 @@ const Pad = ({sample, audioContext, keyBind}) => {
 
     // const handleKey = () = {
 
-
-
     useEffect(() => {
         document.addEventListener('keydown', (event) => {
             if (event.key === keyBind) {
@@ -35,10 +33,9 @@ const Pad = ({sample, audioContext, keyBind}) => {
         });
     }, []);
 
-
     return (<>
         <button
-            className={STYLES.pad}
+            className={padClassName}
             onClick={handleClick}
             // onKeyUp
         />
@@ -64,24 +61,45 @@ Pad.propTypes = {
 const PadInstrument = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
     const keyBinds = ['q', 'w', 'e', 'r', 'a', 's', 'd', 'f', 'u', 'i', 'o', 'p'];
-
-    int counter = 0;
-    do while(counter!=4) {
-        return (
-            <div id="pad-line1">
-                {samples.map((sample, i) => (
-                    <Pad
-                        keyBind={keyBinds[i]}
-                        // ><p id="keybind"></p>
-                        key={i}
-                        sample={sample}
-                        audioContext={audioContextRef.current}
-                    />
-                ))}
-            </div>
+    const pads = [];
+    const pads2 = [];
+    for (let i = 0; i < 4; i++) {
+        let padClassName = STYLES.cyanPad;
+        const thisPad = (
+            <Pad
+                keyBind={keyBinds[i]}
+                key={i}
+                sample={samples[i]}
+                padClassName={padClassName}
+                audioContext={audioContextRef.current}
+            />
         );
-        counter++;
+        pads.push(thisPad);
     };
+    for (let i = 4; i < 8; i++) {
+        let padClassName = STYLES.magnetaPad;
+        const thisPad = (
+            <Pad
+                keyBind={keyBinds[i]}
+                key={i}
+                sample={samples[i]}
+                padClassName={padClassName}
+                audioContext={audioContextRef.current}
+            />
+        );
+        pads2.push(thisPad);
+    };
+
+    return (
+        <div id="pad-instrument">
+            <div id="pad-line1">
+                {pads}
+            </div>
+            <div id="pad-line2">
+                {pads2}
+            </div>
+        </div>
+    );
 };
 
 PadInstrument.propTypes = {

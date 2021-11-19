@@ -26,11 +26,16 @@ const SpatialInstrument = ({soundPoints}) => {
 
     const [instrumentWidth, setInstrumentWidth] = useState(null);
     const [instrumentHeight, setInstrumentHeight] = useState(null);
+    const [instrumentDiagonal, setInstrumentDiagonal] = useState(null);
 
     useEffect(() => {
         setInstrumentWidth(instrumentDiv.current.clientWidth);
         setInstrumentHeight(instrumentDiv.current.clientHeight);
     });
+
+    useEffect(() => {
+        setInstrumentDiagonal(Math.round(Math.sqrt(sqDist(0, 0, instrumentWidth,instrumentHeight))));
+    }, [instrumentWidth, instrumentHeight]);
 
     // Instrument properties
     const [maxDist, setMaxDist] = useState(200);
@@ -84,7 +89,17 @@ const SpatialInstrument = ({soundPoints}) => {
             setValue: setMaxDist,
             tooltip: "Maximum distance at which a sample is audible.",
             min: 0,
-            max: (instrumentWidth + instrumentHeight)
+            max: instrumentDiagonal,
+        },
+        {
+            type: "range",
+            name: "halfRange",
+            display: "Half range:",
+            getValue: () => halfRange,
+            setValue: setHalfRange,
+            tooltip: "Distance at which sample is at 50% volume.",
+            min: 0,
+            max: instrumentDiagonal,
         }
     ];
 

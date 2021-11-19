@@ -283,7 +283,9 @@ def playback_demo(_request):
             frequency=freq_to_generate,
             duration=1
         )
+        # audio_samples = synths.wave_with_vibrato(frequency=freq_to_generate, duration=1)
         wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
         wav_files.append(wav_file_base64)
+
 
     return Response(wav_files)

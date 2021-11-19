@@ -302,3 +302,40 @@ def generate_sine_wave_harmonics(frequency, duration, harmonics=0):
     return sine_wave_samples
 
 
+def wave_with_vibrato(frequency, duration):
+    """
+
+    :param frequency:
+    :param duration:
+    :return:
+    """
+    num_samples = int(duration * WAV_SAMPLE_RATE)
+    time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
+    wave_samples = np.sin(frequency * 2 * np.pi * time_steps)
+    print('wave1', wave_samples)
+    copy1 = []
+    copy2 = []
+    for i in range(len(wave_samples)):
+        if i < 2000:
+            copy1.append(wave_samples[0])
+        else:
+            copy1.append(wave_samples[i-2000])
+
+    for i in range(len(wave_samples)):
+        if i < 40000:
+            copy2.append(wave_samples[0])
+        else:
+            copy2.append(wave_samples[i - 40000])
+
+    for k in range(len(wave_samples)):
+        wave_samples[k] += copy1[k]
+        # wave_samples[k] += copy2[k]
+
+    # print("1", copy1)
+    # print('2', copy2)
+    print('wave', wave_samples)
+    return wave_samples
+    # for i in range(len(wave_samples)):
+    #     wave_samples[i]*
+
+

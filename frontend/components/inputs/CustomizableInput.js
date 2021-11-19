@@ -15,7 +15,7 @@ const CustomizableInput = (
         getValue, setValue,
         enabled=true,
         options=[],
-        onEdit,
+        onEdit=()=>{},
         tooltip,
         ...rest
     }

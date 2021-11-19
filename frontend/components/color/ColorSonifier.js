@@ -24,17 +24,19 @@ class ColorSonifier extends React.Component {
             instrumentGenerated: false,
             colorPickerColor: {r: 51, g: 51, b: 51},
             listOfColors: initialColors,
+            listOfColorsChanged: false,
         };
     }
 
     handlePaletteClick = (e) => {
-        this.setState({selected: Number(e.target.id)});
+        this.setState({selected: Number(e.target.id),});
     }
 
     handleChangeComplete = (color) => {
         const currentColorState = [...this.state.listOfColors];
         currentColorState[this.state.selected] = color.rgb;
-        this.setState({listOfColors: [...currentColorState], colorPickerColor: color.rgb});
+        this.setState({listOfColors: [...currentColorState], colorPickerColor: color.rgb,
+            listOfColorsChanged: true,});
     };
 
     handleSubmit = () => {
@@ -43,6 +45,7 @@ class ColorSonifier extends React.Component {
             this.setState({
                 result: responseDict,
                 instrumentGenerated: true,
+                listOfColorsChanged: false,
             });
             alert("Instrument has been updated!");
         };
@@ -58,6 +61,12 @@ class ColorSonifier extends React.Component {
                 handlePaletteClick={this.handlePaletteClick}
             />
         );
+        var updateAlert = "";
+        const listOfColorsChanged = this.state.listOfColorsChanged;
+        if (listOfColorsChanged) {
+            updateAlert = "The palette has changed, please update the instrument.";
+        }
+
         return (<div>
             <h1>Colors</h1>
             <p> Use the color picker below to choose a color, and hit the <b>submit</b> button
@@ -78,6 +87,9 @@ class ColorSonifier extends React.Component {
                             ? "Update Instrument"
                             : "Generate Instrument"}
                     </button>
+                    <div>
+                        {updateAlert}
+                    </div>
                 </div>
 
                 <div className="col-sm">

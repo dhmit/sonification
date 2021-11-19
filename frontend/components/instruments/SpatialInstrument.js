@@ -23,6 +23,8 @@ const SpatialInstrument = ({soundPoints}) => {
     const [mouseX, setMouseX] = useState(null);
     const [mouseY, setMouseY] = useState(null);
 
+
+    // why is this here?
     const [instrumentWidth, setInstrumentWidth] = useState(null);
     const [instrumentHeight, setInstrumentHeight] = useState(null);
 
@@ -31,12 +33,17 @@ const SpatialInstrument = ({soundPoints}) => {
         setInstrumentHeight(instrumentDiv.current.clientHeight);
     });
 
+    // Instrument properties
+    const maxDist = 200;
+    const halfRange = 40;
+    const minRadius = 2;
+    const maxRadius = 5;
+
     function sqDist(x1, y1, x2, y2) {
         return (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2);
     }
 
     function sampleShouldPlay(point) {
-        const maxDist = 200;
         if (mouseX === null || mouseY === null) {
             return false;
         }
@@ -47,8 +54,12 @@ const SpatialInstrument = ({soundPoints}) => {
         if (mouseX === null || mouseY === null) {
             return 0;
         }
-        const halfRange = 40;
         return 100/(sqDist(point.x, point.y, mouseX, mouseY)/(halfRange*halfRange) + 1);
+    }
+
+    function sampleRadius(point) {
+        const vol = sampleVolume(point);
+        return minRadius + (vol/100) * (maxRadius - minRadius);
     }
 
     function handleMouseLeave() {
@@ -87,7 +98,7 @@ const SpatialInstrument = ({soundPoints}) => {
                             key={`circle-${i}`}
                             cx={soundPoint.x}
                             cy={soundPoint.y}
-                            r={2 + 3*sampleVolume(soundPoint)/100}
+                            r={sampleRadius(soundPoint)}
                         />
                     </>
                 ))}

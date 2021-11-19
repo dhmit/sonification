@@ -152,11 +152,6 @@ const TextShapeAnalysis = () => {
                             Right
                         </button>
                         <br/>
-                        <br/>
-                        <label>Upload text into text box:</label>
-                        <br/>
-                        <input className="my-3" type="file" accept=".txt"
-                               onChange={handleUploadFile}/><br/><br/>
                         <button className="btn btn-primary" type="submit">Submit</button>
                     </div>
                     <div className="col">

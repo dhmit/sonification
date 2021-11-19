@@ -328,7 +328,26 @@ def text_shape_to_music(request):
 
 @api_view(['POST'])
 def text_shape_to_samples(request):
-    return not_implemented_error()
+    """
+    API endpoint for generating an instrument based on the shape analysis of the given text
+    """
+    text = request.query_params.get('text')
+    secs_per_line = float(request.query_params.get('secondsPerLine'))
+    base_freq = float(request.query_params.get('baseFreq'))
+    max_beat_freq = float(request.query_params.get('maxBeatFreq'))
+    higher_second_freq = False
+    if request.query_params.get('higherSecondFreq') == 'true':
+        higher_second_freq = True
+
+    audio_data = text_processing.text_shape_to_samples(
+        text, secs_per_line, base_freq, max_beat_freq, higher_second_freq
+    )
+
+    res = {
+        'sound': [audio_samples_to_wav_base64(wave) for wave in audio_data]
+    }
+
+    return Response(res)
 
 
 ################################################################################

@@ -29,6 +29,8 @@ const CustomizableInput = (
     return (
         <div key={name} className={STYLES.customizableInputDiv} hidden={!enabled}>
             {display}
+            {type === "range" && (" " + getValue())}
+            {/*{type === "range" && <label className={STYLES.rangeLabelLeft}>{rest.min}</label>}*/}
             {type === "dropdown"
                 ? <select
                     name={name}
@@ -50,8 +52,10 @@ const CustomizableInput = (
                     onChange={handleChange}
                     value={getValue()}
                     {...rest}
+                    style={{hover: type === "range" ? "asd" : ""}}
                 />
             }
+            {/*{type === "range" && <label className={STYLES.rangeLabelRight}>{rest.max}</label>}*/}
             <HoverTooltip tooltip={tooltip}/>
         </div>
     );

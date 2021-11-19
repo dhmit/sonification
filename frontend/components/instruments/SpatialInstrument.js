@@ -38,8 +38,10 @@ const SpatialInstrument = ({soundPoints}) => {
     }, [instrumentWidth, instrumentHeight]);
 
     // Instrument properties
-    const [maxDist, setMaxDist] = useState(200);
+    const [maxDist, setMaxDist] = useState(100);
     const [halfRange, setHalfRange] = useState(40);
+    const [visualizeRange, setVisualizeRange] = useState(true);
+
     const [minRadius, setMinRadius] = useState(2);
     const [maxRadius, setMaxRadius] = useState(5);
 
@@ -47,15 +49,19 @@ const SpatialInstrument = ({soundPoints}) => {
         return (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2);
     }
 
+    function mouseActive() {
+        return mouseX !== null && mouseY !== null;
+    }
+
     function sampleShouldPlay(point) {
-        if (mouseX === null || mouseY === null) {
+        if (!mouseActive()) {
             return false;
         }
         return sqDist(point.x, point.y, mouseX, mouseY) <= maxDist*maxDist;
     }
 
     function sampleVolume(point) {
-        if (mouseX === null || mouseY === null) {
+        if (!mouseActive()) {
             return 0;
         }
         if (!sampleShouldPlay(point)) return 0;
@@ -84,7 +90,7 @@ const SpatialInstrument = ({soundPoints}) => {
         {
             type: "range",
             name: "maxDist",
-            display: "Maximum distance:",
+            display: "Maximum range:",
             getValue: () => maxDist,
             setValue: setMaxDist,
             tooltip: "Maximum distance at which a sample is audible.",
@@ -100,6 +106,14 @@ const SpatialInstrument = ({soundPoints}) => {
             tooltip: "Distance at which sample is at 50% volume.",
             min: 0,
             max: instrumentDiagonal,
+        },
+        {
+            type: "checkbox",
+            name: "visualizeRange",
+            display: "Visualize range: ",
+            getValue: () => visualizeRange,
+            setValue: setVisualizeRange,
+            tooltip: "Whether to visualize the audible range.",
         }
     ];
 
@@ -131,6 +145,20 @@ const SpatialInstrument = ({soundPoints}) => {
                         />
                     </>
                 ))}
+                {visualizeRange && mouseActive() && <>
+                    <circle
+                        className={STYLES.mouseRange}
+                        cx={mouseX}
+                        cy={mouseY}
+                        r={maxDist}
+                    />
+                    <circle
+                        className={STYLES.mouseRange}
+                        cx={mouseX}
+                        cy={mouseY}
+                        r={halfRange}
+                    />
+                </>}
             </svg>
             {userOptions.map((option) => <CustomizableInput
                 key={option.name}

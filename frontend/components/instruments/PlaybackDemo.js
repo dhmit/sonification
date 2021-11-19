@@ -19,9 +19,9 @@ const PlaybackDemo = () => {
         ];
     }
 
-    useEffect(() => {
-        console.log(soundPoints);
-    }, [soundPoints]);
+    // useEffect(() => {
+    //     console.log(soundPoints);
+    // }, [soundPoints]);
 
     useEffect(() => {
         setSoundPoints(samples.map(

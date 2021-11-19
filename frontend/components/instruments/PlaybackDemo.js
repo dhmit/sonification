@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import SliderInstrument from "./SliderInstrument";
 import PadInstrument from "./PadInstrument";
 import DrumMachine from "./DrumMachine";
+import CheckboxDrumMachine from "./CheckboxDrumMachine";
 import {fetchPost} from "../../common";
 
 const PlaybackDemo = () => {
@@ -30,6 +31,11 @@ const PlaybackDemo = () => {
                 <section className="mb-4">
                     <h3>Drum Machine</h3>
                     <DrumMachine samples={samples}/>
+                </section>
+
+                <section className="mb-4">
+                    <h3>Checkbox Drum Machine</h3>
+                    <CheckboxDrumMachine samples={{samples}/>
                 </section>
 
 

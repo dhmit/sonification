@@ -3,7 +3,6 @@ import numbers
 
 import numpy as np
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
-from app.synthesis.synthesizers import generate_sine_wave_with_envelope
 
 
 def check_valid_polygon(polygon):

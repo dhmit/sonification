@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import SoundPoint from "./SoundPoint";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./SpatialInstrument.module.scss";
+import CustomizableInput from "../inputs/CustomizableInput";
 
 /* TODO: there is a bug in which the player crashes
     not sure how to reproduce.
@@ -23,8 +24,6 @@ const SpatialInstrument = ({soundPoints}) => {
     const [mouseX, setMouseX] = useState(null);
     const [mouseY, setMouseY] = useState(null);
 
-
-    // why is this here?
     const [instrumentWidth, setInstrumentWidth] = useState(null);
     const [instrumentHeight, setInstrumentHeight] = useState(null);
 
@@ -35,7 +34,7 @@ const SpatialInstrument = ({soundPoints}) => {
 
     // Instrument properties
     const [maxDist, setMaxDist] = useState(200);
-    const [halfRange, setHalfRange] = useState(200);
+    const [halfRange, setHalfRange] = useState(40);
     const [minRadius, setMinRadius] = useState(2);
     const [maxRadius, setMaxRadius] = useState(5);
 
@@ -54,6 +53,7 @@ const SpatialInstrument = ({soundPoints}) => {
         if (mouseX === null || mouseY === null) {
             return 0;
         }
+        if (!sampleShouldPlay(point)) return 0;
         return 100/(sqDist(point.x, point.y, mouseX, mouseY)/(halfRange*halfRange) + 1);
     }
 
@@ -75,6 +75,19 @@ const SpatialInstrument = ({soundPoints}) => {
         setMouseY(y);
     }
 
+    const userOptions = [
+        {
+            type: "range",
+            name: "maxDist",
+            display: "Maximum distance:",
+            getValue: () => maxDist,
+            setValue: setMaxDist,
+            tooltip: "Maximum distance at which a sample is audible.",
+            min: 0,
+            max: (instrumentWidth + instrumentHeight)
+        }
+    ];
+
     return (
         <>
             <svg
@@ -90,7 +103,8 @@ const SpatialInstrument = ({soundPoints}) => {
                             key={`sound-point-${i}`}
                             sample={soundPoint.sample}
                             loop
-                            shouldPlay={sampleShouldPlay(soundPoint)}
+                            // shouldPlay={sampleShouldPlay(soundPoint)}
+                            shouldPlay={true}
                             volume={sampleVolume(soundPoint)}
                             audioContext={audioContextRef.current}
                         />
@@ -103,6 +117,10 @@ const SpatialInstrument = ({soundPoints}) => {
                     </>
                 ))}
             </svg>
+            {userOptions.map((option) => <CustomizableInput
+                key={option.name}
+                {...option}
+            />)}
         </>
     );
 };

@@ -277,16 +277,16 @@ def time_series_to_samples(request):
     wav_files = []
     for j, frequency in enumerate(csv_row_av):
         column_constant = column_constants[j]
-        freq_to_generate = column_constant["base_frequency"]["value"] + (
-            float(frequency) + column_constant["offset"]["value"]) * column_constant[
-                               "multiplier"]["value"]
+        freq_to_generate = column_constant["base_frequency"] + (
+            float(frequency) + column_constant["offset"]) * column_constant[
+                               "multiplier"]
         note = synths.generate_sine_wave_with_envelope(
             frequency=freq_to_generate,
             duration=1,
-            a_percentage=int(column_constant["a_percentage"]["value"]) / 100,
-            d_percentage=int(column_constant["d_percentage"]["value"]) / 100,
-            s_percentage=int(column_constant["s_percentage"]["value"]) / 100,
-            r_percentage=int(column_constant["r_percentage"]["value"]) / 100
+            a_percentage=column_constant["a_percentage"],
+            d_percentage=column_constant["d_percentage"],
+            s_percentage=column_constant["s_percentage"],
+            r_percentage=column_constant["r_percentage"]
         )
         wav_file_base64 = audio_samples_to_wav_base64(note)
         wav_files.append(wav_file_base64)

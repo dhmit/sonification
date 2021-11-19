@@ -378,7 +378,35 @@ def polygon_to_music(request):
 
 @api_view(['POST'])
 def polygon_to_samples(request):
-    return not_implemented_error()
+    """
+    Takes in polygon data and constructs an instrument slider, with each slider representing
+    a side in the polygon.
+    """
+
+    converted_data = polygon_processing.parse_polygon_data(json.loads(request.body))
+
+    # remove irrelevant data
+    del converted_data['note_delay']
+    del converted_data['sides_as_duration']
+    del converted_data['note_length']
+
+    frequencies = polygon_processing.polygon_frequencies(**converted_data)
+
+    wav_files = []
+
+    for freq in frequencies:
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq,
+            duration=50,
+            a_percentage=0,
+            d_percentage=0,
+            s_percentage=1,
+            r_percentage=0
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
+
+    return Response(wav_files)
 
 
 ################################################################################

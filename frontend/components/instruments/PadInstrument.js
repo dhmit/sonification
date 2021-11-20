@@ -27,11 +27,18 @@ const Pad = ({sample, audioContext, keyBind, padClassName}) => {
 
     useEffect(() => {
         document.addEventListener('keydown', (event) => {
+            console.log("key down >:)");
             if (event.key === keyBind) {
                 playSample();
+                // how can i create a smooth sound? guess this might change with samples used?
             }
         });
-    }, []);
+        document.addEventListener('keyup', (event) => {
+            console.log("key up!");
+        });
+    },
+        // todo: look up useEffect syntax
+        []);
 
     return (<>
         <button
@@ -63,6 +70,9 @@ const PadInstrument = ({samples}) => {
     const keyBinds = ['q', 'w', 'e', 'r', 'a', 's', 'd', 'f', 'u', 'i', 'o', 'p'];
     const pads = [];
     const pads2 = [];
+    const pads3 = [];
+    // eventually, would it be possible to make this a single for loop instead of 3? just for
+    // readability?
     for (let i = 0; i < 4; i++) {
         let padClassName = STYLES.cyanPad;
         const thisPad = (
@@ -77,7 +87,7 @@ const PadInstrument = ({samples}) => {
         pads.push(thisPad);
     };
     for (let i = 4; i < 8; i++) {
-        let padClassName = STYLES.magnetaPad;
+        let padClassName = STYLES.magentaPad;
         const thisPad = (
             <Pad
                 keyBind={keyBinds[i]}
@@ -89,14 +99,33 @@ const PadInstrument = ({samples}) => {
         );
         pads2.push(thisPad);
     };
+    for (let i = 8; i < 10; i++) {
+        let padClassName = STYLES.limePad;
+        const thisPad = (
+            <Pad
+                keyBind={keyBinds[i]}
+                key={i}
+                sample={samples[i]}
+                padClassName={padClassName}
+                audioContext={audioContextRef.current}
+            />
+        );
+        pads3.push(thisPad);
+    };
 
     return (
+        // TODO: add a flexbox div so that padline1 + 3 can appear on the same line
+        // TODO: how can i bring him (pad-line3) closer to center?
+        // why is pad-line3 getting so angry with me?
         <div id="pad-instrument">
             <div id="pad-line1">
                 {pads}
             </div>
-            <div id="pad-line2">
+            <div id="pad-line2" className="pl-3">
                 {pads2}
+            </div>
+            <div id="pad-line3" className="text-center pl-5">
+                {pads}
             </div>
         </div>
     );

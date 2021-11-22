@@ -1,28 +1,29 @@
 import React, {useState, useRef} from "react";
 import SamplePlayer from "./SamplePlayer";
 
-class CheckboxDrumMachine extends React.Component {
+class StepSequencer extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            drums: [false, true, false]
+            drums: [false, true, false],
         };
     }
 
     updateDrum = () => {
         //stop playing
     }
+
     playSound = () => {
         for (let i = 0; i < this.state.drums.length; i++) {
-            if (this.state.drums[i] === 1) {
-                audio.play()
+            if (this.state.drums[i]) {
+                // audio.play();
             } else {
-                setTimeout(doNothing(), 500)
+                // setTimeout(doNothing(), 500);
             }
         }
     }
-    
+
 }
 
 
-export default CheckboxDrumMachine;
+export default StepSequencer;

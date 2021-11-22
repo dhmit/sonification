@@ -4,7 +4,7 @@ import SamplePlayer from "./SamplePlayer";
 import STYLES from "./PadInstrument.module.scss";
 
 
-const Pad = ({sample, audioContext}) => {
+export const Pad = ({sample, audioContext}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
 
     const handleClick = () => {

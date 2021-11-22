@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import SliderInstrument from "./SliderInstrument";
 import PadInstrument from "./PadInstrument";
-import DrumMachine from "./DrumMachine";
-import CheckboxDrumMachine from "./CheckboxDrumMachine";
+import DragPadInstrument from "./DragPadInstrument";
+import StepSequencer from "./StepSequencer";
 import {fetchPost} from "../../common";
 
 const PlaybackDemo = () => {
@@ -29,8 +29,8 @@ const PlaybackDemo = () => {
                 </section>
 
                 <section className="mb-4">
-                    <h3>Drum Machine</h3>
-                    <DrumMachine samples={samples}/>
+                    <h3>Draggable Pad Instrument</h3>
+                    <DragPadInstrument samples={samples}/>
                 </section>
 
 

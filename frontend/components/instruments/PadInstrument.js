@@ -13,9 +13,15 @@ export const Pad = ({sample, audioContext}) => {
         setTimeout(() => {setShouldPlay(false); }, 1000);
     };
 
+    // Pick button style depending on if sample is loaded
+    const btnStyle =
+        sample
+            ? STYLES.pad
+            : STYLES.emptyPad;
+
     return (<>
         <button
-            className={STYLES.pad}
+            className={btnStyle}
             onClick={handleClick}
         />
         <SamplePlayer

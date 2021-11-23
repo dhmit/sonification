@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./StepSequencer.module.scss";
 
-const Step = ({sample, audioContext, rowIsPlaying}) => {
+const Step = ({sample, audioContext, colIsPlaying}) => {
     const [isActive, setIsActive] = useState(false);
 
     const handleClick = () => {
@@ -23,7 +23,7 @@ const Step = ({sample, audioContext, rowIsPlaying}) => {
         />
         <SamplePlayer
             sample={sample}
-            shouldPlay={rowIsPlaying && isActive}
+            shouldPlay={colIsPlaying && isActive}
             loop={false}
             volume={100}
             audioContext={audioContext}
@@ -32,14 +32,13 @@ const Step = ({sample, audioContext, rowIsPlaying}) => {
 };
 Step.propTypes = {
     sample: PropTypes.string,
+    rowIsPlaying: PropTypes.bool,
     audioContext: PropTypes.object,
 };
 
 
 const StepSequencer = ({samples}) => {
     // TODO pieces of state:
-    // - whether a given step is active for playback or not
-    //    -- an array of length N per sample where N is the number of steps
     // - tempo
     // - position in playback
     // - stretch goal: metronome ticks even without playback
@@ -49,17 +48,33 @@ const StepSequencer = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
     const [numSteps, setNumSteps] = useState(4);
 
+    // playback position is an int representing which column is currently playing
+    const [playbackPosition, setPlaybackPosition] = useState(0);
+    const [isPlaying, setIsPlaying] = useState(false);
 
-    const setNumStepsAndUpdatePads = (newNumSteps) => {
-        setNumSteps(newNumSteps);
-        // TODO: And also do the active pads stuff again
+    const play = () => {
+        setIsPlaying(true);
     };
 
     return (<>
         <div>
-            {numSteps}
+            <div>
+                {numSteps}
+            </div>
+            <div>
+                Playback position: {playbackPosition}
+            </div>
+            <div>
+                <button
+                    onClick={() => play()}
+                >
+                    Play!
+                </button>
+                Playback position: {playbackPosition}
+            </div>
+
             <button
-                onClick={() => setNumStepsAndUpdatePads(numSteps + 1)}
+                onClick={() => setNumSteps(numSteps + 1)}
             >
                 increment numSteps
             </button>
@@ -72,13 +87,16 @@ const StepSequencer = ({samples}) => {
                         key={colIndex}
                         sample={sample}
                         audioContext={audioContextRef.current}
-                        rowIsPlaying={false}
+                        colIsPlaying={isPlaying && colIndex === playbackPosition}
                     />
                 ))}
             </div>
 
         ))}
     </>);
+};
+StepSequencer.propTypes = {
+    samples: PropTypes.array,
 };
 
 export default StepSequencer;

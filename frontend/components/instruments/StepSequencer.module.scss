@@ -1,0 +1,15 @@
+.step {
+    width: 50px;
+    height: 25px;
+    border: 1px solid black;
+}
+
+.activeStep {
+    composes: step;
+    background-color: blue;
+}
+
+.inactiveStep {
+    composes: step;
+    background-color: grey;
+}

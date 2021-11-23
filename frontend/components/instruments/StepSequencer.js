@@ -1,12 +1,45 @@
 import React, {useState, useRef} from "react";
+import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
-import {Pad} from "./PadInstrument";
+import STYLES from "./StepSequencer.module.scss";
+
+const Step = ({sample, audioContext, rowIsPlaying}) => {
+    const [isActive, setIsActive] = useState(false);
+
+    const handleClick = () => {
+        setIsActive(!isActive);
+    };
+
+    // Pick button style depending on if sample is loaded
+    const btnStyle =
+        isActive
+            ? STYLES.activeStep
+            : STYLES.inactiveStep;
+
+    return (<>
+        <button
+            className={btnStyle}
+            onClick={handleClick}
+        />
+        <SamplePlayer
+            sample={sample}
+            shouldPlay={rowIsPlaying && isActive}
+            loop={false}
+            volume={100}
+            audioContext={audioContext}
+        />
+    </>);
+};
+Step.propTypes = {
+    sample: PropTypes.string,
+    audioContext: PropTypes.object,
+};
+
 
 const StepSequencer = ({samples}) => {
     // TODO pieces of state:
     // - whether a given step is active for playback or not
     //    -- an array of length N per sample where N is the number of steps
-    // - am I currently playing?
     // - tempo
     // - position in playback
     // - stretch goal: metronome ticks even without playback
@@ -16,33 +49,30 @@ const StepSequencer = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
     const [numSteps, setNumSteps] = useState(4);
 
-    const initialActivePads = [];
-    for (const _ of samples) {
-        const rowPads = [];
-        for (let i = 0; i < numSteps; i ++) {
-            rowPads.push(false);
-        }
-        initialActivePads.push(rowPads);
-    }
-    const [activePads, setActivePads] = useState(initialActivePads);
+
+    const setNumStepsAndUpdatePads = (newNumSteps) => {
+        setNumSteps(newNumSteps);
+        // TODO: And also do the active pads stuff again
+    };
 
     return (<>
         <div>
             {numSteps}
             <button
-                onClick={() => setNumSteps(numSteps + 1)}
+                onClick={() => setNumStepsAndUpdatePads(numSteps + 1)}
             >
                 increment numSteps
             </button>
         </div>
 
-        {activePads.map((row, rowIndex) => (
+        {samples.map((sample, rowIndex) => (
             <div key={rowIndex}>
-                {row.map((isActive, colIndex) => (
-                    <Pad
+                {Array(numSteps).fill(null).map((_, colIndex) => (
+                    <Step
                         key={colIndex}
-                        sample={samples[rowIndex]}
+                        sample={sample}
                         audioContext={audioContextRef.current}
+                        rowIsPlaying={false}
                     />
                 ))}
             </div>

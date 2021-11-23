@@ -19,6 +19,11 @@ const PlaybackDemo = () => {
 
             {samples &&<>
                 <section className="mb-4">
+                    <h3></h3>
+                    <StepSequencer samples={samples}/>
+                </section>
+
+                <section className="mb-4">
                     <h3>Slider Player</h3>
                     <SliderInstrument samples={samples}/>
                 </section>

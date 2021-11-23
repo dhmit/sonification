@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useEffect, useRef} from "react";
 import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./StepSequencer.module.scss";
@@ -32,15 +32,12 @@ const Step = ({sample, audioContext, colIsPlaying}) => {
 };
 Step.propTypes = {
     sample: PropTypes.string,
-    rowIsPlaying: PropTypes.bool,
+    colIsPlaying: PropTypes.bool,
     audioContext: PropTypes.object,
 };
 
 
 const StepSequencer = ({samples}) => {
-    // TODO pieces of state:
-    // - tempo
-    // - position in playback
     // - stretch goal: metronome ticks even without playback
     // - stretch goal: tempo slider
     // - stretch goal: changeable time signature
@@ -52,25 +49,31 @@ const StepSequencer = ({samples}) => {
     const [playbackPosition, setPlaybackPosition] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
 
-    const play = () => {
-        setIsPlaying(true);
-    };
+    useEffect(() => {
+        if (!isPlaying) return;
+        setInterval(() => {
+            setPlaybackPosition((prevPosition) => {
+                if (prevPosition < numSteps - 1) {
+                    return prevPosition + 1;
+                } else {
+                    return 0;
+                }
+            });
+        }
+        , 1.5 * 1000);  // s * ms/s TODO: tempo
+    }, [isPlaying]);
 
     return (<>
         <div>
-            <div>
-                {numSteps}
-            </div>
             <div>
                 Playback position: {playbackPosition}
             </div>
             <div>
                 <button
-                    onClick={() => play()}
+                    onClick={() => setIsPlaying(true)}
                 >
                     Play!
                 </button>
-                Playback position: {playbackPosition}
             </div>
 
             <button

@@ -51,27 +51,6 @@ const StepSequencer = ({samples}) => {
     const [isPlaying, setIsPlaying] = useState(false);
     const [intervalID, setIntervalID] = useState(0);
 
-    /*
-    useEffect(() => {
-        if (!isPlaying) return;
-        const newIntervalID = setInterval(() => {
-            if (!isPlaying) {
-                return () => clearInterval(intervalID);
-            } // doesn't do anything right now :(
-            setPlaybackPosition((prevPosition) => {
-                if (prevPosition < numSteps - 1) {
-                    return prevPosition + 1;
-                } else {
-                    return 0;
-                }
-            });
-        }
-        , (60/tempo) * 1000);  // s * ms/s
-        setIntervalID(newIntervalID);
-    }, [isPlaying]);
-
-     */
-
     const handlePlay = () => {
         setIsPlaying(true);
         const newIntervalID = setInterval(() => {
@@ -90,7 +69,7 @@ const StepSequencer = ({samples}) => {
     const handlePause = () => {
         setIsPlaying(false);
         clearInterval(intervalID);
-    }
+    };
 
     const handleUpdateTempo = (event) => {
         event.preventDefault();
@@ -109,7 +88,7 @@ const StepSequencer = ({samples}) => {
     const handleMinusBeat = (event) => {
         event.preventDefault();
         if (!isPlaying) { // can only subtract beat when paused
-            setNumSteps(Math.max(1, numSteps - 1));
+            setNumSteps(Math.max(2, numSteps - 1));
         }
     };
 
@@ -154,11 +133,13 @@ const StepSequencer = ({samples}) => {
                 ))}
             </div>
         ))}
-        <b>Tempo:</b>
-        <input className="mx-2" type="range" min="40" max="80"
-               step="1" id="low" value={tempo}
-               onChange={handleUpdateTempo}/>
-        {tempo} bpm
+        <div>
+            <b>Tempo:</b>
+                <input className="mx-2" type="range" min="40" max="80"
+                    step="1" id="low" value={tempo}
+                    onChange={handleUpdateTempo}/>
+            {tempo} bpm
+        </div>
     </>);
 };
 StepSequencer.propTypes = {

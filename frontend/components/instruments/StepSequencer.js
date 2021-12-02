@@ -39,7 +39,7 @@ Step.propTypes = {
 
 const StepSequencer = ({samples}) => {
     // - stretch goal: metronome ticks even without playback
-    // - stretch goal: tempo slider
+    // - stretch goal: tempo slider--DONE
     // - stretch goal: changeable time signature
 
     const audioContextRef = useRef(new AudioContext());
@@ -49,12 +49,14 @@ const StepSequencer = ({samples}) => {
     // playback position is an int representing which column is currently playing
     const [playbackPosition, setPlaybackPosition] = useState(0);
     const [isPlaying, setIsPlaying] = useState(false);
+    const [intervalID, setIntervalID] = useState(0);
 
+    /*
     useEffect(() => {
         if (!isPlaying) return;
-        const interval = setInterval(() => {
+        const newIntervalID = setInterval(() => {
             if (!isPlaying) {
-                clearInterval(interval);
+                return () => clearInterval(intervalID);
             } // doesn't do anything right now :(
             setPlaybackPosition((prevPosition) => {
                 if (prevPosition < numSteps - 1) {
@@ -64,15 +66,51 @@ const StepSequencer = ({samples}) => {
                 }
             });
         }
-        , (60/tempo) * 1000);  // s * ms/s TODO: tempo
+        , (60/tempo) * 1000);  // s * ms/s
+        setIntervalID(newIntervalID);
     }, [isPlaying]);
+
+     */
+
+    const handlePlay = () => {
+        setIsPlaying(true);
+        const newIntervalID = setInterval(() => {
+            setPlaybackPosition((prevPosition) => {
+                if (prevPosition < numSteps - 1) {
+                    return prevPosition + 1;
+                } else {
+                    return 0;
+                }
+            });
+        }
+        , (60/tempo) * 1000);  // s * ms/s
+        setIntervalID(newIntervalID);
+    };
+
+    const handlePause = () => {
+        setIsPlaying(false);
+        clearInterval(intervalID);
+    }
 
     const handleUpdateTempo = (event) => {
         event.preventDefault();
         if (!isPlaying){ // can only move slider when paused
             setTempo(parseInt(event.target.value));
         }
+    };
 
+    const handlePlusBeat = (event) => {
+        event.preventDefault();
+        if (!isPlaying) { // can add beat slider when paused
+            setNumSteps(numSteps + 1);
+        }
+    };
+
+    const handleMinusBeat = (event) => {
+        event.preventDefault();
+        if (!isPlaying) { // can only subtract beat when paused
+            setNumSteps(Math.max(1, numSteps - 1));
+        }
     };
 
     return (<>
@@ -82,22 +120,22 @@ const StepSequencer = ({samples}) => {
             </div>
             <div>
                 <button className="btn btn-outline-primary text-right"
-                    onClick={() => setIsPlaying(true)}
+                    onClick={handlePlay}
                 >
                     Play!
                 </button>
                 <button className="btn btn-outline-primary mx-2"
-                    onClick={() => setIsPlaying(false)}
+                    onClick={handlePause}
                 >
                     Pause!
                 </button>
                 <button className="btn btn-outline-primary mx-2"
-                onClick={() => setNumSteps(numSteps + 1)}
+                onClick={handlePlusBeat}
                 >
                     +1 beat
                 </button>
                 <button className="btn btn-outline-primary text-left"
-                onClick={() => setNumSteps(Math.max(1, numSteps - 1))}
+                onClick={handleMinusBeat}
                 >
                     -1 beat
                 </button>

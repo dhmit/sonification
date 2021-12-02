@@ -28,12 +28,12 @@ const SynthesizePolygons = () => {
 
     function switchSync(syncedOption, loadingOption, unsyncedOption) {
         switch (outOfSync) {
-            case SyncStatus.SYNCED:
-                return syncedOption;
-            case SyncStatus.LOADING:
-                return loadingOption;
-            case SyncStatus.UNSYNCED:
-                return unsyncedOption;
+        case SyncStatus.SYNCED:
+            return syncedOption;
+        case SyncStatus.LOADING:
+            return loadingOption;
+        case SyncStatus.UNSYNCED:
+            return unsyncedOption;
         }
     }
 
@@ -284,11 +284,11 @@ const SynthesizePolygons = () => {
                     <PolygonEditor
                         outerWidth={leftPaneWidth}
                         onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
-                        showSubmit
                         onSubmit={submitPolygon}
                     />
                 </div>
-                <div className={STYLES.paneSeparatorVertical} onMouseDown={onMouseDownVerticalSeparator}>
+                <div className={STYLES.paneSeparatorVertical}
+                    onMouseDown={onMouseDownVerticalSeparator}>
                     <div className={STYLES.triangleLeft}/>
                     <div className={STYLES.triangleRight}/>
                 </div>
@@ -301,7 +301,8 @@ const SynthesizePolygons = () => {
                             onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
                         />)}
                     </div>
-                    <div className={STYLES.paneSeparatorHorizontal} onMouseDown={onMouseDownHorizontalSeparator}>
+                    <div className={STYLES.paneSeparatorHorizontal}
+                        onMouseDown={onMouseDownHorizontalSeparator}>
                         <div className={STYLES.triangleTop}/>
                         <div className={STYLES.triangleBottom}/>
                     </div>
@@ -330,12 +331,10 @@ const SynthesizePolygons = () => {
                                     onTimeUpdate={() => {
                                         setCurAudioTime(audioRef.current.currentTime);
                                     }}
-                                >
-                                    <source src={`data:audio/wav;base64,${sound}`} type={"audio/wav"}/>
-                                </audio>
+                                    src={`data:audio/wav;base64, ${sound}`}/>
                                 <br/>
                                 <PolygonViewer width={300} height={300} rawPoints={data["points"]}
-                                           currentTime={curAudioTime} timestamps={timestamps}/>
+                                    currentTime={curAudioTime} timestamps={timestamps}/>
                             </>
                             : <p>Upload a CSV or draw a polygon in the editor to get results! </p>
                         }

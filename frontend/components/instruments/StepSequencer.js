@@ -44,6 +44,7 @@ const StepSequencer = ({samples}) => {
 
     const audioContextRef = useRef(new AudioContext());
     const [numSteps, setNumSteps] = useState(4);
+    const [tempo, setTempo] = useState(60);
 
     // playback position is an int representing which column is currently playing
     const [playbackPosition, setPlaybackPosition] = useState(0);
@@ -51,7 +52,10 @@ const StepSequencer = ({samples}) => {
 
     useEffect(() => {
         if (!isPlaying) return;
-        setInterval(() => {
+        const interval = setInterval(() => {
+            if (!isPlaying) {
+                clearInterval(interval);
+            } // doesn't do anything right now :(
             setPlaybackPosition((prevPosition) => {
                 if (prevPosition < numSteps - 1) {
                     return prevPosition + 1;
@@ -60,8 +64,16 @@ const StepSequencer = ({samples}) => {
                 }
             });
         }
-        , 1.5 * 1000);  // s * ms/s TODO: tempo
+        , (60/tempo) * 1000);  // s * ms/s TODO: tempo
     }, [isPlaying]);
+
+    const handleUpdateTempo = (event) => {
+        event.preventDefault();
+        if (!isPlaying){ // can only move slider when paused
+            setTempo(parseInt(event.target.value));
+        }
+
+    };
 
     return (<>
         <div>
@@ -69,18 +81,27 @@ const StepSequencer = ({samples}) => {
                 Playback position: {playbackPosition}
             </div>
             <div>
-                <button
+                <button className="btn btn-outline-primary text-right"
                     onClick={() => setIsPlaying(true)}
                 >
                     Play!
                 </button>
-            </div>
-
-            <button
+                <button className="btn btn-outline-primary mx-2"
+                    onClick={() => setIsPlaying(false)}
+                >
+                    Pause!
+                </button>
+                <button className="btn btn-outline-primary mx-2"
                 onClick={() => setNumSteps(numSteps + 1)}
-            >
-                increment numSteps
-            </button>
+                >
+                    +1 beat
+                </button>
+                <button className="btn btn-outline-primary text-left"
+                onClick={() => setNumSteps(Math.max(1, numSteps - 1))}
+                >
+                    -1 beat
+                </button>
+            </div>
         </div>
 
         {samples.map((sample, rowIndex) => (
@@ -94,8 +115,12 @@ const StepSequencer = ({samples}) => {
                     />
                 ))}
             </div>
-
         ))}
+        <b>Tempo:</b>
+        <input className="mx-2" type="range" min="40" max="80"
+               step="1" id="low" value={tempo}
+               onChange={handleUpdateTempo}/>
+        {tempo} bpm
     </>);
 };
 StepSequencer.propTypes = {

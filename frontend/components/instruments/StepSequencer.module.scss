@@ -6,10 +6,10 @@
 
 .activeStep {
     composes: step;
-    background-color: blue;
+    background-color: mediumspringgreen;
 }
 
 .inactiveStep {
     composes: step;
-    background-color: grey;
+    background-color: darkslategrey;
 }

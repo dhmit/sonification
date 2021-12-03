@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./StepSequencer.module.scss";
 
-const Step = ({sample, audioContext, colIsPlaying}) => {
+const Step = ({sample, audioContext, colIsPlaying, vol}) => {
     const [isActive, setIsActive] = useState(false);
 
     const handleClick = () => {
@@ -25,7 +25,7 @@ const Step = ({sample, audioContext, colIsPlaying}) => {
             sample={sample}
             shouldPlay={colIsPlaying && isActive}
             loop={false}
-            volume={100}
+            volume={vol}
             audioContext={audioContext}
         />
     </>);
@@ -62,6 +62,42 @@ Metronome.propTypes = {
     audioContext: PropTypes.object,
 };
 
+const Row = ({sample, audioContext, rowIndex, numSteps, playbackPosition, isPlaying}) => {
+    const [volume, setVolume] = useState(100);
+
+    const handleUpdateVolume = (event) => {
+        event.preventDefault();
+        if (!isPlaying){ // can only move slider when paused
+            setVolume(parseInt(event.target.value));
+        }
+    };
+
+    return (<>
+        <div>
+            {Array(numSteps).fill(null).map((_, colIndex) => (
+                <Step
+                    key={colIndex}
+                    sample={sample}
+                    audioContext={audioContext}
+                    colIsPlaying={isPlaying && colIndex === playbackPosition}
+                    vol = {volume}
+                />
+            ))}
+            Volume {rowIndex}
+            <input className="mx-2" type="range" min="0" max="100"
+                   step="1" id="low" value={volume}
+                   onChange={handleUpdateVolume}/>
+        </div>
+    </>);
+};
+Row.propTypes = {
+    sample: PropTypes.string,
+    audioContext: PropTypes.object,
+    rowIndex: PropTypes.number,
+    numSteps: PropTypes.number,
+    playbackPosition: PropTypes.number,
+    isPlaying: PropTypes.bool,
+};
 
 const StepSequencer = ({samples}) => {
     // - stretch goal: metronome ticks even without playback--DONE
@@ -150,17 +186,17 @@ const StepSequencer = ({samples}) => {
                 </button>
             </div>
         </div>
-
         {samples.map((sample, rowIndex) => (
             <div key={rowIndex}>
-                {Array(numSteps).fill(null).map((_, colIndex) => (
-                    <Step
-                        key={colIndex}
-                        sample={sample}
-                        audioContext={audioContextRef.current}
-                        colIsPlaying={isPlaying && colIndex === playbackPosition}
-                    />
-                ))}
+                <Row
+                    key={rowIndex}
+                    sample={sample}
+                    audioContext={audioContextRef.current}
+                    rowIndex={rowIndex}
+                    numSteps={numSteps}
+                    playbackPosition={playbackPosition}
+                    isPlaying={isPlaying}
+                />
             </div>
         ))}
         <Metronome

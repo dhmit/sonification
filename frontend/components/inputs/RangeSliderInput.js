@@ -3,8 +3,8 @@ import PropTypes from "prop-types";
 import Slider from '@mui/material/Slider';
 
 const RangeSliderInput = (
-    {units, minValue, maxValue, updateValues, step, enabled=true}) => {
-    const [sliderValues, setSliderValues] = useState([minValue, maxValue]);
+    {units, minValue, maxValue, updateValues, step, enabled=true, values=[minValue, maxValue]}) => {
+    const [sliderValues, setSliderValues] = useState(values);
 
 
     const updateSlider = (event, newValues) => {
@@ -43,6 +43,7 @@ RangeSliderInput.propTypes = {
     updateValues: PropTypes.func,
     step: PropTypes.number,
     hidden: PropTypes.bool,
+    values: PropTypes.array,
 };
 
 export default RangeSliderInput;

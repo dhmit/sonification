@@ -3,6 +3,7 @@ import {fetchPost} from "../../common";
 import PolygonViewer from "./PolygonViewer";
 import PolygonEditor from "./PolygonEditor";
 import CustomizableInput from "../inputs/CustomizableInput";
+import RangeSliderInput from "../inputs/RangeSliderInput";
 import STYLES from "./PolygonPageLayout.module.scss";
 
 const API_ENDPOINT = "/api/polygon_to_music/";
@@ -171,8 +172,12 @@ const SynthesizePolygons = () => {
         const obj = {};
         userOptions.forEach((option) => {
             if (typeof option.enabled === "undefined" || option.enabled) {
-                // console.log(`${option.name}: ${option.getValue().toString()}`);
-                obj[option.name] = option.getValue();
+                if (option.name === "Frequency Range") {
+                    obj["floorFrequency"] = floorFrequency;
+                    obj["ceilFrequency"] = ceilFrequency;
+                } else {
+                    obj[option.name] = option.getValue();
+                }
             }
         });
         return obj;
@@ -245,28 +250,14 @@ const SynthesizePolygons = () => {
             tooltip: "Whether to cap the frequencies of notes.",
         },
         {
-            type: "number",
-            name: "floorFrequency",
-            display: "Floor frequency (Hz):",
-            getValue: () => floorFrequency,
-            setValue: setFloorFrequency,
-            onBlur: () => capFrequency(floorFrequency, setFloorFrequency),
-            min: LOW_FREQ,
-            max: HIGH_FREQ,
+            name: "Frequency Range",
             enabled: restrictFrequency,
-            tooltip: "Lowest allowed frequency.",
-        },
-        {
-            type: "number",
-            name: "ceilFrequency",
-            display: "Ceiling frequency (Hz):",
-            getValue: () => ceilFrequency,
-            setValue: setCeilFrequency,
-            onBlur: () => capFrequency(ceilFrequency, setCeilFrequency),
-            min: LOW_FREQ,
-            max: HIGH_FREQ,
-            enabled: restrictFrequency,
-            tooltip: "Highest allowed frequency.",
+            units: "Hz",
+            minValue: LOW_FREQ,
+            maxValue: HIGH_FREQ,
+            values: [floorFrequency, ceilFrequency],
+            updateValues: (val) => setFloorFrequency(val[0]) || setCeilFrequency(val[1]),
+            step: 1,
         },
     ];
 
@@ -296,11 +287,18 @@ const SynthesizePolygons = () => {
                 <div className={STYLES.rightPane} ref={rightPaneRef}>
                     <div className={STYLES.rightSubPane} ref={settingsRef}>
                         <h2>Audio Settings</h2>
-                        {userOptions.map((option) => <CustomizableInput
+                        {userOptions.map((option) => option.name === "Frequency Range"
+                            ? <RangeSliderInput
+                                key={option.name}
+                                {...option}
+                                onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
+                            />
+                            : <CustomizableInput
                             key={option.name}
                             {...option}
                             onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
-                        />)}
+                        />
+                        )}
                     </div>
                     <div className={STYLES.paneSeparatorHorizontal}
                         onMouseDown={onMouseDownHorizontalSeparator}>

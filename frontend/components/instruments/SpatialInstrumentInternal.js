@@ -39,24 +39,19 @@ const SpatialInstrumentInternal = (
 
     const [instrumentWidth, setInstrumentWidth] = useState(null);
     const [instrumentHeight, setInstrumentHeight] = useState(null);
-    const [instrumentDiagonal, setInstrumentDiagonal] = useState(null);
 
     useEffect(() => {
         setInstrumentWidth(instrumentDiv.current.clientWidth);
         setInstrumentHeight(instrumentDiv.current.clientHeight);
     });
 
-    useEffect(() => {
-        setInstrumentDiagonal(Math.round(Math.sqrt(sqDist(0, 0, instrumentWidth,instrumentHeight))));
-    }, [instrumentWidth, instrumentHeight]);
-
     // Instrument properties
     const maxDist = 100;
     const halfRange = 40;
     const visualizeRange = true;
 
-    const [minRadius, setMinRadius] = useState(2);
-    const [maxRadius, setMaxRadius] = useState(5);
+    const minRadius = 2;
+    const maxRadius = 5;
 
     function sqDist(x1, y1, x2, y2) {
         return (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2);

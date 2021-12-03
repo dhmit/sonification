@@ -18,9 +18,11 @@ const TimeSeries = () => {
                         controls
                         autoPlay
                         loop
-                        src={`data:audio/wav;base64, ${audioSample}`}
+                        src={`data:audio/wav;base64, ${audioSample.sound}`}
                         controlsList="download"
                     />
+                    <br/>
+                    <img src={`data:image/png;base64, ${audioSample.img}`}/>
                 </>: null
             }
 

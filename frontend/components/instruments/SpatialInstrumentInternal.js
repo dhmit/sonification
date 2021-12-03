@@ -166,8 +166,8 @@ SpatialInstrumentInternal.propTypes = {
     soundPoints: PropTypes.arrayOf(SoundPoint),
     svgRender: PropTypes.func,
     showPoints: PropTypes.bool,
-    width: PropTypes.oneOf([PropTypes.number, PropTypes.string]),
-    height: PropTypes.oneOf([PropTypes.number, PropTypes.string]),
+    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
 export default SpatialInstrumentInternal;

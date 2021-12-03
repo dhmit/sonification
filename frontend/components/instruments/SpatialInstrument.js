@@ -31,8 +31,8 @@ const SpatialInstrument = ({samples, width=200, height=200}) => {
 
 SpatialInstrument.propTypes = {
     samples: PropTypes.array,
-    width: PropTypes.oneOf([PropTypes.number, PropTypes.string]),
-    height: PropTypes.oneOf([PropTypes.number, PropTypes.string]),
+    width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
 };
 
 export default SpatialInstrument;

@@ -3,6 +3,7 @@ import SliderInstrument from "./SliderInstrument";
 import PadInstrument from "./PadInstrument";
 import {fetchPost} from "../../common";
 import SpatialInstrument from "./SpatialInstrument";
+import InstrumentPicker from "./InstrumentPicker";
 
 const PlaybackDemo = () => {
     const [samples, setSamples] = useState([]);
@@ -42,6 +43,9 @@ const PlaybackDemo = () => {
                     <SpatialInstrument samples={samples}/>
                 </section>
 
+                <section className="mb-4">
+                    <InstrumentPicker samples={samples}/>
+                </section>
             </>}
         </>
     );

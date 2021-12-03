@@ -48,9 +48,10 @@ const SpatialInstrumentInternal = (
         const {width: w, height: h} = instrumentDiv.current.getBoundingClientRect();
         setInstrumentWidth(w);
         setInstrumentHeight(h);
-    }, [width, height, instrumentDiv]);
+    }, [width, height]);
 
     useEffect(() => {
+        console.log(instrumentWidth, instrumentHeight);
         updateSize(instrumentWidth, instrumentHeight);
     }, [instrumentWidth, instrumentHeight]);
 

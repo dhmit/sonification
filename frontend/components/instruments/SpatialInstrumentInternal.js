@@ -1,9 +1,8 @@
-import React, {useState, useRef, useEffect, createRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import PropTypes from "prop-types";
 import SoundPoint from "./SoundPoint";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./SpatialInstrument.module.scss";
-import CustomizableInput from "../inputs/CustomizableInput";
 
 /* TODO: there is a bug in which the player crashes
     not sure how to reproduce.
@@ -33,6 +32,7 @@ const SpatialInstrumentInternal = (
         height=200,
         minPointRadius=2,
         maxPointRadius=5,
+        updateSize=(w, h)=>{},
     }
 ) => {
     const audioContextRef = useRef(new AudioContext());
@@ -49,6 +49,10 @@ const SpatialInstrumentInternal = (
         setInstrumentWidth(w);
         setInstrumentHeight(h);
     }, [width, height, instrumentDiv]);
+
+    useEffect(() => {
+        updateSize(instrumentWidth, instrumentHeight);
+    }, [instrumentWidth, instrumentHeight]);
 
     // Instrument properties
     const maxDist = 100;
@@ -168,6 +172,9 @@ SpatialInstrumentInternal.propTypes = {
     showPoints: PropTypes.bool,
     width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
     height: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    minPointRadius: PropTypes.number,
+    maxPointRadius: PropTypes.number,
+    updateSize: PropTypes.func,
 };
 
 export default SpatialInstrumentInternal;

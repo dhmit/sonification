@@ -39,7 +39,7 @@ const PlaybackDemo = () => {
 
                 <section className="mb-4">
                     <h3>Spatial Instrument</h3>
-                    <SpatialInstrument samples={samples} width="100%"/>
+                    <SpatialInstrument samples={samples}/>
                 </section>
 
             </>}

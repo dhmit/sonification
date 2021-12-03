@@ -16,10 +16,10 @@
 
 .isPlaying {
     composes: step;
-    background-color: skyblue;
+    background-color: pink;
 }
 
 .notPlaying {
     composes: step;
-    background-color: darkslateblue;
+    background-color: darkred;
 }

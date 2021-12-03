@@ -64,9 +64,11 @@ Metronome.propTypes = {
 
 
 const StepSequencer = ({samples}) => {
-    // - stretch goal: metronome ticks even without playback
+    // - stretch goal: metronome ticks even without playback--DONE
     // - stretch goal: tempo slider--DONE
     // - stretch goal: changeable time signature--DONE
+    // - next steps: connecting step sequencer to other sonification projects (e.g. Colors to Sound)
+    // - next steps: make each button brighter according to volume
 
     const audioContextRef = useRef(new AudioContext());
     const [numSteps, setNumSteps] = useState(4);
@@ -78,6 +80,7 @@ const StepSequencer = ({samples}) => {
     const [intervalID, setIntervalID] = useState(0);
 
     const handlePlay = () => {
+        if (isPlaying) return;
         setIsPlaying(true);
         const newIntervalID = setInterval(() => {
             setPlaybackPosition((prevPosition) => {
@@ -93,6 +96,7 @@ const StepSequencer = ({samples}) => {
     };
 
     const handlePause = () => {
+        if (!isPlaying) return;
         setIsPlaying(false);
         clearInterval(intervalID);
     };
@@ -159,17 +163,23 @@ const StepSequencer = ({samples}) => {
                 ))}
             </div>
         ))}
-        {Array(numSteps).fill(null).map((_, colIndex) => (
-            <Metronome
-                key={colIndex}
-                sample={samples[0]}
+        <Metronome
+                key={0}
+                sample={samples[2]}
                 audioContext={audioContextRef.current}
-                colIsPlaying={isPlaying && colIndex === playbackPosition}
+                colIsPlaying={isPlaying && 0 === playbackPosition}
+        />
+        {Array(numSteps-1).fill(null).map((_, colIndex) => (
+            <Metronome
+                key={colIndex+1}
+                sample={samples[1]}
+                audioContext={audioContextRef.current}
+                colIsPlaying={isPlaying && (colIndex+1) === playbackPosition}
             />
         ))}
         <div>
             <b>Tempo:</b>
-                <input className="mx-2" type="range" min="40" max="80"
+                <input className="mx-2" type="range" min="40" max="120"
                     step="1" id="low" value={tempo}
                     onChange={handleUpdateTempo}/>
             {tempo} bpm

@@ -1,7 +1,7 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
-import PitchDurationSliderInput from "../inputs/PitchDurationSliderInput";
+import RangeSliderInput from "../inputs/RangeSliderInput";
 
 
 const GesturesToSound = () => {
@@ -14,7 +14,7 @@ const GesturesToSound = () => {
     const [undoneGestures, setUndoneGestures] = useState([]);
     const [gestureParams, setGestureParams] = useState({
         compression: 10,
-        pitch: {low: 131, high:698}, // range of tenor-alto
+        pitch: {low: 131, high:698},
         duration: {low: 0.1, high:2},
     });
     const [hideAxisLabel, setHideAxisLabel] = useState(true);
@@ -228,9 +228,28 @@ const GesturesToSound = () => {
                             ? 'coordinate'
                             : 'coordinates'} per note
                     </p>
-                    <PitchDurationSliderInput minPitch={1} maxPitch={40}
-                        minDuration={0} maxDuration={3}
-                        updateValues={updatePitchAndDuration}/>
+                    <p>
+                        <b>Duration</b>
+                        <RangeSliderInput
+                            name="duration"
+                            units="secs"
+                            minValue={0.01}
+                            maxValue={2}
+                            updateValues={updatePitchAndDuration}
+                            step={0.01}
+                        />
+                    </p>
+                    <p>
+                        <b>Pitch</b>
+                        <RangeSliderInput
+                            name="pitch"
+                            units="Hz"
+                            minValue={131} // range of tenor-alto
+                            maxValue={698}
+                            updateValues={updatePitchAndDuration}
+                            step={1}
+                        />
+                    </p>
                     {
                         soundData && <p>
                             Gesture Sounds:

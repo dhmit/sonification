@@ -9,6 +9,13 @@ const API_ENDPOINT = "/api/polygon_to_music/";
 const LOW_FREQ = 20;
 const HIGH_FREQ = 10000;
 
+// all valid sync statuses
+const SyncStatus = {
+    SYNCED: "Synced",
+    LOADING: "Loading...",
+    UNSYNCED: "Unsynced changes - click submit to sonify",
+};
+
 // TODO: add error reporting for file upload, backend stuff, etc
 const SynthesizePolygons = () => {
     // results
@@ -16,26 +23,7 @@ const SynthesizePolygons = () => {
     const [sound, setSound] = useState(null);
     const [timestamps, setTimestamps] = useState([]);
     const [curAudioTime, setCurAudioTime] = useState(0);
-    const audioRef = useRef(null);
-
-    // all valid sync statuses
-    const SyncStatus = {
-        SYNCED: "Synced",
-        LOADING: "Loading...",
-        UNSYNCED: "Unsynced changes - click submit to sonify",
-    };
     const [outOfSync, setOutOfSync] = useState(SyncStatus.SYNCED);
-
-    function switchSync(syncedOption, loadingOption, unsyncedOption) {
-        switch (outOfSync) {
-        case SyncStatus.SYNCED:
-            return syncedOption;
-        case SyncStatus.LOADING:
-            return loadingOption;
-        case SyncStatus.UNSYNCED:
-            return unsyncedOption;
-        }
-    }
 
     // user settings
     const [noteLength, setNoteLength] = useState(1);
@@ -57,6 +45,19 @@ const SynthesizePolygons = () => {
     const settingsRef = useRef(null);
     const rightPaneRef = useRef(null);
     const horizontalSeparatorYPos = useRef(null);
+
+    const audioRef = useRef(null);
+
+    function switchSync(syncedOption, loadingOption, unsyncedOption) {
+        switch (outOfSync) {
+        case SyncStatus.SYNCED:
+            return syncedOption;
+        case SyncStatus.LOADING:
+            return loadingOption;
+        case SyncStatus.UNSYNCED:
+            return unsyncedOption;
+        }
+    }
 
     useEffect(() => {
         const curHeight = rightPaneRef.current.clientHeight;

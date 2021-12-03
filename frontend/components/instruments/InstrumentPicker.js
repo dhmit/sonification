@@ -7,8 +7,11 @@ import SliderInstrument from "./SliderInstrument";
 
 const InstrumentPicker = ({samples}) => {
 
-    const [curInstrument, setCurInstrument] = useState(0);
+    function downloadSamples() {
+        // TODO: write this
+    }
 
+    const [curInstrument, setCurInstrument] = useState(0);
 
     const instruments = [
         {
@@ -27,19 +30,29 @@ const InstrumentPicker = ({samples}) => {
 
     return (
       <div className={STYLES.instrumentPickerDiv}>
-          <ul className="nav">
-              {instruments && instruments.map(({title}, i)=> (
-                  <li className="nav-item" key={`instrument-${i}`}>
-                      <a
-                          className={`nav-link active ${STYLES.tabLink}`}
-                          onClick={() => setCurInstrument(i)}
-                      >
-                          {title}
-                      </a>
-                  </li>
-              ))}
-          </ul>
-          { instruments && instruments[curInstrument].instrument }
+          <div className={STYLES.instrumentPickerDiv}>
+              <ul className="nav">
+                  {instruments && instruments.map(({title}, i)=> (
+                      <li className="nav-item" key={`instrument-${i}`}>
+                          <a
+                              className={`nav-link active ${STYLES.tabLink}`}
+                              onClick={() => setCurInstrument(i)}
+                          >
+                              {title}
+                          </a>
+                      </li>
+                  ))}
+              </ul>
+          </div>
+          <br/>
+          <div>
+              { instruments && instruments[curInstrument].instrument }
+          </div>
+          <div className={STYLES.bottomBar}>
+              <button onClick={downloadSamples}>
+                  Download All
+              </button>
+          </div>
       </div>
     );
 };

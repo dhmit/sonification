@@ -164,9 +164,14 @@ const GesturesToSound = () => {
             ({...prevState, compression: parseInt(event.target.value)}));
     };
 
-    const updatePitchAndDuration = (newValue, state) => {
+    const updatePitch = (newValue) => {
         setGestureParams(prevParams => ({...prevParams,
-            [state]:{low:newValue[0], high:newValue[1]}}));
+            pitch:{low:newValue[0], high:newValue[1]}}));
+    };
+
+    const updateDuration = (newValue) => {
+        setGestureParams(prevParams => ({...prevParams,
+            duration:{low:newValue[0], high:newValue[1]}}));
     };
 
     return (
@@ -229,24 +234,24 @@ const GesturesToSound = () => {
                             : 'coordinates'} per note
                     </p>
                     <p>
-                        <b>Duration</b>
+                        <b>Duration:</b>
                         <RangeSliderInput
                             name="duration"
                             units="secs"
                             minValue={0.01}
                             maxValue={2}
-                            updateValues={updatePitchAndDuration}
+                            updateValues={updateDuration}
                             step={0.01}
                         />
                     </p>
                     <p>
-                        <b>Pitch</b>
+                        <b>Pitch:</b>
                         <RangeSliderInput
                             name="pitch"
                             units="Hz"
                             minValue={131} // range of tenor-alto
                             maxValue={698}
-                            updateValues={updatePitchAndDuration}
+                            updateValues={updatePitch}
                             step={1}
                         />
                     </p>

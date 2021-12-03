@@ -79,15 +79,10 @@ def numbers_to_music(request):
 ################################################################################
 # COLOR
 ################################################################################
-@api_view(['POST'])
-def color_to_music(request):
-    """
-    :param request: color picker's rgb values stored as a dictionary when the user hits submit
-    :return: wav file, sine wave with frequency corresponds to energy of the colors
-    """
+def color_to_sample_list(request):
     response_object = request.data['listOfColors']
 
-    sound = None
+    samples = []
     for response in response_object:
         r = response["r"]
         g = response["g"]
@@ -108,13 +103,26 @@ def color_to_music(request):
             r_percentage=0
         )
 
+        samples.append(audio_samples)
+
+    return samples
+
+
+@api_view(['POST'])
+def color_to_music(request):
+    """
+    :param request: color picker's rgb values stored as a dictionary when the user hits submit
+    :return: wav file, sine wave with frequency corresponds to energy of the colors
+    """
+    samples = color_to_sample_list(request)
+
+    sound = None
+    for sample in samples:
         if sound is None:
-            sound = audio_samples
+            sound = sample
         else:
-            sound += audio_samples
-
+            sound += sample
     wav_file_base64 = [audio_samples_to_wav_base64(sound)]
-
     return Response(wav_file_base64)
 
 
@@ -124,31 +132,7 @@ def color_to_samples(request):
     :param request: color picker's rgb values stored as a dictionary when the user hits submit
     :return: wav file, sine wave with frequency corresponds to energy of the color
     """
-    response_object = request.data['listOfColors']
-
-    wav_files = []
-    for response in response_object:
-        r = response["r"]
-        g = response["g"]
-        b = response["b"]
-
-        # color energy calculation
-        energy = round(0.299 * r + .587 * g + .114 * b)
-
-        # frequency based on energy, scaled for 150-350hz
-        freq_to_generate = ((200 * energy) / 255) + 150
-
-        audio_samples = synths.generate_sine_wave_with_envelope(
-            frequency=freq_to_generate,
-            duration=50,
-            a_percentage=0,
-            d_percentage=0,
-            s_percentage=1,
-            r_percentage=0
-        )
-        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
-        wav_files.append(wav_file_base64)
-
+    wav_files = [audio_samples_to_wav_base64(samples) for samples in color_to_sample_list(request)]
     return Response(wav_files)
 
 
@@ -174,7 +158,6 @@ def gesture_to_music(request):
 
 @api_view(['POST'])
 def gesture_to_samples(request):
-    # commit #1 on 11/12/2021
     """
     Takes in gestures as a list of list of (x,y) coordinates and constructs an
     instrument slider based on the sum of coordinates of each gesture

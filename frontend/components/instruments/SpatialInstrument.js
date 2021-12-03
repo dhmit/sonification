@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import SoundPoint from "./SoundPoint";
 import SpatialInstrumentInternal from "./SpatialInstrumentInternal";
 
-const SpatialInstrument = ({samples}) => {
+const SpatialInstrument = ({samples, width=200, height=200}) => {
     const [soundPoints, setSoundPoints] = useState([]);
 
     function unityPoint(i, n) {
@@ -26,11 +26,13 @@ const SpatialInstrument = ({samples}) => {
         ));
     }, [samples]);
 
-    return <SpatialInstrumentInternal soundPoints={soundPoints}/>;
+    return <SpatialInstrumentInternal soundPoints={soundPoints} width={width} height={height}/>;
 };
 
 SpatialInstrument.propTypes = {
     samples: PropTypes.array,
+    width: PropTypes.oneOf([PropTypes.number, PropTypes.string]),
+    height: PropTypes.oneOf([PropTypes.number, PropTypes.string]),
 };
 
 export default SpatialInstrument;

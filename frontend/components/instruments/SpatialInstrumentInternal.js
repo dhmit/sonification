@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from "react";
+import React, {useState, useRef, useEffect, createRef} from "react";
 import PropTypes from "prop-types";
 import SoundPoint from "./SoundPoint";
 import SamplePlayer from "./SamplePlayer";
@@ -29,6 +29,10 @@ const SpatialInstrumentInternal = (
         soundPoints,
         SvgRender=({width,height,x,y}) => <></>,
         showPoints=true,
+        width=200,
+        height=200,
+        minPointRadius=2,
+        maxPointRadius=5,
     }
 ) => {
     const audioContextRef = useRef(new AudioContext());
@@ -39,24 +43,17 @@ const SpatialInstrumentInternal = (
 
     const [instrumentWidth, setInstrumentWidth] = useState(null);
     const [instrumentHeight, setInstrumentHeight] = useState(null);
-    const [instrumentDiagonal, setInstrumentDiagonal] = useState(null);
 
     useEffect(() => {
-        setInstrumentWidth(instrumentDiv.current.clientWidth);
-        setInstrumentHeight(instrumentDiv.current.clientHeight);
-    });
-
-    useEffect(() => {
-        setInstrumentDiagonal(Math.round(Math.sqrt(sqDist(0, 0, instrumentWidth,instrumentHeight))));
-    }, [instrumentWidth, instrumentHeight]);
+        const {width: w, height: h} = instrumentDiv.current.getBoundingClientRect();
+        setInstrumentWidth(w);
+        setInstrumentHeight(h);
+    }, [width, height, instrumentDiv]);
 
     // Instrument properties
     const maxDist = 100;
     const halfRange = 40;
     const visualizeRange = true;
-
-    const [minRadius, setMinRadius] = useState(2);
-    const [maxRadius, setMaxRadius] = useState(5);
 
     function sqDist(x1, y1, x2, y2) {
         return (x1 - x2)*(x1 - x2) + (y1 - y2)*(y1 - y2);
@@ -83,7 +80,7 @@ const SpatialInstrumentInternal = (
 
     function sampleRadius(point) {
         const vol = sampleVolume(point);
-        return minRadius + (vol/100) * (maxRadius - minRadius);
+        return minPointRadius + (vol/100) * (maxPointRadius - minPointRadius);
     }
 
     function handleMouseLeave() {
@@ -93,6 +90,15 @@ const SpatialInstrumentInternal = (
 
     function handleMouseMove(e) {
         const rect = instrumentDiv.current.getBoundingClientRect();
+
+        // update width + height if out of sync
+        if (instrumentWidth !== rect.width) {
+            setInstrumentWidth(rect.width);
+        }
+        if (instrumentHeight !== rect.height) {
+            setInstrumentHeight(rect.height);
+        }
+
         const x = e.clientX - rect.left; // x position within the element.
         const y = e.clientY - rect.top;  // y position within the element.
         setMouseX(x);
@@ -107,6 +113,8 @@ const SpatialInstrumentInternal = (
                 onMouseMove={handleMouseMove}
                 onMouseEnter={handleMouseMove}
                 ref={instrumentDiv}
+                width={width}
+                height={height}
             >
                 <SvgRender
                     width={instrumentWidth}
@@ -158,6 +166,8 @@ SpatialInstrumentInternal.propTypes = {
     soundPoints: PropTypes.arrayOf(SoundPoint),
     svgRender: PropTypes.func,
     showPoints: PropTypes.bool,
+    width: PropTypes.oneOf([PropTypes.number, PropTypes.string]),
+    height: PropTypes.oneOf([PropTypes.number, PropTypes.string]),
 };
 
 export default SpatialInstrumentInternal;

@@ -164,16 +164,9 @@ const GesturesToSound = () => {
             ({...prevState, compression: parseInt(event.target.value)}));
     };
 
-    const handleUpdatePitch = (event) => {
-        event.preventDefault();
+    const updatePitchAndDuration = (newValue, state) => {
         setGestureParams(prevParams => ({...prevParams,
-            pitch:{...prevParams.pitch, [event.target.id]: parseInt(event.target.value)}}));
-    };
-
-    const handleUpdateDuration = (event) => {
-        event.preventDefault();
-        setGestureParams(prevParams => ({...prevParams,
-            duration:{...prevParams.duration, [event.target.id]: parseFloat(event.target.value)}}));
+            [state]:{low:newValue[0], high:newValue[1]}}));
     };
 
     return (
@@ -235,46 +228,9 @@ const GesturesToSound = () => {
                             ? 'coordinate'
                             : 'coordinates'} per note
                     </p>
-                    <p>
-                        <b>Pitch:</b>
-                        <div className="row">
-                            <div className="col">
-                                Low:
-                                <input className="mx-2" type="range" min="75" max="262"
-                                    step="1" id="low" value={gestureParams.pitch.low}
-                                    onChange={handleUpdatePitch}/>
-                                {gestureParams.pitch.low} Hz
-                            </div>
-                            <div className="col">
-                                High:
-                                <input className="mx-2" type="range" min="300" max="1045"
-                                    step="1" id="high" value={gestureParams.pitch.high}
-                                    onChange={handleUpdatePitch}/>
-                                {gestureParams.pitch.high} Hz
-                            </div>
-                        </div>
-                    </p>
-                    <p>
-                        <b>Duration:</b>
-                        <div className="row">
-                            <div className="col">
-                                Low:
-                                <input type="range" min="0.01" max="0.5" id="low" step="0.01"
-                                    value={gestureParams.duration.low}
-                                    onChange={handleUpdateDuration}/>
-                                {gestureParams.duration.low} secs
-                            </div>
-                            <div className="col">
-                                High:
-                                <input type="range" min="1" max="2" step="0.01" id="high"
-                                    value={gestureParams.duration.high}
-                                    onChange={handleUpdateDuration}/>
-                                {gestureParams.duration.high} {gestureParams.duration.high === 1
-                                    ? 'sec' : 'secs'}
-                            </div>
-                        </div>
-                    </p>
-                    <PitchDurationSliderInput minPitch={1} maxPitch={40} minDuration={0} maxDuration={3}/>
+                    <PitchDurationSliderInput minPitch={1} maxPitch={40}
+                        minDuration={0} maxDuration={3}
+                        updateValues={updatePitchAndDuration}/>
                     {
                         soundData && <p>
                             Gesture Sounds:

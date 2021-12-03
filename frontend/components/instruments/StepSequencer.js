@@ -36,11 +36,37 @@ Step.propTypes = {
     audioContext: PropTypes.object,
 };
 
+const Metronome = ({sample, audioContext, colIsPlaying}) => {
+    // Pick button style depending on if sample is loaded
+    const btnStyle =
+        colIsPlaying
+            ? STYLES.isPlaying
+            : STYLES.notPlaying;
+
+    return (<>
+        <button
+            className={btnStyle}
+        />
+        <SamplePlayer
+            sample={sample}
+            shouldPlay={colIsPlaying}
+            loop={false}
+            volume={100}
+            audioContext={audioContext}
+        />
+    </>);
+};
+Metronome.propTypes = {
+    sample: PropTypes.string,
+    colIsPlaying: PropTypes.bool,
+    audioContext: PropTypes.object,
+};
+
 
 const StepSequencer = ({samples}) => {
     // - stretch goal: metronome ticks even without playback
     // - stretch goal: tempo slider--DONE
-    // - stretch goal: changeable time signature
+    // - stretch goal: changeable time signature--DONE
 
     const audioContextRef = useRef(new AudioContext());
     const [numSteps, setNumSteps] = useState(4);
@@ -132,6 +158,14 @@ const StepSequencer = ({samples}) => {
                     />
                 ))}
             </div>
+        ))}
+        {Array(numSteps).fill(null).map((_, colIndex) => (
+            <Metronome
+                key={colIndex}
+                sample={samples[0]}
+                audioContext={audioContextRef.current}
+                colIsPlaying={isPlaying && colIndex === playbackPosition}
+            />
         ))}
         <div>
             <b>Tempo:</b>

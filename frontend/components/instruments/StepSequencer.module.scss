@@ -13,3 +13,13 @@
     composes: step;
     background-color: darkslategrey;
 }
+
+.isPlaying {
+    composes: step;
+    background-color: skyblue;
+}
+
+.notPlaying {
+    composes: step;
+    background-color: darkslateblue;
+}

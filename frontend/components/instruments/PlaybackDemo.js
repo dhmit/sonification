@@ -20,8 +20,13 @@ const PlaybackDemo = () => {
 
             {samples && <>
                 <section className="mb-4">
-                    <h3></h3>
+                    <h3>Step Sequencer</h3>
                     <StepSequencer samples={samples}/>
+                </section>
+
+                <section className="mb-4">
+                    <h3>Spatial Instrument</h3>
+                    <SpatialInstrument samples={samples}/>
                 </section>
 
                 <section className="mb-4">
@@ -38,24 +43,6 @@ const PlaybackDemo = () => {
                     <h3>Draggable Pad Instrument</h3>
                     <DragPadInstrument samples={samples}/>
                 </section>
-
-
-
-                <section className="mb-4">
-                    <h3>A Bunch of Audio Tags</h3>
-                    {samples.map((sample, i) => (
-                        <audio key={i}
-                               controls="controls"
-                               src={`data:audio/wav;base64, ${sample}`}
-                               controlsList="nodownload"/>
-                    ))}
-                </section>
-
-                <section className="mb-4">
-                    <h3>Spatial Instrument</h3>
-                    <SpatialInstrument samples={samples}/>
-                </section>
-
             </>}
         </>
     );

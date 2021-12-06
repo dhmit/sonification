@@ -7,29 +7,29 @@ import MoveIcon from "../../images/MoveIcon.svg";
 import DownloadIcon from "../../images/DownloadIcon.svg";
 import UploadIcon from "../../images/UploadIcon.svg";
 import TrashIcon from "../../images/TrashIcon.svg";
+import ReactTooltipDefaultExport from "react-tooltip";
 
 /**
  * A simple polygon editor with specified width and height. A custom callback onSubmit can be
- * specified, which is called when the submit button is clicked. The submit button is shown
- * only if the prop showSubmit is true.
+ * specified, which is called when the submit button is clicked.
  */
 const PolygonEditor = (
     {
         width = 0,
         height = 0,
         onEdit,
-        showSubmit = false,
         onSubmit,
         outerWidth,
     }
 ) => {
-    const [loading, setLoading] = useState(false);
-    const [points, setPoints] = useState([]);
-    const [cursorLocation, setCursorLocation] = useState(null);
-    const [fileDownloadUrl, setFileDownloadUrl] = useState(null);
-    const fileDownloadRef = useRef(null);
-    const fileUploadRef = useRef(null);
-    const svgDisplay = useRef(null);
+    // editor modes and edit handling
+    const EditorModes = {
+        ADD: 'add',
+        EDIT: 'edit',
+        DELETE: 'delete',
+    };
+
+    const POINT_MOVEMENT_SPEED = 5;
 
     // keyboard shortcuts
     const keyboardShortcuts = {
@@ -42,6 +42,21 @@ const PolygonEditor = (
         'ArrowDown': (e) => handleMovePoint(0, POINT_MOVEMENT_SPEED, e),
         'ArrowRight': (e) => handleMovePoint(POINT_MOVEMENT_SPEED, 0, e),
     };
+
+    const fileDownloadRef = useRef(null);
+    const fileUploadRef = useRef(null);
+    const svgDisplay = useRef(null);
+    const containerRef = useRef(null);
+
+    const [loading, setLoading] = useState(false);
+    const [points, setPoints] = useState([]);
+    const [cursorLocation, setCursorLocation] = useState(null);
+    const [fileDownloadUrl, setFileDownloadUrl] = useState("");
+    const [editorMode, setEditorMode] = useState(EditorModes.ADD);
+    const [internalWidth, setInternalWidth] = useState(width);
+    const [internalHeight, setInternalHeight] = useState(height);
+    const [focusPointIndex, setFocusPointIndex] = useState(-1);
+    const [focusLine, setFocusLine] = useState(-1);
 
     useEffect(() => {
         window.addEventListener("keydown", handleKeyDown);
@@ -74,10 +89,10 @@ const PolygonEditor = (
         // handle enter/space
         if (e.code === 'Space' || e.code === 'Enter') {
             if (editorMode === EditorModes.EDIT) {
-                if (focusPoint !== null) {
+                if (focusPointIndex !== -1) {
                     e.preventDefault();
-                    setFocusPoint(null);
-                } else if (focusLine !== null) {
+                    setFocusPointIndex(-1);
+                } else if (focusLine !== -1) {
                     e.preventDefault();
                     insertPointAtCursor(focusLine);
                 }
@@ -93,55 +108,37 @@ const PolygonEditor = (
         }
     }
 
-    const POINT_MOVEMENT_SPEED = 5;
     function handleMovePoint(dx, dy, event) {
-        if (editorMode === EditorModes.EDIT && focusPoint !== null) {
+        if (editorMode === EditorModes.EDIT && focusPointIndex !== -1) {
             event.preventDefault();
-            const newPoints = points.map((p, i) => (
-                i === focusPoint
-                    ? [p[0] + dx, p[1] + dy]
-                    : p
-            ));
-            setPoints(newPoints);
+            setPoints(
+                prevPoints => [...prevPoints.slice(0, focusPointIndex),
+                    {focusPointIndex : [prevPoints[focusPointIndex][0] + dx,
+                        prevPoints[focusPointIndex][1] + dy]},
+                    prevPoints.slice(focusPointIndex + 1)]);
         }
     }
-
-    // editor modes and edit handling
-    const EditorModes = {
-        ADD: 'add',
-        EDIT: 'edit',
-        DELETE: 'delete',
-    };
-    const [editorMode, setEditorMode] = useState(EditorModes.ADD);
 
     function switchEditorMode(addOption, editOption, deleteOption) {
         switch (editorMode) {
-            case EditorModes.ADD:
-                return addOption;
-            case EditorModes.EDIT:
-                return editOption;
-            case EditorModes.DELETE:
-                return deleteOption;
+        case EditorModes.ADD:
+            return addOption;
+        case EditorModes.EDIT:
+            return editOption;
+        case EditorModes.DELETE:
+            return deleteOption;
         }
     }
 
-    const [focusPoint, setFocusPoint] = useState(null);
-    const [focusLine, setFocusLine] = useState(null);
-
     function handleChangeEditorMode(newMode) {
         setEditorMode(newMode);
-        setFocusPoint(null);
-        setFocusLine(null);
+        setFocusPointIndex(-1);
+        setFocusLine(-1);
     }
 
     function handleEdit() {
         onEdit();
     }
-
-    // handle setting width/height automatically
-    const containerRef = useRef(null);
-    const [internalWidth, setInternalWidth] = useState(width);
-    const [internalHeight, setInternalHeight] = useState(height);
 
     useEffect(() => {
         if (width === 0) {
@@ -152,11 +149,7 @@ const PolygonEditor = (
     }, [width, outerWidth]);
 
     useEffect(() => {
-        if (height === 0) {
-            setInternalHeight(containerRef.current.clientHeight);
-        } else {
-            setInternalHeight(height);
-        }
+        setInternalHeight(containerRef.current.clientHeight);
     }, [height]);
 
     // When fileDownloadUrl is set, if it is not null, download the generated file and revoke
@@ -165,7 +158,7 @@ const PolygonEditor = (
         if (fileDownloadUrl) {
             fileDownloadRef.current.click();
             URL.revokeObjectURL(fileDownloadUrl);
-            setFileDownloadUrl(null);
+            setFileDownloadUrl("");
         }
     }, [fileDownloadUrl]);
 
@@ -241,8 +234,8 @@ const PolygonEditor = (
             setPoints(editedPoints.concat(points.slice(lineIndex + 1, points.length)));
 
             // change focus to new point
-            setFocusLine(null);
-            setFocusPoint(lineIndex + 1);
+            setFocusLine(-1);
+            setFocusPointIndex(lineIndex + 1);
             handleEdit();
         }
     }
@@ -263,22 +256,22 @@ const PolygonEditor = (
 
     // TODO: fix styling of this
     function handleMouseEnterLine(index) {
-        if (focusPoint === null && editorMode === EditorModes.EDIT) {
+        if (focusPointIndex === -1 && editorMode === EditorModes.EDIT) {
             setFocusLine(index);
         }
     }
 
     function handleMouseLeaveLine() {
-        setFocusLine(null);
+        setFocusLine(-1);
     }
 
     function handleClickPoint(index) {
         if (editorMode === EditorModes.EDIT) {
-            if (focusPoint === index) {
-                setFocusPoint(null);
+            if (focusPointIndex === index) {
+                setFocusPointIndex(-1);
             } else {
-                setFocusPoint(index);
-                setFocusLine(null);
+                setFocusPointIndex(index);
+                setFocusLine(-1);
             }
         } else if (editorMode === EditorModes.DELETE) {
             const editedPoints = points.filter((v, i) => i !== index);
@@ -289,6 +282,7 @@ const PolygonEditor = (
 
     // add a new point to polygon
     function handleClickSvg(e) {
+        e.preventDefault();
         if (editorMode === EditorModes.ADD) {
             addPointAtCursor();
         }
@@ -300,11 +294,11 @@ const PolygonEditor = (
         const x = e.clientX - rect.left; // x position within the element.
         const y = e.clientY - rect.top;  // y position within the element.
         setCursorLocation([x, y]);
-        if (editorMode === EditorModes.EDIT && focusPoint !== null) {
+        if (editorMode === EditorModes.EDIT && focusPointIndex !== -1) {
             onEdit();
             const editedPoints = points;
-            editedPoints[focusPoint][0] = x;
-            editedPoints[focusPoint][1] = y;
+            editedPoints[focusPointIndex][0] = x;
+            editedPoints[focusPointIndex][1] = y;
             setPoints(editedPoints);
         }
     }
@@ -332,13 +326,15 @@ const PolygonEditor = (
     const editorIconButtonGroups = [
         [
             {
-                svg: <img alt="Upload Icon" src={UploadIcon} width={"auto"} height={"100%"} />,
+                name: "upload",
+                svg: <img alt="Upload Icon" src={UploadIcon} width={"auto"} height="100%" />,
                 onClick: () => handleClickUpload(),
                 tooltip: "Upload polygon. Shortcut: Ctrl+O",
                 disabled: false,
             },
             {
-                svg: <img alt="Download Icon" src={DownloadIcon} width={"auto"} height={"100%"} />,
+                name: "download",
+                svg: <img alt="Download Icon" src={DownloadIcon} width={"auto"} height="100%" />,
                 onClick: () => handleClickDownload(),
                 tooltip: "Download polygon. Shortcut: Ctrl+D",
                 disabled: points.length === 0,
@@ -346,25 +342,29 @@ const PolygonEditor = (
         ],
         [
             {
-                svg: <img alt="Add Icon" src={AddIcon} width={"auto"} height={"100%"} />,
+                name: "add",
+                svg: <img alt="Add Icon" src={AddIcon} width="auto" height="100%" />,
                 onClick: () => handleChangeEditorMode(EditorModes.ADD),
                 tooltip: "Add new points. Shortcut: a",
                 disabled: editorMode === EditorModes.ADD,
             },
             {
-                svg: <img alt="Move Icon" src={MoveIcon} width={"auto"} height={"100%"} />,
+                name: "move",
+                svg: <img alt="Move Icon" src={MoveIcon} width="auto" height="100%" />,
                 onClick: () => handleChangeEditorMode(EditorModes.EDIT),
                 tooltip: "Edit points and lines. Shortcut: e",
                 disabled: editorMode === EditorModes.EDIT,
             },
             {
-                svg: <img alt="Eraser Icon" src={EraserIcon} width={"auto"} height={"100%"} />,
+                name: "erase",
+                svg: <img alt="Eraser Icon" src={EraserIcon} width="auto" height="100%" />,
                 onClick: () => handleChangeEditorMode(EditorModes.DELETE),
                 tooltip: "Delete points. Shortcut: d",
                 disabled: editorMode === EditorModes.DELETE,
             },
             {
-                svg: <img alt="Trash Icon" src={TrashIcon} width={"auto"} height={"100%"} />,
+                name: "trash",
+                svg: <img alt="Trash Icon" src={TrashIcon} width="auto" height="100%" />,
                 onClick: () => handleClearDrawing(),
                 tooltip: "Clear all points. Shortcut: c",
                 disabled: false,
@@ -376,7 +376,6 @@ const PolygonEditor = (
                 onClick: () => handleSubmit(),
                 tooltip: "Submit polygon. Shortcut: Ctrl+S",
                 disabled: points.length < 3,
-                tooltipLeft: true,
             },
         ],
     ];
@@ -386,8 +385,8 @@ const PolygonEditor = (
             <div className={STYLES.buttonRow}>
             </div>
             <svg
-                className={loading ? STYLES.svgDisplayLoading :
-                    ((editorMode === EditorModes.ADD || focusPoint !== null)
+                className={loading ? STYLES.svgDisplayLoading
+                    : ((editorMode === EditorModes.ADD || focusPointIndex !== -1)
                         ? STYLES.svgDisplayNoCursor : STYLES.svgDisplay)}
                 width={internalWidth}
                 height={internalHeight}
@@ -425,12 +424,13 @@ const PolygonEditor = (
                             y1={points[points.length - 1][1]}
                             x2={points[0][0]}
                             y2={points[0][1]}
-                            className={focusLine === points.length - 1 ? STYLES.editLine : STYLES.line}
+                            className={(focusLine !== -1 && focusLine === (points.length - 1))
+                                ? STYLES.editLine : STYLES.line}
                             onMouseEnter={() => handleMouseEnterLine(points.length - 1)}
                             onMouseLeave={handleMouseLeaveLine}
                             onClick={() => handleClickLine(points.length - 1)}
                         />
-                        {focusLine === points.length - 1 &&
+                        {(focusLine !== -1 && focusLine === points.length - 1) &&
                             <line
                                 key={`internal-line-${points.length-1}`}
                                 x1={points[points.length - 1][0]}
@@ -479,11 +479,10 @@ const PolygonEditor = (
                             key={`point-${i}`}
                             cx={p[0]}
                             cy={p[1]}
-                            // r={5}
-                            className={i === focusPoint
-                                ? switchEditorMode(STYLES.addPoint, STYLES.focusEditPoint, STYLES.deletePoint)
-                                : switchEditorMode(STYLES.addPoint, STYLES.editPoint, STYLES.deletePoint)
-                            }
+                            r={5}
+                            className={switchEditorMode(STYLES.addPoint,
+                                (i === focusPointIndex) ? STYLES.focusEditPoint: STYLES.editPoint,
+                                STYLES.deletePoint)}
                             onClick={() => handleClickPoint(i)}
                         />
                     </React.Fragment>
@@ -501,20 +500,21 @@ const PolygonEditor = (
             <div className={STYLES.buttonRow}>
                 {editorIconButtonGroups.map((buttonGroup, bgi) => (
                     <div key={`button-group-${bgi}`} className={STYLES.buttonGroup}>
-                        {buttonGroup.map(({svg, tooltip, tooltipLeft, ...button}, i) => (
-                            <button
-                                className={STYLES.editorButton + ' ' + STYLES.tooltipContainer}
-                                {...button}
-                                key={`editor-icon-${bgi}-${i}`}
-                            >
-                                {svg}
-                                <span className={tooltipLeft
-                                    ? STYLES.editorTooltipLeft
-                                    : STYLES.editorTooltip}
-                                >
-                                    {tooltip}
+                        {buttonGroup.map(({svg, tooltip, name, ...button}, i) => (
+                            <>
+                                <span data-tip data-for={name} data-tip-disable={false}>
+                                    <button
+                                        className={`btn btn-primary ${STYLES.editorButton} p-2 m-1`}
+                                        {...button}
+                                        key={`editor-icon-${bgi}-${i}`}
+                                    >
+                                        {svg}
+                                    </button>
                                 </span>
-                            </button>
+                                <ReactTooltipDefaultExport id={name} place="top">
+                                    {tooltip}
+                                </ReactTooltipDefaultExport>
+                            </>
                         ))}
                     </div>
                 ))}
@@ -545,7 +545,6 @@ PolygonEditor.propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
     onEdit: PropTypes.func,
-    showSubmit: PropTypes.bool,
     onSubmit: PropTypes.func,
     outerWidth: PropTypes.number,
 };

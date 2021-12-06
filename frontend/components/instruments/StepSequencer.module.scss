@@ -1,0 +1,25 @@
+.step {
+    width: 50px;
+    height: 25px;
+    border: 1px solid black;
+}
+
+.activeStep {
+    composes: step;
+    background-color: mediumspringgreen;
+}
+
+.inactiveStep {
+    composes: step;
+    background-color: darkslategrey;
+}
+
+.isPlaying {
+    composes: step;
+    background-color: pink;
+}
+
+.notPlaying {
+    composes: step;
+    background-color: darkred;
+}

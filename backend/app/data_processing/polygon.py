@@ -262,3 +262,46 @@ def parse_polygon_data(data):
         converted_data['points'] = [tuple(map(float, p)) for p in data['points']]
 
     return converted_data
+
+
+def polygon_frequencies(points, restrict_frequency=False, base_frequency=220, floor_frequency=20,
+                        ceil_frequency=10000):
+    """
+    Returns the list of frequencies of the notes in the synthesis of a polygon.
+    :param points: list of points representing a polygon.
+    :param restrict_frequency: whether to restrict the notes to a specified frequency range
+    side lengths to determine amplitude.
+    :param base_frequency: the frequency of the first note of the polygon
+    :param floor_frequency: the lowest allowable frequency for any note
+    :param ceil_frequency: the highest allowable frequency for any note
+    :return: numpy array which represents the sound.
+    """
+    check_valid_polygon(points)
+    assert ceil_frequency >= 2*floor_frequency, \
+        "the ceiling frequency must be at least an octave above the floor frequency"
+
+    # Compute number of notes, note length and delay in samples
+    num_notes = len(points)
+
+    # Compute sides and angles of polygon
+    angles_list = angles_of_polygon(points)
+    freq_change = change_in_frequency(angles_list)
+    cur_freq = base_frequency
+
+    # initialize the empty sound
+    frequencies = np.zeros(num_notes)
+    # add each note to the sound
+    for note_ind in range(num_notes):
+
+        # generate a sample corresponding to the side
+        frequencies[note_ind] = cur_freq
+
+        # update current frequency
+        cur_freq *= freq_change[note_ind]
+        if restrict_frequency:
+            while cur_freq > ceil_frequency:
+                cur_freq /= 2
+            while cur_freq < floor_frequency:
+                cur_freq *= 2
+
+    return frequencies

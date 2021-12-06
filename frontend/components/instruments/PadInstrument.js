@@ -4,7 +4,7 @@ import SamplePlayer from "./SamplePlayer";
 import STYLES from "./PadInstrument.module.scss";
 
 
-const Pad = ({sample, audioContext}) => {
+export const Pad = ({sample, audioContext}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
 
     const handleClick = () => {
@@ -13,9 +13,15 @@ const Pad = ({sample, audioContext}) => {
         setTimeout(() => {setShouldPlay(false); }, 1000);
     };
 
+    // Pick button style depending on if sample is loaded
+    const btnStyle =
+        sample
+            ? STYLES.pad
+            : STYLES.emptyPad;
+
     return (<>
         <button
-            className={STYLES.pad}
+            className={btnStyle}
             onClick={handleClick}
         />
         <SamplePlayer

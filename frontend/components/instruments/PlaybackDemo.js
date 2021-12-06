@@ -1,6 +1,8 @@
 import React, {useEffect, useState} from "react";
 import SliderInstrument from "./SliderInstrument";
 import PadInstrument from "./PadInstrument";
+import DragPadInstrument from "./DragPadInstrument";
+import StepSequencer from "./StepSequencer";
 import {fetchPost} from "../../common";
 
 const PlaybackDemo = () => {
@@ -17,6 +19,11 @@ const PlaybackDemo = () => {
 
             {samples &&<>
                 <section className="mb-4">
+                    <h3></h3>
+                    <StepSequencer samples={samples}/>
+                </section>
+
+                <section className="mb-4">
                     <h3>Slider Player</h3>
                     <SliderInstrument samples={samples}/>
                 </section>
@@ -25,6 +32,13 @@ const PlaybackDemo = () => {
                     <h3>Pad Instrument</h3>
                     <PadInstrument samples={samples}/>
                 </section>
+
+                <section className="mb-4">
+                    <h3>Draggable Pad Instrument</h3>
+                    <DragPadInstrument samples={samples}/>
+                </section>
+
+
 
                 <section className="mb-4">
                     <h3>A Bunch of Audio Tags</h3>

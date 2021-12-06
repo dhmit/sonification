@@ -15,7 +15,7 @@ const CustomizableInput = (
         getValue, setValue,
         enabled=true,
         options=[],
-        onEdit,
+        onEdit=()=>{},
         tooltip,
         ...rest
     }
@@ -29,6 +29,8 @@ const CustomizableInput = (
     return (
         <div key={name} className={STYLES.customizableInputDiv} hidden={!enabled}>
             {display}
+            {type === "range" && (" " + getValue())}
+            {/*{type === "range" && <label className={STYLES.rangeLabelLeft}>{rest.min}</label>}*/}
             {type === "dropdown"
                 ? <select
                     name={name}

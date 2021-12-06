@@ -4,9 +4,10 @@ import PadInstrument from "./PadInstrument";
 import DragPadInstrument from "./DragPadInstrument";
 import StepSequencer from "./StepSequencer";
 import {fetchPost} from "../../common";
+import SpatialInstrument from "./SpatialInstrument";
 
 const PlaybackDemo = () => {
-    const [samples, setSamples] = useState();
+    const [samples, setSamples] = useState([]);
 
     useEffect(() => {
         const apiEndpoint = '/api/playback_demo/';
@@ -17,7 +18,7 @@ const PlaybackDemo = () => {
         <>
             <h2>Playback Demo Page</h2>
 
-            {samples &&<>
+            {samples && <>
                 <section className="mb-4">
                     <h3></h3>
                     <StepSequencer samples={samples}/>
@@ -44,10 +45,15 @@ const PlaybackDemo = () => {
                     <h3>A Bunch of Audio Tags</h3>
                     {samples.map((sample, i) => (
                         <audio key={i}
-                            controls="controls"
-                            src={`data:audio/wav;base64, ${sample}`}
-                            controlsList="nodownload"/>
+                               controls="controls"
+                               src={`data:audio/wav;base64, ${sample}`}
+                               controlsList="nodownload"/>
                     ))}
+                </section>
+
+                <section className="mb-4">
+                    <h3>Spatial Instrument</h3>
+                    <SpatialInstrument samples={samples}/>
                 </section>
 
             </>}

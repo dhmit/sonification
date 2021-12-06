@@ -1,7 +1,7 @@
 #page {
     display: grid;
     grid-template-areas: "a . b";
-    grid-template-columns: 300px;
+    grid-template-columns: 300px 100px 300px;
 }
 
 #page > pad-line1 {

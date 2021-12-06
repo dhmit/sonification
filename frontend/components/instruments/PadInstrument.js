@@ -113,16 +113,14 @@ const PadInstrument = ({samples}) => {
         };
     };
     return (
-        // TODO: add a flexbox div so that padline1 + 3 can appear on the same line
-        // TODO: how can i bring him (pad-line3) closer to center?
-        <div id="pad-instrument">
+        <section id="page">
             <div id="pad-line1">
                 {pads}
             </div>
             <div id="pad-line2">
                 {pads2}
             </div>
-        </div>
+        </section>
     );
 };
 

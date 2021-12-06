@@ -1,7 +1,17 @@
-/* TODO:
- * add text within each pad that says what it is
- *
- */
+#page {
+    display: grid;
+    grid-template-areas: "a . b";
+    grid-template-columns: 300px;
+}
+
+#page > pad-line1 {
+    grid-area: a;
+}
+
+#page > pad-line2 {
+    grid-area: b;
+}
+
 .pad {
     border-radius: 10px;
     width: 50px;

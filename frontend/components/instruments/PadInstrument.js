@@ -11,10 +11,11 @@ import STYLES from "./PadInstrument.module.scss";
     - space out pads on the screen
     - pseudo-class for keydown?
     - how to print a variable within the pads
+    - onKeyPress add onKeyUp remove on class
  */
+
 const Pad = ({sample, audioContext, keyBind, padClassName}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
-
     const playSample = () => {
         setShouldPlay(true);
         // TODO(ra): dynamically set to length of sample, or allow retriggers shorter than that
@@ -23,28 +24,23 @@ const Pad = ({sample, audioContext, keyBind, padClassName}) => {
 
     const handleClick = () => playSample();
 
-    // const handleKey = () = {
-
     useEffect(() => {
         document.addEventListener('keydown', (event) => {
-            console.log("key down >:)");
             if (event.key === keyBind) {
                 playSample();
-                // how can i create a smooth sound? guess this might change with samples used?
+                keyStatus = true;
             }
         });
         document.addEventListener('keyup', (event) => {
-            console.log("key up!");
+            keyStatus = false;
         });
     },
-        // todo: look up useEffect syntax
         []);
 
     return (<>
         <button
             className={padClassName}
             onClick={handleClick}
-            // onKeyUp
         />
         <SamplePlayer
             sample={sample}
@@ -71,61 +67,60 @@ const PadInstrument = ({samples}) => {
     const pads = [];
     const pads2 = [];
     const pads3 = [];
-    // eventually, would it be possible to make this a single for loop instead of 3? just for
-    // readability?
-    for (let i = 0; i < 4; i++) {
-        let padClassName = STYLES.cyanPad;
-        const thisPad = (
-            <Pad
-                keyBind={keyBinds[i]}
-                key={i}
-                sample={samples[i]}
-                padClassName={padClassName}
-                audioContext={audioContextRef.current}
-            />
-        );
-        pads.push(thisPad);
+    // isn't dynamic to the size of the pads
+    for (let i = 0; i < 10; i++) {
+        if (i < 4) {
+            let padClassName = STYLES.cyanPad;
+            const thisPad = (
+                <Pad
+                    keyStatus = {keyStatus}
+                    keyBind={keyBinds[i]}
+                    key={i}
+                    sample={samples[i]}
+                    padClassName={padClassName}
+                    audioContext={audioContextRef.current}
+                />
+            );
+            pads.push(thisPad);
+        }
+        ;
+        if (i < 8) {
+            let padClassName = STYLES.magentaPad;
+            const thisPad = (
+                <Pad
+                    keyBind={keyBinds[i]}
+                    key={i}
+                    sample={samples[i]}
+                    padClassName={padClassName}
+                    audioContext={audioContextRef.current}
+                />
+            );
+            pads2.push(thisPad);
+        };
+        if (i < 10) {
+            let padClassName = STYLES.limePad;
+            const thisPad = (
+                <Pad
+                    keyBind={keyBinds[i]}
+                    key={i}
+                    sample={samples[i]}
+                    keyStatus={keyStatus}
+                    padClassName={padClassName}
+                    audioContext={audioContextRef.current}
+                />
+            );
+            pads3.push(thisPad);
+        };
     };
-    for (let i = 4; i < 8; i++) {
-        let padClassName = STYLES.magentaPad;
-        const thisPad = (
-            <Pad
-                keyBind={keyBinds[i]}
-                key={i}
-                sample={samples[i]}
-                padClassName={padClassName}
-                audioContext={audioContextRef.current}
-            />
-        );
-        pads2.push(thisPad);
-    };
-    for (let i = 8; i < 10; i++) {
-        let padClassName = STYLES.limePad;
-        const thisPad = (
-            <Pad
-                keyBind={keyBinds[i]}
-                key={i}
-                sample={samples[i]}
-                padClassName={padClassName}
-                audioContext={audioContextRef.current}
-            />
-        );
-        pads3.push(thisPad);
-    };
-
     return (
         // TODO: add a flexbox div so that padline1 + 3 can appear on the same line
         // TODO: how can i bring him (pad-line3) closer to center?
-        // why is pad-line3 getting so angry with me?
         <div id="pad-instrument">
             <div id="pad-line1">
                 {pads}
             </div>
-            <div id="pad-line2" className="pl-3">
+            <div id="pad-line2">
                 {pads2}
-            </div>
-            <div id="pad-line3" className="text-center pl-5">
-                {pads}
             </div>
         </div>
     );

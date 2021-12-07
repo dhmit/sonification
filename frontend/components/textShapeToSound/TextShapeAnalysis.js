@@ -104,9 +104,19 @@ const TextShapeAnalysis = () => {
             });
     };
 
+    const styles = {
+        padding: "1%",
+        width: "35%"
+    };
+
+    const styles2 = {
+        margin: "1%",
+
+    };
+
 
     const makeTextInput = (heading, id, value, title, onChange, unit) => (
-        <div className="form-inline">
+        <div className="form-inline" style={styles}>
             <label className="mr-1" htmlFor={id}>{heading}</label>
             <input
                 className="form-control mr-1" id={id} type="number"
@@ -116,46 +126,34 @@ const TextShapeAnalysis = () => {
                 title={title}
                 onChange={onChange}
                 required
+                style={{width: "40%"}}
             />
             <strong>{unit}</strong>
         </div>
+
     );
 
     return (
-        <div className="container-fluid">
+        <div className="container">
             <h1>Text Shape</h1>
-            <p>
-                Welcome to the Text Shape Synthesizer! Start by typing or uploading a text file and hit submit to generate sound.<br/>
-                The sound is based on the amount of linebreaks and whitespace in the text.
-            </p>
             <form onSubmit={handleSubmit}>
+                <div className="row" style={{width: "90%"}}>
+                    <p className="col-sm-9">
+                            Welcome to the Text Shape Synthesizer! Start by typing or uploading a text file and hit submit to generate sound. The sound is based on the amount of linebreaks and whitespace in the text.
+                    </p>
+                </div>
                 <div className="row mb-3">
                     <div className="col">
                         <textarea
                             className={`form-control ${STYLES.inputTextArea}`}
-                            id="text" rows="8" value={text}
+                            id="text" rows="18" value={text}
                             onChange={handleTextChange}
                             placeholder={"Write text here or upload a text file ..."}
                             required
                         />
                     </div>
-                </div>
-                <div className="row mb-3">
                     <div className="col">
-                        Align: <button className="btn btn-dark" type="button"
-                                       onClick={handleAlignLeft}> Left</button> &nbsp;
-                        <button className="btn btn-dark" type="button" onClick={handleAlignCenter}>
-                            Center
-                        </button>
-                        &nbsp;
-                        <button className="btn btn-dark" type="button" onClick={handleAlignRight}>
-                            Right
-                        </button>
-                        <br/>
-                        <button className="btn btn-primary" type="submit">Submit</button>
-                    </div>
-                    <div className="col">
-                        <p><b>Edit Default Parameters</b></p>
+                        <p><strong>Edit Default Parameters</strong></p>
                         {makeTextInput(
                             "Seconds Per Line:",
                             "secondsPerLine",
@@ -182,9 +180,9 @@ const TextShapeAnalysis = () => {
                             handleMaxBeatFreqChange,
                             "Hz"
                         )}
-                    </div>
-                         <div className="form-inline">
-                             Second Frequency Relative to Base Frequency: &nbsp;
+
+                         <div className="form-inline" style={{marginTop: "2%"}}>
+                             Relative to Base Frequency: &nbsp;
                              <div className="form-check form-switch">
                                  <label className="form-check-label"
                                             id="lowerSecondFreqStatus">
@@ -206,15 +204,30 @@ const TextShapeAnalysis = () => {
                                          Higher
                                  </label>
                              </div>
-                        </div>
+                             <div style={{marginTop: "4%"}}>
+                             Align Text: <button className="btn btn-dark" type="button"
+                                 onClick={handleAlignLeft}> Left</button> &nbsp;
+                             <button className="btn btn-dark" type="button" onClick={handleAlignCenter}>
+                                 Center
+                             </button>
+                             &nbsp;
+                             <button className="btn btn-dark" type="button" onClick={handleAlignRight}>
+                                 Right
+                             </button>
+                             <br/>
+                             <button className="btn btn-primary " type="submit" style={{position: 'absolute', bottom:0}}>Submit</button>
+                             </div>
+                         </div>
+                    </div>
                 </div>
             </form>
             {results && (<>
                 <h3>Play Audio:</h3>
-                <audio controls controlsList={"nodownload"}>
+                <audio controls controlsList={"download"}>
                     <source src={`data:audio/wav;base64,${results}`} type={"audio/wav"}/>
                 </audio>
             </>)}
+
         </div>
     );
 };

@@ -52,13 +52,8 @@ def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.
 
 def generate_sine_wave(frequency, duration, harmonics=0, vibrato=False):
     """
-    Generates audio samples for a sine wave at a given frequency and duration
-
-    :param frequency:  frequency in Hz
-    :param duration:   duration in seconds
-    :param harmonics: number of desired harmonics
-    :param vibrato: boolean for using vibrato or not
-    :return: audio samples for the sine wave
+    Generates audio samples for a sine wave
+    Wrapper for generate_wave, passing np.sin as the wave_type
     """
     sine_wave_samples = generate_wave(frequency, duration, harmonics, vibrato, np.sin)
     return sine_wave_samples
@@ -66,16 +61,18 @@ def generate_sine_wave(frequency, duration, harmonics=0, vibrato=False):
 
 def generate_square_wave(frequency, duration, harmonics=0, vibrato=False):
     """
-        Generates audio samples for a square wave similar to how it is done for a sine wave above.
-        """
+    Generates audio samples for a square wave
+    Wrapper for generate_wave, passing signal.square as the wave_type
+    """
     square_wave_samples = generate_wave(frequency, duration, harmonics, vibrato, signal.square)
     return square_wave_samples
 
 
 def generate_sawtooth_wave(frequency, duration, harmonics=0, vibrato=False):
     """
-        Generates audio samples for a sawtooth wave similar to how it is done for a sine wave above.
-        """
+    Generates audio samples for a sawtooth wave
+    Wrapper for generate_wave, passing signal.sawtooth as the wave_type
+    """
     sawtooth_wave_samples = generate_wave(frequency, duration, harmonics, vibrato, signal.sawtooth)
     return sawtooth_wave_samples
 

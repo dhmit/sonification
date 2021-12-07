@@ -1,11 +1,16 @@
+import base64
 import json
+from io import BytesIO
+
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+import matplotlib.pyplot as plt
 import numpy as np
 
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
+from app.notes import NOTES
 
 from app.data_processing import (
     csv_files as csv_processing,
@@ -212,6 +217,7 @@ def parse_csv(request):
     return Response(csv_data)
 
 
+# pylint: disable=too-many-locals
 @api_view(['POST'])
 def time_series_to_music(request):
     """
@@ -220,17 +226,20 @@ def time_series_to_music(request):
     """
     csv_data = request.data['parsedCSV']
     column_constants = request.data['constants']
-    duration = request.data['duration']
-    every_n = request.data['everyN']
+    duration = float(request.data['duration'])
+    every_n = int(request.data['everyN'])
     csv_data = csv_data[::every_n]
     map_to_note = request.data['mapToNote']
 
+    new_csv = []
     audio_samples = None
 
     for i, row in enumerate(csv_data):
         sound = None
+        new_csv_row = []
         for j, frequency in enumerate(row):
             if frequency == "":
+                new_csv_row += [0]
                 continue
             column_constant = column_constants[j]
 
@@ -242,6 +251,7 @@ def time_series_to_music(request):
                 frequency = (2 ** ((frequency - 49) / 12)) * 440
 
             frequency += column_constant["base_frequency"]
+            new_csv_row += [frequency]
 
             note = synths.generate_sine_wave_with_envelope(
                 frequency=frequency,
@@ -255,6 +265,7 @@ def time_series_to_music(request):
                 sound = note
             else:
                 sound += note
+        new_csv += [new_csv_row]
         if audio_samples is None:
             audio_samples = sound
         else:
@@ -262,7 +273,36 @@ def time_series_to_music(request):
 
     sound = audio_samples_to_wav_base64(audio_samples)
 
-    return Response(sound)
+    time_steps = np.arange(0, len(csv_data))
+    new_csv = np.array(new_csv)
+    plt.plot(time_steps, new_csv)
+
+    min_f = np.amin(new_csv) - 10
+    max_f = np.amax(new_csv) + 10
+    for each in NOTES:
+        f = each["Frequency (Hz)"]
+        if min_f <= f <= max_f:
+            if "A" in each["Note"] and len(each["Note"]) == 2:
+                plt.axhline(y=f, color='r', linestyle='-')
+            else:
+                plt.axhline(y=f, color='grey', linestyle='-.')
+            plt.text(len(new_csv) - 1, f , each["Note"])
+
+    plt.legend(["Col " + str(i + 1) for i in range(len(new_csv[0]))])
+
+    plt.title("Frequencies")
+    plt.xlabel("Time Step")
+    plt.ylabel("Frequency (Hz) - log scale")
+    plt.yscale('log')
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    img_str = base64.b64encode(buffer.getvalue())
+
+    plt.clf()
+
+    return Response({"sound": sound, "img": img_str})
 
 
 @api_view(['POST'])

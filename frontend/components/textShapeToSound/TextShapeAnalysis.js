@@ -104,83 +104,81 @@ const TextShapeAnalysis = () => {
             });
     };
 
+    const styles = {
+        padding: "1%",
+        width: "35%"
+    };
+
+
+
+    const makeTextInput = (heading, id, value, title, onChange, unit) => (
+        <div className="form-inline" style={styles}>
+            <label className="mr-1" htmlFor={id}>{heading}</label>
+            <input
+                className="form-control mr-1" id={id} type="number"
+                value={value}
+                data-toggle="tooltip"
+                data-placement="top"
+                title={title}
+                onChange={onChange}
+                required
+                style={{width: "40%"}}
+            />
+            <strong>{unit}</strong>
+        </div>
+
+    );
 
     return (
-        <div className="container-fluid">
+        <div className="container">
             <h1>Text Shape</h1>
-            <p>
-                This sonificiation produces sequence of beat frequencies based on the shape of the text.<br/>
-                Each beat frequency, based on the base frequency, represents a line by taking into
-                account the average length of spaces in it.<br/>
-                As the average length of spaces in a line increases, the beat frequency decreases.
-            </p>
             <form onSubmit={handleSubmit}>
+                <div className="row" style={{width: "90%"}}>
+                    <p className="col-sm-9">
+                            Welcome to the Text Shape Synthesizer! Start by typing or uploading a text file and hit submit to generate sound. The sound is based on the amount of linebreaks and whitespace in the text.
+                    </p>
+                </div>
                 <div className="row mb-3">
                     <div className="col">
                         <textarea
                             className={`form-control ${STYLES.inputTextArea}`}
-                            id="text" rows="8" value={text}
+                            id="text" rows="18" value={text}
                             onChange={handleTextChange}
                             placeholder={"Write text here or upload a text file ..."}
                             required
                         />
                     </div>
-                </div>
-                <div className="row mb-3">
                     <div className="col">
-                        Align: <button className="btn btn-dark" type="button"
-                                       onClick={handleAlignLeft}> Left</button> &nbsp;
-                        <button className="btn btn-dark" type="button" onClick={handleAlignCenter}>
-                            Center
-                        </button>
-                        &nbsp;
-                        <button className="btn btn-dark" type="button" onClick={handleAlignRight}>
-                            Right
-                        </button>
-                        <br/>
-                        <br/>
-                        <label>Upload text into text box:</label>
-                        <br/>
-                        <input className="my-3" type="file" accept=".txt"
-                               onChange={handleUploadFile}/><br/><br/>
-                        <button className="btn btn-primary" type="submit">Submit</button>
-                    </div>
-                    <div className="col">
-                        <p><b>Edit Default Parameters</b></p>
-                        <div className="form-inline">
-                            Seconds Per Line: &nbsp;
-                            <input className="form-control" id="secondsPerLine" type="number"
-                                   value={secondsPerLine}
-                                   data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="the duration of each beat frequency in seconds"
-                                   onChange={handleSecondsPerLineChange}
-                                   required/>
-                            &nbsp;<b>s</b>
-                        </div>
-                        <div className="form-inline">
-                            Base Frequency: &nbsp;
-                            <input className="form-control" id="baseFreq" type="number"
-                                   data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="the frequency that the beat frequencies will be based on
-                                   in Hertz"
-                                   value={baseFreq} onChange={handleBaseFreqChange}
-                                   required/>
-                            &nbsp;<b>Hz</b>
-                        </div>
-                        <div className="form-inline">
-                            Max Beat Frequency:&nbsp;
-                            <input className="form-control" id="maxBeatFreq" type="number"
-                                   data-toggle="tooltip"
-                                   data-placement="top"
-                                   title="the maximum possible beat frequency in Hertz"
-                                   value={maxBeatFreq} onChange={handleMaxBeatFreqChange}
-                                   required/>&nbsp;
-                            <b>Hz</b>
-                        </div>
-                         <div className="form-inline">
-                             Second Frequency Relative to Base Frequency: &nbsp;
+                        <p><strong>Edit Default Parameters</strong></p>
+                        {makeTextInput(
+                            "Seconds Per Line:",
+                            "secondsPerLine",
+                            secondsPerLine,
+                            "the duration of each beat frequency in seconds",
+                            handleSecondsPerLineChange,
+                            "s"
+                        )}
+
+                        {makeTextInput(
+                            "Base Frequency:",
+                            "baseFreq",
+                            baseFreq,
+                            "the frequency that the beat frequencies will be based on\n" +
+                            "                                   in Hertz",
+                            handleBaseFreqChange,
+                            "Hz"
+                        )}
+                        {makeTextInput(
+                            "Max Beat Frequency:",
+                            "maxBeatFreq",
+                            maxBeatFreq,
+                            "the maximum possible beat frequency in Hertz",
+                            handleMaxBeatFreqChange,
+                            "Hz"
+                        )}
+
+                         <div className="form-inline" style={{marginTop: "2%"}}>
+                             Relative to Base Frequency: &nbsp;
                              <div className="form-check form-switch">
                                  <label className="form-check-label"
                                             id="lowerSecondFreqStatus">
@@ -202,16 +200,30 @@ const TextShapeAnalysis = () => {
                                          Higher
                                  </label>
                              </div>
-                        </div>
+                             <div style={{marginTop: "4%"}}>
+                             Align Text: <button className="btn btn-dark" type="button"
+                                 onClick={handleAlignLeft}> Left</button> &nbsp;
+                             <button className="btn btn-dark" type="button" onClick={handleAlignCenter}>
+                                 Center
+                             </button>
+                             &nbsp;
+                             <button className="btn btn-dark" type="button" onClick={handleAlignRight}>
+                                 Right
+                             </button>
+                             <br/>
+                             <button className="btn btn-primary " type="submit" style={{position: 'absolute', bottom:0}}>Submit</button>
+                             </div>
+                         </div>
                     </div>
                 </div>
             </form>
             {results && (<>
                 <h3>Play Audio:</h3>
-                <audio controls controlsList={"nodownload"}>
+                <audio controls controlsList={"download"}>
                     <source src={`data:audio/wav;base64,${results}`} type={"audio/wav"}/>
                 </audio>
             </>)}
+
         </div>
     );
 };

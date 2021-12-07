@@ -9,7 +9,7 @@ const RangeSliderInput = ({
     updateValues,
     step,
     enabled=true,
-    values=[minValue, maxValue]
+    values=[minValue, maxValue],
 }) => {
 
     // Range sliders that aren't enabled display nothing

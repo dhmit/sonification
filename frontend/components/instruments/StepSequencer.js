@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef} from "react";
+import React, {useState, useRef} from "react";
 import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./StepSequencer.module.scss";
@@ -34,6 +34,7 @@ Step.propTypes = {
     sample: PropTypes.string,
     colIsPlaying: PropTypes.bool,
     audioContext: PropTypes.object,
+    vol: PropTypes.number,
 };
 
 const Metronome = ({sample, audioContext, colIsPlaying}) => {
@@ -85,8 +86,8 @@ const Row = ({sample, audioContext, rowIndex, numSteps, playbackPosition, isPlay
             ))}
             Volume {rowIndex}
             <input className="mx-2" type="range" min="0" max="100"
-                   step="1" id="low" value={volume}
-                   onChange={handleUpdateVolume}/>
+                step="1" id="low" value={volume}
+                onChange={handleUpdateVolume}/>
         </div>
     </>);
 };
@@ -175,12 +176,12 @@ const StepSequencer = ({samples}) => {
                     Pause!
                 </button>
                 <button className="btn btn-outline-primary mx-2"
-                onClick={handlePlusBeat}
+                    onClick={handlePlusBeat}
                 >
                     +1 beat
                 </button>
                 <button className="btn btn-outline-primary text-left"
-                onClick={handleMinusBeat}
+                    onClick={handleMinusBeat}
                 >
                     -1 beat
                 </button>
@@ -200,10 +201,10 @@ const StepSequencer = ({samples}) => {
             </div>
         ))}
         <Metronome
-                key={0}
-                sample={samples[2]}
-                audioContext={audioContextRef.current}
-                colIsPlaying={isPlaying && 0 === playbackPosition}
+            key={0}
+            sample={samples[2]}
+            audioContext={audioContextRef.current}
+            colIsPlaying={isPlaying && 0 === playbackPosition}
         />
         {Array(numSteps-1).fill(null).map((_, colIndex) => (
             <Metronome
@@ -215,9 +216,9 @@ const StepSequencer = ({samples}) => {
         ))}
         <div>
             <b>Tempo:</b>
-                <input className="mx-2" type="range" min="40" max="120"
-                    step="1" id="low" value={tempo}
-                    onChange={handleUpdateTempo}/>
+            <input className="mx-2" type="range" min="40" max="120"
+                step="1" id="low" value={tempo}
+                onChange={handleUpdateTempo}/>
             {tempo} bpm
         </div>
     </>);

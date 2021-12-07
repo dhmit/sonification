@@ -183,15 +183,6 @@ const SynthesizePolygons = () => {
         return obj;
     }
 
-    function capFrequency(freq, setFreq) {
-        if (freq < LOW_FREQ) {
-            setFreq(LOW_FREQ);
-        }
-        if (freq > HIGH_FREQ) {
-            setFreq(HIGH_FREQ);
-        }
-    }
-
     // customizable user options. simply add or remove items to the list to add/remove options
     // fields are passed to <CustomizableInput/> component.
     const userOptions = [
@@ -236,7 +227,6 @@ const SynthesizePolygons = () => {
             display: "Base frequency (Hz):",
             getValue: () => baseFrequency,
             setValue: setBaseFrequency,
-            onBlur: () => capFrequency(baseFrequency, setBaseFrequency),
             min: LOW_FREQ,
             max: HIGH_FREQ,
             tooltip: "The frequency of the first note.",
@@ -294,10 +284,10 @@ const SynthesizePolygons = () => {
                                 onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
                             />
                             : <CustomizableInput
-                            key={option.name}
-                            {...option}
-                            onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
-                        />
+                                key={option.name}
+                                {...option}
+                                onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
+                            />
                         )}
                     </div>
                     <div className={STYLES.paneSeparatorHorizontal}

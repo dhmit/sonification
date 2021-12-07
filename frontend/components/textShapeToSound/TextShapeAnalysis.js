@@ -8,7 +8,7 @@ const TextShapeAnalysis = () => {
     const [baseFreq, setBaseFreq] = useState(440);
     const [maxBeatFreq, setMaxBeatFreq] = useState(20);
     const [results, setResults] = useState("");
-    const [higherSecondFreq, sethigherSecondFreq] = useState(false);
+    const [higherSecondFreq, setHigherSecondFreq] = useState(false);
 
     const handleTextChange = (event) => {
         setText(event.target.value);
@@ -27,7 +27,7 @@ const TextShapeAnalysis = () => {
     };
 
     const handleHigherSecondFreqChange = (event) => {
-        sethigherSecondFreq(event.target.checked);
+        setHigherSecondFreq(event.target.checked);
         let higherSecondFreqStatus = "Higher";
         let lowerSecondFreqStatus = "<b>Lower</b>";
 
@@ -76,16 +76,6 @@ const TextShapeAnalysis = () => {
         setText(newText);
     };
 
-    const handleUploadFile = (event) => {
-        const file = event.target.files[0];
-        const fileReader = new FileReader();
-        fileReader.onload = function (fileEvent) {
-            const textFromFile = fileEvent.target.result;
-            setText(textFromFile);
-        };
-        fileReader.readAsText(file, 'utf-8');
-    };
-
     const handleSubmit = (event) => {
         event.preventDefault();
         setResults("");
@@ -104,15 +94,8 @@ const TextShapeAnalysis = () => {
             });
     };
 
-    const styles = {
-        padding: "1%",
-        width: "35%"
-    };
-
-
-
     const makeTextInput = (heading, id, value, title, onChange, unit) => (
-        <div className="form-inline" style={styles}>
+        <div className="form-inline p-1">
             <label className="mr-1" htmlFor={id}>{heading}</label>
             <input
                 className="form-control mr-1" id={id} type="number"
@@ -135,7 +118,9 @@ const TextShapeAnalysis = () => {
             <form onSubmit={handleSubmit}>
                 <div className="row" style={{width: "90%"}}>
                     <p className="col-sm-9">
-                            Welcome to the Text Shape Synthesizer! Start by typing or uploading a text file and hit submit to generate sound. The sound is based on the amount of linebreaks and whitespace in the text.
+                        Welcome to the Text Shape Synthesizer!
+                        Start by typing or uploading a text file and hit submit to generate sound.
+                        The sound is based on the amount of linebreaks and whitespace in the text.
                     </p>
                 </div>
                 <div className="row mb-3">
@@ -177,43 +162,50 @@ const TextShapeAnalysis = () => {
                             "Hz"
                         )}
 
-                         <div className="form-inline" style={{marginTop: "2%"}}>
-                             Relative to Base Frequency: &nbsp;
-                             <div className="form-check form-switch">
-                                 <label className="form-check-label"
-                                            id="lowerSecondFreqStatus">
-                                         <b>Lower</b>
-                                 </label> &nbsp;&nbsp;
-                                 <input className="form-check-input"
-                                        type="checkbox"
-                                        id="flexSwitchCheckDefault"
-                                        data-toggle="tooltip"
-                                        data-placement="top"
-                                        title="determines whether the second frequencies,
+                        <div className="form-inline" style={{marginTop: "2%"}}>
+                            Relative to Base Frequency: &nbsp;
+                            <div className="form-check form-switch">
+                                <label className="form-check-label" id="lowerSecondFreqStatus">
+                                    <b>Lower</b>
+                                </label> &nbsp;&nbsp;
+                                <input
+                                    className="form-check-input"
+                                    type="checkbox"
+                                    id="flexSwitchCheckDefault"
+                                    data-toggle="tooltip"
+                                    data-placement="top"
+                                    title="determines whether the second frequencies,
                                         which combined with the base frequency produces the beats,
                                         will be higher than the base frequency"
-                                        checked={higherSecondFreq}
-                                        onChange={handleHigherSecondFreqChange}
-                                 />&nbsp;
-                                 <label className="form-check-label"
-                                            id="higherSecondFreqStatus">
-                                         Higher
-                                 </label>
-                             </div>
-                             <div style={{marginTop: "4%"}}>
-                             Align Text: <button className="btn btn-dark" type="button"
-                                 onClick={handleAlignLeft}> Left</button> &nbsp;
-                             <button className="btn btn-dark" type="button" onClick={handleAlignCenter}>
-                                 Center
-                             </button>
-                             &nbsp;
-                             <button className="btn btn-dark" type="button" onClick={handleAlignRight}>
-                                 Right
-                             </button>
-                             <br/>
-                             <button className="btn btn-primary " type="submit" style={{position: 'absolute', bottom:0}}>Submit</button>
-                             </div>
-                         </div>
+                                    checked={higherSecondFreq}
+                                    onChange={handleHigherSecondFreqChange}
+                                />&nbsp;
+                                <label className="form-check-label" id="higherSecondFreqStatus">
+                                    Higher
+                                </label>
+                            </div>
+                            <div style={{marginTop: "4%"}}>
+                                Align Text:
+                                <button className="btn btn-dark mr-1" type="button"
+                                    onClick={handleAlignLeft}
+                                >Left
+                                </button>
+                                <button className="btn btn-dark mr-1" type="button"
+                                    onClick={handleAlignCenter}
+                                >Center
+                                </button>
+                                <button className="btn btn-dark" type="button"
+                                    onClick={handleAlignRight}
+                                >Right
+                                </button>
+                                <br/>
+                                <button
+                                    className="btn btn-primary" type="submit"
+                                    style={{position: 'absolute', bottom:0}}
+                                >Submit
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </form>

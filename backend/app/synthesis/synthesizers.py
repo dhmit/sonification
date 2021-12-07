@@ -9,6 +9,7 @@ from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
+# pylint: disable=too-many-locals
 def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.sin):
     """
     Generates audio samples for various wave types
@@ -26,7 +27,7 @@ def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.
     if harmonics != 0:
         for i in range(harmonics):
             harmonic = np.sin(frequency * 2 * np.pi * time_steps * (i + 2))
-            for j in range(len(wave_samples)):
+            for j, _ in enumerate(wave_samples):
                 wave_samples[j] += harmonic[j]
 
     if vibrato:
@@ -43,8 +44,8 @@ def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.
 
             copies[c] = copy
 
-        for k in range(len(copies)):
-            wave_samples += copies[k]
+        for i, _ in enumerate(copies):
+            wave_samples += copies[i]
 
     return wave_samples
 

@@ -26,7 +26,7 @@ def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.
     if harmonics != 0:
         for i in range(harmonics):
             harmonic = np.sin(frequency * 2 * np.pi * time_steps * (i + 2))
-            for j, ele in enumerate(wave_samples):
+            for j in range(len(wave_samples)):
                 wave_samples[j] += harmonic[j]
 
     if vibrato:
@@ -43,7 +43,7 @@ def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.
 
             copies[c] = copy
 
-        for k, element in enumerate(copies):
+        for k in range(len(copies)):
             wave_samples += copies[k]
 
     return wave_samples
@@ -65,13 +65,7 @@ def generate_sine_wave(frequency, duration, harmonics=0, vibrato=False):
 
 def generate_square_wave(frequency, duration, harmonics=0, vibrato=False):
     """
-        Generates audio samples for a square wave at a given frequency and duration
-
-        :param frequency:  frequency in Hz
-        :param duration:   duration in seconds
-        :param harmonics: number of desired harmonics
-        :param vibrato: boolean for using vibrato or not
-        :return: audio samples for the sine wave
+        Generates audio samples for a square wave similar to how it is done for a sine wave above.
         """
     square_wave_samples = generate_wave(frequency, duration, harmonics, vibrato, signal.square)
     return square_wave_samples
@@ -79,13 +73,7 @@ def generate_square_wave(frequency, duration, harmonics=0, vibrato=False):
 
 def generate_sawtooth_wave(frequency, duration, harmonics=0, vibrato=False):
     """
-        Generates audio samples for a sawtooth wave at a given frequency and duration
-
-        :param frequency:  frequency in Hz
-        :param duration:   duration in seconds
-        :param harmonics: number of desired harmonics
-        :param vibrato: boolean for using vibrato or not
-        :return: audio samples for the sine wave
+        Generates audio samples for a sawtooth wave similar to how it is done for a sine wave above.
         """
     sawtooth_wave_samples = generate_wave(frequency, duration, harmonics, vibrato, signal.sawtooth)
     return sawtooth_wave_samples
@@ -166,50 +154,6 @@ def generate_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percent
     return audio_samples_with_adsr_envelope
 
 
-def generate_sawtooth_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
-                                         s_percentage=0.1, r_percentage=0.7, harmonics=0,
-                                         vibrato=False):
-    """
-    For a sawtooth wave uses the ADSR (Attack, Decay, Sustain, Release) envelope
-    to generate a note that fades in and out
-    Adapted from example in https://towardsdatascience.com/music-in-python-2f054deb41f4
-    :param frequency: frequency of the note in Hz
-    :param duration: duration in seconds
-    :param a_percentage: attack
-    :param d_percentage: decay
-    :param s_percentage: sustain
-    :param r_percentage: release
-    :param harmonics: number of desired harmonics
-    :param vibrato: boolean for using vibrato or not
-    :return audio_samples: list of samples for the note
-    """
-    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
-                                       s_percentage, r_percentage, harmonics,
-                                       vibrato, signal.sawtooth)
-
-
-def generate_square_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
-                                       s_percentage=0.1, r_percentage=0.7, harmonics=0,
-                                       vibrato=False):
-    """
-    For a square wave uses the ADSR (Attack, Decay, Sustain, Release) envelope
-    to generate a note that fades in and out
-    Adapted from example in https://towardsdatascience.com/music-in-python-2f054deb41f4
-    :param frequency: frequency of the note in Hz
-    :param duration: duration in seconds
-    :param a_percentage: attack
-    :param d_percentage: decay
-    :param s_percentage: sustain
-    :param r_percentage: release
-    :param harmonics: number of desired harmonics
-    :param vibrato: boolean for using vibrato or not
-    :return audio_samples: list of samples for the note
-    """
-    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
-                                       s_percentage, r_percentage, harmonics, vibrato,
-                                       signal.square)
-
-
 # pylint: disable-msg=R0913
 def generate_sine_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
                                      s_percentage=0.1, r_percentage=0.7, harmonics=0,
@@ -232,6 +176,30 @@ def generate_sine_wave_with_envelope(frequency, duration, a_percentage=0.1, d_pe
 
     return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
                                        s_percentage, r_percentage, harmonics, vibrato, np.sin)
+
+
+def generate_square_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
+                                       s_percentage=0.1, r_percentage=0.7, harmonics=0,
+                                       vibrato=False):
+    """
+    Square wave with envelope created similarly to sine waves
+    created by generate_sine_wave_with_envelope.
+    """
+    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
+                                       s_percentage, r_percentage, harmonics, vibrato,
+                                       signal.square)
+
+
+def generate_sawtooth_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
+                                         s_percentage=0.1, r_percentage=0.7, harmonics=0,
+                                         vibrato=False):
+    """
+    Sawtooth wave with envelope created similarly to sine waves
+    created by generate_sine_wave_with_envelope.
+    """
+    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
+                                       s_percentage, r_percentage, harmonics,
+                                       vibrato, signal.sawtooth)
 
 
 def convert_piano_key_num_to_sin_wave(piano_key):

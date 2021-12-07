@@ -4,7 +4,6 @@ Methods for creating sound!
 import math
 import numpy as np
 from scipy import signal
-from matplotlib import pyplot
 
 from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
@@ -27,11 +26,11 @@ def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.
     if harmonics != 0:
         for i in range(harmonics):
             harmonic = np.sin(frequency * 2 * np.pi * time_steps * (i + 2))
-            for i in range(len(wave_samples)):
-                wave_samples[i] += harmonic[i]
+            for j in range(len(wave_samples)):
+                wave_samples[j] += harmonic[j]
 
     if vibrato:
-        vibrato_changer = 5 #5 is arbitrary, decrease for stronger vibrato
+        vibrato_changer = 5  # 5 is arbitrary, decrease for stronger vibrato
         copies = {}
 
         for c in range(20):
@@ -46,9 +45,6 @@ def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.
 
         for k in range(len(copies)):
             wave_samples += copies[k]
-    # pyplot.plot(sine_wave_samples)
-    # pyplot.xlim(0, 1/frequency*WAV_SAMPLE_RATE)
-    # pyplot.show()
 
     return wave_samples
 

@@ -286,5 +286,4 @@ def playback_demo(_request):
         wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
         wav_files.append(wav_file_base64)
 
-
     return Response(wav_files)

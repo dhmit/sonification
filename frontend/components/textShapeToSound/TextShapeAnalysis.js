@@ -109,10 +109,6 @@ const TextShapeAnalysis = () => {
         width: "35%"
     };
 
-    const styles2 = {
-        margin: "1%",
-
-    };
 
 
     const makeTextInput = (heading, id, value, title, onChange, unit) => (

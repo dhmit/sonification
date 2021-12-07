@@ -1,11 +1,12 @@
+import base64
 import json
+from io import BytesIO
+
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
-import numpy as np
 import matplotlib.pyplot as plt
-import base64
-from io import BytesIO
+import numpy as np
 
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
@@ -216,6 +217,7 @@ def parse_csv(request):
     return Response(csv_data)
 
 
+# pylint: disable=too-many-locals
 @api_view(['POST'])
 def time_series_to_music(request):
     """
@@ -271,9 +273,9 @@ def time_series_to_music(request):
 
     sound = audio_samples_to_wav_base64(audio_samples)
 
-    t = np.arange(0, len(csv_data))
+    time_steps = np.arange(0, len(csv_data))
     new_csv = np.array(new_csv)
-    plt.plot(t, new_csv)
+    plt.plot(time_steps, new_csv)
 
     min_f = np.amin(new_csv) - 10
     max_f = np.amax(new_csv) + 10
@@ -291,7 +293,6 @@ def time_series_to_music(request):
     plt.title("Frequencies")
     plt.xlabel("Time Step")
     plt.ylabel("Frequency (Hz) - log scale")
-
     plt.yscale('log')
 
     buffer = BytesIO()

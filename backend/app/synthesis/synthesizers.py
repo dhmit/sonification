@@ -26,7 +26,7 @@ def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.
     if harmonics != 0:
         for i in range(harmonics):
             harmonic = np.sin(frequency * 2 * np.pi * time_steps * (i + 2))
-            for j in range(len(wave_samples)):
+            for j, ele in enumerate(wave_samples):
                 wave_samples[j] += harmonic[j]
 
     if vibrato:
@@ -43,7 +43,7 @@ def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.
 
             copies[c] = copy
 
-        for k in range(len(copies)):
+        for k, element in enumerate(copies):
             wave_samples += copies[k]
 
     return wave_samples
@@ -167,7 +167,8 @@ def generate_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percent
 
 
 def generate_sawtooth_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
-                                         s_percentage=0.1, r_percentage=0.7, harmonics=0, vibrato=False):
+                                         s_percentage=0.1, r_percentage=0.7, harmonics=0,
+                                         vibrato=False):
     """
     For a sawtooth wave uses the ADSR (Attack, Decay, Sustain, Release) envelope
     to generate a note that fades in and out
@@ -188,7 +189,8 @@ def generate_sawtooth_wave_with_envelope(frequency, duration, a_percentage=0.1, 
 
 
 def generate_square_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
-                                       s_percentage=0.1, r_percentage=0.7, harmonics=0, vibrato=False):
+                                       s_percentage=0.1, r_percentage=0.7, harmonics=0,
+                                       vibrato=False):
     """
     For a square wave uses the ADSR (Attack, Decay, Sustain, Release) envelope
     to generate a note that fades in and out
@@ -210,7 +212,8 @@ def generate_square_wave_with_envelope(frequency, duration, a_percentage=0.1, d_
 
 # pylint: disable-msg=R0913
 def generate_sine_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
-                                     s_percentage=0.1, r_percentage=0.7, harmonics=0, vibrato=False):
+                                     s_percentage=0.1, r_percentage=0.7, harmonics=0,
+                                     vibrato=False):
     # pylint: disable-msg=R0914
     """
     For a sine wave uses the ADSR (Attack, Decay, Sustain, Release) envelope
@@ -244,4 +247,3 @@ def convert_piano_key_num_to_sin_wave(piano_key):
     duration = 1
     frequency = a4_note * (2 ** ((piano_key + 1 - 49) / 12))
     return generate_sine_wave(frequency, duration)
-

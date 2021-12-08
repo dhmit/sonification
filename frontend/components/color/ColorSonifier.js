@@ -10,8 +10,6 @@ class ColorSonifier extends React.Component {
 
         this.handlePaletteClick = this.handlePaletteClick.bind(this);
 
-        const NUM_COLORS = 7;
-
         // rainbow-ish -- taken from default swatches in the color picker
         const initialColors = [
             {r: 208, g: 2, b: 27},

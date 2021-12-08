@@ -52,7 +52,7 @@ Metronome.propTypes = {
     colIsPlaying: PropTypes.bool,
 };
 
-const Row = ({sample, audioContext, rowIndex, numSteps, playbackPosition, isPlaying}) => {
+const Row = ({sample, audioContext, numSteps, playbackPosition, isPlaying}) => {
     const [volume, setVolume] = useState(100);
 
     const handleUpdateVolume = (event) => {
@@ -82,7 +82,6 @@ const Row = ({sample, audioContext, rowIndex, numSteps, playbackPosition, isPlay
 Row.propTypes = {
     sample: PropTypes.string,
     audioContext: PropTypes.object,
-    rowIndex: PropTypes.number,
     numSteps: PropTypes.number,
     playbackPosition: PropTypes.number,
     isPlaying: PropTypes.bool,
@@ -171,7 +170,6 @@ const StepSequencer = ({samples}) => {
                     key={rowIndex}
                     sample={sample}
                     audioContext={audioContextRef.current}
-                    rowIndex={rowIndex}
                     numSteps={numSteps}
                     playbackPosition={playbackPosition}
                     isPlaying={isPlaying}

@@ -45,7 +45,6 @@ class ColorSonifier extends React.Component {
                 result: responseDict,
                 instrumentGenerated: true,
             });
-            alert("Instrument has been updated!");
         };
         fetchPost('/api/color_to_samples/', requestBody, responseCallbackFunc);
     };
@@ -59,6 +58,7 @@ class ColorSonifier extends React.Component {
                 handlePaletteClick={this.handlePaletteClick}
             />
         );
+
         return (<div>
             <h1>Colors</h1>
             <p> Use the color picker below to choose a color, and hit the <b>submit</b> button
@@ -72,19 +72,28 @@ class ColorSonifier extends React.Component {
                     className="col-sm"
                 />
 
-                <div className="col-sm-2">
-                    {colorDisplay}
-                    <button onClick={this.handleSubmit}>
-                        {this.state.instrumentGenerated
-                            ? "Update Instrument"
-                            : "Generate Instrument"}
-                    </button>
-                </div>
+                <div className="col">
+                    <div className="row mb-4">
+                        <div className="col">
+                            {colorDisplay}
+                            <div className="text-right">
+                                <button className="btn btn-primary"
+                                    onClick={this.handleSubmit}>
+                                    {this.state.instrumentGenerated
+                                        ? "Update Instrument"
+                                        : "Generate Instrument"}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
 
-                <div className="col-sm">
-                    {this.state.result.length !== 0 &&
-                        <InstrumentPicker samples={this.state.result}/>
-                    }
+                    <div className="row">
+                        <div className="col">
+                            {this.state.result.length !== 0 &&
+                            <InstrumentPicker samples={this.state.result}/>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>);

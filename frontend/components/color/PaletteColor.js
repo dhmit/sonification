@@ -2,25 +2,25 @@ import React from "react";
 import PropTypes from "prop-types";
 
 const PaletteColor = ({id, color, handlePaletteClick, selected}) => {
+    const colorCssRgb = `rgb(${color.r},${color.g},${color.b})`;
     const style = {
-        backgroundColor: `rgb(${color.r},${color.g},${color.b})`,
-        height: "15px",
+        backgroundColor: colorCssRgb,
+        height: "30px",
         width: "100px",
-        float: "left",
-        border: 0,
+        border: `2px solid ${colorCssRgb}`,
     };
 
     if (selected) {
-        style.boxShadow = "5px 5px 4px gray";
+        style.border = "2px solid black";
     }
 
-    return (<div className="row mb-2"><div className="col">
+    return (<span className="mr-2">
         <button
             id={id}
             style={style}
             onClick={handlePaletteClick}
         />
-    </div></div>);
+    </span>);
 };
 PaletteColor.propTypes = {
     id: PropTypes.number,

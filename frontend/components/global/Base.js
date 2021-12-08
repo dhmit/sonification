@@ -7,8 +7,8 @@ const Base = ({children}) => {
     return (
         <>
             <Nav/>
-            <div className={STYLES.body} id={"main-container"}>
-                <main role={"main"}>{children}</main>
+            <div className={STYLES.body} id="main-container">
+                <main role="main" className="container">{children}</main>
             </div>
         </>
     );

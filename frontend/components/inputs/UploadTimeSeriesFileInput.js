@@ -1,5 +1,5 @@
 import React, {useState} from "react";
-import {fetchPost, getCookie} from "../../common";
+import {fetchPost} from "../../common";
 import PropTypes from "prop-types";
 import FileInput from "./FileInput";
 
@@ -68,8 +68,7 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
     };
 
     const makeColumnControls = (columnNumber) => {
-        const columnConstants = constants[columnNumber];
-        const controls = (<form>
+        return (<form>
             <div className="row">
                 {makeControl(columnNumber, "base_frequency")}
                 {makeControl(columnNumber, "multiplier")}
@@ -82,8 +81,6 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                 {makeControl(columnNumber, "r_percentage")}
             </div>
         </form>);
-
-        return controls;
     };
 
     const makeControl = (columnNumber, constantName) => {
@@ -177,7 +174,10 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
                         </div>
                         <div className="col">
                             <label>
-                                <input type="checkbox" onClick={e => setMapToNote(e.target.checked)}/>
+                                <input
+                                    type="checkbox"
+                                    onClick={e => setMapToNote(e.target.checked)}
+                                />
                                 <span> Map numbers to note?</span>
                             </label>
                         </div>

@@ -1,11 +1,16 @@
+import base64
 import json
+from io import BytesIO
+
+from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from rest_framework import status
+import matplotlib.pyplot as plt
 import numpy as np
 
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
+from app.notes import NOTES
 
 from app.data_processing import (
     csv_files as csv_processing,
@@ -80,8 +85,42 @@ def numbers_to_music(request):
 # COLOR
 ################################################################################
 @api_view(['POST'])
-def color_to_music(_request):
-    return not_implemented_error()
+def color_to_music(request):
+    """
+    :param request: color picker's rgb values stored as a dictionary when the user hits submit
+    :return: wav file, sine wave with frequency corresponds to energy of the colors
+    """
+    response_object = request.data['listOfColors']
+
+    sound = None
+    for response in response_object:
+        r = response["r"]
+        g = response["g"]
+        b = response["b"]
+
+        # color energy calculation
+        energy = round(0.299 * r + .587 * g + .114 * b)
+
+        # frequency based on energy, scaled for 150-350hz
+        freq_to_generate = ((200 * energy) / 255) + 150
+
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=50,
+            a_percentage=0,
+            d_percentage=0,
+            s_percentage=1,
+            r_percentage=0
+        )
+
+        if sound is None:
+            sound = audio_samples
+        else:
+            sound += audio_samples
+
+    wav_file_base64 = [audio_samples_to_wav_base64(sound)]
+
+    return Response(wav_file_base64)
 
 
 @api_view(['POST'])
@@ -140,7 +179,27 @@ def gesture_to_music(request):
 
 @api_view(['POST'])
 def gesture_to_samples(request):
-    return not_implemented_error()
+    # commit #1 on 11/12/2021
+    """
+    Takes in gestures as a list of list of (x,y) coordinates and constructs an
+    instrument slider based on the sum of coordinates of each gesture
+    """
+    gestures = request.data['gestures']
+    gestures_params = request.data['parameters']
+    coordinate_sums = gesture_processing.get_instrument_sliders(gestures, gestures_params)
+    wav_files = []
+    for coordinate_sum in coordinate_sums:
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=coordinate_sum,
+            duration=50,
+            a_percentage=0,
+            d_percentage=0,
+            s_percentage=1,
+            r_percentage=0
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
+    return Response(wav_files)
 
 
 ################################################################################
@@ -158,24 +217,29 @@ def parse_csv(request):
     return Response(csv_data)
 
 
+# pylint: disable=too-many-locals
 @api_view(['POST'])
 def time_series_to_music(request):
     """
-    Takes a 2-D CSV with the header and constructs samples based on those ratios.
+    Takes a dictionary representing a parsed CSV and constructs samples based on
+    those ratios.
     """
     csv_data = request.data['parsedCSV']
     column_constants = request.data['constants']
-    duration = request.data['duration']
-    every_n = request.data['everyN']
+    duration = float(request.data['duration'])
+    every_n = int(request.data['everyN'])
     csv_data = csv_data[::every_n]
     map_to_note = request.data['mapToNote']
 
+    new_csv = []
     audio_samples = None
+
     for i, row in enumerate(csv_data):
         sound = None
-
+        new_csv_row = []
         for j, frequency in enumerate(row):
             if frequency == "":
+                new_csv_row += [0]
                 continue
             column_constant = column_constants[j]
 
@@ -187,6 +251,7 @@ def time_series_to_music(request):
                 frequency = (2 ** ((frequency - 49) / 12)) * 440
 
             frequency += column_constant["base_frequency"]
+            new_csv_row += [frequency]
 
             note = synths.generate_sine_wave_with_envelope(
                 frequency=frequency,
@@ -200,6 +265,7 @@ def time_series_to_music(request):
                 sound = note
             else:
                 sound += note
+        new_csv += [new_csv_row]
         if audio_samples is None:
             audio_samples = sound
         else:
@@ -207,12 +273,70 @@ def time_series_to_music(request):
 
     sound = audio_samples_to_wav_base64(audio_samples)
 
-    return Response(sound)
+    time_steps = np.arange(0, len(csv_data))
+    new_csv = np.array(new_csv)
+    plt.plot(time_steps, new_csv)
+
+    min_f = np.amin(new_csv) - 10
+    max_f = np.amax(new_csv) + 10
+    for each in NOTES:
+        f = each["Frequency (Hz)"]
+        if min_f <= f <= max_f:
+            if "A" in each["Note"] and len(each["Note"]) == 2:
+                plt.axhline(y=f, color='r', linestyle='-')
+            else:
+                plt.axhline(y=f, color='grey', linestyle='-.')
+            plt.text(len(new_csv) - 1, f , each["Note"])
+
+    plt.legend(["Col " + str(i + 1) for i in range(len(new_csv[0]))])
+
+    plt.title("Frequencies")
+    plt.xlabel("Time Step")
+    plt.ylabel("Frequency (Hz) - log scale")
+    plt.yscale('log')
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png')
+    buffer.seek(0)
+    img_str = base64.b64encode(buffer.getvalue())
+
+    plt.clf()
+
+    return Response({"sound": sound, "img": img_str})
 
 
 @api_view(['POST'])
 def time_series_to_samples(request):
-    return not_implemented_error()
+    """
+    Takes a dictionary representing a parsed CSV file and constructs samples
+    based on the column averages.
+    """
+    csv_data = request.data['parsedCSV']
+    column_constants = request.data['constants']
+    every_n = request.data['everyN']
+    csv_data = csv_data[::every_n]
+
+    csv_np_array = np.array(csv_data).astype(np.float)
+
+    csv_row_av = np.average(csv_np_array, axis=0)
+    wav_files = []
+    for j, frequency in enumerate(csv_row_av):
+        column_constant = column_constants[j]
+        freq_to_generate = column_constant["base_frequency"] + (
+            float(frequency) + column_constant["offset"]) * column_constant[
+                               "multiplier"]
+        note = synths.generate_sine_wave_with_envelope(
+            frequency=freq_to_generate,
+            duration=1,
+            a_percentage=column_constant["a_percentage"],
+            d_percentage=column_constant["d_percentage"],
+            s_percentage=column_constant["s_percentage"],
+            r_percentage=column_constant["r_percentage"]
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(note)
+        wav_files.append(wav_file_base64)
+
+    return Response(wav_files)
 
 
 ################################################################################
@@ -244,7 +368,26 @@ def text_shape_to_music(request):
 
 @api_view(['POST'])
 def text_shape_to_samples(request):
-    return not_implemented_error()
+    """
+    API endpoint for generating an instrument based on the shape analysis of the given text
+    """
+    text = request.query_params.get('text')
+    secs_per_line = float(request.query_params.get('secondsPerLine'))
+    base_freq = float(request.query_params.get('baseFreq'))
+    max_beat_freq = float(request.query_params.get('maxBeatFreq'))
+    higher_second_freq = False
+    if request.query_params.get('higherSecondFreq') == 'true':
+        higher_second_freq = True
+
+    audio_data = text_processing.text_shape_to_samples(
+        text, secs_per_line, base_freq, max_beat_freq, higher_second_freq
+    )
+
+    res = {
+        'sound': [audio_samples_to_wav_base64(wave) for wave in audio_data]
+    }
+
+    return Response(res)
 
 
 ################################################################################
@@ -275,7 +418,35 @@ def polygon_to_music(request):
 
 @api_view(['POST'])
 def polygon_to_samples(request):
-    return not_implemented_error()
+    """
+    Takes in polygon data and constructs an instrument slider, with each slider representing
+    a side in the polygon.
+    """
+
+    converted_data = polygon_processing.parse_polygon_data(json.loads(request.body))
+
+    # remove irrelevant data
+    del converted_data['note_delay']
+    del converted_data['sides_as_duration']
+    del converted_data['note_length']
+
+    frequencies = polygon_processing.polygon_frequencies(**converted_data)
+
+    wav_files = []
+
+    for freq in frequencies:
+        audio_samples = synths.generate_sine_wave_with_envelope(
+            frequency=freq,
+            duration=50,
+            a_percentage=0,
+            d_percentage=0,
+            s_percentage=1,
+            r_percentage=0
+        )
+        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
+        wav_files.append(wav_file_base64)
+
+    return Response(wav_files)
 
 
 ################################################################################

@@ -23,18 +23,15 @@ svgRender should be a component which takes 4 props (width: instrument width, he
  height, x: current mouseX, y: current mouseY) and returns svg components to render (doesn't need
  a wrapping svg tag, since this will be placed into the main svg tag of the instrument itself).
  */
-const SpatialInstrumentInternal = (
-    {
-        soundPoints,
-        SvgRender=({width,height,x,y}) => <></>,
-        showPoints=true,
-        width=200,
-        height=200,
-        minPointRadius=2,
-        maxPointRadius=5,
-        updateSize=(w, h)=>{},
-    }
-) => {
+const SpatialInstrumentInternal = ({
+    soundPoints,
+    showPoints=true,
+    width=200,
+    height=200,
+    minPointRadius=2,
+    maxPointRadius=5,
+    updateSize,
+}) => {
     const audioContextRef = useRef(new AudioContext());
 
     const instrumentDiv = useRef(null);
@@ -121,12 +118,6 @@ const SpatialInstrumentInternal = (
                 width={width}
                 height={height}
             >
-                <SvgRender
-                    width={instrumentWidth}
-                    height={instrumentHeight}
-                    x={mouseX}
-                    y={mouseY}
-                />
                 {soundPoints.map((soundPoint, i) => (
                     <React.Fragment key={`fragment-${i}`}>
                         <SamplePlayer

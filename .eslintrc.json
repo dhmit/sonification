@@ -27,7 +27,7 @@
         "max-classes-per-file": ["off"],
         "max-len": ["warn", { "code": 100, "ignoreUrls": true }],
         "no-console": ["off"],
-        "no-multi-spaces": ["error", { "ignoreEOLComments": true }],
+        "no-multi-spaces": ["warn", { "ignoreEOLComments": true }],
         "no-multiple-empty-lines": ["off"],
         "no-param-reassign": ["off"],
         "no-plusplus": ["off"],

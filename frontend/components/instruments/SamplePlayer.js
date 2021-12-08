@@ -26,6 +26,8 @@ const SamplePlayer = ({
     volume,
     audioContext,
 }) => {
+    if (!sample) return null;
+
     const audioSourceRef = useRef(null);
     const audioGainNodeRef = useRef(audioContext.createGain());
     const [isPlaying, setIsPlaying] = useState(false);

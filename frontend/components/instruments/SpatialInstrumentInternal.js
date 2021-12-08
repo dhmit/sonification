@@ -18,11 +18,6 @@ import STYLES from "./SpatialInstrument.module.scss";
    fixed by keeping everything playing at all times, just using 0 volume to "turn off" nodes.
 */
 
-/*
-svgRender should be a component which takes 4 props (width: instrument width, height: instrument
- height, x: current mouseX, y: current mouseY) and returns svg components to render (doesn't need
- a wrapping svg tag, since this will be placed into the main svg tag of the instrument itself).
- */
 const SpatialInstrumentInternal = ({
     soundPoints,
     showPoints=true,
@@ -33,6 +28,11 @@ const SpatialInstrumentInternal = ({
     updateSize,
 }) => {
     const audioContextRef = useRef(new AudioContext());
+
+    useEffect(() => {
+        // Cleanup function
+        return () => audioContextRef.current.close();
+    }, []);
 
     const instrumentDiv = useRef(null);
     const [mouseX, setMouseX] = useState(null);
@@ -45,7 +45,7 @@ const SpatialInstrumentInternal = ({
         const {width: w, height: h} = instrumentDiv.current.getBoundingClientRect();
         setInstrumentWidth(w);
         setInstrumentHeight(h);
-    }, [width, height, instrumentDiv]);
+    }, [width, height]);
 
     useEffect(() => {
         updateSize(instrumentWidth, instrumentHeight);

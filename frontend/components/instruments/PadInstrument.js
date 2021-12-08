@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./PadInstrument.module.scss";
@@ -9,9 +9,14 @@ export const Pad = ({sample, audioContext}) => {
 
     const handleClick = () => {
         setShouldPlay(true);
-        // TODO(ra): dynamically set to length of sample, or allow retriggers shorter than that
-        setTimeout(() => {setShouldPlay(false); }, 1000);
     };
+
+    useEffect(() => {
+        if (!shouldPlay) return;
+
+        const timeout = setTimeout(() => { setShouldPlay(false); }, 1000);
+        return () => clearInterval(timeout);
+    }, [shouldPlay]);
 
     // Pick button style depending on if sample is loaded
     const btnStyle =
@@ -46,8 +51,13 @@ Pad.propTypes = {
 const PadInstrument = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
 
+    useEffect(() => {
+        // Cleanup function
+        return () => audioContextRef.current.close();
+    }, []);
+
     return (
-        <div id="step-sequencer">
+        <div>
             {samples.map((sample, i) => (
                 <Pad
                     key={i}

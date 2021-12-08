@@ -5,8 +5,8 @@ const TimeSeries = () => {
     const [audioSample, setAudioSample] = useState(null);
 
     return (
-        <>
-            <h2>Time Series Data</h2>
+        <div>
+            <h1>Time Series Data</h1>
             <UploadTimeSeriesFileInput
                 uploadSuccessfulCallback={setAudioSample}
                 apiEndpoint={'/api/time_series_to_music/'}
@@ -26,7 +26,7 @@ const TimeSeries = () => {
                 </>: null
             }
 
-        </>
+        </div>
     );
 };
 

@@ -11,11 +11,12 @@ const SpatialInstrument = ({samples, width=200, height=200}) => {
     const [offsetY, setOffsetY] = useState(100);
 
     function updateSize(w, h) {
+        if (Math.min(w,h) <= 200) {
+            return;
+        }
         setRadius(.8*Math.min(w/2, h/2));
         setOffsetX(w/2);
         setOffsetY(h/2);
-
-        updateSoundPoints();
     }
 
     function unityPoint(i, n) {
@@ -33,7 +34,7 @@ const SpatialInstrument = ({samples, width=200, height=200}) => {
 
     useEffect(() => {
         updateSoundPoints();
-    }, [samples]);
+    }, [samples, radius, offsetX, offsetY]);
 
     return <SpatialInstrumentInternal
         soundPoints={soundPoints}

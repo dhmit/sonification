@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useState, useRef, useEffect} from "react";
 import PropTypes from "prop-types";
 import Slider from "../inputs/Slider";
 import SamplePlayer from "./SamplePlayer";
@@ -10,17 +10,17 @@ const SliderPlayer = ({
     sample,
     isPlaying,
     index,
+    audioContext,
+    initialVolume=0,
 }) => {
-    const [volume, setVolume] = useState(0);
-    const audioContextRef = useRef(new AudioContext());
-
+    const [volume, setVolume] = useState(initialVolume);
     return (<>
         <SamplePlayer
             loop={true}
             sample={sample}
             volume={volume}
             shouldPlay={isPlaying}
-            audioContext={audioContextRef.current}
+            audioContext={audioContext}
         />
         <Slider
             id={index}
@@ -33,6 +33,8 @@ SliderPlayer.propTypes = {
     sample: PropTypes.string,
     index: PropTypes.number,
     isPlaying: PropTypes.bool,
+    audioContext: PropTypes.object,
+    initialVolume: PropTypes.number,
 };
 
 
@@ -41,8 +43,15 @@ SliderPlayer.propTypes = {
  * provides sliders for playing loops with stop/start controls.
  */
 const SliderInstrument = ({samples}) => {
-    const [isPlaying, setIsPlaying] = useState(false);
+    const [isPlaying, setIsPlaying] = useState(true);
     const toggleAudio = () => setIsPlaying(!isPlaying);
+    const audioContextRef = useRef(new AudioContext());
+
+    useEffect(() => {
+        // Cleanup function
+        return () => audioContextRef.current.close();
+    }, []);
+
 
     const controllers = [];
     for (let i = 0; i < samples.length; i++) {
@@ -54,6 +63,8 @@ const SliderInstrument = ({samples}) => {
                     sample={samples[i]}
                     isPlaying={isPlaying}
                     loop={true}
+                    audioContext={audioContextRef.current}
+                    initialVolume={i === 0 ? 100 : 0}
                 />
             </li>);
     }

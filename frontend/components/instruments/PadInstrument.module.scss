@@ -1,14 +1,14 @@
-#page {
+#instrument {
     display: grid;
     grid-template-areas: "a . b";
     grid-template-columns: 300px 100px 300px;
 }
 
-#page > pad-line1 {
+#pad-line1 {
     grid-area: a;
 }
 
-#page > pad-line2 {
+#pad-line2 {
     grid-area: b;
 }
 

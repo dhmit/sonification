@@ -68,7 +68,7 @@ const PadInstrument = ({samples}) => {
     const pads2 = [];
     const pads3 = [];
     // isn't dynamic to the size of the pads
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 8; i++) {
         if (i < 4) {
             let padClassName = STYLES.cyanPad;
             const thisPad = (
@@ -82,9 +82,7 @@ const PadInstrument = ({samples}) => {
                 />
             );
             pads.push(thisPad);
-        }
-        ;
-        if (i < 8) {
+        } else {
             let padClassName = STYLES.magentaPad;
             const thisPad = (
                 <Pad
@@ -96,24 +94,11 @@ const PadInstrument = ({samples}) => {
                 />
             );
             pads2.push(thisPad);
-        };
-        if (i < 10) {
-            let padClassName = STYLES.limePad;
-            const thisPad = (
-                <Pad
-                    keyBind={keyBinds[i]}
-                    key={i}
-                    sample={samples[i]}
-                    keyStatus={keyStatus}
-                    padClassName={padClassName}
-                    audioContext={audioContextRef.current}
-                />
-            );
-            pads3.push(thisPad);
+        }
         };
     };
     return (
-        <section id="page">
+        <section id="instrument">
             <div id="pad-line1">
                 {pads}
             </div>
@@ -122,7 +107,6 @@ const PadInstrument = ({samples}) => {
             </div>
         </section>
     );
-};
 
 PadInstrument.propTypes = {
     samples: PropTypes.array,

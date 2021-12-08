@@ -1,17 +1,29 @@
+#pad-instrument {
+    display: grid;
+    grid-template-columns: 300px 100px 300px;
+}
+
 .pad {
+    border-radius: 10px;
     width: 50px;
-    height: 25px;
-    background-color: blue;
-    border: 1px solid black;
+    height: 50px;
+    background-color: white;
+    border: 5px solid gray;
+    margin-right: 5px;
+    margin-left: 5px;
+    margin-bottom: 5px;
+}
+
+.cyanPad {
+    composes: pad;
     &:active {
-        background-color: red;
+        background-color: cyan;
     }
 }
 
-.emptyPad {
+.magentaPad {
     composes: pad;
-    background-color: grey;
     &:active {
-        background-color: grey;
+        background-color: magenta;
     }
 }

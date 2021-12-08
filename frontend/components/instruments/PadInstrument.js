@@ -3,32 +3,36 @@ import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./PadInstrument.module.scss";
 
-
-export const Pad = ({sample, audioContext}) => {
+const Pad = ({sample, audioContext, keyBind, padClassName}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
 
-    const handleClick = () => {
-        setShouldPlay(true);
+    const handleKeyDown = (event) => {
+        if (event.key === keyBind) {
+            setShouldPlay(true);
+        }
     };
 
     useEffect(() => {
-        if (!shouldPlay) return;
+        document.addEventListener('keydown', handleKeyDown);
+        return () => {
+            document.removeEventListener('keydown', handleKeyDown);
+        };
+    }, []);
 
+    useEffect(() => {
+        if (!shouldPlay) return;
         const timeout = setTimeout(() => { setShouldPlay(false); }, 1000);
         return () => clearInterval(timeout);
     }, [shouldPlay]);
 
-    // Pick button style depending on if sample is loaded
-    const btnStyle =
-        sample
-            ? STYLES.pad
-            : STYLES.emptyPad;
 
     return (<>
         <button
-            className={btnStyle}
-            onClick={handleClick}
-        />
+            className={`${padClassName} inactive`}
+            onClick={() => setShouldPlay(true)}
+        >
+            {keyBind}
+        </button>
         <SamplePlayer
             sample={sample}
             shouldPlay={shouldPlay}
@@ -39,8 +43,10 @@ export const Pad = ({sample, audioContext}) => {
     </>);
 };
 Pad.propTypes = {
-    sample: PropTypes.string,
     audioContext: PropTypes.object,
+    keyBind: PropTypes.string,
+    padClassName: PropTypes.string,
+    sample: PropTypes.string,
 };
 
 
@@ -50,25 +56,29 @@ Pad.propTypes = {
  */
 const PadInstrument = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
+    const keyBinds = ['q', 'w', 'e', 'r', 'a', 's', 'd', 'f', 'u', 'i', 'o', 'p'];
 
     useEffect(() => {
         // Cleanup function
-        return () => audioContextRef.current.close();
+        return () => void audioContextRef.current.close();
     }, []);
 
+    const pads = samples.map((sample, i) => (
+        <Pad
+            keyBind={keyBinds[i]}
+            key={i}
+            sample={samples[i]}
+            padClassName={i < 4 ? STYLES.cyanPad : STYLES.magentaPad}
+            audioContext={audioContextRef.current}
+        />
+    ));
+
     return (
-        <div>
-            {samples.map((sample, i) => (
-                <Pad
-                    key={i}
-                    sample={sample}
-                    audioContext={audioContextRef.current}
-                />
-            ))}
-        </div>
+        <section id="pad-instrument">
+            {pads}
+        </section>
     );
 };
-
 PadInstrument.propTypes = {
     samples: PropTypes.array,
 };

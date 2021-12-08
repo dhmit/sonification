@@ -1,4 +1,4 @@
-import React, {useState, useRef} from "react";
+import React, {useEffect, useState, useRef} from "react";
 import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./StepSequencer.module.scss";
@@ -37,7 +37,7 @@ Step.propTypes = {
     vol: PropTypes.number,
 };
 
-const Metronome = ({sample, audioContext, colIsPlaying}) => {
+const Metronome = ({colIsPlaying}) => {
     // Pick button style depending on if sample is loaded
     const btnStyle =
         colIsPlaying
@@ -45,22 +45,11 @@ const Metronome = ({sample, audioContext, colIsPlaying}) => {
             : STYLES.notPlaying;
 
     return (<>
-        <button
-            className={btnStyle}
-        />
-        <SamplePlayer
-            sample={sample}
-            shouldPlay={colIsPlaying}
-            loop={false}
-            volume={100}
-            audioContext={audioContext}
-        />
+        <div className={btnStyle} style={{display: 'inline-block'}} />
     </>);
 };
 Metronome.propTypes = {
-    sample: PropTypes.string,
     colIsPlaying: PropTypes.bool,
-    audioContext: PropTypes.object,
 };
 
 const Row = ({sample, audioContext, rowIndex, numSteps, playbackPosition, isPlaying}) => {
@@ -101,13 +90,12 @@ Row.propTypes = {
 };
 
 const StepSequencer = ({samples}) => {
-    // - stretch goal: metronome ticks even without playback--DONE
-    // - stretch goal: tempo slider--DONE
-    // - stretch goal: changeable time signature--DONE
-    // - next steps: connecting step sequencer to other sonification projects (e.g. Colors to Sound)
-    // - next steps: make each button brighter according to volume
-
     const audioContextRef = useRef(new AudioContext());
+    useEffect(() => {
+        // Cleanup function
+        return () => audioContextRef.current.close();
+    }, []);
+
     const [numSteps, setNumSteps] = useState(4);
     const [tempo, setTempo] = useState(60);
 
@@ -162,9 +150,6 @@ const StepSequencer = ({samples}) => {
     return (<>
         <div>
             <div>
-                Playback position: {playbackPosition}
-            </div>
-            <div>
                 <button className="btn btn-outline-primary text-right"
                     onClick={handlePlay}
                 >
@@ -200,18 +185,10 @@ const StepSequencer = ({samples}) => {
                 />
             </div>
         ))}
-        <Metronome
-            key={0}
-            sample={samples[2]}
-            audioContext={audioContextRef.current}
-            colIsPlaying={isPlaying && 0 === playbackPosition}
-        />
-        {Array(numSteps-1).fill(null).map((_, colIndex) => (
+        {Array(numSteps).fill(null).map((_, colIndex) => (
             <Metronome
                 key={colIndex+1}
-                sample={samples[1]}
-                audioContext={audioContextRef.current}
-                colIsPlaying={isPlaying && (colIndex+1) === playbackPosition}
+                colIsPlaying={isPlaying && colIndex === playbackPosition}
             />
         ))}
         <div>

@@ -14,7 +14,6 @@ const SpatialInstrument = ({samples, width=200, height=200}) => {
         if (Math.min(w,h) <= 200) {
             return;
         }
-        console.log("received", w, h);
         setRadius(.8*Math.min(w/2, h/2));
         setOffsetX(w/2);
         setOffsetY(h/2);

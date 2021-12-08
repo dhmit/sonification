@@ -1,7 +1,6 @@
 import React from "react";
 import {SketchPicker} from 'react-color';
 import {fetchPost} from "../../common";
-import SliderInstrument from "../instruments/SliderInstrument";
 import PaletteColor from "./PaletteColor";
 import InstrumentPicker from "../instruments/InstrumentPicker";
 

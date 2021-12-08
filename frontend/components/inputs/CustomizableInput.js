@@ -1,7 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
 import STYLES from "./CustomizableInput.module.scss";
-import HoverTooltip from "../synthesizePolygons/HoverTooltip";
+import ReactTooltipDefaultExport from 'react-tooltip';
 
 /**
  * A customizable input component. Consists of a wrapper div, a display description, and an
@@ -15,7 +15,7 @@ const CustomizableInput = (
         getValue, setValue,
         enabled=true,
         options=[],
-        onEdit,
+        onEdit=()=>{},
         tooltip,
         ...rest
     }
@@ -29,6 +29,8 @@ const CustomizableInput = (
     return (
         <div key={name} className={STYLES.customizableInputDiv} hidden={!enabled}>
             {display}
+            {type === "range" && (" " + getValue())}
+            {/*{type === "range" && <label className={STYLES.rangeLabelLeft}>{rest.min}</label>}*/}
             {type === "dropdown"
                 ? <select
                     name={name}
@@ -52,7 +54,12 @@ const CustomizableInput = (
                     {...rest}
                 />
             }
-            <HoverTooltip tooltip={tooltip}/>
+            <ReactTooltipDefaultExport id={name} place="right">
+                {tooltip}
+            </ReactTooltipDefaultExport>
+            <div className={STYLES.tooltipDiv} data-tip data-for={name}>
+                <div>?</div>
+            </div>
         </div>
     );
 };

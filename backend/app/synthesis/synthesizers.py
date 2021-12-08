@@ -3,44 +3,100 @@ Methods for creating sound!
 """
 import math
 import numpy as np
-
+from scipy import signal
 
 from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
-def generate_sine_wave(frequency, duration):
+# pylint: disable=too-many-locals
+def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.sin):
     """
-    Generates audio samples for a sine wave at a given frequency and duration
-
-    :param frequency:  frequency in Hz
-    :param duration:   duration in seconds
-    :return: audio samples for the sine wave
+    Generates audio samples for various wave types
+    :param frequency: frequency in Hz
+    :param duration:  duration in seconds
+    :param harmonics: number of desired harmonics
+    :param wave_type:  wave type
+    :param vibrato: boolean for using vibrato or not
+    :return: audio samples for wave of the given wave type
     """
     num_samples = int(duration * WAV_SAMPLE_RATE)
     time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
-    sine_wave_samples = np.sin(frequency * 2 * np.pi * time_steps)
+    wave_samples = wave_type(frequency * 2 * np.pi * time_steps)
+
+    if harmonics != 0:
+        for i in range(harmonics):
+            harmonic = np.sin(frequency * 2 * np.pi * time_steps * (i + 2))
+            for j, _ in enumerate(wave_samples):
+                wave_samples[j] += harmonic[j]
+
+    if vibrato:
+        vibrato_changer = 5  # 5 is arbitrary, decrease for stronger vibrato
+        copies = {}
+
+        for c in range(20):
+            copy = len(wave_samples) * [wave_samples[0] / vibrato_changer]
+            for i in range(2000 * c, len(wave_samples)):
+                if i < (len(wave_samples) - 1000):
+                    copy[i] = (wave_samples[i - 2000 * c]) / vibrato_changer
+                else:
+                    copy[i] = 0
+
+            copies[c] = copy
+
+        for i, _ in enumerate(copies):
+            wave_samples += copies[i]
+
+    return wave_samples
+
+
+def generate_sine_wave(frequency, duration, harmonics=0, vibrato=False):
+    """
+    Generates audio samples for a sine wave
+    Wrapper for generate_wave, passing np.sin as the wave_type
+    """
+    sine_wave_samples = generate_wave(frequency, duration, harmonics, vibrato, np.sin)
     return sine_wave_samples
 
 
+def generate_square_wave(frequency, duration, harmonics=0, vibrato=False):
+    """
+    Generates audio samples for a square wave
+    Wrapper for generate_wave, passing signal.square as the wave_type
+    """
+    square_wave_samples = generate_wave(frequency, duration, harmonics, vibrato, signal.square)
+    return square_wave_samples
+
+
+def generate_sawtooth_wave(frequency, duration, harmonics=0, vibrato=False):
+    """
+    Generates audio samples for a sawtooth wave
+    Wrapper for generate_wave, passing signal.sawtooth as the wave_type
+    """
+    sawtooth_wave_samples = generate_wave(frequency, duration, harmonics, vibrato, signal.sawtooth)
+    return sawtooth_wave_samples
+
+
 # pylint: disable-msg=R0913
-def generate_sine_wave_with_envelope(frequency, duration,
-                                     a_percentage=0.1, d_percentage=0.1,
-                                     s_percentage=0.1, r_percentage=0.7):
+def generate_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
+                                s_percentage=0.1, r_percentage=0.7, harmonics=0, vibrato=False,
+                                wave_type=np.sin):
     # pylint: disable-msg=R0914
     """
     Uses the ADSR (Attack, Decay, Sustain, Release) envelope
     to generate a note that fades in and out
     Adapted from example in https://towardsdatascience.com/music-in-python-2f054deb41f4
-    :param frequency: frequency of the note in Hz
-    :param duration: duration in seconds
+    :param frequency: frequency in Hz
+    :param duration:  duration in seconds
     :param a_percentage: attack
     :param d_percentage: decay
     :param s_percentage: sustain
     :param r_percentage: release
-    :return audio_samples: list of samples for the note
+    :param harmonics: number of desired harmonics
+    :param vibrato: boolean for using vibrato or not
+    :param wave_type: wave type
+    :return:
     """
-
     peak_weight = 1
     sustain_weight = peak_weight * 0.7
     final_weight = 0
@@ -88,12 +144,60 @@ def generate_sine_wave_with_envelope(frequency, duration,
     # Concatenate weights for the full envelope
     adsr_envelope_weights = np.array(a_weights + d_weights + s_weights + r_weights)
 
-    sine_wave_samples = generate_sine_wave(frequency, duration)
+    wave_samples = generate_wave(frequency, duration, harmonics, vibrato, wave_type)
 
     # apply the envelope weights to the generated sine wave
-    audio_samples_with_adsr_envelope = sine_wave_samples * adsr_envelope_weights
+    audio_samples_with_adsr_envelope = wave_samples * adsr_envelope_weights
 
     return audio_samples_with_adsr_envelope
+
+
+# pylint: disable-msg=R0913
+def generate_sine_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
+                                     s_percentage=0.1, r_percentage=0.7, harmonics=0,
+                                     vibrato=False):
+    # pylint: disable-msg=R0914
+    """
+    For a sine wave uses the ADSR (Attack, Decay, Sustain, Release) envelope
+    to generate a note that fades in and out
+    Adapted from example in https://towardsdatascience.com/music-in-python-2f054deb41f4
+    :param frequency: frequency of the note in Hz
+    :param duration: duration in seconds
+    :param a_percentage: attack
+    :param d_percentage: decay
+    :param s_percentage: sustain
+    :param r_percentage: release
+    :param harmonics: number of desired harmonics
+    :param vibrato: boolean for using vibrato or not
+    :return audio_samples: list of samples for the note
+    """
+
+    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
+                                       s_percentage, r_percentage, harmonics, vibrato, np.sin)
+
+
+def generate_square_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
+                                       s_percentage=0.1, r_percentage=0.7, harmonics=0,
+                                       vibrato=False):
+    """
+    Square wave with envelope created similarly to sine waves
+    created by generate_sine_wave_with_envelope.
+    """
+    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
+                                       s_percentage, r_percentage, harmonics, vibrato,
+                                       signal.square)
+
+
+def generate_sawtooth_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percentage=0.1,
+                                         s_percentage=0.1, r_percentage=0.7, harmonics=0,
+                                         vibrato=False):
+    """
+    Sawtooth wave with envelope created similarly to sine waves
+    created by generate_sine_wave_with_envelope.
+    """
+    return generate_wave_with_envelope(frequency, duration, a_percentage, d_percentage,
+                                       s_percentage, r_percentage, harmonics,
+                                       vibrato, signal.sawtooth)
 
 
 def convert_piano_key_num_to_sin_wave(piano_key):

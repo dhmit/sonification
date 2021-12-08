@@ -3,26 +3,11 @@ import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./PadInstrument.module.scss";
 
-/*
-    CURRENTLY:
-    - pads are mapped to keyboard inputs
-
-    TODO:
-    - space out pads on the screen
-    - pseudo-class for keydown?
-    - how to print a variable within the pads
-    - onKeyPress add onKeyUp remove on class
- */
-
 const Pad = ({sample, audioContext, keyBind, padClassName}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
     const [keyStatus, setKeyStatus] = useState(false);
     const playSample = () => {
         setShouldPlay(true);
-        // TODO(ra): dynamically set to length of sample, or allow retriggers shorter than that
-        setTimeout(() => {
-            setShouldPlay(false);
-        }, 1000);
     };
 
     const handleClick = () => playSample();
@@ -37,7 +22,23 @@ const Pad = ({sample, audioContext, keyBind, padClassName}) => {
         document.addEventListener('keyup', (event) => {
             setKeyStatus(false);
         });
+
+
     }, []);
+
+    useEffect(() => {
+        if (!shouldPlay) return;
+
+        const timeout = setTimeout(() => { setShouldPlay(false); }, 1000);
+        return () => clearInterval(timeout);
+    }, [shouldPlay]);
+
+
+    // Pick button style depending on if sample is loaded
+    const btnStyle =
+        sample
+            ? STYLES.pad
+            : STYLES.emptyPad;
 
     return (<>
         <button
@@ -70,6 +71,12 @@ const PadInstrument = ({samples}) => {
     const pads2 = [];
     const pads3 = [];
     // isn't dynamic to the size of the pads
+
+    useEffect(() => {
+        // Cleanup function
+        return () => audioContextRef.current.close();
+    }, []);
+
     for (let i = 0; i < 8; i++) {
         if (i < 4) {
             let padClassName = STYLES.cyanPad;

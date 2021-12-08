@@ -59,9 +59,9 @@ jobs:
       - name: Install frontend deps and eslint
         run: |
           npm ci
-      - name: Run eslint on frontend/src
+      - name: Run eslint on frontend
         run: |
-          ./node_modules/.bin/eslint --max-warnings 0 frontend/**/*.js
+          ./node_modules/.bin/eslint --max-warnings 0 frontend
   frontend_tests:
     runs-on: ubuntu-latest
     steps:

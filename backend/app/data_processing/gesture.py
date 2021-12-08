@@ -81,3 +81,21 @@ def convert_gesture_to_audio(gesture, gesture_param):
     for pair in sonified_gesture:
         audio_samples.extend(generate_sine_wave_with_envelope(pair[0], pair[1]))
     return audio_samples
+
+
+def get_instrument_sliders(gestures, gesture_param):
+    # commit #1 on 11/12/2021
+    """
+    :param gestures: list of coordinates received from user input via frontend
+    :param gesture_param: dictionary storing the high and low bounds of pitch in Hz,
+        the high and low bounds of duration in seconds, and the factor to compress notes by
+    :return: a list of sums of the coordinates in each compressed gesture
+    """
+    compressed_gestures = compress_coordinates(gestures, gesture_param['compression'])
+    result = []
+    for gesture in compressed_gestures:
+        coordinates_sum = 0
+        for coordinate in gesture:
+            coordinates_sum += coordinate['x'] + coordinate['y']
+        result.append(coordinates_sum)
+    return result

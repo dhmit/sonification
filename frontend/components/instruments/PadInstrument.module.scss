@@ -43,3 +43,11 @@
         background-color: lime;
     }
 }
+
+.emptyPad {
+    composes: pad;
+    background-color: grey;
+    &:active {
+        background-color: grey;
+    }
+}

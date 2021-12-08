@@ -1,6 +1,7 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
+import RangeSliderInput from "../inputs/RangeSliderInput";
 
 
 const GesturesToSound = () => {
@@ -13,7 +14,7 @@ const GesturesToSound = () => {
     const [undoneGestures, setUndoneGestures] = useState([]);
     const [gestureParams, setGestureParams] = useState({
         compression: 10,
-        pitch: {low: 131, high:698}, // range of tenor-alto
+        pitch: {low: 131, high:698},
         duration: {low: 0.1, high:2},
     });
     const [hideAxisLabel, setHideAxisLabel] = useState(true);
@@ -163,16 +164,14 @@ const GesturesToSound = () => {
             ({...prevState, compression: parseInt(event.target.value)}));
     };
 
-    const handleUpdatePitch = (event) => {
-        event.preventDefault();
+    const updatePitch = (newValue) => {
         setGestureParams(prevParams => ({...prevParams,
-            pitch:{...prevParams.pitch, [event.target.id]: parseInt(event.target.value)}}));
+            pitch:{low:newValue[0], high:newValue[1]}}));
     };
 
-    const handleUpdateDuration = (event) => {
-        event.preventDefault();
+    const updateDuration = (newValue) => {
         setGestureParams(prevParams => ({...prevParams,
-            duration:{...prevParams.duration, [event.target.id]: parseFloat(event.target.value)}}));
+            duration:{low:newValue[0], high:newValue[1]}}));
     };
 
     return (
@@ -235,45 +234,27 @@ const GesturesToSound = () => {
                             : 'coordinates'} per note
                     </p>
                     <p>
-                        <b>Pitch:</b>
-                        <div className="row">
-                            <div className="col">
-                                Low:
-                                <input className="mx-2" type="range" min="75" max="262"
-                                    step="1" id="low" value={gestureParams.pitch.low}
-                                    onChange={handleUpdatePitch}/>
-                                {gestureParams.pitch.low} Hz
-                            </div>
-                            <div className="col">
-                                High:
-                                <input className="mx-2" type="range" min="300" max="1045"
-                                    step="1" id="high" value={gestureParams.pitch.high}
-                                    onChange={handleUpdatePitch}/>
-                                {gestureParams.pitch.high} Hz
-                            </div>
-                        </div>
+                        <b>Duration:</b>
+                        <RangeSliderInput
+                            name="duration"
+                            units="secs"
+                            minValue={0.01}
+                            maxValue={2}
+                            updateValues={updateDuration}
+                            step={0.01}
+                        />
                     </p>
                     <p>
-                        <b>Duration:</b>
-                        <div className="row">
-                            <div className="col">
-                                Low:
-                                <input type="range" min="0.01" max="0.5" id="low" step="0.01"
-                                    value={gestureParams.duration.low}
-                                    onChange={handleUpdateDuration}/>
-                                {gestureParams.duration.low} secs
-                            </div>
-                            <div className="col">
-                                High:
-                                <input type="range" min="1" max="2" step="0.01" id="high"
-                                    value={gestureParams.duration.high}
-                                    onChange={handleUpdateDuration}/>
-                                {gestureParams.duration.high} {gestureParams.duration.high === 1
-                                    ? 'sec' : 'secs'}
-                            </div>
-                        </div>
+                        <b>Pitch:</b>
+                        <RangeSliderInput
+                            name="pitch"
+                            units="Hz"
+                            minValue={131} // range of tenor-alto
+                            maxValue={698}
+                            updateValues={updatePitch}
+                            step={1}
+                        />
                     </p>
-
                     {
                         soundData && <p>
                             Gesture Sounds:

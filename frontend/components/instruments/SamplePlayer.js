@@ -26,10 +26,15 @@ const SamplePlayer = ({
     volume,
     audioContext,
 }) => {
+    if (!sample) return null;
+
     const audioSourceRef = useRef(null);
     const audioGainNodeRef = useRef(audioContext.createGain());
+    // save a ref to the audio buffer so we can cache between reloads
+    const audioBuffer = useRef(sampleBase64StrToArrayBuffer(sample));
     const [isPlaying, setIsPlaying] = useState(false);
     const [shouldSetupAudio, setShouldSetupAudio] = useState(true);
+
 
     const setupAudioRouting = () => {
         const audioGainNode = audioGainNodeRef.current;
@@ -48,10 +53,16 @@ const SamplePlayer = ({
             setIsPlaying(false);
         };
 
-        const audioBuffer = sampleBase64StrToArrayBuffer(sample);
-        audioContext.decodeAudioData(audioBuffer, (buffer) => { audioSource.buffer = buffer; });
+        audioContext.decodeAudioData(
+            // decodeAudioData detaches the buffer when complete, preventing reuse
+            // so we pass a _copy_ of the cached value in the ref,
+            // to avoid having to reconvert to an ArrayBuffer everytime
+            audioBuffer.current.slice(0),
+            (buffer) => { audioSource.buffer = buffer; }
+        );
         setShouldSetupAudio(false);
     };
+
 
     useEffect(() => {
         setupAudioRouting();

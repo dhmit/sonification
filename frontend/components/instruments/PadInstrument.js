@@ -19,22 +19,24 @@ const Pad = ({sample, audioContext, keyBind, padClassName}) => {
     const playSample = () => {
         setShouldPlay(true);
         // TODO(ra): dynamically set to length of sample, or allow retriggers shorter than that
-        setTimeout(() => {setShouldPlay(false); }, 1000);
+        setTimeout(() => {
+            setShouldPlay(false);
+        }, 1000);
     };
 
     const handleClick = () => playSample();
 
     useEffect(() => {
-        document.addEventListener('keydown', (event) => {
-            if (event.key === keyBind) {
-                playSample();
-                keyStatus = true;
-            }
-        });
-        document.addEventListener('keyup', (event) => {
-            keyStatus = false;
-        });
-    },
+            document.addEventListener('keydown', (event) => {
+                if (event.key === keyBind) {
+                    playSample();
+                    keyStatus = true;
+                }
+            });
+            document.addEventListener('keyup', (event) => {
+                keyStatus = false;
+            });
+        },
         []);
 
     return (<>
@@ -73,7 +75,7 @@ const PadInstrument = ({samples}) => {
             let padClassName = STYLES.cyanPad;
             const thisPad = (
                 <Pad
-                    keyStatus = {keyStatus}
+                    keyStatus={keyStatus}
                     keyBind={keyBinds[i]}
                     key={i}
                     sample={samples[i]}
@@ -95,8 +97,7 @@ const PadInstrument = ({samples}) => {
             );
             pads2.push(thisPad);
         }
-        };
-    };
+    }
     return (
         <section id="instrument">
             <div id="pad-line1">
@@ -107,7 +108,7 @@ const PadInstrument = ({samples}) => {
             </div>
         </section>
     );
-
+};
 PadInstrument.propTypes = {
     samples: PropTypes.array,
 };

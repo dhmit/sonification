@@ -31,7 +31,7 @@ const SpatialInstrumentInternal = ({
 
     useEffect(() => {
         // Cleanup function
-        return () => audioContextRef.current.close();
+        return () => void audioContextRef.current.close();
     }, []);
 
     const instrumentDiv = useRef(null);

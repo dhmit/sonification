@@ -1,15 +1,6 @@
-#instrument {
+#pad-instrument {
     display: grid;
-    grid-template-areas: "a . b";
     grid-template-columns: 300px 100px 300px;
-}
-
-#pad-line1 {
-    grid-area: a;
-}
-
-#pad-line2 {
-    grid-area: b;
 }
 
 .pad {
@@ -34,20 +25,5 @@
     composes: pad;
     &:active {
         background-color: magenta;
-    }
-}
-
-.limePad {
-    composes: pad;
-    &:active {
-        background-color: lime;
-    }
-}
-
-.emptyPad {
-    composes: pad;
-    background-color: grey;
-    &:active {
-        background-color: grey;
     }
 }

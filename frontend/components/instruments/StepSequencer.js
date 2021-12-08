@@ -91,7 +91,7 @@ const StepSequencer = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
     useEffect(() => {
         // Cleanup function
-        return () => audioContextRef.current.close();
+        return () => void audioContextRef.current.close();
     }, []);
 
     const [numSteps, setNumSteps] = useState(4);
@@ -146,24 +146,6 @@ const StepSequencer = ({samples}) => {
     };
 
     return (<>
-        <div>
-            <div>
-                {isPlaying
-                    ? <button className="btn btn-outline-primary" onClick={handlePause}>⏸</button>
-                    : <button className="btn btn-outline-primary" onClick={handlePlay}>▶</button>
-                }
-                <button className="btn btn-outline-primary mx-2"
-                    onClick={handlePlusBeat}
-                >
-                    +1 beat
-                </button>
-                <button className="btn btn-outline-primary text-left"
-                    onClick={handleMinusBeat}
-                >
-                    -1 beat
-                </button>
-            </div>
-        </div>
         {samples.map((sample, rowIndex) => (
             <div key={rowIndex}>
                 <Row
@@ -183,11 +165,33 @@ const StepSequencer = ({samples}) => {
             />
         ))}
         <div>
-            <b>Tempo:</b>
-            <input className="mx-2" type="range" min="40" max="120"
-                step="1" id="low" value={tempo}
-                onChange={handleUpdateTempo}/>
-            {tempo} bpm
+            <div>
+                {isPlaying
+                    ? <button className="btn btn-outline-primary" onClick={handlePause}>⏸</button>
+                    : <button className="btn btn-outline-primary" onClick={handlePlay}>▶</button>
+                }
+
+                {!isPlaying && <>
+                    <button className="btn btn-outline-primary mx-2"
+                        onClick={handlePlusBeat}
+                    >
+                        + step
+                    </button>
+                    <button className="btn btn-outline-primary text-left"
+                        onClick={handleMinusBeat}
+                    >
+                        - step
+                    </button>
+                    <div>
+                        <b>Tempo:</b>
+                        <input
+                            className="mx-2" type="range" min="40" max="120"
+                            step="1" id="low" value={tempo}
+                            onChange={handleUpdateTempo}/>
+                        {tempo} bpm
+                    </div>
+                </>}
+            </div>
         </div>
     </>);
 };

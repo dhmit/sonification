@@ -3,6 +3,7 @@ import {SketchPicker} from 'react-color';
 import {fetchPost} from "../../common";
 import SliderInstrument from "../instruments/SliderInstrument";
 import PaletteColor from "./PaletteColor";
+import InstrumentPicker from "../instruments/InstrumentPicker";
 
 class ColorSonifier extends React.Component {
     constructor(props) {
@@ -82,7 +83,8 @@ class ColorSonifier extends React.Component {
 
                 <div className="col-sm">
                     {this.state.result.length !== 0 &&
-                    <SliderInstrument samples={this.state.result}/>}
+                        <InstrumentPicker samples={this.state.result}/>
+                    }
                 </div>
             </div>
         </div>);

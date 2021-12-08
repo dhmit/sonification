@@ -16,6 +16,7 @@ import STYLES from "./PadInstrument.module.scss";
 
 const Pad = ({sample, audioContext, keyBind, padClassName}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
+    const [keyStatus, setKeyStatus] = useState(false);
     const playSample = () => {
         setShouldPlay(true);
         // TODO(ra): dynamically set to length of sample, or allow retriggers shorter than that
@@ -27,17 +28,16 @@ const Pad = ({sample, audioContext, keyBind, padClassName}) => {
     const handleClick = () => playSample();
 
     useEffect(() => {
-            document.addEventListener('keydown', (event) => {
-                if (event.key === keyBind) {
-                    playSample();
-                    keyStatus = true;
-                }
-            });
-            document.addEventListener('keyup', (event) => {
-                keyStatus = false;
-            });
-        },
-        []);
+        document.addEventListener('keydown', (event) => {
+            if (event.key === keyBind) {
+                playSample();
+                setKeyStatus(false);
+            }
+        });
+        document.addEventListener('keyup', (event) => {
+            setKeyStatus(false);
+        });
+    }, []);
 
     return (<>
         <button
@@ -75,7 +75,6 @@ const PadInstrument = ({samples}) => {
             let padClassName = STYLES.cyanPad;
             const thisPad = (
                 <Pad
-                    keyStatus={keyStatus}
                     keyBind={keyBinds[i]}
                     key={i}
                     sample={samples[i]}

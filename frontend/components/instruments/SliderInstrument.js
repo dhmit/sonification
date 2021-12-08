@@ -11,8 +11,9 @@ const SliderPlayer = ({
     isPlaying,
     index,
     audioContext,
+    initialVolume=0,
 }) => {
-    const [volume, setVolume] = useState(100);
+    const [volume, setVolume] = useState(initialVolume);
     return (<>
         <SamplePlayer
             loop={true}
@@ -33,6 +34,7 @@ SliderPlayer.propTypes = {
     index: PropTypes.number,
     isPlaying: PropTypes.bool,
     audioContext: PropTypes.object,
+    initialVolume: PropTypes.number,
 };
 
 
@@ -62,6 +64,7 @@ const SliderInstrument = ({samples}) => {
                     isPlaying={isPlaying}
                     loop={true}
                     audioContext={audioContextRef.current}
+                    initialVolume={i === 0 ? 100 : 0}
                 />
             </li>);
     }

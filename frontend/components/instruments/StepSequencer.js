@@ -57,9 +57,7 @@ const Row = ({sample, audioContext, rowIndex, numSteps, playbackPosition, isPlay
 
     const handleUpdateVolume = (event) => {
         event.preventDefault();
-        if (!isPlaying){ // can only move slider when paused
-            setVolume(parseInt(event.target.value));
-        }
+        setVolume(parseInt(event.target.value));
     };
 
     return (<>
@@ -73,10 +71,11 @@ const Row = ({sample, audioContext, rowIndex, numSteps, playbackPosition, isPlay
                     vol = {volume}
                 />
             ))}
-            Volume {rowIndex}
-            <input className="mx-2" type="range" min="0" max="100"
+            <input
+                className="mx-2" type="range" min="0" max="100"
                 step="1" id="low" value={volume}
-                onChange={handleUpdateVolume}/>
+                onChange={handleUpdateVolume}
+            />
         </div>
     </>);
 };
@@ -150,16 +149,10 @@ const StepSequencer = ({samples}) => {
     return (<>
         <div>
             <div>
-                <button className="btn btn-outline-primary text-right"
-                    onClick={handlePlay}
-                >
-                    Play!
-                </button>
-                <button className="btn btn-outline-primary mx-2"
-                    onClick={handlePause}
-                >
-                    Pause!
-                </button>
+                {isPlaying
+                    ? <button className="btn btn-outline-primary" onClick={handlePause}>⏸</button>
+                    : <button className="btn btn-outline-primary" onClick={handlePlay}>▶</button>
+                }
                 <button className="btn btn-outline-primary mx-2"
                     onClick={handlePlusBeat}
                 >

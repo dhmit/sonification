@@ -5,8 +5,6 @@ const PaletteColor = ({id, color, handlePaletteClick, selected}) => {
     const colorCssRgb = `rgb(${color.r},${color.g},${color.b})`;
     const style = {
         backgroundColor: colorCssRgb,
-        height: "30px",
-        width: "100px",
         border: `2px solid ${colorCssRgb}`,
     };
 
@@ -14,13 +12,14 @@ const PaletteColor = ({id, color, handlePaletteClick, selected}) => {
         style.border = "2px solid black";
     }
 
-    return (<span className="mr-2">
+    return (<div className="col-3 mb-1">
         <button
             id={id}
             style={style}
             onClick={handlePaletteClick}
+            className="w-100 h-100"
         />
-    </span>);
+    </div>);
 };
 PaletteColor.propTypes = {
     id: PropTypes.number,

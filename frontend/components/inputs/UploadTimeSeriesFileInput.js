@@ -129,6 +129,10 @@ const UploadTimeSeriesFileInput = ({
                 </p>
                 <div>
                     <button
+                        onClick={() => getSampleData('boston_sunrise_sunset')}
+                        className="btn btn-outline-dark mr-1">
+                        2020 Sunrise and Sunset Times in Boston</button>
+                    <button
                         onClick={() => getSampleData('pi')}
                         className="btn btn-outline-dark mr-1">Digits of Pi</button>
                     <button

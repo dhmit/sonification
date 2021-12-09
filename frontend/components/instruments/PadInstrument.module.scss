@@ -16,14 +16,14 @@
 
 .cyanPad {
     composes: pad;
-    &:active {
+    &:active, &.keypress {
         background-color: cyan;
     }
 }
 
 .magentaPad {
     composes: pad;
-    &:active {
+    &:active, &.keypress {
         background-color: magenta;
     }
 }

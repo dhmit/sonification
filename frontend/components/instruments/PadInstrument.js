@@ -5,10 +5,12 @@ import STYLES from "./PadInstrument.module.scss";
 
 const Pad = ({sample, audioContext, keyBind, padClassName}) => {
     const [shouldPlay, setShouldPlay] = useState(false);
+    const [keyStatusClass, setKeyStatusClass] = useState('');
 
     const handleKeyDown = (event) => {
         if (event.key === keyBind) {
             setShouldPlay(true);
+            setKeyStatusClass(STYLES.keypress);
         }
     };
 
@@ -21,14 +23,17 @@ const Pad = ({sample, audioContext, keyBind, padClassName}) => {
 
     useEffect(() => {
         if (!shouldPlay) return;
-        const timeout = setTimeout(() => { setShouldPlay(false); }, 1000);
+        const timeout = setTimeout(() => {
+            setShouldPlay(false);
+            setKeyStatusClass('');
+        }, 1000);
         return () => clearInterval(timeout);
     }, [shouldPlay]);
 
 
     return (<>
         <button
-            className={`${padClassName} inactive`}
+            className={`${padClassName} ${keyStatusClass} inactive`}
             onClick={() => setShouldPlay(true)}
         >
             {keyBind}

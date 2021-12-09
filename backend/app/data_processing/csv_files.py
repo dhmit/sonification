@@ -4,19 +4,15 @@ This module contains functions for transforming CSV file data into quantities
 that we can plug into the parameters of our synthesis modules.
 
 """
-
 import csv
-import io
 
 
-def parse_csv_upload_as_floats(csv_upload):
+def parse_csv_str_as_floats(csv_str):
     """
-    :param dictionary: True if we want dict representation of CSV, False for list representation
-    :param csv_upload: client-submitted file expected to be in CSV format
-    :return: a list of dictionaries mapping the CSV header data to values for each row
+    Expects a string that's the contents of a CSV file, where the values are floats
+    Returns a list of lists of floats, where the inner lists are rows, with a float per col
     """
-    csv_str = csv_upload.read().decode('utf-8-sig')
-    reader = csv.reader(io.StringIO(csv_str))
+    reader = csv.reader(csv_str)
     float_list = []
     for row in reader:
         try:
@@ -29,3 +25,12 @@ def parse_csv_upload_as_floats(csv_upload):
             pass
 
     return float_list
+
+
+def parse_csv_upload_as_floats(csv_upload):
+    """
+    :param csv_upload: client-submitted file expected to be in CSV format
+    :return: a list of lists, where each inner list represents a row
+    """
+    csv_str = csv_upload.read().decode('utf-8-sig')
+    return parse_csv_str_as_floats(csv_str)

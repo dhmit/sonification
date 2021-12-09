@@ -186,6 +186,7 @@ const TextShapeAnalysis = () => {
                             </div>
                             <div style={{marginTop: "4%"}}>
                                 Align Text:
+                                <br/>
                                 <button className="btn btn-dark mr-1" type="button"
                                     onClick={handleAlignLeft}
                                 >Left

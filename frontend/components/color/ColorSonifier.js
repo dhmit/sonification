@@ -81,7 +81,7 @@ class ColorSonifier extends React.Component {
                                 {colorDisplay}
                             </div>
                             <div className="text-right">
-                                <button className="btn btn-outline-dark"
+                                <button className="btn btn-outline-dark mt-2"
                                     onClick={this.handleSubmit}>
                                     {this.state.instrumentGenerated
                                         ? "Update Instrument"

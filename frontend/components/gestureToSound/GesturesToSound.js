@@ -258,6 +258,7 @@ const GesturesToSound = () => {
                     {
                         soundData && <p>
                             Gesture Sounds:
+                            <br/>
                             <audio controls="controls"
                                 src={`data:audio/wav;base64, ${soundData}`}
                                 controlsList="nodownload"/>

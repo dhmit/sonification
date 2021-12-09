@@ -4,12 +4,14 @@ This module contains functions for transforming CSV file data into quantities
 that we can plug into the parameters of our synthesis modules.
 
 """
-
 import csv
-import io
 
 
 def parse_csv_str_as_floats(csv_str):
+    """
+    Expects a string that's the contents of a CSV file, where the values are floats
+    Returns a list of lists of floats, where the inner lists are rows, with a float per col
+    """
     reader = csv.reader(csv_str)
     float_list = []
     for row in reader:

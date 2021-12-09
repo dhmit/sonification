@@ -90,9 +90,9 @@ const TextShapeAnalysis = () => {
 
     const makeTextInput = (heading, id, value, title, onChange, unit) => (
         <div className="form-inline p-1">
-            <label className="mr-1" htmlFor={id}>{heading}</label>
+            <label className="mr-1" htmlFor={id}>{heading} {(unit && <>({unit})</>)}</label>
             <input
-                className="form-control mr-1" id={id} type="number"
+                className="form-control mr-1 w-25" id={id} type="number"
                 value={value}
                 data-toggle="tooltip"
                 data-placement="top"
@@ -101,7 +101,6 @@ const TextShapeAnalysis = () => {
                 required
                 style={{width: "40%"}}
             />
-            <strong>{unit}</strong>
         </div>
 
     );
@@ -130,16 +129,16 @@ const TextShapeAnalysis = () => {
                     <div className="col">
                         <p><strong>Edit Default Parameters</strong></p>
                         {makeTextInput(
-                            "Seconds Per Line:",
+                            "Seconds Per Line",
                             "secondsPerLine",
                             secondsPerLine,
                             "the duration of each beat frequency in seconds",
                             handleSecondsPerLineChange,
-                            "s"
+                            ""
                         )}
 
                         {makeTextInput(
-                            "Base Frequency:",
+                            "Base Frequency",
                             "baseFreq",
                             baseFreq,
                             "the frequency that the beat frequencies will be based on\n" +
@@ -148,7 +147,7 @@ const TextShapeAnalysis = () => {
                             "Hz"
                         )}
                         {makeTextInput(
-                            "Max Beat Frequency:",
+                            "Max Beat Frequency",
                             "maxBeatFreq",
                             maxBeatFreq,
                             "the maximum possible beat frequency in Hertz",
@@ -182,16 +181,16 @@ const TextShapeAnalysis = () => {
                                 Align Text:
                                 <br/>
                                 <button className="btn btn-dark mr-1" type="button"
-                                    onClick={handleAlignLeft}
-                                >Left
+                                    onClick={handleAlignLeft}>
+                                    Left
                                 </button>
                                 <button className="btn btn-dark mr-1" type="button"
-                                    onClick={handleAlignCenter}
-                                >Center
+                                    onClick={handleAlignCenter}>
+                                    Center
                                 </button>
                                 <button className="btn btn-dark" type="button"
-                                    onClick={handleAlignRight}
-                                >Right
+                                    onClick={handleAlignRight}>
+                                    Right
                                 </button>
                                 <br/>
                                 <button

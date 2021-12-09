@@ -35,8 +35,8 @@ const MusicPlayer = ({music}) => {
 
     return (<div>
         <p>
-        This is a single sonification of your input data.
-        Check out the other tabs for interactive sonifications of the data.
+        This is a sonification of your input data as a single piece of music.
+        Check out the other tabs for interactive sonifications of the data!
         </p>
 
         <audio controls controlsList="nodownload" src={musicDataAsUrl} />

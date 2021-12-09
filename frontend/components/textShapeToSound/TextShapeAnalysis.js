@@ -1,5 +1,7 @@
 import React, {useState} from "react";
 import STYLES from "./TextShapeAnalysis.module.scss";
+import {fetchPost} from "../../common";
+import InstrumentPicker from "../instruments/InstrumentPicker";
 
 const TextShapeAnalysis = () => {
 
@@ -7,7 +9,10 @@ const TextShapeAnalysis = () => {
     const [secondsPerLine, setSecondsPerLine] = useState(1);
     const [baseFreq, setBaseFreq] = useState(440);
     const [maxBeatFreq, setMaxBeatFreq] = useState(20);
-    const [results, setResults] = useState("");
+
+    const [music, setMusic] = useState(null);
+    const [instrumentSamples, setInstrumentSamples] = useState(null);
+
     const [higherSecondFreq, setHigherSecondFreq] = useState(false);
 
     const handleTextChange = (event) => {
@@ -78,20 +83,9 @@ const TextShapeAnalysis = () => {
 
     const handleSubmit = (event) => {
         event.preventDefault();
-        setResults("");
-        const encodedText = encodeURIComponent(text);
-        const encodedSecondsPerLine = encodeURIComponent(secondsPerLine);
-        const encodedBaseFreq = encodeURIComponent(baseFreq);
-        const encodedMaxBeatFreq = encodeURIComponent(maxBeatFreq);
-        const encodedHigherSecondFreq = encodeURIComponent(higherSecondFreq);
-        fetch(`/api/text_shape_to_music/?text=${encodedText}
-        &secondsPerLine=${encodedSecondsPerLine}&baseFreq=${encodedBaseFreq}
-        &maxBeatFreq=${encodedMaxBeatFreq}
-        &higherSecondFreq=${encodedHigherSecondFreq}`)
-            .then(response => response.json())
-            .then(data => {
-                setResults(data["sound"]);
-            });
+        const requestBody = {text, secondsPerLine, baseFreq, maxBeatFreq, higherSecondFreq};
+        void fetchPost('/api/text_shape_to_music/', requestBody, setMusic);
+        void fetchPost('/api/text_shape_to_samples/', requestBody, setInstrumentSamples);
     };
 
     const makeTextInput = (heading, id, value, title, onChange, unit) => (
@@ -210,12 +204,9 @@ const TextShapeAnalysis = () => {
                     </div>
                 </div>
             </form>
-            {results && (<>
-                <h3>Play Audio:</h3>
-                <audio controls controlsList={"download"}>
-                    <source src={`data:audio/wav;base64,${results}`} type={"audio/wav"}/>
-                </audio>
-            </>)}
+            {music && instrumentSamples &&
+                <InstrumentPicker music={music} samples={instrumentSamples} />
+            }
 
         </div>
     );

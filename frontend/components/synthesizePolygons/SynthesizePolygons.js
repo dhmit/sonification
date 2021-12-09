@@ -4,9 +4,11 @@ import PolygonViewer from "./PolygonViewer";
 import PolygonEditor from "./PolygonEditor";
 import CustomizableInput from "../inputs/CustomizableInput";
 import RangeSliderInput from "../inputs/RangeSliderInput";
+import InstrumentPicker from "../instruments/InstrumentPicker";
 import STYLES from "./PolygonPageLayout.module.scss";
 
-const API_ENDPOINT = "/api/polygon_to_music/";
+const MUSIC_API_ENDPOINT = "/api/polygon_to_music/";
+const SAMPLES_API_ENDPOINT = "/api/polygon_to_samples/";
 const LOW_FREQ = 20;
 const HIGH_FREQ = 10000;
 
@@ -20,8 +22,9 @@ const SyncStatus = {
 // TODO: add error reporting for file upload, backend stuff, etc
 const SynthesizePolygons = () => {
     // results
-    const [data, setData] = useState(null);
-    const [sound, setSound] = useState(null);
+    const [musicData, setMusicData] = useState(null);
+    const [musicAudio, setMusicAudio] = useState(null);
+    const [instrumentSamples, setInstrumentSamples] = useState(null);
     const [timestamps, setTimestamps] = useState([]);
     const [curAudioTime, setCurAudioTime] = useState(0);
     const [outOfSync, setOutOfSync] = useState(SyncStatus.SYNCED);
@@ -146,25 +149,27 @@ const SynthesizePolygons = () => {
     });
 
     useEffect(() => {
-        if (data) {
-            if (data["sound"]) {
-                setSound(data["sound"]);
+        if (musicData) {
+            if (musicData["sound"]) {
+                setMusicAudio(musicData["sound"]);
             }
-            if (data["timestamps"]) {
-                setTimestamps(data["timestamps"]);
+            if (musicData["timestamps"]) {
+                setTimestamps(musicData["timestamps"]);
             }
         }
-    }, [data]);
+    }, [musicData]);
 
     useEffect(() => {
-        if (data && sound) {
+        if (musicData && musicAudio) {
             audioRef.current.load();
         }
-    }, [sound]);
+    }, [musicAudio]);
 
     async function submitPolygon(points) {
         setOutOfSync(SyncStatus.LOADING);
-        await fetchPost(API_ENDPOINT, {points, ...createUserOptionObject()}, setData);
+        const requestBody = {points, ...createUserOptionObject()};
+        await fetchPost(SAMPLES_API_ENDPOINT, requestBody, setInstrumentSamples);
+        await fetchPost(MUSIC_API_ENDPOINT, requestBody, setMusicData);
         setOutOfSync(SyncStatus.SYNCED);
     }
 
@@ -311,7 +316,7 @@ const SynthesizePolygons = () => {
                                 {outOfSync}
                             </p>
                         </div>
-                        {data
+                        {musicData
                             ? <>
                                 <audio
                                     controls
@@ -320,12 +325,17 @@ const SynthesizePolygons = () => {
                                     onTimeUpdate={() => {
                                         setCurAudioTime(audioRef.current.currentTime);
                                     }}
-                                    src={`data:audio/wav;base64, ${sound}`}/>
+                                    src={`data:audio/wav;base64, ${musicAudio}`}/>
                                 <br/>
-                                <PolygonViewer width={300} height={300} rawPoints={data["points"]}
-                                    currentTime={curAudioTime} timestamps={timestamps}/>
+                                <PolygonViewer width={300} height={300}
+                                    rawPoints={musicData["points"]}
+                                    currentTime={curAudioTime} timestamps={timestamps}
+                                />
                             </>
                             : <p>Upload a CSV or draw a polygon in the editor to get results! </p>
+                        }
+                        {instrumentSamples &&
+                            <InstrumentPicker music={musicAudio} samples={instrumentSamples}/>
                         }
                     </div>
                 </div>

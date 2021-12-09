@@ -77,9 +77,11 @@ class ColorSonifier extends React.Component {
                     <div className="row mb-4">
                         <div className="col">
                             <div className="row">
-                                {colorDisplay}
+                                <ul className="list-inline ml-3">
+                                    {colorDisplay}
+                                </ul>
                             </div>
-                            <div className="text-right">
+                            <div>
                                 <button className="btn btn-outline-dark mt-2"
                                     onClick={this.handleSubmit}>
                                     {this.state.instrumentSamples
@@ -93,10 +95,10 @@ class ColorSonifier extends React.Component {
                     <div className="row">
                         <div className="col">
                             {this.state.instrumentSamples && this.state.music &&
-                                <InstrumentPicker
-                                    samples={this.state.instrumentSamples}
-                                    music={this.state.music}
-                                />
+                            <InstrumentPicker
+                                samples={this.state.instrumentSamples}
+                                music={this.state.music}
+                            />
                             }
                         </div>
                     </div>
@@ -105,4 +107,5 @@ class ColorSonifier extends React.Component {
         </div>);
     }
 }
+
 export default ColorSonifier;

@@ -5,6 +5,7 @@ that we can plug into the parameters of our synthesis modules.
 
 """
 import csv
+import io
 
 
 def parse_csv_str_as_floats(csv_str):
@@ -32,5 +33,5 @@ def parse_csv_upload_as_floats(csv_upload):
     :param csv_upload: client-submitted file expected to be in CSV format
     :return: a list of lists, where each inner list represents a row
     """
-    csv_str = csv_upload.read().decode('utf-8-sig')
+    csv_str = io.StringIO(csv_upload.read().decode('utf-8-sig'))
     return parse_csv_str_as_floats(csv_str)

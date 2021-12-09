@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 
 const ProjectCard = ({title, description, route}) => {
     return (
-        <div className="col-3 card mb-4 mr-4">
+        <div className="col-sm-4 col-md-3 card mb-4 mr-4">
             <div className="card-body">
                 <h2 className="card-title text-center">
                     <a href={route} className="stretched-link">{title}</a>

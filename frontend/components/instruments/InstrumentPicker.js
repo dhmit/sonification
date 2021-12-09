@@ -16,7 +16,7 @@ const DownloadSamples = ({samples}) => {
                 <li key={i} className="list-group-item">
                     <audio controls controlsList="nodownload" src={sample} />
                     <a
-                        className="btn btn-primary"
+                        className="btn btn-primary float-right"
                         download={`sample-${i}.wav`} href={sample}
                     >
                         Download
@@ -30,10 +30,39 @@ DownloadSamples.propTypes = {
     samples: PropTypes.arrayOf(PropTypes.string),
 };
 
-const InstrumentPicker = ({samples}) => {
+const MusicPlayer = ({music}) => {
+    const musicDataAsUrl = `data:audio/wav;base64, ${music}`;
+
+    return (<div>
+        <p>
+        This is a single sonification of your input data.
+        Check out the other tabs for interactive sonifications of the data.
+        </p>
+
+        <audio controls controlsList="nodownload" src={musicDataAsUrl} />
+        <br />
+        <a
+            className="btn btn-primary float-right"
+            download={`sonification.wav`} href={musicDataAsUrl}
+        >
+            Download
+        </a>
+    </div>);
+};
+MusicPlayer.propTypes = {
+    music: PropTypes.string,
+};
+
+
+
+const InstrumentPicker = ({music, samples}) => {
     const [curInstrument, setCurInstrument] = useState(0);
 
     const instruments = [
+        {
+            title: "Music",
+            component: <MusicPlayer music={music}/>,
+        },
         {
             title: "Pads",
             component: <PadInstrument samples={samples}/>,
@@ -92,6 +121,7 @@ const InstrumentPicker = ({samples}) => {
 };
 InstrumentPicker.propTypes = {
     samples: PropTypes.arrayOf(PropTypes.string),
+    music: PropTypes.string,
 };
 
 export default InstrumentPicker;

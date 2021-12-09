@@ -22,7 +22,10 @@ const TimeSeries = () => {
                         controlsList="download"
                     />
                     <br/>
-                    <img src={`data:image/png;base64, ${audioSample.img}`}/>
+                    <img
+                        src={`data:image/png;base64, ${audioSample.img}`}
+                        alt="A line chart showing the frequencies of the sonified data"
+                    />
                 </>: null
             }
 

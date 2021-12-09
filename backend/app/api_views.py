@@ -92,7 +92,7 @@ def color_to_music(request):
     """
     response_object = request.data['listOfColors']
 
-    sound = None
+    raw_samples = []
     for response in response_object:
         r = response["r"]
         g = response["g"]
@@ -106,20 +106,17 @@ def color_to_music(request):
 
         audio_samples = synths.generate_sine_wave_with_envelope(
             frequency=freq_to_generate,
-            duration=1,
+            duration=3,
             a_percentage=0,
             d_percentage=0,
             s_percentage=1,
             r_percentage=0
         )
 
-        if sound is None:
-            sound = audio_samples
-        else:
-            sound += audio_samples
+        raw_samples.append(audio_samples)
 
-    wav_file_base64 = [audio_samples_to_wav_base64(sound)]
-
+    raw_audio = np.hstack(raw_samples)
+    wav_file_base64 = audio_samples_to_wav_base64(raw_audio)
     return Response(wav_file_base64)
 
 
@@ -171,10 +168,8 @@ def gesture_to_music(request):
     # pitch_range and duration_range are hardcoded for now
     # TODO: allow variable pitch/duration range inputs in the frontend
     audio = gesture_processing.convert_gesture_to_audio(gestures, gestures_params)
-    res = {
-        'sound': audio_samples_to_wav_base64(audio)
-    }
-    return Response(res)
+    wav_file_base64 = audio_samples_to_wav_base64(audio)
+    return Response(wav_file_base64)
 
 
 @api_view(['POST'])
@@ -191,7 +186,7 @@ def gesture_to_samples(request):
     for coordinate_sum in coordinate_sums:
         audio_samples = synths.generate_sine_wave_with_envelope(
             frequency=coordinate_sum,
-            duration=50,
+            duration=1,
             a_percentage=0,
             d_percentage=0,
             s_percentage=1,

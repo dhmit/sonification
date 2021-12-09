@@ -22,9 +22,9 @@ class ColorSonifier extends React.Component {
         ];
 
         this.state = {
-            result: [],
+            instrumentSamples: null,
+            music: null,
             selected: 0,
-            instrumentGenerated: false,
             colorPickerColor: initialColors[0],
             listOfColors: initialColors,
         };
@@ -42,13 +42,12 @@ class ColorSonifier extends React.Component {
 
     handleSubmit = () => {
         const requestBody = {listOfColors: this.state.listOfColors};
-        const responseCallbackFunc = responseDict => {
-            this.setState({
-                result: responseDict,
-                instrumentGenerated: true,
-            });
-        };
-        fetchPost('/api/color_to_samples/', requestBody, responseCallbackFunc);
+        // TODO(ra): doing this as a pair of API calls is a hack to get it done quickly
+        //           without a refactor -- actually refactor this in future!
+        const setSamples = response => this.setState({instrumentSamples: response});
+        const setMusic = response => this.setState({music: response});
+        fetchPost('/api/color_to_samples/', requestBody, setSamples);
+        fetchPost('/api/color_to_music/', requestBody, setMusic);
     };
 
     render() {
@@ -83,9 +82,9 @@ class ColorSonifier extends React.Component {
                             <div className="text-right">
                                 <button className="btn btn-outline-dark mt-2"
                                     onClick={this.handleSubmit}>
-                                    {this.state.instrumentGenerated
-                                        ? "Update Instrument"
-                                        : "Generate Instrument"}
+                                    {this.state.instrumentSamples
+                                        ? "Update"
+                                        : "Sonify!"}
                                 </button>
                             </div>
                         </div>
@@ -93,8 +92,11 @@ class ColorSonifier extends React.Component {
 
                     <div className="row">
                         <div className="col">
-                            {this.state.result.length !== 0 &&
-                            <InstrumentPicker samples={this.state.result}/>
+                            {this.state.instrumentSamples && this.state.music &&
+                                <InstrumentPicker
+                                    samples={this.state.instrumentSamples}
+                                    music={this.state.music}
+                                />
                             }
                         </div>
                     </div>

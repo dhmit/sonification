@@ -14,7 +14,12 @@ const DEFAULT_COLUMN_CONSTANTS = {
     "r_percentage": .2,
 };
 
-const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
+const UploadTimeSeriesFileInput = ({
+    musicApiEndpoint,
+    samplesApiEndpoint,
+    setInstrumentSamples,
+    setMusicData,
+}) => {
     const [parsedCSV, setParsedCSV] = useState(null);
     const [duration, setDuration] = useState(.2);
     const [everyN, setEveryN] = useState(1);
@@ -45,7 +50,7 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
         const formData = new FormData();
         formData.append("type", "file");
         formData.append("value", file, "tempfile.csv");
-        fetchPost('/api/parse_csv/', formData, setParsedCsvAndUpdateConstants, false);
+        void fetchPost('/api/parse_csv/', formData, setParsedCsvAndUpdateConstants, false);
     };
 
     const submitToAPI = () => {
@@ -56,7 +61,8 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
             mapToNote,
             parsedCSV,
         };
-        fetchPost(apiEndpoint, requestBody, uploadSuccessfulCallback);
+        void fetchPost(musicApiEndpoint, requestBody, setMusicData);
+        void fetchPost(samplesApiEndpoint, requestBody, setInstrumentSamples);
     };
 
     const updateConstant = (colNumber, constantName, val) => {
@@ -196,8 +202,10 @@ const UploadTimeSeriesFileInput = ({uploadSuccessfulCallback, apiEndpoint}) => {
 };
 
 UploadTimeSeriesFileInput.propTypes = {
-    uploadSuccessfulCallback: PropTypes.func,
-    apiEndpoint: PropTypes.string,
+    setMusicData: PropTypes.func,
+    setInstrumentSamples: PropTypes.func,
+    musicApiEndpoint: PropTypes.string,
+    samplesApiEndpoint: PropTypes.string,
 };
 
 

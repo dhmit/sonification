@@ -1,29 +1,30 @@
 import React, {useState} from "react";
 import UploadTimeSeriesFileInput from "../inputs/UploadTimeSeriesFileInput";
+import InstrumentPicker from "../instruments/InstrumentPicker";
 
 const TimeSeries = () => {
-    const [audioSample, setAudioSample] = useState(null);
+    const [instrumentSamples, setInstrumentSamples] = useState(null);
+    const [musicData, setMusicData] = useState(null);
 
     return (
         <div>
             <h1>Time Series Data</h1>
             <UploadTimeSeriesFileInput
-                uploadSuccessfulCallback={setAudioSample}
-                apiEndpoint={'/api/time_series_to_music/'}
+                setMusicData={setMusicData}
+                setInstrumentSamples={setInstrumentSamples}
+                musicApiEndpoint={'/api/time_series_to_music/'}
+                samplesApiEndpoint={'/api/time_series_to_samples/'}
             />
-            {
-                audioSample ? <>
-                    <p><b>Sound:</b></p>
-                    <audio
-                        controls
-                        autoPlay
-                        loop
-                        src={`data:audio/wav;base64, ${audioSample.sound}`}
-                        controlsList="download"
+            {musicData &&
+                <div>
+                    <img
+                        src={`data:image/png;base64, ${musicData.img}`}
+                        alt="A line chart showing the frequencies of the sonified data"
                     />
-                    <br/>
-                    <img src={`data:image/png;base64, ${audioSample.img}`}/>
-                </>: null
+                </div>
+            }
+            {musicData && instrumentSamples &&
+                <InstrumentPicker music={musicData.sound} samples={instrumentSamples}/>
             }
 
         </div>

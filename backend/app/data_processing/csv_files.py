@@ -9,14 +9,8 @@ import csv
 import io
 
 
-def parse_csv_upload_as_floats(csv_upload):
-    """
-    :param dictionary: True if we want dict representation of CSV, False for list representation
-    :param csv_upload: client-submitted file expected to be in CSV format
-    :return: a list of dictionaries mapping the CSV header data to values for each row
-    """
-    csv_str = csv_upload.read().decode('utf-8-sig')
-    reader = csv.reader(io.StringIO(csv_str))
+def parse_csv_str_as_floats(csv_str):
+    reader = csv.reader(csv_str)
     float_list = []
     for row in reader:
         try:
@@ -29,3 +23,12 @@ def parse_csv_upload_as_floats(csv_upload):
             pass
 
     return float_list
+
+
+def parse_csv_upload_as_floats(csv_upload):
+    """
+    :param csv_upload: client-submitted file expected to be in CSV format
+    :return: a list of lists, where each inner list represents a row
+    """
+    csv_str = csv_upload.read().decode('utf-8-sig')
+    return parse_csv_str_as_floats(csv_str)

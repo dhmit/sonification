@@ -53,6 +53,10 @@ const UploadTimeSeriesFileInput = ({
         void fetchPost('/api/parse_csv/', formData, setParsedCsvAndUpdateConstants, false);
     };
 
+    const getSampleData = (name) => {
+        void fetchPost('/api/time_series_sample_data/', {name}, setParsedCsvAndUpdateConstants);
+    };
+
     const submitToAPI = () => {
         const requestBody = {
             constants,
@@ -112,10 +116,29 @@ const UploadTimeSeriesFileInput = ({
     return (
         <>
             {!parsedCSV && <>
+                <p>
+                    This sonification takes in a table of values (like a spreadsheet), and
+                    uses the numbers it finds within to create music and instruments.
+                </p>
                 <p className="mb-0">
-                    First, upload a CSV file that has numeric values in its columns:
+                    Either upload a CSV file that has numeric values in its columns...
                 </p>
                 <FileInput onSubmit={csvParse} />
+                <p>
+                ... or try sonifying some data that we've already curated:
+                </p>
+                <div>
+                    <button
+                        onClick={() => getSampleData('pi')}
+                        className="btn btn-outline-dark mr-1">Digits of Pi</button>
+                    <button
+                        onClick={() => getSampleData('golden')}
+                        className="btn btn-outline-dark mr-1">Digits of the Golden Ratio</button>
+                    <button
+                        onClick={() => getSampleData('fibonacci')}
+                        className="btn btn-outline-dark mr-1">
+                        Digits of the Fibonacci Sequence</button>
+                </div>
             </>}
 
             {parsedCSV && constants && <>

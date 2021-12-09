@@ -1,12 +1,15 @@
 import base64
 import json
 from io import BytesIO
+from pathlib import Path
 
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 import matplotlib.pyplot as plt
 import numpy as np
+
+from django.conf import settings
 
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
@@ -209,6 +212,18 @@ def parse_csv(request):
     """
     temp_file = request.FILES.get('value')
     csv_data = csv_processing.parse_csv_upload_as_floats(temp_file)
+    return Response(csv_data)
+
+
+@api_view(['POST'])
+def time_series_sample_data(request):
+    """
+    Gets sample data for the time series module
+    """
+    name = request.data.get('name')
+    sample_csv_path = Path(settings.BACKEND_DIR, 'app', 'sample_csvs', name+'.csv')
+    with open(sample_csv_path, encoding='utf-8') as csv_file:
+        csv_data = csv_processing.parse_csv_str_as_floats(csv_file)
     return Response(csv_data)
 
 

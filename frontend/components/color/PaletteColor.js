@@ -6,20 +6,23 @@ const PaletteColor = ({id, color, handlePaletteClick, selected}) => {
     const style = {
         backgroundColor: colorCssRgb,
         border: `2px solid ${colorCssRgb}`,
+        borderRadius: '50%',
+        minWidth: '50px',
+        minHeight: '50px'
     };
 
     if (selected) {
         style.border = "2px solid black";
     }
 
-    return (<div className="col-3 mb-1">
+    return (<li className="list-inline-item p-0 ml-1 mb-1">
         <button
             id={id}
             style={style}
             onClick={handlePaletteClick}
-            className="w-100 h-100"
+            className=""
         />
-    </div>);
+    </li>);
 };
 PaletteColor.propTypes = {
     id: PropTypes.number,

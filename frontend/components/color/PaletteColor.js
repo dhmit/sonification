@@ -8,7 +8,7 @@ const PaletteColor = ({id, color, handlePaletteClick, selected}) => {
         border: `2px solid ${colorCssRgb}`,
         borderRadius: '50%',
         minWidth: '50px',
-        minHeight: '50px'
+        minHeight: '50px',
     };
 
     if (selected) {

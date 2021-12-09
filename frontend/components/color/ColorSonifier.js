@@ -83,7 +83,7 @@ class ColorSonifier extends React.Component {
                             </div>
                             <div>
                                 <button className="btn btn-outline-dark mt-2"
-                                        onClick={this.handleSubmit}>
+                                    onClick={this.handleSubmit}>
                                     {this.state.instrumentSamples
                                         ? "Update"
                                         : "Sonify!"}

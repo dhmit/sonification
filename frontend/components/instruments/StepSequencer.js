@@ -94,7 +94,7 @@ const StepSequencer = ({samples}) => {
         return () => void audioContextRef.current.close();
     }, []);
 
-    const [numSteps, setNumSteps] = useState(4);
+    const [numSteps, setNumSteps] = useState(samples.length);
     const [tempo, setTempo] = useState(60);
 
     // playback position is an int representing which column is currently playing

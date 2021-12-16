@@ -6,13 +6,16 @@ import FileInput from "./FileInput";
 
 const DEFAULT_COLUMN_CONSTANTS = {
     "base_frequency": 220,
-    "multiplier": 1,
+    "multiplier": 4,
     "offset": 0,
     "a_percentage": .2,
     "d_percentage": .1,
     "s_percentage": .5,
     "r_percentage": .2,
 };
+
+const INITIAL_EVERY_N = 8;
+const INITIAL_DURATION = .5;
 
 const UploadTimeSeriesFileInput = ({
     musicApiEndpoint,
@@ -21,8 +24,8 @@ const UploadTimeSeriesFileInput = ({
     setMusicData,
 }) => {
     const [parsedCSV, setParsedCSV] = useState(null);
-    const [duration, setDuration] = useState(.2);
-    const [everyN, setEveryN] = useState(1);
+    const [duration, setDuration] = useState(INITIAL_DURATION);
+    const [everyN, setEveryN] = useState(INITIAL_EVERY_N);
     const [mapToNote, setMapToNote] = useState(false);
     const [constants, setConstants] = useState([]);
     const [activeColumn, setActiveColumn] = useState(0);

@@ -238,6 +238,7 @@ def time_series_to_music(request):
     column_constants = request.data['constants']
     duration = float(request.data['duration'])
     every_n = int(request.data['everyN'])
+    print('Music every n', every_n)
     csv_data = csv_data[::every_n]
     map_to_note = request.data['mapToNote']
 
@@ -269,7 +270,7 @@ def time_series_to_music(request):
                 a_percentage=column_constant["a_percentage"],
                 d_percentage=column_constant["d_percentage"],
                 s_percentage=column_constant["s_percentage"],
-                r_percentage=column_constant["r_percentage"]
+                r_percentage=column_constant["r_percentage"],
             )
             if sound is None:
                 sound = note
@@ -296,13 +297,13 @@ def time_series_to_music(request):
                 plt.axhline(y=f, color='r', linestyle='-')
             else:
                 plt.axhline(y=f, color='grey', linestyle='-.')
-            plt.text(len(new_csv) - 1, f , each["Note"])
+            plt.text(len(new_csv) - 1, f, each["Note"])
 
-    plt.legend(["Col " + str(i + 1) for i in range(len(new_csv[0]))])
+    # TODO(ra) - let's add this back once it looks a bit nicer
+    # plt.legend(["Col " + str(i + 1) for i in range(len(new_csv[0]))])
 
-    plt.title("Frequencies")
     plt.xlabel("Time Step")
-    plt.ylabel("Frequency (Hz) - log scale")
+    plt.ylabel("Frequency (Hz)")
     plt.yscale('log')
 
     buffer = BytesIO()
@@ -323,8 +324,6 @@ def time_series_to_samples(request):
     """
     csv_data = request.data['parsedCSV']
     column_constants = request.data['constants']
-    every_n = request.data['everyN']
-    csv_data = csv_data[::every_n]
 
     csv_np_array = np.array(csv_data).astype(np.float)
 

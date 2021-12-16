@@ -19,6 +19,7 @@ const TimeSeries = () => {
                 <div>
                     <img
                         src={`data:image/png;base64, ${musicData.img}`}
+                        className="img-fluid"
                         alt="A line chart showing the frequencies of the sonified data"
                     />
                 </div>

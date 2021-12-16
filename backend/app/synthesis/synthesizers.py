@@ -28,7 +28,7 @@ def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.
         for i in range(harmonics):
             harmonic = np.sin(frequency * 2 * np.pi * time_steps * (i + 2))
             for j, _ in enumerate(wave_samples):
-                wave_samples[j] += harmonic[j]
+                wave_samples[j] += harmonic[j] * .3
 
     if vibrato:
         vibrato_changer = 5  # 5 is arbitrary, decrease for stronger vibrato

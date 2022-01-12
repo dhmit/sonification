@@ -2,7 +2,7 @@ import React from "react";
 import {SketchPicker} from 'react-color';
 import {fetchPost} from "../../common";
 import PaletteColor from "./PaletteColor";
-import InstrumentPicker from "../instruments/InstrumentPicker";
+import ToolTemplate from "../templates/ToolTemplate";
 
 class ColorSonifier extends React.Component {
     constructor(props) {
@@ -60,51 +60,49 @@ class ColorSonifier extends React.Component {
             />
         );
 
-        return (<div>
-            <h1>Colors</h1>
-            <p> Use the color picker below to choose a color, and hit the <b>submit</b> button
-                to add up to seven colors to your palette. When you're ready to hear them together,
-                click the <b>Generate Instrument</b> button to hear them together!</p>
-            <div className="row">
-                <SketchPicker
-                    color={this.state.colorPickerColor}
-                    onChangeComplete={this.handleChangeComplete}
-                    disableAlpha
-                    className="col-sm"
-                />
-
-                <div className="col">
-                    <div className="row mb-4">
-                        <div className="col">
-                            <div className="row">
-                                <ul className="list-inline ml-3">
-                                    {colorDisplay}
-                                </ul>
-                            </div>
-                            <div>
-                                <button className="btn btn-outline-dark mt-2"
-                                    onClick={this.handleSubmit}>
-                                    {this.state.instrumentSamples
-                                        ? "Update"
-                                        : "Sonify!"}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
+        return (
+            <ToolTemplate
+                title='Colors'
+                description={
+                    <p> Use the color picker below to choose a color, and hit the 
+                        <b>submit</b> button to add up to seven colors to your palette. 
+                    When you're ready to hear them together, click the 
+                        <b>Generate Instrument</b> button to hear them together!</p>
+                }
+                instrumentSamples={this.state.instrumentSamples}
+                music={this.state.music}
+                tool={<>
                     <div className="row">
+                        <SketchPicker
+                            color={this.state.colorPickerColor}
+                            onChangeComplete={this.handleChangeComplete}
+                            disableAlpha
+                            className="col-sm"
+                        />
+
                         <div className="col">
-                            {this.state.instrumentSamples && this.state.music &&
-                            <InstrumentPicker
-                                samples={this.state.instrumentSamples}
-                                music={this.state.music}
-                            />
-                            }
+                            <div className="row mb-4">
+                                <div className="col">
+                                    <div className="row">
+                                        <ul className="list-inline ml-3">
+                                            {colorDisplay}
+                                        </ul>
+                                    </div>
+                                    <div>
+                                        <button className="btn btn-outline-dark mt-2"
+                                            onClick={this.handleSubmit}>
+                                            {this.state.instrumentSamples
+                                                ? "Update"
+                                                : "Sonify!"}
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>);
+                </>}
+            />
+        );
     }
 }
 

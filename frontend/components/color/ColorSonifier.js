@@ -71,6 +71,7 @@ class ColorSonifier extends React.Component {
                 }
                 instrumentSamples={this.state.instrumentSamples}
                 music={this.state.music}
+                handleSubmit={this.handleSubmit}
                 tool={<>
                     <div className="row">
                         <SketchPicker
@@ -87,14 +88,6 @@ class ColorSonifier extends React.Component {
                                         <ul className="list-inline ml-3">
                                             {colorDisplay}
                                         </ul>
-                                    </div>
-                                    <div>
-                                        <button className="btn btn-outline-dark mt-2"
-                                            onClick={this.handleSubmit}>
-                                            {this.state.instrumentSamples
-                                                ? "Update"
-                                                : "Sonify!"}
-                                        </button>
                                     </div>
                                 </div>
                             </div>

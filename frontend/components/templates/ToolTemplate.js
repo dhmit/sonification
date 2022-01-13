@@ -1,6 +1,7 @@
 import {object, string, array, func} from 'prop-types';
 import React from 'react';
 import InstrumentPicker from '../instruments/InstrumentPicker';
+import STYLES from './Templates.module.scss';
 
 const ToolTemplate = ({tool, music, instrumentSamples, title, description, handleSubmit}) => {
     return (
@@ -16,7 +17,8 @@ const ToolTemplate = ({tool, music, instrumentSamples, title, description, handl
                     {tool}
                 </div>
                 <div className='col'>
-                    <button className="btn btn-outline-dark mt-2"
+                    <button 
+                        className={"btn btn-outline-dark mt-2" + STYLES.submit}
                         onClick={handleSubmit}
                     >
                         {instrumentSamples

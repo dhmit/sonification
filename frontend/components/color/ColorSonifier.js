@@ -1,7 +1,7 @@
 import React from "react";
-import {SketchPicker} from 'react-color';
 import {fetchPost} from "../../common";
 import PaletteColor from "./PaletteColor";
+import ColorPicker from "./ColorPicker";
 import ToolTemplate from "../templates/ToolTemplate";
 
 class ColorSonifier extends React.Component {
@@ -73,21 +73,16 @@ class ColorSonifier extends React.Component {
                 music={this.state.music}
                 handleSubmit={this.handleSubmit}
                 tool={<>
-                    <div className="row">
+                    <div className='row'>
                         <div className='col'>
-                            <SketchPicker
-                                color={this.state.colorPickerColor}
-                                onChangeComplete={this.handleChangeComplete}
-                                disableAlpha
-                                className="col-sm"
+                            <ColorPicker 
+                                onColorChange={this.handleChangeComplete}                         
                             />
                         </div>
                     </div>
-                    <div className="row">
-                        <div className="col">
-                            <ul className="list-inline ml-3">
-                                {colorDisplay}
-                            </ul>
+                    <div className='row'>
+                        <div className='col'>
+                            {colorDisplay}
                         </div>
                     </div>
                 </>}

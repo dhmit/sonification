@@ -74,23 +74,20 @@ class ColorSonifier extends React.Component {
                 handleSubmit={this.handleSubmit}
                 tool={<>
                     <div className="row">
-                        <SketchPicker
-                            color={this.state.colorPickerColor}
-                            onChangeComplete={this.handleChangeComplete}
-                            disableAlpha
-                            className="col-sm"
-                        />
-
+                        <div className='col'>
+                            <SketchPicker
+                                color={this.state.colorPickerColor}
+                                onChangeComplete={this.handleChangeComplete}
+                                disableAlpha
+                                className="col-sm"
+                            />
+                        </div>
+                    </div>
+                    <div className="row">
                         <div className="col">
-                            <div className="row mb-4">
-                                <div className="col">
-                                    <div className="row">
-                                        <ul className="list-inline ml-3">
-                                            {colorDisplay}
-                                        </ul>
-                                    </div>
-                                </div>
-                            </div>
+                            <ul className="list-inline ml-3">
+                                {colorDisplay}
+                            </ul>
                         </div>
                     </div>
                 </>}

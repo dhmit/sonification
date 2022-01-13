@@ -60,13 +60,13 @@ class ColorSonifier extends React.Component {
     };
 
     handleSubmit = () => {
-        const requestBody = {listOfColors: this.state.listOfColors};
-        // TODO(ra): doing this as a pair of API calls is a hack to get it done quickly
-        //           without a refactor -- actually refactor this in future!
-        const setSamples = response => this.setState({instrumentSamples: response});
-        const setMusic = response => this.setState({music: response});
-        fetchPost('/api/color_to_samples/', requestBody, setSamples);
-        fetchPost('/api/color_to_music/', requestBody, setMusic);
+        let requestBody = {colors: this.state.listOfColors.map(color => rgb2hsv(color))};
+        fetchPost('/api/color_to_instruments/', requestBody, response => {
+            this.setState({
+                instrumentSamples: response.samples,
+                music: response.music,
+            });
+        });
     };
 
     render() {
@@ -85,10 +85,8 @@ class ColorSonifier extends React.Component {
             <ToolTemplate
                 title='Colors'
                 description={
-                    <p> Use the color picker below to choose a color, and hit the 
-                        <b>submit</b> button to add up to seven colors to your palette. 
-                    When you're ready to hear them together, click the 
-                        <b>Generate Instrument</b> button to hear them together!</p>
+                    // eslint-disable-next-line max-len
+                    <p> Use the color picker below to choose a color, and hit the <b>submit</b> button to add up to seven colors to your palette. When you're ready to hear them together, click the <b>Generate Instrument</b> button to hear them together!</p>
                 }
                 instrumentSamples={this.state.instrumentSamples}
                 music={this.state.music}

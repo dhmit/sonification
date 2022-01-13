@@ -88,6 +88,38 @@ def numbers_to_music(request):
 # COLOR
 ################################################################################
 @api_view(['POST'])
+def color_to_instruments(request):
+    '''
+    :param request: includes property 'colors' which is a list of HSV dictionaries.
+    :return: wav file of the generated music as well as a list of samples for the pad instrument.
+    '''
+    colors = request.data['colors']
+
+    samples = []
+    for hsv in colors:
+        h,s,v = hsv['h']/360, hsv['s']/100, hsv['v']/100
+        print(h,s,v)
+
+        freq = 440 + 440*h
+        gain = s
+        
+        sample = gain*synths.generate_sine_wave(freq, 1)
+        samples.append(sample)
+
+        
+    raw_audio = np.hstack(samples)
+    wav_file_base64 = audio_samples_to_wav_base64(raw_audio)
+
+    samples_base64 = [audio_samples_to_wav_base64(s) for s in samples]
+
+
+    return Response({
+        'samples': samples_base64,
+        'music': wav_file_base64,
+    })
+
+
+@api_view(['POST'])
 def color_to_music(request):
     """
     :param request: color picker's rgb values stored as a dictionary when the user hits submit

@@ -4,6 +4,25 @@ import PaletteColor from "./PaletteColor";
 import ColorPicker from "./ColorPicker";
 import ToolTemplate from "../templates/ToolTemplate";
 
+// input: r,g,b in [0,1], out: h in [0,360) and s,v in [0,1]
+// https://stackoverflow.com/questions/8022885/rgb-to-hsv-color-in-javascript
+function rgb2hsv(color) {
+    let {r,g,b} = color;
+    let v=Math.max(r,g,b), c=v-Math.min(r,g,b);
+    let h= c && ((v===r) ? (g-b)/c : ((v===g) ? 2+(b-r)/c : 4+(r-g)/c)); 
+    return {h: 60*(h<0?h+6:h), s: 100*(v&&c/v), v: 100*v/255};
+}
+  
+function rgb2hex(color) {
+    let {r,g,b} = color;
+    function componentToHex(c) {
+        const hex = c.toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+    }
+
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
 class ColorSonifier extends React.Component {
     constructor(props) {
         super(props);
@@ -60,6 +79,8 @@ class ColorSonifier extends React.Component {
             />
         );
 
+        const hsv = rgb2hsv(this.state.colorPickerColor);
+
         return (
             <ToolTemplate
                 title='Colors'
@@ -76,8 +97,14 @@ class ColorSonifier extends React.Component {
                     <div className='row'>
                         <div className='col'>
                             <ColorPicker 
+                                initColor={rgb2hex(this.state.colorPickerColor)}
                                 onColorChange={this.handleChangeComplete}                         
                             />
+                            <p>
+                                <b>H:</b> {Math.round(hsv.h)}&deg;
+                                <b> S:</b> {Math.round(hsv.s)}% 
+                                <b> V:</b> {Math.round(hsv.v)}%
+                            </p>
                         </div>
                     </div>
                     <div className='row'>

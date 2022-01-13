@@ -1,12 +1,11 @@
 import React, {Component} from "react";
 import iro from "@jaames/iro";
-import {func} from "prop-types";
+import {func, string} from "prop-types";
 
 class ColorPicker extends Component {
     componentDidMount() {
-        // create a new iro color picker and pass component props to it
         this.colorPicker = new iro.ColorPicker(this.el, {
-            color: '#03ecfc',
+            color: this.props.initColor ?? '#03ecfc',
             layoutDirection: 'horizontal',
             layout: [
                 {
@@ -50,6 +49,7 @@ class ColorPicker extends Component {
 
 ColorPicker.propTypes = {
     onColorChange: func,
+    initColor: string,
 };
 
 export default ColorPicker;

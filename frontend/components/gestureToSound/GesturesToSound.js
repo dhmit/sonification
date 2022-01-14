@@ -2,7 +2,6 @@ import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
 import RangeSliderInput from "../inputs/RangeSliderInput";
-import InstrumentPicker from "../instruments/InstrumentPicker";
 import ToolTemplate from "../templates/ToolTemplate";
 
 
@@ -178,15 +177,16 @@ const GesturesToSound = () => {
         title='Gestures'
         description={
             allMouseCoords.length === 0
-            ? <p>First, draw something!</p>
-            : <p>You can configure the settings for your sonification below.</p>
+                ? <p>First, draw something!</p>
+                : <p>You can configure the settings for your sonification below.</p>
         }
         instrumentSamples={instrumentSamples}
         music={music}
         handleSubmit={handleSubmitGestures}
-        tool={
+        sonifyButtonDisabled={allMouseCoords.length === 0}
+        tool={<>
             <div className="row">
-                <div className="col-12 col-sm-5">
+                <div className="col">
                     <canvas
                         className={`
                             ${STYLES.canvas}
@@ -195,14 +195,6 @@ const GesturesToSound = () => {
                         ref={canvasRef}
                         width="500" height="500"
                     />
-                    {/* <div className="row" id="axisLabel" hidden={hideAxisLabel}>
-                        <div className="col align-left">
-                            low pitch
-                        </div>
-                        <div className="col align-right text-right">
-                            high pitch
-                        </div>
-                    </div> */}
                     <div className="btn-group w-100 mb-2" role="group">
                         <button
                             className="btn btn-outline-dark"
@@ -226,14 +218,8 @@ const GesturesToSound = () => {
                     <button className="btn btn-outline-primary"
                         onClick={showAxis}>{buttonText}</button>
                 </div>
-                {/* <div className={`col-1 my-5 flex-column ${STYLES.yAxis}`} hidden={hideAxisLabel}>
-                    <div className="mb-auto">
-                        short notes
-                    </div>
-                    <div className="my-3">
-                        long notes
-                    </div>
-                </div> */}
+            </div>
+            <div className="row">
                 <div className="col">
                     <div>
                         <strong>Compression</strong>
@@ -268,7 +254,7 @@ const GesturesToSound = () => {
                     </div>
                 </div>
             </div>
-        }
+        </>}
     />);
 };
 

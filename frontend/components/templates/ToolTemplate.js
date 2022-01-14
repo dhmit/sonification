@@ -1,9 +1,11 @@
-import {object, string, array, func} from 'prop-types';
+import {object, string, array, func, bool} from 'prop-types';
 import React from 'react';
 import InstrumentPicker from '../instruments/InstrumentPicker';
 import STYLES from './Templates.module.scss';
 
-const ToolTemplate = ({tool, music, instrumentSamples, title, description, handleSubmit}) => {
+const ToolTemplate = ({
+    tool, music, instrumentSamples, title, description, handleSubmit, sonifyButtonDisabled,
+}) => {
     return (
         <>
             <div className='row'>
@@ -18,6 +20,7 @@ const ToolTemplate = ({tool, music, instrumentSamples, title, description, handl
                 </div>
                 <div className='col'>
                     <button 
+                        disabled={sonifyButtonDisabled ?? false}
                         className={"btn btn-outline-dark mt-2" + STYLES.submit}
                         onClick={handleSubmit}
                     >
@@ -40,6 +43,7 @@ ToolTemplate.propTypes = {
     title: string,
     description: object,
     handleSubmit: func,
+    sonifyButtonDisabled: bool,
 };
 
 export default ToolTemplate;

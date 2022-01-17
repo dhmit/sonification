@@ -33,6 +33,7 @@ const GesturesToSound = () => {
         return {
             x: (event.clientX - rect.left) * scale.x,
             y: (event.clientY - rect.top) * scale.y,
+            t: Date.now(),
         };
     };
 

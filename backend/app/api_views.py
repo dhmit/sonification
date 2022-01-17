@@ -182,6 +182,11 @@ def color_to_samples(request):
 ################################################################################
 # GESTURE
 ################################################################################
+# @api_view(['POST'])
+# def gesture_to_instruments(request):
+#     gestures = request.data['gestures']
+
+
 @api_view(['POST'])
 def gesture_to_music(request):
     """

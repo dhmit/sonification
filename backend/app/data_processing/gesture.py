@@ -17,10 +17,12 @@ def compress_coordinates(gestures, factor):
             coords_list = [gesture[j] for j in range(i, min(i+factor, len(gesture)))]
             sum_x = sum(coord["x"] for coord in coords_list)
             sum_y = sum(coord["y"] for coord in coords_list)
+            sum_t = sum(coord["t"] for coord in coords_list)
             num_coords = min(i + factor, len(gesture)) - i + 1
             compressed_coord = {
                 "x": sum_x/num_coords,
-                "y": sum_y/num_coords
+                "y": sum_y/num_coords,
+                "t": sum_t/num_coords,
             }
             current_result.append(compressed_coord)
         result.append(current_result)

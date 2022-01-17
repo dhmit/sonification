@@ -61,7 +61,7 @@ class ColorSonifier extends React.Component {
 
     handleSubmit = async () => {
         let requestBody = {colors: this.state.listOfColors.map(color => rgb2hsv(color))};
-        fetchPost('/api/color_to_instruments/', requestBody, response => {
+        await fetchPost('/api/color_to_instruments/', requestBody, response => {
             this.setState({
                 instrumentSamples: response.samples,
                 music: response.music,

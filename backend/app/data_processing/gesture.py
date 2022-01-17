@@ -1,5 +1,5 @@
 import math
-from app.synthesis.synthesizers import generate_sine_wave_with_envelope
+from app.synthesis.synthesizers import generate_sine_wave_with_envelope, generate_wave_with_offset
 
 
 def compress_coordinates(gestures, factor):
@@ -101,3 +101,24 @@ def get_instrument_sliders(gestures, gesture_param):
             coordinates_sum += coordinate['x'] + coordinate['y']
         result.append(coordinates_sum)
     return result
+
+def generate_samples_from_gesture(gesture):
+    samples = []
+    offset = 0
+    for i in range(len(gesture)-1):
+        coord, next_coord = gesture[i], gesture[i+1]
+
+        duration = (next_coord['t'] - coord['t'])/1000 # ms -> s
+        # wave = generate_sine_wave(440, duration/1000)
+        wave = generate_wave_with_offset(440, duration, offset)
+        offset += duration
+        samples.extend(wave)
+    return samples
+
+def generate_samples(gestures, canvas):
+    # print(gestures)
+    # print(canvas)
+
+    samples = [generate_samples_from_gesture(g) for g in gestures]
+    # print(samples)
+    return samples

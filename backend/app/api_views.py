@@ -112,12 +112,18 @@ def color_to_instruments(request):
 ################################################################################
 @api_view(['POST'])
 def gesture_to_instruments(request):
-    # gestures = request.data['gestures']
+    gestures = request.data['gestures']
+    canvas = request.data['canvas']
+    s = gesture_processing.generate_samples(gestures, canvas)
+    m = audio_samples_to_wav_base64(s[0])
+
     music = gesture_to_music(request)
+    print(m[:10])
+    print(music[:10])
     samples = gesture_to_samples(request)
     return Response({
         'samples': samples,
-        'music': music,
+        'music': m,
     })
 
 # legacy, remove after rewriting endpoint

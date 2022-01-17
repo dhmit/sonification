@@ -114,16 +114,20 @@ const GesturesToSound = () => {
 
     const handleSubmitGestures = async (event) => {
         event.preventDefault();
+        const canvas = canvasRef.current;
+        const canvasSettings = {
+            width: canvas.width,
+            height: canvas.height,
+        };
         const requestBody = {
             gestures: allMouseCoords,
             parameters: gestureParams,
+            canvas: canvasSettings,
         };
         await fetchPost('/api/gesture_to_instruments/', requestBody, (response) => {
             setMusic(response.music);
             setInstrumentSamples(response.samples);
         });
-        // await fetchPost("/api/gesture_to_music/", requestBody, setMusic);
-        // await fetchPost("/api/gesture_to_samples/", requestBody, setInstrumentSamples);
         setSubmitted(true);
     };
 

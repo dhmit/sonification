@@ -8,6 +8,13 @@ from scipy import signal
 from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
+def generate_wave_with_offset(frequency, duration, offset=0, wave_type=np.sin):
+    
+    num_samples = int(duration * WAV_SAMPLE_RATE)
+    time_steps = np.linspace(offset, offset+duration, num=num_samples, retstep=False)
+    wave_samples = wave_type(frequency * 2 * np.pi * time_steps)
+
+    return wave_samples
 
 # pylint: disable=too-many-locals
 def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.sin):

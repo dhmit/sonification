@@ -17,6 +17,7 @@ from app.notes import NOTES
 
 from app.data_processing import (
     csv_files as csv_processing,
+    color as color_processing,
     gesture as gesture_processing,
     polygon as polygon_processing,
     text as text_processing,
@@ -95,18 +96,7 @@ def color_to_instruments(request):
     '''
     colors = request.data['colors']
 
-    samples = []
-    for hsv in colors:
-        h,s,v = hsv['h']/360, hsv['s']/100, hsv['v']/100
-        print(h,s,v)
-
-        freq = 440 + 440*h
-        gain = s
-        
-        sample = gain*synths.generate_sine_wave(freq, 1)
-        samples.append(sample)
-
-        
+    samples = color_processing.generate_samples(colors)
     raw_audio = np.hstack(samples)
     wav_file_base64 = audio_samples_to_wav_base64(raw_audio)
 

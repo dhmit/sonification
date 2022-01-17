@@ -118,8 +118,12 @@ const GesturesToSound = () => {
             gestures: allMouseCoords,
             parameters: gestureParams,
         };
-        await fetchPost("/api/gesture_to_music/", requestBody, setMusic);
-        await fetchPost("/api/gesture_to_samples/", requestBody, setInstrumentSamples);
+        await fetchPost('/api/gesture_to_instruments/', requestBody, (response) => {
+            setMusic(response.music);
+            setInstrumentSamples(response.samples);
+        });
+        // await fetchPost("/api/gesture_to_music/", requestBody, setMusic);
+        // await fetchPost("/api/gesture_to_samples/", requestBody, setInstrumentSamples);
         setSubmitted(true);
     };
 

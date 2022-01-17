@@ -99,9 +99,7 @@ def color_to_instruments(request):
     samples = color_processing.generate_samples(colors)
     raw_audio = np.hstack(samples)
     wav_file_base64 = audio_samples_to_wav_base64(raw_audio)
-
     samples_base64 = [audio_samples_to_wav_base64(s) for s in samples]
-
 
     return Response({
         'samples': samples_base64,
@@ -182,12 +180,17 @@ def color_to_samples(request):
 ################################################################################
 # GESTURE
 ################################################################################
-# @api_view(['POST'])
-# def gesture_to_instruments(request):
-#     gestures = request.data['gestures']
-
-
 @api_view(['POST'])
+def gesture_to_instruments(request):
+    # gestures = request.data['gestures']
+    music = gesture_to_music(request)
+    samples = gesture_to_samples(request)
+    return Response({
+        'samples': samples,
+        'music': music,
+    })
+
+# legacy, remove after rewriting endpoint
 def gesture_to_music(request):
     """
     Takes in gestures as a list of list of (x,y) coordinates and constructs audio sample
@@ -199,10 +202,9 @@ def gesture_to_music(request):
     # TODO: allow variable pitch/duration range inputs in the frontend
     audio = gesture_processing.convert_gesture_to_audio(gestures, gestures_params)
     wav_file_base64 = audio_samples_to_wav_base64(audio)
-    return Response(wav_file_base64)
+    return wav_file_base64
 
-
-@api_view(['POST'])
+# legacy, remove after rewriting endpoint
 def gesture_to_samples(request):
     # commit #1 on 11/12/2021
     """
@@ -224,7 +226,7 @@ def gesture_to_samples(request):
         )
         wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
         wav_files.append(wav_file_base64)
-    return Response(wav_files)
+    return wav_files
 
 
 ################################################################################

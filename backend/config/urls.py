@@ -26,8 +26,6 @@ urlpatterns = [
 
     # API endpoints
     path('api/color_to_instruments/', api_views.color_to_instruments),
-    path('api/color_to_music/', api_views.color_to_music),
-    path('api/color_to_samples/', api_views.color_to_samples),
 
     path('api/gesture_to_instruments/', api_views.gesture_to_instruments),
     path('api/gesture_to_music/', api_views.gesture_to_music),

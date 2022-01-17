@@ -1,11 +1,18 @@
 import {object, string, array, func, bool} from 'prop-types';
-import React from 'react';
+import React, {useState} from 'react';
 import InstrumentPicker from '../instruments/InstrumentPicker';
 import STYLES from './Templates.module.scss';
+
+const loadResults = async (event, handleSubmit, setLoading) => {
+    setLoading(true);
+    await handleSubmit(event);
+    setLoading(false);
+};
 
 const ToolTemplate = ({
     tool, music, instrumentSamples, title, description, handleSubmit, sonifyButtonDisabled,
 }) => {
+    const [loading, setLoading] = useState(false);
     return (
         <>
             <div className='row'>
@@ -22,12 +29,13 @@ const ToolTemplate = ({
                     <button 
                         disabled={sonifyButtonDisabled ?? false}
                         className={"btn btn-outline-dark mt-2" + STYLES.submit}
-                        onClick={handleSubmit}
+                        onClick={(event) => loadResults(event, handleSubmit, setLoading)}
                     >
-                        {instrumentSamples
+                        {loading ? 'loading' : (instrumentSamples
                             ? "Update"
-                            : "Sonify!"}
+                            : "Sonify!")}
                     </button>
+                    {loading && <div className="spinner-border" role="status"></div>}
                     {music && instrumentSamples && 
                         <InstrumentPicker samples={instrumentSamples} music={music} />}
                 </div>

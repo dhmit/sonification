@@ -111,7 +111,7 @@ const GesturesToSound = () => {
         setInstrumentSamples(null);
     };
 
-    const handleSubmitGestures = (event) => {
+    const handleSubmitGestures = async (event) => {
         event.preventDefault();
         const requestBody = {
             gestures: allMouseCoords,

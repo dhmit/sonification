@@ -59,7 +59,7 @@ class ColorSonifier extends React.Component {
         this.setState({listOfColors: [...currentColorState], colorPickerColor: color.rgb});
     };
 
-    handleSubmit = () => {
+    handleSubmit = async () => {
         let requestBody = {colors: this.state.listOfColors.map(color => rgb2hsv(color))};
         fetchPost('/api/color_to_instruments/', requestBody, response => {
             this.setState({

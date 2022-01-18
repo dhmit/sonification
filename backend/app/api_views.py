@@ -114,16 +114,16 @@ def color_to_instruments(request):
 def gesture_to_instruments(request):
     gestures = request.data['gestures']
     canvas = request.data['canvas']
-    s = gesture_processing.generate_samples(gestures, canvas)
-    m = audio_samples_to_wav_base64(s[0])
 
-    music = gesture_to_music(request)
-    print(m[:10])
-    print(music[:10])
-    samples = gesture_to_samples(request)
+    samples = gesture_processing.generate_samples(gestures, canvas)
+
+    raw_audio = np.hstack(samples)
+    wav_file_base64 = audio_samples_to_wav_base64(raw_audio)
+    samples_base64 = [audio_samples_to_wav_base64(s) for s in samples]
+
     return Response({
-        'samples': samples,
-        'music': m,
+        'samples': samples_base64,
+        'music': wav_file_base64,
     })
 
 # legacy, remove after rewriting endpoint

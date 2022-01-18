@@ -19,6 +19,7 @@ const PolygonEditor = (
         height = 0,
         onEdit,
         onSubmit,
+        onPointsUpdate,
         outerWidth,
     }
 ) => {
@@ -62,6 +63,11 @@ const PolygonEditor = (
         window.addEventListener("keydown", handleKeyDown);
         return () => window.removeEventListener("keydown", handleKeyDown);
     });
+
+    const updatePoints = async (...args) => {
+        setPoints(...args);
+        onPointsUpdate(...args);
+    };
 
     function handleKeyDown(e) {
         // console.log(e);
@@ -111,7 +117,7 @@ const PolygonEditor = (
     function handleMovePoint(dx, dy, event) {
         if (editorMode === EditorModes.EDIT && focusPointIndex !== -1) {
             event.preventDefault();
-            setPoints(
+            updatePoints(
                 prevPoints => [...prevPoints.slice(0, focusPointIndex),
                     {focusPointIndex : [prevPoints[focusPointIndex][0] + dx,
                         prevPoints[focusPointIndex][1] + dy]},
@@ -210,7 +216,7 @@ const PolygonEditor = (
             ];
         });
 
-        setPoints(scaledPoints);
+        updatePoints(scaledPoints);
         handleEdit();
         fileUploadRef.current.value = null;
         setLoading(false);
@@ -231,7 +237,7 @@ const PolygonEditor = (
         if (cursorLocation && cursorLocation.length === 2) {
             const editedPoints = points.slice(0, lineIndex + 1);
             editedPoints.push([cursorLocation[0], cursorLocation[1]]);
-            setPoints(editedPoints.concat(points.slice(lineIndex + 1, points.length)));
+            updatePoints(editedPoints.concat(points.slice(lineIndex + 1, points.length)));
 
             // change focus to new point
             setFocusLine(-1);
@@ -242,7 +248,7 @@ const PolygonEditor = (
 
     function addPointAtCursor() {
         if (cursorLocation && cursorLocation.length === 2) {
-            setPoints([...points, [cursorLocation[0], cursorLocation[1]]]);
+            updatePoints([...points, [cursorLocation[0], cursorLocation[1]]]);
             handleEdit();
         }
     }
@@ -276,7 +282,7 @@ const PolygonEditor = (
         } else if (editorMode === EditorModes.DELETE) {
             const editedPoints = points.filter((v, i) => i !== index);
             handleEdit();
-            setPoints(editedPoints);
+            updatePoints(editedPoints);
         }
     }
 
@@ -299,7 +305,7 @@ const PolygonEditor = (
             const editedPoints = points;
             editedPoints[focusPointIndex][0] = x;
             editedPoints[focusPointIndex][1] = y;
-            setPoints(editedPoints);
+            updatePoints(editedPoints);
         }
     }
 
@@ -311,7 +317,7 @@ const PolygonEditor = (
     // handle editor buttons
     function handleClearDrawing() {
         if (points.length === 0) return;
-        setPoints([]);
+        updatePoints([]);
         handleEdit();
     }
 
@@ -501,7 +507,7 @@ const PolygonEditor = (
                 {editorIconButtonGroups.map((buttonGroup, bgi) => (
                     <div key={`button-group-${bgi}`} className={STYLES.buttonGroup}>
                         {buttonGroup.map(({svg, tooltip, name, ...button}, i) => (
-                            <>
+                            <div key={`button-group-${bgi}-${name}`}>
                                 <span data-tip data-for={name} data-tip-disable={false}>
                                     <button
                                         className={`btn btn-primary ${STYLES.editorButton} p-2 m-1`}
@@ -514,7 +520,7 @@ const PolygonEditor = (
                                 <ReactTooltipDefaultExport id={name} place="top">
                                     {tooltip}
                                 </ReactTooltipDefaultExport>
-                            </>
+                            </div>
                         ))}
                     </div>
                 ))}
@@ -546,6 +552,7 @@ PolygonEditor.propTypes = {
     height: PropTypes.number,
     onEdit: PropTypes.func,
     onSubmit: PropTypes.func,
+    onPointsUpdate: PropTypes.func,
     outerWidth: PropTypes.number,
 };
 

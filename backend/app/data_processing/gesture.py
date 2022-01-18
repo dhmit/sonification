@@ -1,4 +1,5 @@
 import math
+import numpy as np
 from app.synthesis.synthesizers import generate_sine_wave_with_envelope, generate_wave_with_offset
 
 
@@ -102,23 +103,27 @@ def get_instrument_sliders(gestures, gesture_param):
         result.append(coordinates_sum)
     return result
 
-def generate_samples_from_gesture(gesture):
-    samples = []
-    offset = 0
-    for i in range(len(gesture)-1):
-        coord, next_coord = gesture[i], gesture[i+1]
+def generate_samples_from_gesture(gesture, canvas):
 
-        duration = (next_coord['t'] - coord['t'])/1000 # ms -> s
-        # wave = generate_sine_wave(440, duration/1000)
-        wave = generate_wave_with_offset(440, duration, offset)
-        offset += duration
-        samples.extend(wave)
+    # origin = gesture[0]
+    # final = gesture[-1]
+    # def mod_func(t):
+    #     xp = np.array([(coord['t']-origin['t'])/1000 for coord in gesture])
+    #     fp = np.array([1 - (coord['y']/canvas['height']) for coord in gesture])
+        
+    #     return np.interp(t, xp, fp)
+    
+    # duration = (final['t'] - origin['t'])/1000
+    # samples = generate_wave_with_offset(duration, mod_func)
+
+    samples = generate_wave_with_offset(gesture, canvas)
+
     return samples
 
 def generate_samples(gestures, canvas):
     # print(gestures)
     # print(canvas)
 
-    samples = [generate_samples_from_gesture(g) for g in gestures]
+    samples = [generate_samples_from_gesture(g, canvas) for g in gestures]
     # print(samples)
     return samples

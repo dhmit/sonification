@@ -10,15 +10,14 @@ import TrashIcon from "../../images/TrashIcon.svg";
 import ReactTooltipDefaultExport from "react-tooltip";
 
 /**
- * A simple polygon editor with specified width and height. A custom callback onSubmit can be
- * specified, which is called when the submit button is clicked.
+ * A simple polygon editor with specified width and height. A custom callback onPointsUpdate 
+ * should point to the parent element's state variable update function for the points.
  */
 const PolygonEditor = (
     {
         width = 0,
         height = 0,
         onEdit,
-        onSubmit,
         onPointsUpdate,
         outerWidth,
     }
@@ -376,14 +375,6 @@ const PolygonEditor = (
                 disabled: false,
             },
         ],
-        [
-            {
-                svg: "Submit",
-                onClick: () => handleSubmit(),
-                tooltip: "Submit polygon. Shortcut: Ctrl+S",
-                disabled: points.length < 3,
-            },
-        ],
     ];
 
     return (
@@ -551,7 +542,6 @@ PolygonEditor.propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
     onEdit: PropTypes.func,
-    onSubmit: PropTypes.func,
     onPointsUpdate: PropTypes.func,
     outerWidth: PropTypes.number,
 };

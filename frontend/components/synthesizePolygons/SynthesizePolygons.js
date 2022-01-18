@@ -274,7 +274,7 @@ const SynthesizePolygons = () => {
                         <PolygonEditor
                             outerWidth={leftPaneWidth}
                             onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
-                            onSubmit={() => submitPolygon(points)}
+                            // onSubmit={() => submitPolygon(points)}
                             onPointsUpdate={setPoints}
                         />
                     </div>
@@ -285,7 +285,7 @@ const SynthesizePolygons = () => {
                     </div>
                     <div className={STYLES.rightPane} ref={rightPaneRef}>
                         <div className={STYLES.rightSubPane} ref={settingsRef}>
-                            <h2>Audio Settings</h2>
+                            <h5>Audio Settings</h5>
                             {userOptions.map((option) => option.name === "Frequency Range"
                                 ? <RangeSliderInput
                                     key={option.name}
@@ -305,7 +305,7 @@ const SynthesizePolygons = () => {
                             <div className={STYLES.triangleBottom}/>
                         </div>
                         <div className={STYLES.rightSubPane}>
-                            <h2 style={{marginBottom: 0}}>Results</h2>
+                            <h5 style={{marginBottom: 0}}>Results</h5>
                             {/*Highly dependent on CSS for animation*/}
                             <div className={switchSync(
                                 STYLES.statusDivSynced,
@@ -320,8 +320,8 @@ const SynthesizePolygons = () => {
                                     {outOfSync}
                                 </p>
                             </div>
-                            {musicData
-                                ? <>
+                            {musicData &&
+                                <>
                                     <audio
                                         controls
                                         controlsList={"nodownload"}
@@ -336,7 +336,6 @@ const SynthesizePolygons = () => {
                                         currentTime={curAudioTime} timestamps={timestamps}
                                     />
                                 </>
-                                : <p>Upload a CSV or draw a polygon in the editor!</p>
                             }
                         </div>
                     </div>

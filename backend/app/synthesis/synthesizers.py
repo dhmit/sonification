@@ -8,31 +8,22 @@ from scipy import signal
 from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
-def generate_wave_with_offset(gesture, canvas):
-
-    duration = (gesture[-1]['t'] - gesture[0]['t'])/1000
-    
-    # wave_samples = np.sin(2*np.pi*(880 + 880*mod_func(time_steps))*time_steps)
-
-    t = np.array([(c['t']-gesture[0]['t'])/1000 for c in gesture])
-
-    f_inst = np.array([
-        440 + 440*(gesture[i]['y']/canvas['width']) for i in range(len(gesture))
-    ])
-
-    
+def generate_wave_phase_mod(duration, t, freq):
+    '''
+    Generates an audio signal from a time-varying frequency signal.
+    :param duration:    duration of the frequency signal (in seconds)
+    :param t:           times of each frequency sample (in seconds)
+    :param freq:        frequency signal (in Hz)
+    '''
     num_samples = int(duration * WAV_SAMPLE_RATE)
     time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
 
     dt = time_steps[1] - time_steps[0]
-
-    f = np.interp(time_steps, t, f_inst)
-
-    phi = 2 * np.pi * np.cumsum(f) * dt
-
+    # interpolate frequencies to fit sampling times
+    freq_interp = np.interp(time_steps, t, freq)
+    phi = 2 * np.pi * np.cumsum(freq_interp) * dt
 
     wave_samples = np.sin(phi)
-
     return wave_samples
 
 # pylint: disable=too-many-locals

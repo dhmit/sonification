@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from app.synthesis.synthesizers import generate_sine_wave_with_envelope, generate_wave_with_offset
+from app.synthesis.synthesizers import generate_sine_wave_with_envelope, generate_wave_phase_mod
 
 
 def compress_coordinates(gestures, factor):
@@ -105,25 +105,19 @@ def get_instrument_sliders(gestures, gesture_param):
 
 def generate_samples_from_gesture(gesture, canvas):
 
-    # origin = gesture[0]
-    # final = gesture[-1]
-    # def mod_func(t):
-    #     xp = np.array([(coord['t']-origin['t'])/1000 for coord in gesture])
-    #     fp = np.array([1 - (coord['y']/canvas['height']) for coord in gesture])
-        
-    #     return np.interp(t, xp, fp)
-    
-    # duration = (final['t'] - origin['t'])/1000
-    # samples = generate_wave_with_offset(duration, mod_func)
+    first_coord, final_coord = gesture[0], gesture[-1]
 
-    samples = generate_wave_with_offset(gesture, canvas)
+    duration = (final_coord['t'] - first_coord['t'])/1000
+    t = np.array([(c['t']-first_coord['t'])/1000 for c in gesture])
 
+    base_freq = 440
+    freq = np.array([
+        base_freq + base_freq*(1 - (gesture[i]['y']/canvas['width'])) for i in range(len(gesture))
+    ])
+
+    samples = generate_wave_phase_mod(duration, t, freq)
     return samples
 
 def generate_samples(gestures, canvas):
-    # print(gestures)
-    # print(canvas)
-
     samples = [generate_samples_from_gesture(g, canvas) for g in gestures]
-    # print(samples)
     return samples

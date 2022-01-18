@@ -8,6 +8,19 @@ from scipy import signal
 from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
+def interp_envelope(duration, t, mags):
+    '''
+    Interpolates a time-varying envelope to fit an audio signal.
+    :param duration:    duration of the envelope signal (in seconds)
+    :param t:           times of each envelope sample (in seconds)
+    :param mags:        magnitudes of the envelope at the given times
+    '''
+    num_samples = int(duration * WAV_SAMPLE_RATE)
+    time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
+
+    mag_interp = np.interp(time_steps, t, mags)
+    return mag_interp
+
 def generate_wave_phase_mod(duration, t, freq):
     '''
     Generates an audio signal from a time-varying frequency signal.

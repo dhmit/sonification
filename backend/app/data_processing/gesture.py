@@ -1,6 +1,6 @@
 import math
 import numpy as np
-from app.synthesis.synthesizers import generate_sine_wave_with_envelope, generate_wave_phase_mod
+from app.synthesis.synthesizers import generate_sine_wave_with_envelope, generate_wave_phase_mod, interp_envelope
 
 
 def compress_coordinates(gestures, factor):
@@ -104,18 +104,34 @@ def get_instrument_sliders(gestures, gesture_param):
     return result
 
 def generate_samples_from_gesture(gesture, canvas):
+    '''
+    Given a geture and canvas parameters, generate an audio signal.
 
+    At any given time in the signal, the y-axis coordinate corresponds to the pitch and the 
+    euclidian distance from the first coordinate in the gesture determines the amplitude.
+    '''
     first_coord, final_coord = gesture[0], gesture[-1]
 
+    # convert milliseconds -> seconds
     duration = (final_coord['t'] - first_coord['t'])/1000
     t = np.array([(c['t']-first_coord['t'])/1000 for c in gesture])
 
     base_freq = 440
     freq = np.array([
+        # linear mapping over the octave above the base frequency
         base_freq + base_freq*(1 - (gesture[i]['y']/canvas['width'])) for i in range(len(gesture))
     ])
-
     samples = generate_wave_phase_mod(duration, t, freq)
+
+    # calculate euclidean distance for each coordinate, normalize, generate envelope
+    xs = np.array([c['x'] for c in gesture])
+    ys = np.array([c['y'] for c in gesture])
+    mags = np.sqrt((xs - first_coord['x'])**2 + (ys - first_coord['y'])**2)
+    mags = mags / np.max(mags)
+    envelope = interp_envelope(duration, t, mags)
+
+    # apply envelope to generated samples
+    samples = envelope * samples
     return samples
 
 def generate_samples(gestures, canvas):

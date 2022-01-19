@@ -325,21 +325,6 @@ def text_shape_to_samples(request):
 ################################################################################
 @api_view(['POST'])
 def polygon_to_audio(request):
-
-    polygon_data = polygon_processing.parse_polygon_data(json.loads(request.body))
-    samples = polygon_processing.generate_samples(polygon_data['points'], polygon_data['base_frequency'])
-
-    samples_base64 = [audio_samples_to_wav_base64(s) for s in samples]
-
-    music_data = polygon_to_music(request.body)
-
-    return Response({
-        'samples': samples_base64,
-        'musicData': music_data,
-    })
-
-# legacy, remove after reconfiguring endpoint
-def polygon_to_music(request_body):
     """
     Endpoint for synthesizing a polygon from a list of points.
 
@@ -347,18 +332,24 @@ def polygon_to_music(request_body):
     should have a field "points" with the polygon points.
     It may also contain fields for the other arguments that synthesize_polygon takes.
     :param request: the HttpRequest
-    :return: a Response object to send back to the client with the generated sound and the
-    polygon points.
+    :return: a Response object to send back to the client with the generated musical data and samples.
     """
+    polygon_data = polygon_processing.parse_polygon_data(json.loads(request.body))
+    samples = polygon_processing.generate_samples(polygon_data)
 
-    converted_data = polygon_processing.parse_polygon_data(json.loads(request_body))
-    sound, timestamps = polygon_processing.synthesize_polygon(**converted_data)
+    samples_base64 = [audio_samples_to_wav_base64(s) for s in samples]
 
-    return {
+    sound, timestamps = polygon_processing.synthesize_polygon(**polygon_data)
+    music_data = {
         "sound": audio_samples_to_wav_base64(sound),
-        "points": converted_data['points'],
+        "points": polygon_data['points'],
         "timestamps": timestamps,
     }
+
+    return Response({
+        'samples': samples_base64,
+        'musicData': music_data,
+    })
 
 
 ################################################################################

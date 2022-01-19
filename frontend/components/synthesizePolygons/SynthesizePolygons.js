@@ -33,8 +33,10 @@ const SynthesizePolygons = () => {
     // user settings
     const [noteLength, setNoteLength] = useState(1);
     const [noteDelay, setNoteDelay] = useState(1);
-    const [restrictFrequency, setRestrictFrequency] = useState(false);
-    const [sidesAsDuration, setSidesAsDuration] = useState(false);
+    // const [restrictFrequency, setRestrictFrequency] = useState(false);
+    const [restrictFrequency] = useState(false);
+    // const [sidesAsDuration, setSidesAsDuration] = useState(false);
+    const [sidesAsDuration] = useState(false);
     const [baseFrequency, setBaseFrequency] = useState(220);
     const [floorFrequency, setFloorFrequency] = useState(220);
     const [ceilFrequency, setCeilFrequency] = useState(880);
@@ -192,24 +194,24 @@ const SynthesizePolygons = () => {
     // customizable user options. simply add or remove items to the list to add/remove options
     // fields are passed to <CustomizableInput/> component.
     const userOptions = [
-        {
-            type: "dropdown",
-            name: "sidesAsDuration",
-            display: "Use side lengths as:",
-            getValue: () => sidesAsDuration,
-            setValue: (v) => setSidesAsDuration(v === "true"),
-            tooltip: "How to interpret side lengths of the polygon.",
-            options: [
-                {
-                    name: "false",
-                    display: "amplitudes",
-                },
-                {
-                    name: "true",
-                    display: "durations",
-                },
-            ],
-        },
+        // {
+        //     type: "dropdown",
+        //     name: "sidesAsDuration",
+        //     display: "Use side lengths as:",
+        //     getValue: () => sidesAsDuration,
+        //     setValue: (v) => setSidesAsDuration(v === "true"),
+        //     tooltip: "How to interpret side lengths of the polygon.",
+        //     options: [
+        //         {
+        //             name: "false",
+        //             display: "amplitudes",
+        //         },
+        //         {
+        //             name: "true",
+        //             display: "durations",
+        //         },
+        //     ],
+        // },
         {
             type: "number",
             name: "noteLength",
@@ -237,14 +239,14 @@ const SynthesizePolygons = () => {
             max: HIGH_FREQ,
             tooltip: "The frequency of the first note.",
         },
-        {
-            type: "checkbox",
-            name: "restrictFrequency",
-            display: "Restrict frequencies:",
-            getValue: () => restrictFrequency,
-            setValue: () => setRestrictFrequency(!restrictFrequency),
-            tooltip: "Whether to cap the frequencies of notes.",
-        },
+        // {
+        //     type: "checkbox",
+        //     name: "restrictFrequency",
+        //     display: "Restrict frequencies:",
+        //     getValue: () => restrictFrequency,
+        //     setValue: () => setRestrictFrequency(!restrictFrequency),
+        //     tooltip: "Whether to cap the frequencies of notes.",
+        // },
         {
             name: "Frequency Range",
             enabled: restrictFrequency,

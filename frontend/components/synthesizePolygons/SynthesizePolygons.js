@@ -7,8 +7,6 @@ import RangeSliderInput from "../inputs/RangeSliderInput";
 import STYLES from "./PolygonPageLayout.module.scss";
 import ToolTemplate from "../templates/ToolTemplate";
 
-const MUSIC_API_ENDPOINT = "/api/polygon_to_music/";
-const SAMPLES_API_ENDPOINT = "/api/polygon_to_samples/";
 const LOW_FREQ = 20;
 const HIGH_FREQ = 10000;
 
@@ -169,8 +167,10 @@ const SynthesizePolygons = () => {
     async function submitPolygon(points) {
         setOutOfSync(SyncStatus.LOADING);
         const requestBody = {points, ...createUserOptionObject()};
-        await fetchPost(SAMPLES_API_ENDPOINT, requestBody, setInstrumentSamples);
-        await fetchPost(MUSIC_API_ENDPOINT, requestBody, setMusicData);
+        await fetchPost('/api/polygon_to_audio', requestBody, (response) => {
+            setMusicData(response.musicData);
+            setInstrumentSamples(response.samples);
+        });
         setOutOfSync(SyncStatus.SYNCED);
     }
 

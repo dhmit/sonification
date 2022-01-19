@@ -29,8 +29,7 @@ urlpatterns = [
 
     path('api/gesture_to_audio/', api_views.gesture_to_audio),
 
-    path('api/polygon_to_music/', api_views.polygon_to_music),
-    path('api/polygon_to_samples/', api_views.polygon_to_samples),
+    path('api/polygon_to_audio', api_views.polygon_to_audio),
 
     path('api/text_shape_to_music/', api_views.text_shape_to_music),
     path('api/text_shape_to_samples/', api_views.text_shape_to_samples),

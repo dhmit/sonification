@@ -324,7 +324,18 @@ def text_shape_to_samples(request):
 # POLYGONS
 ################################################################################
 @api_view(['POST'])
-def polygon_to_music(request):
+def polygon_to_audio(request):
+
+    samples = polygon_to_samples(request.body)
+    music_data = polygon_to_music(request.body)
+
+    return Response({
+        'samples': samples,
+        'musicData': music_data,
+    })
+
+# legacy, remove after reconfiguring endpoint
+def polygon_to_music(request_body):
     """
     Endpoint for synthesizing a polygon from a list of points.
 
@@ -336,24 +347,24 @@ def polygon_to_music(request):
     polygon points.
     """
 
-    converted_data = polygon_processing.parse_polygon_data(json.loads(request.body))
+    converted_data = polygon_processing.parse_polygon_data(json.loads(request_body))
     sound, timestamps = polygon_processing.synthesize_polygon(**converted_data)
 
-    return Response({
+    return {
         "sound": audio_samples_to_wav_base64(sound),
         "points": converted_data['points'],
         "timestamps": timestamps,
-    })
+    }
 
 
-@api_view(['POST'])
-def polygon_to_samples(request):
+# legacy, remove after reconfiguring endpoint
+def polygon_to_samples(request_body):
     """
     Takes in polygon data and constructs an instrument slider, with each slider representing
     a side in the polygon.
     """
 
-    converted_data = polygon_processing.parse_polygon_data(json.loads(request.body))
+    converted_data = polygon_processing.parse_polygon_data(json.loads(request_body))
 
     # remove irrelevant data
     del converted_data['note_delay']
@@ -376,7 +387,7 @@ def polygon_to_samples(request):
         wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
         wav_files.append(wav_file_base64)
 
-    return Response(wav_files)
+    return wav_files
 
 
 ################################################################################

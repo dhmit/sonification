@@ -267,6 +267,20 @@ const SynthesizePolygons = () => {
         sonifyButtonDisabled={points.length < 3}
         tool={(
             <div>
+                {/*Highly dependent on CSS for animation*/}
+                <div className={switchSync(
+                        STYLES.statusDivSynced,
+                        STYLES.statusDivLoading,
+                        STYLES.statusDivUnsynced,
+                    )}>
+                    <svg width={10} height={10}>
+                        <circle cx={5} cy={5} r={switchSync(5, 4, 5)}/>
+                    </svg>
+                    <p className={switchSync(
+                    )}>
+                        {outOfSync}
+                    </p>
+                </div>
                 <div className={STYLES.splitPane} ref={splitPaneVerticalRef}>
                     <div className={STYLES.leftPane} ref={leftPaneRef}>
                         <PolygonEditor
@@ -276,40 +290,6 @@ const SynthesizePolygons = () => {
                             onPointsUpdate={setPoints}
                         />
                     </div>
-                </div>
-                <div className={STYLES.rightSubPane}>
-                    <h5 style={{marginBottom: 0}}>Results</h5>
-                    {/*Highly dependent on CSS for animation*/}
-                    <div className={switchSync(
-                        STYLES.statusDivSynced,
-                        STYLES.statusDivLoading,
-                        STYLES.statusDivUnsynced,
-                    )}>
-                        <svg width={10} height={10}>
-                            <circle cx={5} cy={5} r={switchSync(5, 4, 5)}/>
-                        </svg>
-                        <p className={switchSync(
-                        )}>
-                            {outOfSync}
-                        </p>
-                    </div>
-                    {musicData &&
-                        <>
-                            <audio
-                                controls
-                                controlsList={"nodownload"}
-                                ref={audioRef}
-                                onTimeUpdate={() => {
-                                    setCurAudioTime(audioRef.current.currentTime);
-                                }}
-                                src={`data:audio/wav;base64, ${musicAudio}`}/>
-                            <br/>
-                            <PolygonViewer width={300} height={300}
-                                rawPoints={musicData["points"]}
-                                currentTime={curAudioTime} timestamps={timestamps}
-                            />
-                        </>
-                    }
                 </div>
                 <div className={STYLES.rightSubPane} ref={settingsRef}>
                     <h5>Audio Settings</h5>
@@ -328,6 +308,32 @@ const SynthesizePolygons = () => {
                 </div>
             </div>
         )}
+        customInstruments={[
+            {
+                title: 'Results',
+                component: (
+                    <div className={STYLES.rightSubPane}>
+                        {musicData &&
+                            <>
+                                <audio
+                                    controls
+                                    controlsList={"nodownload"}
+                                    ref={audioRef}
+                                    onTimeUpdate={() => {
+                                        setCurAudioTime(audioRef.current.currentTime);
+                                    }}
+                                    src={`data:audio/wav;base64, ${musicAudio}`}/>
+                                <br/>
+                                <PolygonViewer width={300} height={300}
+                                    rawPoints={musicData["points"]}
+                                    currentTime={curAudioTime} timestamps={timestamps}
+                                />
+                            </>
+                        }
+                    </div>
+                )
+            }
+        ]}
     />);
 };
 

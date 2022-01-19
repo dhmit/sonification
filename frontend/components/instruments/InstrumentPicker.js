@@ -55,10 +55,11 @@ MusicPlayer.propTypes = {
 
 
 
-const InstrumentPicker = ({music, samples}) => {
+const InstrumentPicker = ({music, samples, customInstruments=[]}) => {
     const [curInstrument, setCurInstrument] = useState(0);
 
     const instruments = [
+        ...customInstruments,
         {
             title: "Music",
             component: <MusicPlayer music={music}/>,
@@ -122,6 +123,7 @@ const InstrumentPicker = ({music, samples}) => {
 InstrumentPicker.propTypes = {
     samples: PropTypes.arrayOf(PropTypes.string),
     music: PropTypes.string,
+    customInstruments: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default InstrumentPicker;

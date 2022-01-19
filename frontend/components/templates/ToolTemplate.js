@@ -10,7 +10,14 @@ const loadResults = async (event, handleSubmit, setLoading) => {
 };
 
 const ToolTemplate = ({
-    tool, music, instrumentSamples, title, description, handleSubmit, sonifyButtonDisabled, customInstruments=[],
+    tool, 
+    music, 
+    instrumentSamples, 
+    title, 
+    description, 
+    handleSubmit, 
+    sonifyButtonDisabled, 
+    customInstruments=[],
 }) => {
     const [loading, setLoading] = useState(false);
     return (
@@ -37,7 +44,11 @@ const ToolTemplate = ({
                     </button>
                     {loading && <div className="spinner-border" role="status"></div>}
                     {music && instrumentSamples && 
-                        <InstrumentPicker samples={instrumentSamples} music={music} customInstruments={customInstruments} />}
+                        <InstrumentPicker 
+                            samples={instrumentSamples} 
+                            music={music} 
+                            customInstruments={customInstruments} 
+                        />}
                 </div>
             </div>
         </>

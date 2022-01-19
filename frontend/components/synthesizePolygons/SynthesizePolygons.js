@@ -88,13 +88,13 @@ const SynthesizePolygons = () => {
         settingsRef.current.style.height = `${settingsPaneHeight}px`;
     }, [settingsPaneHeight]);
 
-    const onMouseDownVerticalSeparator = (e) => {
-        verticalSeparatorXPos.current = e.clientX;
-    };
+    // const onMouseDownVerticalSeparator = (e) => {
+    //     verticalSeparatorXPos.current = e.clientX;
+    // };
 
-    const onMouseDownHorizontalSeparator = (e) => {
-        horizontalSeparatorYPos.current = e.clientY;
-    };
+    // const onMouseDownHorizontalSeparator = (e) => {
+    //     horizontalSeparatorYPos.current = e.clientY;
+    // };
 
     const onMouseMove = (e) => {
         if (verticalSeparatorXPos.current) {
@@ -269,10 +269,10 @@ const SynthesizePolygons = () => {
             <div>
                 {/*Highly dependent on CSS for animation*/}
                 <div className={switchSync(
-                        STYLES.statusDivSynced,
-                        STYLES.statusDivLoading,
-                        STYLES.statusDivUnsynced,
-                    )}>
+                    STYLES.statusDivSynced,
+                    STYLES.statusDivLoading,
+                    STYLES.statusDivUnsynced,
+                )}>
                     <svg width={10} height={10}>
                         <circle cx={5} cy={5} r={switchSync(5, 4, 5)}/>
                     </svg>
@@ -331,8 +331,8 @@ const SynthesizePolygons = () => {
                             </>
                         }
                     </div>
-                )
-            }
+                ),
+            },
         ]}
     />);
 };

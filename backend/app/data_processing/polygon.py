@@ -3,6 +3,7 @@ import numbers
 
 import numpy as np
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
+from app.synthesis import synthesizers as synths
 
 
 def check_valid_polygon(polygon):
@@ -305,3 +306,24 @@ def polygon_frequencies(points, restrict_frequency=False, base_frequency=220, fl
                 cur_freq *= 2
 
     return frequencies
+
+
+def calc_side_len(point1, point2):
+    return ((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)**(1/2)
+
+
+def generate_perimeter_samples(points, base_freq):
+    distances = [calc_side_len(points[i-1], points[i]) for i in range(len(points))]
+    distances = distances[1:] + [distances[0]]
+    distances_sum = sum(distances)
+    rel_distances = [d / distances_sum for d in distances]
+    cumulative_distances = np.cumsum(rel_distances)
+    freqs = [base_freq] + [base_freq * (1 + dist) for dist in cumulative_distances]
+    samples = [
+        synths.generate_sine_wave(freq, 1) for freq in freqs
+    ]
+    return samples
+
+
+def generate_samples(points, base_freq):
+    return generate_perimeter_samples(points, base_freq)

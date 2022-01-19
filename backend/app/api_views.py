@@ -89,7 +89,7 @@ def numbers_to_music(request):
 # COLOR
 ################################################################################
 @api_view(['POST'])
-def color_to_instruments(request):
+def color_to_audio(request):
     '''
     :param request: includes property 'colors' which is a list of HSV dictionaries.
     :return: wav file of the generated music as well as a list of samples for the pad instrument.
@@ -111,7 +111,7 @@ def color_to_instruments(request):
 # GESTURE
 ################################################################################
 @api_view(['POST'])
-def gesture_to_instruments(request):
+def gesture_to_audio(request):
     gestures = request.data['gestures']
     canvas = request.data['canvas']
 
@@ -125,44 +125,6 @@ def gesture_to_instruments(request):
         'samples': samples_base64,
         'music': wav_file_base64,
     })
-
-# legacy, remove after rewriting endpoint
-def gesture_to_music(request):
-    """
-    Takes in gestures as a list of list of (x,y) coordinates and constructs audio sample
-    based on the horizontal and vertical components of the gestures
-    """
-    gestures = request.data['gestures']
-    gestures_params = request.data['parameters']
-    # pitch_range and duration_range are hardcoded for now
-    # TODO: allow variable pitch/duration range inputs in the frontend
-    audio = gesture_processing.convert_gesture_to_audio(gestures, gestures_params)
-    wav_file_base64 = audio_samples_to_wav_base64(audio)
-    return wav_file_base64
-
-# legacy, remove after rewriting endpoint
-def gesture_to_samples(request):
-    # commit #1 on 11/12/2021
-    """
-    Takes in gestures as a list of list of (x,y) coordinates and constructs an
-    instrument slider based on the sum of coordinates of each gesture
-    """
-    gestures = request.data['gestures']
-    gestures_params = request.data['parameters']
-    coordinate_sums = gesture_processing.get_instrument_sliders(gestures, gestures_params)
-    wav_files = []
-    for coordinate_sum in coordinate_sums:
-        audio_samples = synths.generate_sine_wave_with_envelope(
-            frequency=coordinate_sum,
-            duration=1,
-            a_percentage=0,
-            d_percentage=0,
-            s_percentage=1,
-            r_percentage=0
-        )
-        wav_file_base64 = audio_samples_to_wav_base64(audio_samples)
-        wav_files.append(wav_file_base64)
-    return wav_files
 
 
 ################################################################################

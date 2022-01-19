@@ -25,11 +25,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
 
     # API endpoints
-    path('api/color_to_instruments/', api_views.color_to_instruments),
+    path('api/color_to_audio/', api_views.color_to_audio),
 
-    path('api/gesture_to_instruments/', api_views.gesture_to_instruments),
-    path('api/gesture_to_music/', api_views.gesture_to_music),
-    path('api/gesture_to_samples/', api_views.gesture_to_samples),
+    path('api/gesture_to_audio/', api_views.gesture_to_audio),
 
     path('api/polygon_to_music/', api_views.polygon_to_music),
     path('api/polygon_to_samples/', api_views.polygon_to_samples),

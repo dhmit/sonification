@@ -124,7 +124,7 @@ const GesturesToSound = () => {
             parameters: gestureParams,
             canvas: canvasSettings,
         };
-        await fetchPost('/api/gesture_to_instruments/', requestBody, (response) => {
+        await fetchPost('/api/gesture_to_audio/', requestBody, (response) => {
             setMusic(response.music);
             setInstrumentSamples(response.samples);
         });

@@ -50,7 +50,6 @@ const SynthesizePolygons = () => {
     // Used for controlling right pane
     const [settingsPaneHeight, setSettingsPaneHeight] = useState(null);
     const settingsRef = useRef(null);
-    const rightPaneRef = useRef(null);
     const horizontalSeparatorYPos = useRef(null);
 
     const audioRef = useRef(null);
@@ -67,8 +66,7 @@ const SynthesizePolygons = () => {
     }
 
     useEffect(() => {
-        const curHeight = rightPaneRef.current.clientHeight;
-        rightPaneRef.current.style.maxHeight = `${curHeight}px`;
+        const curHeight = leftPaneRef.current.clientHeight;
         leftPaneRef.current.style.maxHeight = `${curHeight}px`;
     });
 
@@ -120,7 +118,7 @@ const SynthesizePolygons = () => {
             const newTopHeight = settingsPaneHeight + e.clientY- horizontalSeparatorYPos.current;
             horizontalSeparatorYPos.current = e.clientY;
 
-            const totalHeight = rightPaneRef.current.clientHeight;
+            const totalHeight = leftPaneRef.current.clientHeight;
             const minHeight = .1*totalHeight;
             const maxHeight = .9*totalHeight;
 
@@ -278,67 +276,55 @@ const SynthesizePolygons = () => {
                             onPointsUpdate={setPoints}
                         />
                     </div>
-                    <div className={STYLES.paneSeparatorVertical}
-                        onMouseDown={onMouseDownVerticalSeparator}>
-                        <div className={STYLES.triangleLeft}/>
-                        <div className={STYLES.triangleRight}/>
+                </div>
+                <div className={STYLES.rightSubPane}>
+                    <h5 style={{marginBottom: 0}}>Results</h5>
+                    {/*Highly dependent on CSS for animation*/}
+                    <div className={switchSync(
+                        STYLES.statusDivSynced,
+                        STYLES.statusDivLoading,
+                        STYLES.statusDivUnsynced,
+                    )}>
+                        <svg width={10} height={10}>
+                            <circle cx={5} cy={5} r={switchSync(5, 4, 5)}/>
+                        </svg>
+                        <p className={switchSync(
+                        )}>
+                            {outOfSync}
+                        </p>
                     </div>
-                    <div className={STYLES.rightPane} ref={rightPaneRef}>
-                        <div className={STYLES.rightSubPane} ref={settingsRef}>
-                            <h5>Audio Settings</h5>
-                            {userOptions.map((option) => option.name === "Frequency Range"
-                                ? <RangeSliderInput
-                                    key={option.name}
-                                    {...option}
-                                    onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
-                                />
-                                : <CustomizableInput
-                                    key={option.name}
-                                    {...option}
-                                    onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
-                                />
-                            )}
-                        </div>
-                        <div className={STYLES.paneSeparatorHorizontal}
-                            onMouseDown={onMouseDownHorizontalSeparator}>
-                            <div className={STYLES.triangleTop}/>
-                            <div className={STYLES.triangleBottom}/>
-                        </div>
-                        <div className={STYLES.rightSubPane}>
-                            <h5 style={{marginBottom: 0}}>Results</h5>
-                            {/*Highly dependent on CSS for animation*/}
-                            <div className={switchSync(
-                                STYLES.statusDivSynced,
-                                STYLES.statusDivLoading,
-                                STYLES.statusDivUnsynced,
-                            )}>
-                                <svg width={10} height={10}>
-                                    <circle cx={5} cy={5} r={switchSync(5, 4, 5)}/>
-                                </svg>
-                                <p className={switchSync(
-                                )}>
-                                    {outOfSync}
-                                </p>
-                            </div>
-                            {musicData &&
-                                <>
-                                    <audio
-                                        controls
-                                        controlsList={"nodownload"}
-                                        ref={audioRef}
-                                        onTimeUpdate={() => {
-                                            setCurAudioTime(audioRef.current.currentTime);
-                                        }}
-                                        src={`data:audio/wav;base64, ${musicAudio}`}/>
-                                    <br/>
-                                    <PolygonViewer width={300} height={300}
-                                        rawPoints={musicData["points"]}
-                                        currentTime={curAudioTime} timestamps={timestamps}
-                                    />
-                                </>
-                            }
-                        </div>
-                    </div>
+                    {musicData &&
+                        <>
+                            <audio
+                                controls
+                                controlsList={"nodownload"}
+                                ref={audioRef}
+                                onTimeUpdate={() => {
+                                    setCurAudioTime(audioRef.current.currentTime);
+                                }}
+                                src={`data:audio/wav;base64, ${musicAudio}`}/>
+                            <br/>
+                            <PolygonViewer width={300} height={300}
+                                rawPoints={musicData["points"]}
+                                currentTime={curAudioTime} timestamps={timestamps}
+                            />
+                        </>
+                    }
+                </div>
+                <div className={STYLES.rightSubPane} ref={settingsRef}>
+                    <h5>Audio Settings</h5>
+                    {userOptions.map((option) => option.name === "Frequency Range"
+                        ? <RangeSliderInput
+                            key={option.name}
+                            {...option}
+                            onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
+                        />
+                        : <CustomizableInput
+                            key={option.name}
+                            {...option}
+                            onEdit={() => setOutOfSync(SyncStatus.UNSYNCED)}
+                        />
+                    )}
                 </div>
             </div>
         )}

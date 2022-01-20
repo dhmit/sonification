@@ -1,6 +1,5 @@
 import React, {useState} from "react";
 import UploadTimeSeriesFileInput from "../inputs/UploadTimeSeriesFileInput";
-// import InstrumentPicker from "../instruments/InstrumentPicker";
 import {fetchPost} from "../../common";
 import ToolTemplate from "../templates/ToolTemplate";
 

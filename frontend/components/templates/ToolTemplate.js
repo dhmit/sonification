@@ -1,4 +1,4 @@
-import {object, string, array, func, bool, arrayOf} from 'prop-types';
+import {object, string, array, func, bool} from 'prop-types';
 import React, {useState} from 'react';
 import InstrumentPicker from '../instruments/InstrumentPicker';
 import STYLES from './Templates.module.scss';
@@ -17,7 +17,7 @@ const ToolTemplate = ({
     description, 
     handleSubmit, 
     sonifyButtonDisabled, 
-    customInstruments=[],
+    instrumentPickerProps={},
 }) => {
     const [loading, setLoading] = useState(false);
     return (
@@ -47,7 +47,7 @@ const ToolTemplate = ({
                         <InstrumentPicker 
                             samples={instrumentSamples} 
                             music={music} 
-                            customInstruments={customInstruments} 
+                            {...instrumentPickerProps}
                         />}
                 </div>
             </div>
@@ -63,7 +63,7 @@ ToolTemplate.propTypes = {
     description: object,
     handleSubmit: func,
     sonifyButtonDisabled: bool,
-    customInstruments: arrayOf(object),
+    instrumentPickerProps: object,
 };
 
 export default ToolTemplate;

@@ -53,17 +53,20 @@ MusicPlayer.propTypes = {
     music: PropTypes.string,
 };
 
+export const ALL_DEFAULT_INSTRUMENTS = [
+    'Pads',
+    'Slider Looper',
+    'Spatial Instrument',
+    'Step Sequencer',
+    'Download',
+];
 
-
-const InstrumentPicker = ({music, samples, customInstruments=[]}) => {
+const InstrumentPicker = ({
+    music, samples, includedDefaultInstruments=[], customInstruments=[],
+}) => {
     const [curInstrument, setCurInstrument] = useState(0);
 
-    const instruments = [
-        ...customInstruments,
-        {
-            title: "Music",
-            component: <MusicPlayer music={music}/>,
-        },
+    const defaultInstruments = [
         {
             title: "Pads",
             component: <PadInstrument samples={samples}/>,
@@ -85,6 +88,17 @@ const InstrumentPicker = ({music, samples, customInstruments=[]}) => {
             title: "Download",
             component: <DownloadSamples samples={samples}/>,
         },
+    ];
+
+    const instruments = [
+        ...customInstruments,
+        {
+            title: "Music",
+            component: <MusicPlayer music={music}/>,
+        },
+        ...defaultInstruments.filter(
+            instrument => includedDefaultInstruments.includes(instrument.title)
+        ),
     ];
 
     const instrumentPickerHeader = (
@@ -123,6 +137,7 @@ const InstrumentPicker = ({music, samples, customInstruments=[]}) => {
 InstrumentPicker.propTypes = {
     samples: PropTypes.arrayOf(PropTypes.string),
     music: PropTypes.string,
+    includedDefaultInstruments: PropTypes.arrayOf(PropTypes.string),
     customInstruments: PropTypes.arrayOf(PropTypes.object),
 };
 

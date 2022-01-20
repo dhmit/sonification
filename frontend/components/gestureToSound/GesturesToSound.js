@@ -2,7 +2,7 @@ import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
 import ToolTemplate from "../templates/ToolTemplate";
-
+import {ALL_DEFAULT_INSTRUMENTS} from "../instruments/InstrumentPicker";
 
 const GesturesToSound = () => {
     const canvasRef = useRef(null);
@@ -165,6 +165,9 @@ const GesturesToSound = () => {
         music={music}
         handleSubmit={handleSubmitGestures}
         sonifyButtonDisabled={allMouseCoords.length === 0}
+        instrumentPickerProps={{
+            includedDefaultInstruments: ALL_DEFAULT_INSTRUMENTS,
+        }}
         tool={<>
             <div className="row">
                 <div className="col">

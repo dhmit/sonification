@@ -3,6 +3,7 @@ import {fetchPost} from "../../common";
 import PaletteColor from "./PaletteColor";
 import ColorPicker from "./ColorPicker";
 import ToolTemplate from "../templates/ToolTemplate";
+import {ALL_DEFAULT_INSTRUMENTS} from "../instruments/InstrumentPicker";
 
 // input: r,g,b in [0,1], out: h in [0,360) and s,v in [0,1]
 // https://stackoverflow.com/questions/8022885/rgb-to-hsv-color-in-javascript
@@ -91,6 +92,9 @@ class ColorSonifier extends React.Component {
                 instrumentSamples={this.state.instrumentSamples}
                 music={this.state.music}
                 handleSubmit={this.handleSubmit}
+                instrumentPickerProps={{
+                    includedDefaultInstruments: ALL_DEFAULT_INSTRUMENTS,
+                }}
                 tool={<>
                     <div className='row'>
                         <div className='col'>

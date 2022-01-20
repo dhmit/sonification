@@ -6,6 +6,7 @@ import CustomizableInput from "../inputs/CustomizableInput";
 import RangeSliderInput from "../inputs/RangeSliderInput";
 import STYLES from "./PolygonPageLayout.module.scss";
 import ToolTemplate from "../templates/ToolTemplate";
+import {ALL_DEFAULT_INSTRUMENTS} from "../instruments/InstrumentPicker";
 
 const LOW_FREQ = 20;
 const HIGH_FREQ = 10000;
@@ -310,32 +311,38 @@ const SynthesizePolygons = () => {
                 </div>
             </div>
         )}
-        customInstruments={[
+        instrumentPickerProps={
             {
-                title: 'Results',
-                component: (
-                    <div className={STYLES.rightSubPane}>
-                        {musicData &&
-                            <>
-                                <audio
-                                    controls
-                                    controlsList={"nodownload"}
-                                    ref={audioRef}
-                                    onTimeUpdate={() => {
-                                        setCurAudioTime(audioRef.current.currentTime);
-                                    }}
-                                    src={`data:audio/wav;base64, ${musicAudio}`}/>
-                                <br/>
-                                <PolygonViewer width={300} height={300}
-                                    rawPoints={musicData["points"]}
-                                    currentTime={curAudioTime} timestamps={timestamps}
-                                />
-                            </>
-                        }
-                    </div>
-                ),
-            },
-        ]}
+                includedDefaultInstruments: ALL_DEFAULT_INSTRUMENTS,
+                customInstruments: 
+                [
+                    {
+                        title: 'Results',
+                        component: (
+                            <div className={STYLES.rightSubPane}>
+                                {musicData &&
+                                    <>
+                                        <audio
+                                            controls
+                                            controlsList={"nodownload"}
+                                            ref={audioRef}
+                                            onTimeUpdate={() => {
+                                                setCurAudioTime(audioRef.current.currentTime);
+                                            }}
+                                            src={`data:audio/wav;base64, ${musicAudio}`}/>
+                                        <br/>
+                                        <PolygonViewer width={300} height={300}
+                                            rawPoints={musicData["points"]}
+                                            currentTime={curAudioTime} timestamps={timestamps}
+                                        />
+                                    </>
+                                }
+                            </div>
+                        ),
+                    },
+                ],
+            }
+        }
     />);
 };
 

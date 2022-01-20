@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {fetchPost} from "../../common";
 import PropTypes from "prop-types";
 import FileInput from "./FileInput";
@@ -18,10 +18,7 @@ const INITIAL_EVERY_N = 8;
 const INITIAL_DURATION = .5;
 
 const UploadTimeSeriesFileInput = ({
-    musicApiEndpoint,
-    samplesApiEndpoint,
-    setInstrumentSamples,
-    setMusicData,
+    updateInputCallback,
 }) => {
     const [parsedCSV, setParsedCSV] = useState(null);
     const [duration, setDuration] = useState(INITIAL_DURATION);
@@ -29,6 +26,16 @@ const UploadTimeSeriesFileInput = ({
     const [mapToNote, setMapToNote] = useState(false);
     const [constants, setConstants] = useState([]);
     const [activeColumn, setActiveColumn] = useState(0);
+
+    useEffect(() => {
+        updateInputCallback({
+            parsedCSV,
+            duration,
+            everyN,
+            mapToNote,
+            constants,
+        });
+    }, [parsedCSV, duration, everyN, mapToNote, constants]);
 
     const constantsDefaults = {
         "base_frequency": {"label": "Base Frequency", "min": null, "max": null, "step": null},
@@ -58,18 +65,6 @@ const UploadTimeSeriesFileInput = ({
 
     const getSampleData = (name) => {
         void fetchPost('/api/time_series_sample_data/', {name}, setParsedCsvAndUpdateConstants);
-    };
-
-    const submitToAPI = () => {
-        const requestBody = {
-            constants,
-            duration,
-            everyN,
-            mapToNote,
-            parsedCSV,
-        };
-        void fetchPost(musicApiEndpoint, requestBody, setMusicData);
-        void fetchPost(samplesApiEndpoint, requestBody, setInstrumentSamples);
     };
 
     const updateConstant = (colNumber, constantName, val) => {
@@ -119,10 +114,6 @@ const UploadTimeSeriesFileInput = ({
     return (
         <>
             {!parsedCSV && <>
-                <p>
-                    This sonification takes in a table of values (like a spreadsheet), and
-                    uses the numbers it finds within to create music and instruments.
-                </p>
                 <p className="mb-0">
                     Either upload a CSV file that has numeric values in its columns...
                 </p>
@@ -219,23 +210,13 @@ const UploadTimeSeriesFileInput = ({
                         </div>
                     </div>
                 </form>
-
-                <button
-                    className="btn btn-primary"
-                    onClick={() => submitToAPI()}
-                >
-                    Sonify my data!
-                </button>
             </>}
         </>
     );
 };
 
 UploadTimeSeriesFileInput.propTypes = {
-    setMusicData: PropTypes.func,
-    setInstrumentSamples: PropTypes.func,
-    musicApiEndpoint: PropTypes.string,
-    samplesApiEndpoint: PropTypes.string,
+    updateInputCallback: PropTypes.func,
 };
 
 

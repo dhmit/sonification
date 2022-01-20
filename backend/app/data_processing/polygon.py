@@ -324,8 +324,8 @@ def generate_perimeter_freqs(points, base_freq):
     cumulative_distances = np.cumsum(rel_distances)
 
     freqs = [base_freq] + [base_freq * (1 + dist) for dist in cumulative_distances]
-    print(freqs)
     return freqs
+
 
 def generate_perimeter_samples(polygon_data):
     points = polygon_data['points']

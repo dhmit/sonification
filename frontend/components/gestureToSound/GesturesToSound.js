@@ -1,7 +1,6 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
-import RangeSliderInput from "../inputs/RangeSliderInput";
 import ToolTemplate from "../templates/ToolTemplate";
 
 
@@ -14,13 +13,9 @@ const GesturesToSound = () => {
     const [music, setMusic] = useState(null);
     const [instrumentSamples, setInstrumentSamples] = useState(null);
     const [undoneGestures, setUndoneGestures] = useState([]);
-    const [gestureParams, setGestureParams] = useState({
-        compression: 10,
-        pitch: {low: 131, high:698},
-        duration: {low: 0.1, high:2},
-    });
-    const [hideAxisLabel, setHideAxisLabel] = useState(true);
-    const [buttonText, setButtonText] = useState("Show Axis");
+    // const [gestureParams, setGestureParams] = useState({
+    //     pitch: {low: 131, high:698},
+    // });
 
     const getCoords = (event) => {
         if (!canvasRef.current) return;
@@ -121,7 +116,7 @@ const GesturesToSound = () => {
         };
         const requestBody = {
             gestures: allMouseCoords,
-            parameters: gestureParams,
+            // parameters: gestureParams,
             canvas: canvasSettings,
         };
         await fetchPost('/api/gesture_to_audio/', requestBody, (response) => {
@@ -150,37 +145,14 @@ const GesturesToSound = () => {
         if (undoneGestures.length > 0) {
             let lastUndoneGesture = undoneGestures.pop();
             setAllMouseCoords(prevLines => [...prevLines, lastUndoneGesture]);
-            //drawLine(allMouseCoords[allMouseCoords.length-1]);
             drawLine(lastUndoneGesture);
         }
     };
 
-    const showAxis = (event) => {
-        event.preventDefault();
-        if (hideAxisLabel) {
-            setHideAxisLabel(false);
-            setButtonText("Hide Axis");
-        } else{
-            setHideAxisLabel(true);
-            setButtonText("Show Axis");
-        }
-    };
-
-    const handleUpdateCompression = (event) => {
-        event.preventDefault();
-        setGestureParams(prevState =>
-            ({...prevState, compression: parseInt(event.target.value)}));
-    };
-
-    const updatePitch = (newValue) => {
-        setGestureParams(prevParams => ({...prevParams,
-            pitch:{low:newValue[0], high:newValue[1]}}));
-    };
-
-    const updateDuration = (newValue) => {
-        setGestureParams(prevParams => ({...prevParams,
-            duration:{low:newValue[0], high:newValue[1]}}));
-    };
+    // const updatePitch = (newValue) => {
+    //     setGestureParams(prevParams => ({...prevParams,
+    //         pitch:{low:newValue[0], high:newValue[1]}}));
+    // };
 
     return (<ToolTemplate 
         title='Gestures'
@@ -224,32 +196,10 @@ const GesturesToSound = () => {
                             New Canvas
                         </button>
                     </div>
-                    <button className="btn btn-outline-primary"
-                        onClick={showAxis}>{buttonText}</button>
                 </div>
             </div>
-            <div className="row">
+            {/* <div className="row">
                 <div className="col">
-                    <div>
-                        <strong>Compression</strong>
-                        <input className="slider mx-3" type="range"
-                            min="1" max="100" step="1" value={gestureParams.compression}
-                            onChange={handleUpdateCompression}/>
-                        {gestureParams.compression} {gestureParams.compression === 1
-                            ? 'coordinate'
-                            : 'coordinates'} per note
-                    </div>
-                    <div>
-                        <strong>Duration</strong>
-                        <RangeSliderInput
-                            name="duration"
-                            units="secs"
-                            minValue={0.01}
-                            maxValue={2}
-                            updateValues={updateDuration}
-                            step={0.01}
-                        />
-                    </div>
                     <div>
                         <strong>Pitch</strong>
                         <RangeSliderInput
@@ -262,7 +212,7 @@ const GesturesToSound = () => {
                         />
                     </div>
                 </div>
-            </div>
+            </div> */}
         </>}
     />);
 };

@@ -103,6 +103,7 @@ def get_instrument_sliders(gestures, gesture_param):
         result.append(coordinates_sum)
     return result
 
+
 def generate_samples_from_gesture(gesture, canvas):
     '''
     Given a geture and canvas parameters, generate an audio signal.
@@ -133,6 +134,7 @@ def generate_samples_from_gesture(gesture, canvas):
     # apply envelope to generated samples
     samples = envelope * samples
     return samples
+
 
 def generate_samples(gestures, canvas):
     samples = [generate_samples_from_gesture(g, canvas) for g in gestures]

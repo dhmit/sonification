@@ -26,7 +26,6 @@ def time_series_to_music(request):
     every_n = int(request.data['everyN'])
     print('Music every n', every_n)
     csv_data = csv_data[::every_n]
-    map_to_note = request.data['mapToNote']
 
     new_csv = []
     audio_samples = None
@@ -42,10 +41,6 @@ def time_series_to_music(request):
 
             frequency =\
                 (float(frequency) + column_constant["offset"]) * column_constant["multiplier"]
-
-            if map_to_note:
-                # map number [0,88] to a note
-                frequency = (2 ** ((frequency - 49) / 12)) * 440
 
             frequency += column_constant["base_frequency"]
             new_csv_row += [frequency]

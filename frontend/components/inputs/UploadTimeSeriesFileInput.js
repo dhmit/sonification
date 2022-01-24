@@ -23,7 +23,6 @@ const UploadTimeSeriesFileInput = ({
     const [parsedCSV, setParsedCSV] = useState(null);
     const [duration, setDuration] = useState(INITIAL_DURATION);
     const [everyN] = useState(INITIAL_EVERY_N);
-    const [mapToNote] = useState(false);
     const [constants, setConstants] = useState([]);
     const [activeColumn, setActiveColumn] = useState(0);
 
@@ -32,10 +31,9 @@ const UploadTimeSeriesFileInput = ({
             parsedCSV,
             duration,
             everyN,
-            mapToNote,
             constants,
         });
-    }, [parsedCSV, duration, everyN, mapToNote, constants]);
+    }, [parsedCSV, duration, everyN, constants]);
 
     const constantsDefaults = {
         "base_frequency": {"label": "Base Frequency", "min": null, "max": null, "step": null},

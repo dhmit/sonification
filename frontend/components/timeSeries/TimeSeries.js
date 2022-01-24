@@ -10,8 +10,6 @@ const TimeSeries = () => {
 
     const submitToAPI = async () => {
         const requestBody = fileInputData;
-        // await fetchPost('/api/time_series_to_music/', requestBody, setMusicData);
-        // await fetchPost('/api/time_series_to_samples/', requestBody, setInstrumentSamples);
         await fetchPost('/api/time_series_to_audio/', requestBody, response => {
             setMusicData(response.musicData);
             setInstrumentSamples(response.samples);

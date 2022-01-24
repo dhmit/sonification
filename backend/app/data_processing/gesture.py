@@ -111,6 +111,9 @@ def generate_samples_from_gesture(gesture, canvas):
     At any given time in the signal, the y-axis coordinate corresponds to the pitch and the 
     euclidian distance from the first coordinate in the gesture determines the amplitude.
     '''
+    if len(gesture) < 2:
+        return np.array([0])
+
     first_coord, final_coord = gesture[0], gesture[-1]
 
     # convert milliseconds -> seconds

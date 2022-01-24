@@ -76,17 +76,9 @@ const UploadTimeSeriesFileInput = ({
     };
 
     const makeColumnControls = (columnNumber) => {
-        return (<form>
+        return (<form className="container">
             <div className="row">
                 {makeControl(columnNumber, "base_frequency")}
-                {makeControl(columnNumber, "multiplier")}
-                {makeControl(columnNumber, "offset")}
-            </div>
-            <div className="row">
-                {makeControl(columnNumber, "a_percentage")}
-                {makeControl(columnNumber, "d_percentage")}
-                {makeControl(columnNumber, "s_percentage")}
-                {makeControl(columnNumber, "r_percentage")}
             </div>
         </form>);
     };
@@ -172,20 +164,8 @@ const UploadTimeSeriesFileInput = ({
                 </p>
                 <br />
 
-                <form>
+                <form className='container'>
                     <div className="row">
-                        <div className="col">
-                            <div className="form-group col-md-6">
-                                <label htmlFor="step_size">Step size</label>
-                                <input
-                                    className="form-control" type="number" id="step_size"
-                                    min={1}
-                                    step={1}
-                                    onChange={e => setEveryN(e.target.value)}
-                                    value={everyN}
-                                />
-                            </div>
-                        </div>
                         <div className="col">
                             <div className="form-group col-md-6">
                                 <label htmlFor="duration">Duration of each step (sec)</label>
@@ -198,15 +178,6 @@ const UploadTimeSeriesFileInput = ({
                                     value={duration}
                                 />
                             </div>
-                        </div>
-                        <div className="col">
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    onClick={e => setMapToNote(e.target.checked)}
-                                />
-                                <span> Map numbers to note?</span>
-                            </label>
                         </div>
                     </div>
                 </form>

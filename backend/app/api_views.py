@@ -6,7 +6,12 @@ from pathlib import Path
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+
+# https://stackoverflow.com/questions/50157759/runtimeerror-main-thread-is-not-in-main-loop-using-matplotlib-with-django
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
+
 import numpy as np
 
 from django.conf import settings

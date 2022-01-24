@@ -22,8 +22,8 @@ const UploadTimeSeriesFileInput = ({
 }) => {
     const [parsedCSV, setParsedCSV] = useState(null);
     const [duration, setDuration] = useState(INITIAL_DURATION);
-    const [everyN, setEveryN] = useState(INITIAL_EVERY_N);
-    const [mapToNote, setMapToNote] = useState(false);
+    const [everyN] = useState(INITIAL_EVERY_N);
+    const [mapToNote] = useState(false);
     const [constants, setConstants] = useState([]);
     const [activeColumn, setActiveColumn] = useState(0);
 

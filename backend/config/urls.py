@@ -34,8 +34,7 @@ urlpatterns = [
     path('api/text_shape_to_music/', api_views.text_shape_to_music),
     path('api/text_shape_to_samples/', api_views.text_shape_to_samples),
 
-    path('api/time_series_to_music/', api_views.time_series_to_music),
-    path('api/time_series_to_samples/', api_views.time_series_to_samples),
+    path('api/time_series_to_audio/', api_views.time_series_to_audio),
     path('api/time_series_sample_data/', api_views.time_series_sample_data),
     path('api/parse_csv/', api_views.parse_csv),
 

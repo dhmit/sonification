@@ -24,11 +24,14 @@ def time_series_to_music(request):
     column_constants = request.data['constants']
     duration = float(request.data['duration'])
     every_n = int(request.data['everyN'])
-    print('Music every n', every_n)
     csv_data = csv_data[::every_n]
 
     new_csv = []
     audio_samples = None
+
+    csv_data_cols = np.array(csv_data)
+    column_maxes = np.max(csv_data_cols, axis=0)
+    column_mins = np.min(csv_data_cols, axis=0)
 
     for i, row in enumerate(csv_data):
         sound = None
@@ -38,11 +41,12 @@ def time_series_to_music(request):
                 new_csv_row += [0]
                 continue
             column_constant = column_constants[j]
+            
+            base_freq = column_constant["base_frequency"]
+            min_freq = column_mins[j]
+            max_freq = column_maxes[j]
+            frequency = base_freq * (1 + (frequency-min_freq)/(max_freq-min_freq))
 
-            frequency =\
-                (float(frequency) + column_constant["offset"]) * column_constant["multiplier"]
-
-            frequency += column_constant["base_frequency"]
             new_csv_row += [frequency]
 
             note = synths.generate_sine_wave_with_envelope(

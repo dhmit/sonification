@@ -14,7 +14,7 @@ const DEFAULT_COLUMN_CONSTANTS = {
     "r_percentage": .2,
 };
 
-const INITIAL_EVERY_N = 8;
+const INITIAL_EVERY_N = 1;
 const INITIAL_DURATION = .5;
 
 const UploadTimeSeriesFileInput = ({

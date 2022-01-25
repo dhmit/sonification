@@ -101,38 +101,29 @@ const InstrumentPicker = ({
         ),
     ];
 
-    const instrumentPickerHeader = (
-        <div className="card-header">
-            <ul className="nav nav-tabs card-header-tabs">
+    const buttons = instruments.map(({title}, i) => (
+        <button 
+            type="button" 
+            className={`btn btn-secondary ${curInstrument === i && 'active'}`} 
+            onClick={() => setCurInstrument(i)} 
+            key={i}
+        >
+            {title}
+        </button>
+    ));
 
-                {instruments.map(({title}, i)=> (
-                    <li className="nav-item" key={`instrument-${i}`}>
-                        <a
-                            className={
-                                `nav-link
-                                ${STYLES.tabLink}
-                                ${curInstrument === i && 'active'}
-                            `}
-                            onClick={() => setCurInstrument(i)}
-                        >
-                            {title}
-                        </a>
-                    </li>
-                ))}
-            </ul>
+    return (<>
+        <div className='btn-group' role='group'>
+            {buttons}
         </div>
-    );
-
-    return (
-        <div className="card">
-            {instrumentPickerHeader}
+        <div className={`card ${STYLES.card}`}>
             <div className="card-body">
                 <div>
                     {instruments[curInstrument].component}
                 </div>
             </div>
         </div>
-    );
+    </>);
 };
 InstrumentPicker.propTypes = {
     samples: PropTypes.arrayOf(PropTypes.string),

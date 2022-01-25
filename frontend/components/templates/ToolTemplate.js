@@ -32,17 +32,19 @@ const ToolTemplate = ({
                 <div className='col'>
                     {tool}
                 </div>
-                <div className='col'>
-                    <button 
-                        disabled={sonifyButtonDisabled ?? false}
-                        className={"btn btn-outline-dark mt-2" + STYLES.submit}
-                        onClick={(event) => loadResults(event, handleSubmit, setLoading)}
-                    >
-                        {loading ? 'loading' : (instrumentSamples
-                            ? "Update"
-                            : "Sonify!")}
-                    </button>
-                    {loading && <div className="spinner-border" role="status"></div>}
+                <div className={STYLES.right + ' col'}>
+                    <div className={`${STYLES.buttonLoading}`}>
+                        <button 
+                            disabled={sonifyButtonDisabled ?? false}
+                            className={"btn btn-outline-dark mt-2" + STYLES.submit}
+                            onClick={(event) => loadResults(event, handleSubmit, setLoading)}
+                        >
+                            {loading ? 'loading' : (instrumentSamples
+                                ? "Update"
+                                : "Sonify!")}
+                        </button>
+                        {loading && <div className='spinner-border' role="status"></div>}
+                    </div>
                     {music && instrumentSamples && 
                         <InstrumentPicker 
                             samples={instrumentSamples} 

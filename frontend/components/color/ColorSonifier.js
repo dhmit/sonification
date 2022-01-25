@@ -51,7 +51,11 @@ class ColorSonifier extends React.Component {
     }
 
     handlePaletteClick = (e) => {
-        this.setState({selected: Number(e.target.id)});
+        const index = Number(e.target.id);
+        this.setState({
+            selected: index,
+            colorPickerColor: this.state.listOfColors[index],
+        });
     }
 
     handleChangeComplete = (color) => {
@@ -99,7 +103,7 @@ class ColorSonifier extends React.Component {
                     <div className='row'>
                         <div className='col'>
                             <ColorPicker 
-                                initColor={rgb2hex(this.state.colorPickerColor)}
+                                initColor={rgb2hex(this.state.listOfColors[this.state.selected])}
                                 onColorChange={this.handleChangeComplete}                         
                             />
                             <p>

@@ -3,6 +3,13 @@ import iro from "@jaames/iro";
 import {func, string} from "prop-types";
 
 class ColorPicker extends Component {
+    
+    componentDidUpdate() {
+        if (this.props.initColor !== this.colorPicker.color.hex) {
+            this.colorPicker.color.set(this.props.initColor);
+        }
+    }
+
     componentDidMount() {
         this.colorPicker = new iro.ColorPicker(this.el, {
             color: this.props.initColor ?? '#03ecfc',

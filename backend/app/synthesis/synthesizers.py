@@ -8,6 +8,27 @@ from scipy import signal
 from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
+
+def generate_wave_weighted_harmonics(frequency, duration, harmonic_weights):
+    '''
+    Create a wave from the addition of weighted harmonics of a given frequency.
+    '''
+    num_samples = int(duration * WAV_SAMPLE_RATE)
+    # time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
+
+    wave = np.zeros(num_samples)
+
+    for i, weight in enumerate(harmonic_weights):
+        harmonic_wave = generate_sine_wave(frequency*i, duration)
+        wave += weight*harmonic_wave
+    
+    norm = sum(harmonic_weights)
+    if norm != 0:
+        wave /= norm
+
+    return wave
+    
+
 def interp_envelope(duration, t, mags):
     '''
     Interpolates a time-varying envelope to fit an audio signal.
@@ -20,6 +41,7 @@ def interp_envelope(duration, t, mags):
 
     mag_interp = np.interp(time_steps, t, mags)
     return mag_interp
+
 
 def generate_wave_phase_mod(duration, t, freq):
     '''
@@ -38,6 +60,7 @@ def generate_wave_phase_mod(duration, t, freq):
 
     wave_samples = np.sin(phi)
     return wave_samples
+
 
 # pylint: disable=too-many-locals
 def generate_wave(frequency, duration, harmonics=0, vibrato=False, wave_type=np.sin):

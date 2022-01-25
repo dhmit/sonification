@@ -29,10 +29,10 @@ const ToolTemplate = ({
                 </div>
             </div>
             <div className='row'>
-                <div className='col'>
+                <div className='col-6'>
                     {tool}
                 </div>
-                <div className={STYLES.right + ' col'}>
+                <div className={STYLES.right + ' col-6'}>
                     <div className={`${STYLES.buttonLoading}`}>
                         <button 
                             disabled={sonifyButtonDisabled ?? false}

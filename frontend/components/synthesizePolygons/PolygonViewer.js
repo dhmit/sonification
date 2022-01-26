@@ -43,9 +43,7 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
                 y1={points[points.length - 1][1]}
                 x2={points[0][0]}
                 y2={points[0][1]}
-                className={(currentTime >= timestamps[points.length - 1][0] &&
-                    currentTime <= timestamps[points.length - 1][1])
-                    ? STYLES.playedLine : STYLES.line}
+                className={STYLES.line}
             />}
             {points && timestamps && timestamps.length === points.length &&
             points.map((p, i) => (
@@ -57,14 +55,14 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
                         y1={points[i][1]}
                         x2={points[i + 1][0]}
                         y2={points[i + 1][1]}
-                        className={(currentTime >= timestamps[i][0] &&
-                            currentTime <= timestamps[i][1]) ? STYLES.playedLine : STYLES.line}
+                        className={STYLES.line}
                     />}
                     <circle
                         key={`point-${i}`}
                         cx={p[0]}
                         cy={p[1]}
-                        className={STYLES.displayPoint}
+                        className={(currentTime >= timestamps[i][0] &&
+                            currentTime <= timestamps[i][1]) ? STYLES.playedPoint : STYLES.displayPoint}
                     />
                 </React.Fragment>
             ))}

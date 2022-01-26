@@ -110,6 +110,14 @@ def color_to_audio(request):
 ################################################################################
 @api_view(['POST'])
 def gesture_to_audio(request):
+    '''
+    Takes a list of gestures and canvas data and returns a response containing
+    a piece of music and samples generated from the list.
+    :param gestures: a list of lists containing coordinate objects, which are
+                        dictionaries containing 'x', 'y', and 't' keys.
+    :param canvas: a dictionary containing canvas metadata, specifically
+                    its height and width.
+    '''
     gestures = request.data['gestures']
     canvas = request.data['canvas']
 
@@ -155,7 +163,7 @@ def time_series_sample_data(request):
 @api_view(['POST'])
 def time_series_to_audio(request):
     """
-    Takes a dictionary representing a parsed CSV and constructs a piece of music 
+    Takes a dictionary representing a parsed CSV and constructs a piece of music
     and a set of samples based on the data.
     """
     music_data = time_series_processing.time_series_to_music(request)
@@ -224,7 +232,8 @@ def polygon_to_audio(request):
     should have a field "points" with the polygon points.
     It may also contain fields for the other arguments that synthesize_polygon takes.
     :param request: the HttpRequest
-    :return: a Response object to send back to the client with the generated musical data and samples.
+    :return: a Response object to send back to the client with the generated musical
+            data and samples.
     """
     polygon_data = polygon_processing.parse_polygon_data(json.loads(request.body))
     samples = polygon_processing.generate_samples(polygon_data)

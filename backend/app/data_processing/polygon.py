@@ -185,7 +185,7 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
 
     # Compute sides and angles of polygon
     sides_list = sides_of_polygon(points)
-    angles_list = angles_of_polygon(points)
+    # angles_list = angles_of_polygon(points)
     cur_time = 0
     if sides_as_duration:
         duration_list, total_length = sides_to_duration(sides_list, note_length)
@@ -315,7 +315,14 @@ def calc_side_len(point1, point2):
 
 
 def generate_perimeter_freqs(points, base_freq):
-
+    '''
+    Compute a frequency corresponding to each side's cumulative contribution 
+    to the total perimeter length.
+    :param points: list of lists of length 2, corresponding to x and y coordinates.
+    :param base_freq: base frequency for the octave that the perimeter frequencies
+                        will be mapped to.
+    :param freqs: list of frequencies corresponding to each side/vertex
+    '''
     distances = [calc_side_len(points[i-1], points[i]) for i in range(len(points))]
     distances = distances[1:] + [distances[0]]
 

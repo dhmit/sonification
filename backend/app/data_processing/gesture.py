@@ -1,6 +1,7 @@
 import math
 import numpy as np
-from app.synthesis.synthesizers import generate_sine_wave_with_envelope, generate_wave_phase_mod, interp_envelope
+from app.synthesis.synthesizers import \
+    generate_sine_wave_with_envelope, generate_wave_phase_mod, interp_envelope
 
 
 def compress_coordinates(gestures, factor):
@@ -108,7 +109,7 @@ def generate_samples_from_gesture(gesture, canvas):
     '''
     Given a geture and canvas parameters, generate an audio signal.
 
-    At any given time in the signal, the y-axis coordinate corresponds to the pitch and the 
+    At any given time in the signal, the y-axis coordinate corresponds to the pitch and the
     euclidian distance from the first coordinate in the gesture determines the amplitude.
     '''
     if len(gesture) < 2:

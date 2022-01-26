@@ -21,13 +21,13 @@ def generate_wave_weighted_harmonics(frequency, duration, harmonic_weights):
     for i, weight in enumerate(harmonic_weights):
         harmonic_wave = generate_sine_wave(frequency*i, duration)
         wave += weight*harmonic_wave
-    
+
     norm = sum(harmonic_weights)
     if norm != 0:
         wave /= norm
 
     return wave
-    
+
 
 def interp_envelope(duration, t, mags):
     '''

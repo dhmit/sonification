@@ -50,6 +50,11 @@ const UploadTimeSeriesFileInput = ({
         //           a new CSV. It might be nice to retain settings between uploads. Not sure.
         const newColumnConstants = [];
         parsedData[0].forEach(() => newColumnConstants.push({...DEFAULT_COLUMN_CONSTANTS}));
+
+        const numRows = parsedData.length;
+        const dur = Math.min(30 / numRows, INITIAL_DURATION); // aim for 30 seconds of audio if too long
+        setDuration(dur);
+
         setConstants(newColumnConstants);
         setParsedCSV(parsedData);  // we set this last because the UI if's on its presence
     };
@@ -169,7 +174,7 @@ const UploadTimeSeriesFileInput = ({
                                 <label htmlFor="duration">Duration of each step (sec)</label>
                                 <input
                                     className="form-control" type="number" id="duration"
-                                    min={0.1}
+                                    min={0}
                                     max={10}
                                     step={.1}
                                     onChange={e => setDuration(e.target.value)}

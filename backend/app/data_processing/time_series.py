@@ -1,17 +1,18 @@
 import base64
 from io import BytesIO
 
-# https://stackoverflow.com/questions/50157759/runtimeerror-main-thread-is-not-in-main-loop-using-matplotlib-with-django
 import matplotlib
-matplotlib.use('Agg')
 import matplotlib.pyplot as plt
-
 import numpy as np
 
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
 
 from app.notes import NOTES
+
+
+# https://stackoverflow.com/questions/50157759/runtimeerror-main-thread-is-not-in-main-loop-using-matplotlib-with-django
+matplotlib.use('Agg')
 
 
 # pylint: disable=too-many-locals
@@ -41,7 +42,7 @@ def time_series_to_music(request):
                 new_csv_row += [0]
                 continue
             column_constant = column_constants[j]
-            
+
             base_freq = column_constant["base_frequency"]
             min_freq = column_mins[j]
             max_freq = column_maxes[j]

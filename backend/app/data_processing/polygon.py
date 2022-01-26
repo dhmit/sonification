@@ -316,7 +316,7 @@ def calc_side_len(point1, point2):
 
 def generate_perimeter_freqs(points, base_freq):
     '''
-    Compute a frequency corresponding to each side's cumulative contribution 
+    Compute a frequency corresponding to each side's cumulative contribution
     to the total perimeter length.
     :param points: list of lists of length 2, corresponding to x and y coordinates.
     :param base_freq: base frequency for the octave that the perimeter frequencies
@@ -335,6 +335,9 @@ def generate_perimeter_freqs(points, base_freq):
 
 
 def generate_perimeter_samples(polygon_data):
+    '''
+    Generate audio samples for each side of a polygon.
+    '''
     points = polygon_data['points']
     base_freq = polygon_data['base_frequency']
     note_len = polygon_data['note_length']

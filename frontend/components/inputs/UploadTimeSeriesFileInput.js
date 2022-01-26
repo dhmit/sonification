@@ -52,7 +52,8 @@ const UploadTimeSeriesFileInput = ({
         parsedData[0].forEach(() => newColumnConstants.push({...DEFAULT_COLUMN_CONSTANTS}));
 
         const numRows = parsedData.length;
-        const dur = Math.min(30 / numRows, INITIAL_DURATION); // aim for 30 seconds of audio if too long
+        // aim for 30 seconds of audio if too long
+        const dur = Math.min(30 / numRows, INITIAL_DURATION);
         setDuration(dur);
 
         setConstants(newColumnConstants);

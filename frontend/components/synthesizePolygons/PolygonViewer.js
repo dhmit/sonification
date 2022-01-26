@@ -62,7 +62,9 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
                         cx={p[0]}
                         cy={p[1]}
                         className={(currentTime >= timestamps[i][0] &&
-                            currentTime <= timestamps[i][1]) ? STYLES.playedPoint : STYLES.displayPoint}
+                            currentTime <= timestamps[i][1]) 
+                            ? STYLES.playedPoint 
+                            : STYLES.displayPoint}
                     />
                 </React.Fragment>
             ))}

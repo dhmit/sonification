@@ -190,11 +190,6 @@ const GesturesToSound = () => {
                             onClick={redoGesture} disabled={undoneGestures.length === 0}>
                             Redo
                         </button>
-                        <button
-                            className="btn btn-outline-dark"
-                            onClick={resetCanvas} disabled={submitted}>
-                            Clear Gestures
-                        </button>
                         <button className="btn btn-outline-dark" onClick={handleNewGestures}>
                             New Canvas
                         </button>

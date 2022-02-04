@@ -53,16 +53,20 @@ MusicPlayer.propTypes = {
     music: PropTypes.string,
 };
 
+export const ALL_DEFAULT_INSTRUMENTS = [
+    'Pads',
+    'Slider Looper',
+    'Spatial Instrument',
+    'Step Sequencer',
+    'Download',
+];
 
-
-const InstrumentPicker = ({music, samples}) => {
+const InstrumentPicker = ({
+    music, samples, includedDefaultInstruments=[], customInstruments=[],
+}) => {
     const [curInstrument, setCurInstrument] = useState(0);
 
-    const instruments = [
-        {
-            title: "Music",
-            component: <MusicPlayer music={music}/>,
-        },
+    const defaultInstruments = [
         {
             title: "Pads",
             component: <PadInstrument samples={samples}/>,
@@ -86,42 +90,46 @@ const InstrumentPicker = ({music, samples}) => {
         },
     ];
 
-    const instrumentPickerHeader = (
-        <div className="card-header">
-            <ul className="nav nav-tabs card-header-tabs">
+    const instruments = [
+        ...customInstruments,
+        {
+            title: "Music",
+            component: <MusicPlayer music={music}/>,
+        },
+        ...defaultInstruments.filter(
+            instrument => includedDefaultInstruments.includes(instrument.title)
+        ),
+    ];
 
-                {instruments.map(({title}, i)=> (
-                    <li className="nav-item" key={`instrument-${i}`}>
-                        <a
-                            className={
-                                `nav-link
-                                ${STYLES.tabLink}
-                                ${curInstrument === i && 'active'}
-                            `}
-                            onClick={() => setCurInstrument(i)}
-                        >
-                            {title}
-                        </a>
-                    </li>
-                ))}
-            </ul>
+    const buttons = instruments.map(({title}, i) => (
+        <button 
+            type="button" 
+            className={`btn btn-secondary ${curInstrument === i && 'active'}`} 
+            onClick={() => setCurInstrument(i)} 
+            key={i}
+        >
+            {title}
+        </button>
+    ));
+
+    return (<>
+        <div className='btn-group' role='group'>
+            {buttons}
         </div>
-    );
-
-    return (
-        <div className="card">
-            {instrumentPickerHeader}
+        <div className={`card ${STYLES.card}`}>
             <div className="card-body">
                 <div>
                     {instruments[curInstrument].component}
                 </div>
             </div>
         </div>
-    );
+    </>);
 };
 InstrumentPicker.propTypes = {
     samples: PropTypes.arrayOf(PropTypes.string),
     music: PropTypes.string,
+    includedDefaultInstruments: PropTypes.arrayOf(PropTypes.string),
+    customInstruments: PropTypes.arrayOf(PropTypes.object),
 };
 
 export default InstrumentPicker;

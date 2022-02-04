@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {fetchPost} from "../../common";
 import PropTypes from "prop-types";
 import FileInput from "./FileInput";
@@ -14,21 +14,26 @@ const DEFAULT_COLUMN_CONSTANTS = {
     "r_percentage": .2,
 };
 
-const INITIAL_EVERY_N = 8;
+const INITIAL_EVERY_N = 1;
 const INITIAL_DURATION = .5;
 
 const UploadTimeSeriesFileInput = ({
-    musicApiEndpoint,
-    samplesApiEndpoint,
-    setInstrumentSamples,
-    setMusicData,
+    updateInputCallback,
 }) => {
     const [parsedCSV, setParsedCSV] = useState(null);
     const [duration, setDuration] = useState(INITIAL_DURATION);
-    const [everyN, setEveryN] = useState(INITIAL_EVERY_N);
-    const [mapToNote, setMapToNote] = useState(false);
+    const [everyN] = useState(INITIAL_EVERY_N);
     const [constants, setConstants] = useState([]);
     const [activeColumn, setActiveColumn] = useState(0);
+
+    useEffect(() => {
+        updateInputCallback({
+            parsedCSV,
+            duration,
+            everyN,
+            constants,
+        });
+    }, [parsedCSV, duration, everyN, constants]);
 
     const constantsDefaults = {
         "base_frequency": {"label": "Base Frequency", "min": null, "max": null, "step": null},
@@ -45,6 +50,12 @@ const UploadTimeSeriesFileInput = ({
         //           a new CSV. It might be nice to retain settings between uploads. Not sure.
         const newColumnConstants = [];
         parsedData[0].forEach(() => newColumnConstants.push({...DEFAULT_COLUMN_CONSTANTS}));
+
+        const numRows = parsedData.length;
+        // aim for 30 seconds of audio if too long
+        const dur = Math.min(30 / numRows, INITIAL_DURATION);
+        setDuration(dur);
+
         setConstants(newColumnConstants);
         setParsedCSV(parsedData);  // we set this last because the UI if's on its presence
     };
@@ -60,18 +71,6 @@ const UploadTimeSeriesFileInput = ({
         void fetchPost('/api/time_series_sample_data/', {name}, setParsedCsvAndUpdateConstants);
     };
 
-    const submitToAPI = () => {
-        const requestBody = {
-            constants,
-            duration,
-            everyN,
-            mapToNote,
-            parsedCSV,
-        };
-        void fetchPost(musicApiEndpoint, requestBody, setMusicData);
-        void fetchPost(samplesApiEndpoint, requestBody, setInstrumentSamples);
-    };
-
     const updateConstant = (colNumber, constantName, val) => {
         setConstants(prevState => {
             let temp = Object.assign([], prevState);
@@ -81,17 +80,9 @@ const UploadTimeSeriesFileInput = ({
     };
 
     const makeColumnControls = (columnNumber) => {
-        return (<form>
+        return (<form className="container">
             <div className="row">
                 {makeControl(columnNumber, "base_frequency")}
-                {makeControl(columnNumber, "multiplier")}
-                {makeControl(columnNumber, "offset")}
-            </div>
-            <div className="row">
-                {makeControl(columnNumber, "a_percentage")}
-                {makeControl(columnNumber, "d_percentage")}
-                {makeControl(columnNumber, "s_percentage")}
-                {makeControl(columnNumber, "r_percentage")}
             </div>
         </form>);
     };
@@ -119,10 +110,6 @@ const UploadTimeSeriesFileInput = ({
     return (
         <>
             {!parsedCSV && <>
-                <p>
-                    This sonification takes in a table of values (like a spreadsheet), and
-                    uses the numbers it finds within to create music and instruments.
-                </p>
                 <p className="mb-0">
                     Either upload a CSV file that has numeric values in its columns...
                 </p>
@@ -181,26 +168,14 @@ const UploadTimeSeriesFileInput = ({
                 </p>
                 <br />
 
-                <form>
+                <form className='container'>
                     <div className="row">
-                        <div className="col">
-                            <div className="form-group col-md-6">
-                                <label htmlFor="step_size">Step size</label>
-                                <input
-                                    className="form-control" type="number" id="step_size"
-                                    min={1}
-                                    step={1}
-                                    onChange={e => setEveryN(e.target.value)}
-                                    value={everyN}
-                                />
-                            </div>
-                        </div>
                         <div className="col">
                             <div className="form-group col-md-6">
                                 <label htmlFor="duration">Duration of each step (sec)</label>
                                 <input
                                     className="form-control" type="number" id="duration"
-                                    min={0.1}
+                                    min={0}
                                     max={10}
                                     step={.1}
                                     onChange={e => setDuration(e.target.value)}
@@ -208,34 +183,15 @@ const UploadTimeSeriesFileInput = ({
                                 />
                             </div>
                         </div>
-                        <div className="col">
-                            <label>
-                                <input
-                                    type="checkbox"
-                                    onClick={e => setMapToNote(e.target.checked)}
-                                />
-                                <span> Map numbers to note?</span>
-                            </label>
-                        </div>
                     </div>
                 </form>
-
-                <button
-                    className="btn btn-primary"
-                    onClick={() => submitToAPI()}
-                >
-                    Sonify my data!
-                </button>
             </>}
         </>
     );
 };
 
 UploadTimeSeriesFileInput.propTypes = {
-    setMusicData: PropTypes.func,
-    setInstrumentSamples: PropTypes.func,
-    musicApiEndpoint: PropTypes.string,
-    samplesApiEndpoint: PropTypes.string,
+    updateInputCallback: PropTypes.func,
 };
 
 

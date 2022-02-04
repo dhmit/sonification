@@ -1,8 +1,28 @@
 import React from "react";
-import {SketchPicker} from 'react-color';
 import {fetchPost} from "../../common";
 import PaletteColor from "./PaletteColor";
-import InstrumentPicker from "../instruments/InstrumentPicker";
+import ColorPicker from "./ColorPicker";
+import ToolTemplate from "../templates/ToolTemplate";
+import {ALL_DEFAULT_INSTRUMENTS} from "../instruments/InstrumentPicker";
+
+// input: r,g,b in [0,1], out: h in [0,360) and s,v in [0,1]
+// https://stackoverflow.com/questions/8022885/rgb-to-hsv-color-in-javascript
+function rgb2hsv(color) {
+    let {r,g,b} = color;
+    let v=Math.max(r,g,b), c=v-Math.min(r,g,b);
+    let h= c && ((v===r) ? (g-b)/c : ((v===g) ? 2+(b-r)/c : 4+(r-g)/c)); 
+    return {h: 60*(h<0?h+6:h), s: 100*(v&&c/v), v: 100*v/255};
+}
+  
+function rgb2hex(color) {
+    let {r,g,b} = color;
+    function componentToHex(c) {
+        const hex = c.toString(16);
+        return hex.length === 1 ? "0" + hex : hex;
+    }
+
+    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
 
 class ColorSonifier extends React.Component {
     constructor(props) {
@@ -31,7 +51,11 @@ class ColorSonifier extends React.Component {
     }
 
     handlePaletteClick = (e) => {
-        this.setState({selected: Number(e.target.id)});
+        const index = Number(e.target.id);
+        this.setState({
+            selected: index,
+            colorPickerColor: this.state.listOfColors[index],
+        });
     }
 
     handleChangeComplete = (color) => {
@@ -40,14 +64,14 @@ class ColorSonifier extends React.Component {
         this.setState({listOfColors: [...currentColorState], colorPickerColor: color.rgb});
     };
 
-    handleSubmit = () => {
-        const requestBody = {listOfColors: this.state.listOfColors};
-        // TODO(ra): doing this as a pair of API calls is a hack to get it done quickly
-        //           without a refactor -- actually refactor this in future!
-        const setSamples = response => this.setState({instrumentSamples: response});
-        const setMusic = response => this.setState({music: response});
-        fetchPost('/api/color_to_samples/', requestBody, setSamples);
-        fetchPost('/api/color_to_music/', requestBody, setMusic);
+    handleSubmit = async () => {
+        let requestBody = {colors: this.state.listOfColors.map(color => rgb2hsv(color))};
+        await fetchPost('/api/color_to_audio/', requestBody, response => {
+            this.setState({
+                instrumentSamples: response.samples,
+                music: response.music,
+            });
+        });
     };
 
     render() {
@@ -60,51 +84,43 @@ class ColorSonifier extends React.Component {
             />
         );
 
-        return (<div>
-            <h1>Colors</h1>
-            <p> Use the color picker below to choose a color, and hit the <b>submit</b> button
-                to add up to seven colors to your palette. When you're ready to hear them together,
-                click the <b>Generate Instrument</b> button to hear them together!</p>
-            <div className="row">
-                <SketchPicker
-                    color={this.state.colorPickerColor}
-                    onChangeComplete={this.handleChangeComplete}
-                    disableAlpha
-                    className="col-sm"
-                />
+        const hsv = rgb2hsv(this.state.colorPickerColor);
 
-                <div className="col">
-                    <div className="row mb-4">
-                        <div className="col">
-                            <div className="row">
-                                <ul className="list-inline ml-3">
-                                    {colorDisplay}
-                                </ul>
-                            </div>
-                            <div>
-                                <button className="btn btn-outline-dark mt-2"
-                                    onClick={this.handleSubmit}>
-                                    {this.state.instrumentSamples
-                                        ? "Update"
-                                        : "Sonify!"}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div className="row">
-                        <div className="col">
-                            {this.state.instrumentSamples && this.state.music &&
-                            <InstrumentPicker
-                                samples={this.state.instrumentSamples}
-                                music={this.state.music}
+        return (
+            <ToolTemplate
+                title='Colors'
+                description={
+                    // eslint-disable-next-line max-len
+                    <p> Use the color picker below to choose a color, and hit the <b>submit</b> button to add up to seven colors to your palette. When you're ready to hear them together, click the <b>Generate Instrument</b> button to hear them together!</p>
+                }
+                instrumentSamples={this.state.instrumentSamples}
+                music={this.state.music}
+                handleSubmit={this.handleSubmit}
+                instrumentPickerProps={{
+                    includedDefaultInstruments: ALL_DEFAULT_INSTRUMENTS,
+                }}
+                tool={<>
+                    <div className='row'>
+                        <div className='col'>
+                            <ColorPicker 
+                                initColor={rgb2hex(this.state.listOfColors[this.state.selected])}
+                                onColorChange={this.handleChangeComplete}                         
                             />
-                            }
+                            <p>
+                                <b>H:</b> {Math.round(hsv.h)}&deg;
+                                <b> S:</b> {Math.round(hsv.s)}% 
+                                <b> V:</b> {Math.round(hsv.v)}%
+                            </p>
                         </div>
                     </div>
-                </div>
-            </div>
-        </div>);
+                    <div className='row'>
+                        <div className='col'>
+                            {colorDisplay}
+                        </div>
+                    </div>
+                </>}
+            />
+        );
     }
 }
 

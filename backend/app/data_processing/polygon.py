@@ -3,6 +3,7 @@ import numbers
 
 import numpy as np
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
+from app.synthesis import synthesizers as synths
 
 
 def check_valid_polygon(polygon):
@@ -184,18 +185,20 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
 
     # Compute sides and angles of polygon
     sides_list = sides_of_polygon(points)
-    angles_list = angles_of_polygon(points)
+    # angles_list = angles_of_polygon(points)
     cur_time = 0
     if sides_as_duration:
         duration_list, total_length = sides_to_duration(sides_list, note_length)
         total_length = int(total_length * WAV_SAMPLE_RATE)
-    freq_change = change_in_frequency(angles_list)
-    cur_freq = base_frequency
+    # freq_change = change_in_frequency(angles_list)
+    # cur_freq = base_frequency
+    freqs = generate_perimeter_freqs(points, base_frequency)
 
     # initialize the empty sound
     sound = np.zeros(total_length)
     # add each note to the sound
     for note_ind in range(num_notes):
+        cur_freq = freqs[note_ind]
         # generate note and ensure it has correct length
         if sides_as_duration:
             # base amplitude of 1
@@ -218,12 +221,12 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
                 sound[note_ind * note_delay_samples + i] += note[i]
 
         # update current frequency
-        cur_freq *= freq_change[note_ind]
-        if restrict_frequency:
-            while cur_freq > ceil_frequency:
-                cur_freq /= 2
-            while cur_freq < floor_frequency:
-                cur_freq *= 2
+        # cur_freq *= freq_change[note_ind]
+        # if restrict_frequency:
+        #     while cur_freq > ceil_frequency:
+        #         cur_freq /= 2
+        #     while cur_freq < floor_frequency:
+        #         cur_freq *= 2
 
     if not sides_as_duration:
         duration_list = [note_length]*num_notes
@@ -305,3 +308,46 @@ def polygon_frequencies(points, restrict_frequency=False, base_frequency=220, fl
                 cur_freq *= 2
 
     return frequencies
+
+
+def calc_side_len(point1, point2):
+    return ((point1[0] - point2[0])**2 + (point1[1] - point2[1])**2)**(1/2)
+
+
+def generate_perimeter_freqs(points, base_freq):
+    '''
+    Compute a frequency corresponding to each side's cumulative contribution
+    to the total perimeter length.
+    :param points: list of lists of length 2, corresponding to x and y coordinates.
+    :param base_freq: base frequency for the octave that the perimeter frequencies
+                        will be mapped to.
+    :param freqs: list of frequencies corresponding to each side/vertex
+    '''
+    distances = [calc_side_len(points[i-1], points[i]) for i in range(len(points))]
+    distances = distances[1:] + [distances[0]]
+
+    distances_sum = sum(distances)
+    rel_distances = [d / distances_sum for d in distances]
+    cumulative_distances = np.cumsum(rel_distances)
+
+    freqs = [base_freq] + [base_freq * (1 + dist) for dist in cumulative_distances]
+    return freqs
+
+
+def generate_perimeter_samples(polygon_data):
+    '''
+    Generate audio samples for each side of a polygon.
+    '''
+    points = polygon_data['points']
+    base_freq = polygon_data['base_frequency']
+    note_len = polygon_data['note_length']
+
+    freqs = generate_perimeter_freqs(points, base_freq)
+    samples = [
+        synths.generate_sine_wave(freq, note_len) for freq in freqs
+    ]
+    return samples
+
+
+def generate_samples(polygon_data):
+    return generate_perimeter_samples(polygon_data)

@@ -9,8 +9,8 @@ module.exports = {
         index: "./frontend/index"
     },
     output: {
-        path: path.resolve("./assets/bundles/"),
-        publicPath: "/assets/bundles/",
+        path: path.resolve("./build/bundles/"),
+        publicPath: "/static/bundles/",
         filename: "[name].bundle.js"
     },
     plugins: [

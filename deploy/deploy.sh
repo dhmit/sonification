@@ -20,7 +20,7 @@ source "$REPO_ROOT_DIR"/venv/bin/activate
 
 echo 'Building frontend'
 cd "$REPO_ROOT_DIR"/frontend
-npm install
+npm ci
 npm run build
 
 cd ../backend

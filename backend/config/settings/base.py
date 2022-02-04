@@ -52,7 +52,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
 ROOT_URLCONF = 'config.urls'
@@ -134,7 +134,6 @@ STATIC_ROOT = os.path.join(PROJECT_ROOT, 'static')
 # where collectstatic looks for static files
 STATICFILES_DIRS = (
     os.path.join(PROJECT_ROOT, 'build'),
-    os.path.join(PROJECT_ROOT, 'assets'),
 )
 
 REST_FRAMEWORK = {

@@ -10,10 +10,10 @@ import {ALL_DEFAULT_INSTRUMENTS} from "../instruments/InstrumentPicker";
 function rgb2hsv(color) {
     let {r,g,b} = color;
     let v=Math.max(r,g,b), c=v-Math.min(r,g,b);
-    let h= c && ((v===r) ? (g-b)/c : ((v===g) ? 2+(b-r)/c : 4+(r-g)/c)); 
+    let h= c && ((v===r) ? (g-b)/c : ((v===g) ? 2+(b-r)/c : 4+(r-g)/c));
     return {h: 60*(h<0?h+6:h), s: 100*(v&&c/v), v: 100*v/255};
 }
-  
+
 function rgb2hex(color) {
     let {r,g,b} = color;
     function componentToHex(c) {
@@ -89,10 +89,19 @@ class ColorSonifier extends React.Component {
         return (
             <ToolTemplate
                 title='Colors'
-                description={
-                    // eslint-disable-next-line max-len
-                    <p> Use the color picker below to choose a color, and hit the <b>submit</b> button to add up to seven colors to your palette. When you're ready to hear them together, click the <b>Generate Instrument</b> button to hear them together!</p>
-                }
+                description={<>
+                    <p>
+                        Choose up to seven colors below, then click Sonify to
+                        hear your palette!
+                    </p>
+                    <p>
+                        Each color's<ul>
+                            <li><strong>Hue</strong> is mapped to the pitch of the sound,</li>
+                            <li><strong>Saturation</strong> is mapped to its loudness,</li>
+                            <li><strong>Value</strong> to its timbre.</li>
+                        </ul>
+                    </p>
+                </>}
                 instrumentSamples={this.state.instrumentSamples}
                 music={this.state.music}
                 handleSubmit={this.handleSubmit}
@@ -102,14 +111,14 @@ class ColorSonifier extends React.Component {
                 tool={<>
                     <div className='row'>
                         <div className='col'>
-                            <ColorPicker 
+                            <ColorPicker
                                 initColor={rgb2hex(this.state.listOfColors[this.state.selected])}
-                                onColorChange={this.handleChangeComplete}                         
+                                onColorChange={this.handleChangeComplete}
                             />
                             <p>
-                                <b>H:</b> {Math.round(hsv.h)}&deg;
-                                <b> S:</b> {Math.round(hsv.s)}% 
-                                <b> V:</b> {Math.round(hsv.v)}%
+                                <b>Hue:</b> {Math.round(hsv.h)}&deg;
+                                <b>Saturation:</b> {Math.round(hsv.s)}%
+                                <b>Value:</b> {Math.round(hsv.v)}%
                             </p>
                         </div>
                     </div>

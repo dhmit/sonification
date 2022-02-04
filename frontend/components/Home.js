@@ -1,9 +1,10 @@
 import React from "react";
 import PropTypes from "prop-types";
+import {HomeNav} from "./global/Nav";
 
 const ProjectCard = ({title, description, route}) => {
     return (
-        <div className="col-sm-4 col-md-3 card mb-4 mr-4">
+        <div className="col-12 col-md-5 card mb-4 mr-4">
             <div className="card-body">
                 <h2 className="card-title text-center">
                     <a href={route} className="stretched-link">{title}</a>
@@ -20,6 +21,7 @@ ProjectCard.propTypes = {
     description: PropTypes.string,
     route: PropTypes.string,
 };
+
 
 
 const Home = () => {
@@ -45,8 +47,8 @@ const Home = () => {
             route: '/text-shape/',
         },
         {
-            title: 'Playback Demos',
-            route: '/playback-demo/',
+            title: 'Summer 2021 Prototypes',
+            route: '/summer-prototypes/',
         },
     ];
 
@@ -59,20 +61,35 @@ const Home = () => {
         />
     ));
 
-    return (
-        <div className="row">
-            {projectCards}
-            <div className="col-3 card mb-4 mr-4">
-                <div className="card-body text-center">
-                    <h2 className="card-title">
-                        Numbers Demo
-                    </h2>
-                    <a href="/numbers-before/" className="card-link">Before</a>
-                    <a href="/numbers-after/" className="card-link">After</a>
+
+    return (<>
+        <HomeNav/>
+        <div id="main-container">
+            <main className='container mx-auto' role="main">
+                <div className="row">
+                    <p className='col-12 col-md-10'>
+                        This project was created in the MIT Digital Humanities Lab
+                        as a collaboration between DH Fall 2021 Faculty Fellow&nbsp;
+                        <a href='https://www.ziporyn.com/'>Prof. Evan Ziporyn</a>,&nbsp;
+                        <a href='https://digitalhumanities.mit.edu/project/sonification-toolkit-for-musicians/'>
+                        two dozen undergraduate research associates</a>,
+                        and the <a href='https://digitalhumanities.mit.edu/people/'> instructional
+                        staff</a> of the DH Lab.
+                    </p>
+                    <p className='col-12 col-md-10'>
+                    This site is a work-in-progress prototype. Choose a module below to begin
+                    transforming data into music!
+                    </p>
                 </div>
-            </div>
+
+                <div className="row">
+                    {projectCards}
+                </div>
+            </main>
         </div>
-    );
+
+
+    </>);
 };
 
 export default Home;

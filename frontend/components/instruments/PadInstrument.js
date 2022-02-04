@@ -1,50 +1,64 @@
 import React, {useEffect, useState, useRef} from "react";
 import PropTypes from "prop-types";
-import SamplePlayer from "./SamplePlayer";
+import {createAudioCallbacks} from "./SamplePlayer";
 import STYLES from "./PadInstrument.module.scss";
 
-const Pad = ({sample, audioContext, keyBind, padClassName}) => {
-    const [shouldPlay, setShouldPlay] = useState(false);
+const Pad = ({keyBind, padClassName, startCallback, endCallback}) => {
     const [keyStatusClass, setKeyStatusClass] = useState('');
+
+    let isPlaying = false;
+
+    const startPlaying = () => {
+        if (isPlaying) return;
+        isPlaying = true;
+        startCallback();
+        setKeyStatusClass(STYLES.keypress);
+    };
+
+    const stopPlaying = () => {
+        if (!isPlaying) return;
+        isPlaying = false;
+        endCallback();
+        setKeyStatusClass('');
+    };
 
     const handleKeyDown = (event) => {
         if (event.key === keyBind) {
-            setShouldPlay(true);
-            setKeyStatusClass(STYLES.keypress);
+            startPlaying();
+        }
+    };
+
+    const handleKeyUp = (event) => {
+        if (event.key === keyBind) {
+            stopPlaying();
         }
     };
 
     useEffect(() => {
         document.addEventListener('keydown', handleKeyDown);
+        document.addEventListener('keyup', handleKeyUp);
         return () => {
             document.removeEventListener('keydown', handleKeyDown);
+            document.removeEventListener('keyup', handleKeyUp);
         };
     }, []);
 
-    useEffect(() => {
-        if (!shouldPlay) return;
+    const handlePadClick = () => {
+        startPlaying();
         const timeout = setTimeout(() => {
-            setShouldPlay(false);
-            setKeyStatusClass('');
+            stopPlaying();
         }, 1000);
         return () => clearInterval(timeout);
-    }, [shouldPlay]);
+    };
 
 
     return (<>
         <button
             className={`${padClassName} ${keyStatusClass} inactive`}
-            onClick={() => setShouldPlay(true)}
+            onClick={() => handlePadClick()}
         >
             {keyBind}
         </button>
-        <SamplePlayer
-            sample={sample}
-            shouldPlay={shouldPlay}
-            loop={false}
-            volume={100}
-            audioContext={audioContext}
-        />
     </>);
 };
 Pad.propTypes = {
@@ -52,6 +66,8 @@ Pad.propTypes = {
     keyBind: PropTypes.string,
     padClassName: PropTypes.string,
     sample: PropTypes.string,
+    startCallback: PropTypes.func,
+    endCallback: PropTypes.func,
 };
 
 
@@ -68,6 +84,8 @@ const PadInstrument = ({samples}) => {
         return () => void audioContextRef.current.close();
     }, []);
 
+    const [startCallbacks, endCallbacks] = createAudioCallbacks(samples);
+
     const pads = samples.map((sample, i) => (
         <Pad
             keyBind={keyBinds[i]}
@@ -75,6 +93,8 @@ const PadInstrument = ({samples}) => {
             sample={samples[i]}
             padClassName={i < 4 ? STYLES.cyanPad : STYLES.magentaPad}
             audioContext={audioContextRef.current}
+            startCallback={startCallbacks[i]}
+            endCallback={endCallbacks[i]}
         />
     ));
 

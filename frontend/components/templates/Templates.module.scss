@@ -1,0 +1,16 @@
+.submit {
+  margin: 0 !important;
+}
+
+.buttonLoading {
+  display: flex;
+}
+
+.right {
+  display: flex;
+  flex-direction: column;
+}
+
+.right > div {
+  margin-bottom: 5px;
+}

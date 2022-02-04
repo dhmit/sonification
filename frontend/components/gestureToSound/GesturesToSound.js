@@ -1,9 +1,8 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
-import RangeSliderInput from "../inputs/RangeSliderInput";
-import InstrumentPicker from "../instruments/InstrumentPicker";
-
+import ToolTemplate from "../templates/ToolTemplate";
+import {ALL_DEFAULT_INSTRUMENTS} from "../instruments/InstrumentPicker";
 
 const GesturesToSound = () => {
     const canvasRef = useRef(null);
@@ -14,13 +13,9 @@ const GesturesToSound = () => {
     const [music, setMusic] = useState(null);
     const [instrumentSamples, setInstrumentSamples] = useState(null);
     const [undoneGestures, setUndoneGestures] = useState([]);
-    const [gestureParams, setGestureParams] = useState({
-        compression: 10,
-        pitch: {low: 131, high:698},
-        duration: {low: 0.1, high:2},
-    });
-    const [hideAxisLabel, setHideAxisLabel] = useState(true);
-    const [buttonText, setButtonText] = useState("Show Axis");
+    // const [gestureParams, setGestureParams] = useState({
+    //     pitch: {low: 131, high:698},
+    // });
 
     const getCoords = (event) => {
         if (!canvasRef.current) return;
@@ -33,6 +28,7 @@ const GesturesToSound = () => {
         return {
             x: (event.clientX - rect.left) * scale.x,
             y: (event.clientY - rect.top) * scale.y,
+            t: Date.now(),
         };
     };
 
@@ -111,14 +107,22 @@ const GesturesToSound = () => {
         setInstrumentSamples(null);
     };
 
-    const handleSubmitGestures = (event) => {
+    const handleSubmitGestures = async (event) => {
         event.preventDefault();
+        const canvas = canvasRef.current;
+        const canvasSettings = {
+            width: canvas.width,
+            height: canvas.height,
+        };
         const requestBody = {
             gestures: allMouseCoords,
-            parameters: gestureParams,
+            // parameters: gestureParams,
+            canvas: canvasSettings,
         };
-        fetchPost("/api/gesture_to_music/", requestBody, setMusic);
-        fetchPost("/api/gesture_to_samples/", requestBody, setInstrumentSamples);
+        await fetchPost('/api/gesture_to_audio/', requestBody, (response) => {
+            setMusic(response.music);
+            setInstrumentSamples(response.samples);
+        });
         setSubmitted(true);
     };
 
@@ -141,43 +145,32 @@ const GesturesToSound = () => {
         if (undoneGestures.length > 0) {
             let lastUndoneGesture = undoneGestures.pop();
             setAllMouseCoords(prevLines => [...prevLines, lastUndoneGesture]);
-            //drawLine(allMouseCoords[allMouseCoords.length-1]);
             drawLine(lastUndoneGesture);
         }
     };
 
-    const showAxis = (event) => {
-        event.preventDefault();
-        if (hideAxisLabel) {
-            setHideAxisLabel(false);
-            setButtonText("Hide Axis");
-        } else{
-            setHideAxisLabel(true);
-            setButtonText("Show Axis");
+    // const updatePitch = (newValue) => {
+    //     setGestureParams(prevParams => ({...prevParams,
+    //         pitch:{low:newValue[0], high:newValue[1]}}));
+    // };
+
+    return (<ToolTemplate 
+        title='Gestures'
+        description={
+            allMouseCoords.length === 0
+                ? <p>First, draw something!</p>
+                : <p>You can configure the settings for your sonification below.</p>
         }
-    };
-
-    const handleUpdateCompression = (event) => {
-        event.preventDefault();
-        setGestureParams(prevState =>
-            ({...prevState, compression: parseInt(event.target.value)}));
-    };
-
-    const updatePitch = (newValue) => {
-        setGestureParams(prevParams => ({...prevParams,
-            pitch:{low:newValue[0], high:newValue[1]}}));
-    };
-
-    const updateDuration = (newValue) => {
-        setGestureParams(prevParams => ({...prevParams,
-            duration:{low:newValue[0], high:newValue[1]}}));
-    };
-
-    return (
-        <>
-            <h1>Gestures</h1>
+        instrumentSamples={instrumentSamples}
+        music={music}
+        handleSubmit={handleSubmitGestures}
+        sonifyButtonDisabled={allMouseCoords.length === 0}
+        instrumentPickerProps={{
+            includedDefaultInstruments: ALL_DEFAULT_INSTRUMENTS,
+        }}
+        tool={<>
             <div className="row">
-                <div className="col-12 col-sm-5">
+                <div className="col">
                     <canvas
                         className={`
                             ${STYLES.canvas}
@@ -186,14 +179,6 @@ const GesturesToSound = () => {
                         ref={canvasRef}
                         width="500" height="500"
                     />
-                    <div className="row" id="axisLabel" hidden={hideAxisLabel}>
-                        <div className="col align-left">
-                            low pitch
-                        </div>
-                        <div className="col align-right text-right">
-                            high pitch
-                        </div>
-                    </div>
                     <div className="btn-group w-100 mb-2" role="group">
                         <button
                             className="btn btn-outline-dark"
@@ -205,51 +190,14 @@ const GesturesToSound = () => {
                             onClick={redoGesture} disabled={undoneGestures.length === 0}>
                             Redo
                         </button>
-                        <button
-                            className="btn btn-outline-dark"
-                            onClick={resetCanvas} disabled={submitted}>
-                            Clear Gestures
-                        </button>
                         <button className="btn btn-outline-dark" onClick={handleNewGestures}>
                             New Canvas
                         </button>
                     </div>
-                    <button className="btn btn-outline-primary"
-                        onClick={showAxis}>{buttonText}</button>
                 </div>
-                <div className={`col-1 my-5 flex-column ${STYLES.yAxis}`} hidden={hideAxisLabel}>
-                    <div className="mb-auto">
-                        short notes
-                    </div>
-                    <div className="my-3">
-                        long notes
-                    </div>
-                </div>
+            </div>
+            {/* <div className="row">
                 <div className="col">
-                    {allMouseCoords.length === 0
-                        ? <p>First, draw something!</p>
-                        : <p>You can configure the settings for your sonification below.</p>
-                    }
-                    <div>
-                        <strong>Compression</strong>
-                        <input className="slider mx-3" type="range"
-                            min="1" max="100" step="1" value={gestureParams.compression}
-                            onChange={handleUpdateCompression}/>
-                        {gestureParams.compression} {gestureParams.compression === 1
-                            ? 'coordinate'
-                            : 'coordinates'} per note
-                    </div>
-                    <div>
-                        <strong>Duration</strong>
-                        <RangeSliderInput
-                            name="duration"
-                            units="secs"
-                            minValue={0.01}
-                            maxValue={2}
-                            updateValues={updateDuration}
-                            step={0.01}
-                        />
-                    </div>
                     <div>
                         <strong>Pitch</strong>
                         <RangeSliderInput
@@ -261,20 +209,10 @@ const GesturesToSound = () => {
                             step={1}
                         />
                     </div>
-                    {allMouseCoords.length > 0 &&
-                        <button
-                            className="btn btn-primary" disabled={submitted}
-                            onClick={handleSubmitGestures}>
-                            Sonify!
-                        </button>
-                    }
-                    {music && instrumentSamples &&
-                        <InstrumentPicker samples={instrumentSamples} music={music}/>
-                    }
                 </div>
-            </div>
-        </>
-    );
+            </div> */}
+        </>}
+    />);
 };
 
 export default GesturesToSound;

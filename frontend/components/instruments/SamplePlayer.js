@@ -15,6 +15,54 @@ const sampleBase64StrToArrayBuffer = (sampleStr) => {
     return buffer;
 };
 
+/**
+ * Create callbacks to start and stop audio for a list of samples.
+ * 
+ * @param {list} samples list of base64-encoded audio samples
+ * @returns {list} list where each index holds a list of two functions where the first will
+ *                  make a call to start the audio and the second will make a call to stop it.
+ */
+export const createAudioCallbacks = (samples) => {
+    const audioContext = new AudioContext();
+    const gainNode = audioContext.createGain();
+    const compressor = audioContext.createDynamicsCompressor();
+    compressor.connect(audioContext.destination);
+    gainNode.connect(compressor);
+    const buffers = samples.map(sample => sampleBase64StrToArrayBuffer(sample));
+
+    const startCallbacks = [];
+    const endCallbacks = [];
+
+    buffers.forEach(buffer => {
+
+        let audioSource;
+        
+        const startCallback = (loop=false) => {
+            if (audioSource) audioSource.stop();
+            audioSource = audioContext.createBufferSource();
+            audioSource.loop = loop;
+            audioSource.connect(gainNode);
+
+            audioContext.decodeAudioData(
+                buffer.slice(0),
+                (b) => {
+                    audioSource.buffer = b;
+                    audioSource.start(0);
+                }
+            );
+        };
+
+        const endCallback = () => {
+            audioSource.stop();
+        };
+
+        startCallbacks.push(startCallback);
+        endCallbacks.push(endCallback);
+    });
+
+    return [startCallbacks, endCallbacks];
+};
+
 
 /*
  * An audio playback component that plays a single sample using the Web Audio API

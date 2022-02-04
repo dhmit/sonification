@@ -1,14 +1,15 @@
 import React from "react";
 import Nav from "./Nav";
-import STYLES from "./Base.module.scss";
 import * as PropTypes from "prop-types";
 
 const Base = ({children}) => {
     return (
         <>
             <Nav/>
-            <div className={STYLES.body} id="main-container">
-                <main role="main" className="container">{children}</main>
+            <div id="main-container">
+                <main className='container mx-auto' role="main">
+                    {children}
+                </main>
             </div>
         </>
     );

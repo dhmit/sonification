@@ -7,9 +7,9 @@ const Base = ({children}) => {
     return (
         <>
             <Nav/>
-            <div className={STYLES.body} id="main-container">
-                <main role="main">
-                    <div className='container-fluid'>{children}</div>
+            <div id="main-container">
+                <main className='container mx-auto' role="main">
+                    {children}
                 </main>
             </div>
         </>

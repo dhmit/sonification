@@ -43,9 +43,15 @@ const COMPONENT_NAME = JSON.parse(COMPONENT_NAME_RAW);
 
 const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponent"];
 
+let components;
+
+if (COMPONENT_PROPS['overrideBase']) {
+    components = <PreselectedComponent {...COMPONENT_PROPS} />;
+} else {
+    components = <Base><PreselectedComponent {...COMPONENT_PROPS} /></Base>;
+}
+
 ReactDOM.render(
-    <Base>
-        <PreselectedComponent {...COMPONENT_PROPS} />
-    </Base>,
+    components,
     document.getElementById("app_root")
 );

@@ -88,10 +88,10 @@ def numbers_to_music(request):
 ################################################################################
 @api_view(['POST'])
 def color_to_audio(request):
-    '''
+    """
     :param request: includes property 'colors' which is a list of HSV dictionaries.
     :return: wav file of the generated music as well as a list of samples for the pad instrument.
-    '''
+    """
     colors = request.data['colors']
 
     samples = color_processing.generate_samples(colors)

@@ -34,7 +34,8 @@ def index(request):
 
     # NOTE(ra): no page title for homepage, as it's taken care of in the index.html template
     context = {
-        'component_name': 'Home'
+        'component_name': 'Home',
+        'component_props': {'overrideBase': True}
     }
 
     return render(request, 'index.html', context)

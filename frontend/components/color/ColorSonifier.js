@@ -32,13 +32,13 @@ class ColorSonifier extends React.Component {
 
         // rainbow-ish -- taken from default swatches in the color picker
         const initialColors = [
-            {r: 208, g: 2, b: 27},
-            {r: 245, g: 166, b: 35},
-            {r: 248, g: 231, b: 28},
-            {r: 126, g: 211, b: 31},
-            {r: 74, g: 144, b: 226},
-            {r: 144, g: 19, b: 254},
-            {r: 139, g: 87, b: 42},
+            {r: 255, g: 0, b: 0},
+            {r: 255, g: 159, b: 0},
+            {r: 255, g: 231, b: 0},
+            {r: 134, g: 255, b: 0},
+            {r: 0, g: 116, b: 255},
+            {r: 137, g: 0, b: 255},
+            {r: 255, g: 0, b: 168},
         ];
 
         this.state = {
@@ -86,18 +86,37 @@ class ColorSonifier extends React.Component {
 
         const hsv = rgb2hsv(this.state.colorPickerColor);
 
+        const toolLayout = (
+            <div className='row'>
+                <div className='col'>
+                    <ColorPicker
+                        initColor={rgb2hex(this.state.listOfColors[this.state.selected])}
+                        onColorChange={this.handleChangeComplete}
+                    />
+                    <div className='row mt-2 text-center'>
+                        <div className='col mr-1'><b>Hue</b><br/> {Math.round(hsv.h)}&deg;</div>
+                        <div className='col mr-1'><b>Saturation</b><br/> {Math.round(hsv.s)}%</div>
+                        <div className='col mr-1'><b>Value</b><br/> {Math.round(hsv.v)}%</div>
+                    </div>
+                </div>
+                <div className='col d-flex justify-content-between mt-4 mt-lg-0'>
+                    {colorDisplay}
+                </div>
+            </div>
+        );
+
         return (
             <ToolTemplate
                 title='Colors'
                 description={<>
                     <p>
-                        Choose up to seven colors below, then click Sonify to
-                        hear your palette!
+                        Choose up to seven colors below, then click Sonify! at the bottom of the
+                        page to hear your palette.
                     </p>
                     <p>
-                        Each color's<ul>
-                            <li><strong>Hue</strong> is mapped to the pitch of the sound,</li>
-                            <li><strong>Saturation</strong> is mapped to its loudness,</li>
+                        Each color's:<ul>
+                            <li><strong>Hue</strong> is mapped to the pitch of the sound</li>
+                            <li><strong>Saturation</strong> is mapped to its loudness</li>
                             <li><strong>Value</strong> to its timbre.</li>
                         </ul>
                     </p>
@@ -108,26 +127,7 @@ class ColorSonifier extends React.Component {
                 instrumentPickerProps={{
                     includedDefaultInstruments: ALL_DEFAULT_INSTRUMENTS,
                 }}
-                tool={<>
-                    <div className='row'>
-                        <div className='col'>
-                            <ColorPicker
-                                initColor={rgb2hex(this.state.listOfColors[this.state.selected])}
-                                onColorChange={this.handleChangeComplete}
-                            />
-                            <p>
-                                <b>Hue:</b> {Math.round(hsv.h)}&deg;
-                                <b>Saturation:</b> {Math.round(hsv.s)}%
-                                <b>Value:</b> {Math.round(hsv.v)}%
-                            </p>
-                        </div>
-                    </div>
-                    <div className='row'>
-                        <div className='col'>
-                            {colorDisplay}
-                        </div>
-                    </div>
-                </>}
+                tool={toolLayout}
             />
         );
     }

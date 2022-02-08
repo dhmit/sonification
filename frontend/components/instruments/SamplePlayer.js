@@ -17,13 +17,13 @@ const sampleBase64StrToArrayBuffer = (sampleStr) => {
 
 /**
  * Create callbacks to start and stop audio for a list of samples.
- * 
+ *
  * @param {list} samples list of base64-encoded audio samples
+ * @param {object} audioContext audioContext for the controlling component
  * @returns {list} list where each index holds a list of two functions where the first will
  *                  make a call to start the audio and the second will make a call to stop it.
  */
-export const createAudioCallbacks = (samples) => {
-    const audioContext = new AudioContext();
+export const createAudioCallbacks = (samples, audioContext) => {
     const gainNode = audioContext.createGain();
     const compressor = audioContext.createDynamicsCompressor();
     compressor.connect(audioContext.destination);
@@ -36,7 +36,7 @@ export const createAudioCallbacks = (samples) => {
     buffers.forEach(buffer => {
 
         let audioSource;
-        
+
         const startCallback = (loop=false) => {
             if (audioSource) audioSource.stop();
             audioSource = audioContext.createBufferSource();

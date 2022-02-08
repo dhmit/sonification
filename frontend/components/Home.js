@@ -77,8 +77,11 @@ const Home = () => {
                         staff</a> of the DH Lab.
                     </p>
                     <p className='col-12 col-md-10'>
-                    This site is a work-in-progress prototype. Choose a module below to begin
-                    transforming data into music!
+                    This site is a work-in-progress prototype, so pardon our dust. Some modules
+                    won't work on mobile devices.
+                    </p>
+                    <p>
+                    Choose a module below to begin transforming data into music!
                     </p>
                 </div>
 

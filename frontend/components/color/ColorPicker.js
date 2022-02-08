@@ -3,7 +3,6 @@ import iro from "@jaames/iro";
 import {func, string} from "prop-types";
 
 class ColorPicker extends Component {
-    
     componentDidUpdate() {
         if (this.props.initColor !== this.colorPicker.color.hex) {
             this.colorPicker.color.set(this.props.initColor);
@@ -13,12 +12,8 @@ class ColorPicker extends Component {
     componentDidMount() {
         this.colorPicker = new iro.ColorPicker(this.el, {
             color: this.props.initColor ?? '#03ecfc',
-            layoutDirection: 'horizontal',
+            width: 450,
             layout: [
-                {
-                    component: iro.ui.Wheel,
-                    options: {},
-                },
                 {
                     component: iro.ui.Slider,
                     options: {

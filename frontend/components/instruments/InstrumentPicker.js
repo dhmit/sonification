@@ -102,10 +102,10 @@ const InstrumentPicker = ({
     ];
 
     const buttons = instruments.map(({title}, i) => (
-        <button 
-            type="button" 
-            className={`btn btn-secondary ${curInstrument === i && 'active'}`} 
-            onClick={() => setCurInstrument(i)} 
+        <button
+            type="button"
+            className={`btn btn-secondary ${curInstrument === i && 'active'}`}
+            onClick={() => setCurInstrument(i)}
             key={i}
         >
             {title}
@@ -113,7 +113,7 @@ const InstrumentPicker = ({
     ));
 
     return (<>
-        <div className='btn-group' role='group'>
+        <div className='btn-group w-100' role='group'>
             {buttons}
         </div>
         <div className={`card ${STYLES.card}`}>

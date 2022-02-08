@@ -62,7 +62,6 @@ const Pad = ({keyBind, padClassName, startCallback, endCallback}) => {
     </>);
 };
 Pad.propTypes = {
-    audioContext: PropTypes.object,
     keyBind: PropTypes.string,
     padClassName: PropTypes.string,
     sample: PropTypes.string,
@@ -77,14 +76,14 @@ Pad.propTypes = {
  */
 const PadInstrument = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
-    const keyBinds = ['q', 'w', 'e', 'r', 'a', 's', 'd', 'f', 'u', 'i', 'o', 'p'];
+    const keyBinds = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'];
 
     useEffect(() => {
         // Cleanup function
         return () => void audioContextRef.current.close();
     }, []);
 
-    const [startCallbacks, endCallbacks] = createAudioCallbacks(samples);
+    const [startCallbacks, endCallbacks] = createAudioCallbacks(samples, audioContextRef.current);
 
     const pads = samples.map((sample, i) => (
         <Pad
@@ -92,7 +91,6 @@ const PadInstrument = ({samples}) => {
             key={i}
             sample={samples[i]}
             padClassName={i < 4 ? STYLES.cyanPad : STYLES.magentaPad}
-            audioContext={audioContextRef.current}
             startCallback={startCallbacks[i]}
             endCallback={endCallbacks[i]}
         />

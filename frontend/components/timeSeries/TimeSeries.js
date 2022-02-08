@@ -15,27 +15,29 @@ const TimeSeries = () => {
             setInstrumentSamples(response.samples);
         });
     };
-    
+
     return (<ToolTemplate
         title='Time Series Data'
         // eslint-disable-next-line max-len
-        description={<p>This sonification takes in a table of values (like a spreadsheet), and uses the numbers it finds within to create music and instruments.</p>}
+        description={<p>This sonification takes in a table of values (like a spreadsheet), and uses the numbers it finds within to create music.</p>}
         instrumentSamples={instrumentSamples}
         music={musicData?.sound}
         handleSubmit={() => submitToAPI()}
         sonifyButtonDisabled={!(fileInputData?.parsedCSV && fileInputData?.constants)}
-        tool={<div>
-            {musicData &&
+        tool={<UploadTimeSeriesFileInput updateInputCallback={setFileInputData} />}
+        dataViz={
+            musicData &&
                 <div>
+                    <p>
+                        Here's a visualization of the music we've produced. Scroll down to play it.
+                    </p>
                     <img
                         src={`data:image/png;base64, ${musicData.img}`}
                         className="img-fluid"
                         alt="A line chart showing the frequencies of the sonified data"
                     />
                 </div>
-            }
-            <UploadTimeSeriesFileInput updateInputCallback={setFileInputData} />
-        </div>}
+        }
     />);
 };
 

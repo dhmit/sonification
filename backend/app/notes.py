@@ -7,7 +7,7 @@ NOTES = [
     "Wavelength (cm)": 2109.89
   },
   {
-    "Note": "C#0/Db0",
+    "Note": "C#0",
     "Frequency (Hz)": 17.32,
     "Wavelength (cm)": 1991.47
   },
@@ -17,7 +17,7 @@ NOTES = [
     "Wavelength (cm)": 1879.69
   },
   {
-    "Note": "D#0/Eb0",
+    "Note": "D#0",
     "Frequency (Hz)": 19.45,
     "Wavelength (cm)": 1774.2
   },
@@ -32,7 +32,7 @@ NOTES = [
     "Wavelength (cm)": 1580.63
   },
   {
-    "Note": "F#0/Gb0",
+    "Note": "F#0",
     "Frequency (Hz)": 23.12,
     "Wavelength (cm)": 1491.91
   },
@@ -42,7 +42,7 @@ NOTES = [
     "Wavelength (cm)": 1408.18
   },
   {
-    "Note": "G#0/Ab0",
+    "Note": "G#0",
     "Frequency (Hz)": 25.96,
     "Wavelength (cm)": 1329.14
   },
@@ -52,7 +52,7 @@ NOTES = [
     "Wavelength (cm)": 1254.55
   },
   {
-    "Note": "A#0/Bb0",
+    "Note": "A#0",
     "Frequency (Hz)": 29.14,
     "Wavelength (cm)": 1184.13
   },
@@ -67,7 +67,7 @@ NOTES = [
     "Wavelength (cm)": 1054.94
   },
   {
-    "Note": "C#1/Db1",
+    "Note": "C#1",
     "Frequency (Hz)": 34.65,
     "Wavelength (cm)": 995.73
   },
@@ -77,7 +77,7 @@ NOTES = [
     "Wavelength (cm)": 939.85
   },
   {
-    "Note": "D#1/Eb1",
+    "Note": "D#1",
     "Frequency (Hz)": 38.89,
     "Wavelength (cm)": 887.1
   },
@@ -92,7 +92,7 @@ NOTES = [
     "Wavelength (cm)": 790.31
   },
   {
-    "Note": "F#1/Gb1",
+    "Note": "F#1",
     "Frequency (Hz)": 46.25,
     "Wavelength (cm)": 745.96
   },
@@ -102,7 +102,7 @@ NOTES = [
     "Wavelength (cm)": 704.09
   },
   {
-    "Note": "G#1/Ab1",
+    "Note": "G#1",
     "Frequency (Hz)": 51.91,
     "Wavelength (cm)": 664.57
   },
@@ -112,7 +112,7 @@ NOTES = [
     "Wavelength (cm)": 627.27
   },
   {
-    "Note": "A#1/Bb1",
+    "Note": "A#1",
     "Frequency (Hz)": 58.27,
     "Wavelength (cm)": 592.07
   },
@@ -127,7 +127,7 @@ NOTES = [
     "Wavelength (cm)": 527.47
   },
   {
-    "Note": "C#2/Db2",
+    "Note": "C#2",
     "Frequency (Hz)": 69.3,
     "Wavelength (cm)": 497.87
   },
@@ -137,7 +137,7 @@ NOTES = [
     "Wavelength (cm)": 469.92
   },
   {
-    "Note": "D#2/Eb2",
+    "Note": "D#2",
     "Frequency (Hz)": 77.78,
     "Wavelength (cm)": 443.55
   },
@@ -152,7 +152,7 @@ NOTES = [
     "Wavelength (cm)": 395.16
   },
   {
-    "Note": "F#2/Gb2",
+    "Note": "F#2",
     "Frequency (Hz)": 92.5,
     "Wavelength (cm)": 372.98
   },
@@ -162,7 +162,7 @@ NOTES = [
     "Wavelength (cm)": 352.04
   },
   {
-    "Note": "G#2/Ab2",
+    "Note": "G#2",
     "Frequency (Hz)": 103.83,
     "Wavelength (cm)": 332.29
   },
@@ -172,7 +172,7 @@ NOTES = [
     "Wavelength (cm)": 313.64
   },
   {
-    "Note": "A#2/Bb2",
+    "Note": "A#2",
     "Frequency (Hz)": 116.54,
     "Wavelength (cm)": 296.03
   },
@@ -187,7 +187,7 @@ NOTES = [
     "Wavelength (cm)": 263.74
   },
   {
-    "Note": "C#3/Db3",
+    "Note": "C#3",
     "Frequency (Hz)": 138.59,
     "Wavelength (cm)": 248.93
   },
@@ -197,7 +197,7 @@ NOTES = [
     "Wavelength (cm)": 234.96
   },
   {
-    "Note": "D#3/Eb3",
+    "Note": "D#3",
     "Frequency (Hz)": 155.56,
     "Wavelength (cm)": 221.77
   },
@@ -212,7 +212,7 @@ NOTES = [
     "Wavelength (cm)": 197.58
   },
   {
-    "Note": "F#3/Gb3",
+    "Note": "F#3",
     "Frequency (Hz)": 185,
     "Wavelength (cm)": 186.49
   },
@@ -222,7 +222,7 @@ NOTES = [
     "Wavelength (cm)": 176.02
   },
   {
-    "Note": "G#3/Ab3",
+    "Note": "G#3",
     "Frequency (Hz)": 207.65,
     "Wavelength (cm)": 166.14
   },
@@ -232,7 +232,7 @@ NOTES = [
     "Wavelength (cm)": 156.82
   },
   {
-    "Note": "A#3/Bb3",
+    "Note": "A#3",
     "Frequency (Hz)": 233.08,
     "Wavelength (cm)": 148.02
   },
@@ -247,7 +247,7 @@ NOTES = [
     "Wavelength (cm)": 131.87
   },
   {
-    "Note": "C#4/Db4",
+    "Note": "C#4",
     "Frequency (Hz)": 277.18,
     "Wavelength (cm)": 124.47
   },
@@ -257,7 +257,7 @@ NOTES = [
     "Wavelength (cm)": 117.48
   },
   {
-    "Note": "D#4/Eb4",
+    "Note": "D#4",
     "Frequency (Hz)": 311.13,
     "Wavelength (cm)": 110.89
   },
@@ -272,7 +272,7 @@ NOTES = [
     "Wavelength (cm)": 98.79
   },
   {
-    "Note": "F#4/Gb4",
+    "Note": "F#4",
     "Frequency (Hz)": 369.99,
     "Wavelength (cm)": 93.24
   },
@@ -282,7 +282,7 @@ NOTES = [
     "Wavelength (cm)": 88.01
   },
   {
-    "Note": "G#4/Ab4",
+    "Note": "G#4",
     "Frequency (Hz)": 415.3,
     "Wavelength (cm)": 83.07
   },
@@ -292,7 +292,7 @@ NOTES = [
     "Wavelength (cm)": 78.41
   },
   {
-    "Note": "A#4/Bb4",
+    "Note": "A#4",
     "Frequency (Hz)": 466.16,
     "Wavelength (cm)": 74.01
   },
@@ -307,7 +307,7 @@ NOTES = [
     "Wavelength (cm)": 65.93
   },
   {
-    "Note": "C#5/Db5",
+    "Note": "C#5",
     "Frequency (Hz)": 554.37,
     "Wavelength (cm)": 62.23
   },
@@ -317,7 +317,7 @@ NOTES = [
     "Wavelength (cm)": 58.74
   },
   {
-    "Note": "D#5/Eb5",
+    "Note": "D#5",
     "Frequency (Hz)": 622.25,
     "Wavelength (cm)": 55.44
   },
@@ -332,7 +332,7 @@ NOTES = [
     "Wavelength (cm)": 49.39
   },
   {
-    "Note": "F#5/Gb5",
+    "Note": "F#5",
     "Frequency (Hz)": 739.99,
     "Wavelength (cm)": 46.62
   },
@@ -342,7 +342,7 @@ NOTES = [
     "Wavelength (cm)": 44.01
   },
   {
-    "Note": "G#5/Ab5",
+    "Note": "G#5",
     "Frequency (Hz)": 830.61,
     "Wavelength (cm)": 41.54
   },
@@ -352,7 +352,7 @@ NOTES = [
     "Wavelength (cm)": 39.2
   },
   {
-    "Note": "A#5/Bb5",
+    "Note": "A#5",
     "Frequency (Hz)": 932.33,
     "Wavelength (cm)": 37
   },
@@ -367,7 +367,7 @@ NOTES = [
     "Wavelength (cm)": 32.97
   },
   {
-    "Note": "C#6/Db6",
+    "Note": "C#6",
     "Frequency (Hz)": 1108.73,
     "Wavelength (cm)": 31.12
   },
@@ -377,7 +377,7 @@ NOTES = [
     "Wavelength (cm)": 29.37
   },
   {
-    "Note": "D#6/Eb6",
+    "Note": "D#6",
     "Frequency (Hz)": 1244.51,
     "Wavelength (cm)": 27.72
   },
@@ -392,7 +392,7 @@ NOTES = [
     "Wavelength (cm)": 24.7
   },
   {
-    "Note": "F#6/Gb6",
+    "Note": "F#6",
     "Frequency (Hz)": 1479.98,
     "Wavelength (cm)": 23.31
   },
@@ -402,7 +402,7 @@ NOTES = [
     "Wavelength (cm)": 22
   },
   {
-    "Note": "G#6/Ab6",
+    "Note": "G#6",
     "Frequency (Hz)": 1661.22,
     "Wavelength (cm)": 20.77
   },
@@ -412,7 +412,7 @@ NOTES = [
     "Wavelength (cm)": 19.6
   },
   {
-    "Note": "A#6/Bb6",
+    "Note": "A#6",
     "Frequency (Hz)": 1864.66,
     "Wavelength (cm)": 18.5
   },
@@ -427,7 +427,7 @@ NOTES = [
     "Wavelength (cm)": 16.48
   },
   {
-    "Note": "C#7/Db7",
+    "Note": "C#7",
     "Frequency (Hz)": 2217.46,
     "Wavelength (cm)": 15.56
   },
@@ -437,7 +437,7 @@ NOTES = [
     "Wavelength (cm)": 14.69
   },
   {
-    "Note": "D#7/Eb7",
+    "Note": "D#7",
     "Frequency (Hz)": 2489.02,
     "Wavelength (cm)": 13.86
   },
@@ -452,7 +452,7 @@ NOTES = [
     "Wavelength (cm)": 12.35
   },
   {
-    "Note": "F#7/Gb7",
+    "Note": "F#7",
     "Frequency (Hz)": 2959.96,
     "Wavelength (cm)": 11.66
   },
@@ -462,7 +462,7 @@ NOTES = [
     "Wavelength (cm)": 11
   },
   {
-    "Note": "G#7/Ab7",
+    "Note": "G#7",
     "Frequency (Hz)": 3322.44,
     "Wavelength (cm)": 10.38
   },
@@ -472,7 +472,7 @@ NOTES = [
     "Wavelength (cm)": 9.8
   },
   {
-    "Note": "A#7/Bb7",
+    "Note": "A#7",
     "Frequency (Hz)": 3729.31,
     "Wavelength (cm)": 9.25
   },
@@ -487,7 +487,7 @@ NOTES = [
     "Wavelength (cm)": 8.24
   },
   {
-    "Note": "C#8/Db8",
+    "Note": "C#8",
     "Frequency (Hz)": 4434.92,
     "Wavelength (cm)": 7.78
   },
@@ -497,7 +497,7 @@ NOTES = [
     "Wavelength (cm)": 7.34
   },
   {
-    "Note": "D#8/Eb8",
+    "Note": "D#8",
     "Frequency (Hz)": 4978.03,
     "Wavelength (cm)": 6.93
   },
@@ -512,7 +512,7 @@ NOTES = [
     "Wavelength (cm)": 6.17
   },
   {
-    "Note": "F#8/Gb8",
+    "Note": "F#8",
     "Frequency (Hz)": 5919.91,
     "Wavelength (cm)": 5.83
   },
@@ -522,7 +522,7 @@ NOTES = [
     "Wavelength (cm)": 5.5
   },
   {
-    "Note": "G#8/Ab8",
+    "Note": "G#8",
     "Frequency (Hz)": 6644.88,
     "Wavelength (cm)": 5.19
   },
@@ -532,7 +532,7 @@ NOTES = [
     "Wavelength (cm)": 4.9
   },
   {
-    "Note": "A#8/Bb8",
+    "Note": "A#8",
     "Frequency (Hz)": 7458.62,
     "Wavelength (cm)": 4.63
   },

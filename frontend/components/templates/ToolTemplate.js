@@ -10,45 +10,52 @@ const loadResults = async (event, handleSubmit, setLoading) => {
 };
 
 const ToolTemplate = ({
-    tool, 
-    music, 
-    instrumentSamples, 
-    title, 
-    description, 
-    handleSubmit, 
-    sonifyButtonDisabled, 
+    tool,
+    dataViz,
+    music,
+    instrumentSamples,
+    title,
+    description,
+    handleSubmit,
+    sonifyButtonDisabled,
     instrumentPickerProps={},
 }) => {
     const [loading, setLoading] = useState(false);
     return (
         <>
             <div className='row'>
-                <div className='col'>
+                <div className='col mb-2'>
                     <h1>{title}</h1>
                     {description}
                 </div>
+                <hr className='mb-4'/>
             </div>
-            <div className='row'>
-                <div className='col-6'>
+            <div className='row mb-2'>
+                <div className='col mb-4'>
                     {tool}
                 </div>
-                <div className={STYLES.right + ' col-6'}>
+                <hr/>
+            </div>
+            <div className='row'>
+                <div className='col px-0'>
                     <div className={`${STYLES.buttonLoading}`}>
-                        <button 
+                        <button
                             disabled={sonifyButtonDisabled ?? false}
-                            className={"btn btn-outline-dark mt-2" + STYLES.submit}
+                            className="w-100 btn btn-outline-primary mb-4"
                             onClick={(event) => loadResults(event, handleSubmit, setLoading)}
                         >
-                            {loading ? 'loading' : (instrumentSamples
-                                ? "Update"
-                                : "Sonify!")}
+                            {loading
+                                ? <div className='spinner-border' role="status" />
+                                : (instrumentSamples
+                                    ? "Update"
+                                    : "Sonify!")}
                         </button>
-                        {loading && <div className='spinner-border' role="status"></div>}
                     </div>
-                    {music && instrumentSamples && 
-                        <InstrumentPicker 
-                            samples={instrumentSamples} 
-                            music={music} 
+                    {dataViz}
+                    {music && instrumentSamples &&
+                        <InstrumentPicker
+                            samples={instrumentSamples}
+                            music={music}
                             {...instrumentPickerProps}
                         />}
                 </div>
@@ -66,6 +73,8 @@ ToolTemplate.propTypes = {
     handleSubmit: func,
     sonifyButtonDisabled: bool,
     instrumentPickerProps: object,
+    dataViz: object,
+
 };
 
 export default ToolTemplate;

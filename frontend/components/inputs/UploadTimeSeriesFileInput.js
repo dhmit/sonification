@@ -190,7 +190,7 @@ const UploadTimeSeriesFileInput = ({
                         </div>
                     </div>
                 </form>
-            <hr />
+                <hr />
             </>}
         </>
     );

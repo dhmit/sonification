@@ -93,7 +93,7 @@ def time_series_to_music(request):
     plt.yscale('log')
 
     buffer = BytesIO()
-    plt.savefig(buffer, format='png')
+    plt.savefig(buffer, bbox_inches='tight', format='png')
     buffer.seek(0)
     img_str = base64.b64encode(buffer.getvalue())
 

@@ -263,7 +263,7 @@ const SynthesizePolygons = () => {
     return (<ToolTemplate
         title='Polygons'
         // eslint-disable-next-line max-len
-        description={<p>Welcome to the Polygon Synthesizer! Start by drawing a polygon in the editor below or by uploading a file describing your polygon. Uploaded files should be CSVs that have two columns that include x and y coordinates of the points of the polygon with x-coordinates in the first column and the corresponding y-coordinates in the second column.</p>}
+        description={<p>Welcome to the Polygon Synthesizer! Start by drawing a polygon in the editor below, then hit Sonify! to hear your shape transformed into a scale. This module takes an octave and divides it up into intervals corresponding to the side lengths of your polygon.</p>}
         instrumentSamples={instrumentSamples}
         music={musicAudio}
         handleSubmit={() => submitPolygon(points)}
@@ -271,19 +271,6 @@ const SynthesizePolygons = () => {
         tool={(
             <div>
                 {/*Highly dependent on CSS for animation*/}
-                <div className={switchSync(
-                    STYLES.statusDivSynced,
-                    STYLES.statusDivLoading,
-                    STYLES.statusDivUnsynced,
-                )}>
-                    <svg width={10} height={10}>
-                        <circle cx={5} cy={5} r={switchSync(5, 4, 5)}/>
-                    </svg>
-                    <p className={switchSync(
-                    )}>
-                        {outOfSync}
-                    </p>
-                </div>
                 <div className={STYLES.splitPane} ref={splitPaneVerticalRef}>
                     <div className={STYLES.leftPane} ref={leftPaneRef}>
                         <PolygonEditor
@@ -309,12 +296,26 @@ const SynthesizePolygons = () => {
                         />
                     )}
                 </div>
+
+                <div className={switchSync(
+                    STYLES.statusDivSynced,
+                    STYLES.statusDivLoading,
+                    STYLES.statusDivUnsynced,
+                )}>
+                    <svg width={10} height={10}>
+                        <circle cx={5} cy={5} r={switchSync(5, 4, 5)}/>
+                    </svg>
+                    <p className={switchSync(
+                    )}>
+                        {outOfSync}
+                    </p>
+                </div>
             </div>
         )}
         instrumentPickerProps={
             {
                 includedDefaultInstruments: ALL_DEFAULT_INSTRUMENTS,
-                customInstruments: 
+                customInstruments:
                 [
                     {
                         title: 'Results',

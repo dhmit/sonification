@@ -50,10 +50,15 @@ const UploadTimeSeriesFileInput = ({
         //           a new CSV. It might be nice to retain settings between uploads. Not sure.
         const newColumnConstants = [];
         parsedData[0].forEach(() => newColumnConstants.push({...DEFAULT_COLUMN_CONSTANTS}));
+        let nextFreq = 220;
+        for (const constants of newColumnConstants) {
+            constants.base_frequency = nextFreq;
+            nextFreq *= 2;
+        }
 
         const numRows = parsedData.length;
         // aim for 30 seconds of audio if too long
-        const dur = Math.min(30 / numRows, INITIAL_DURATION);
+        const dur = Math.round(Math.min(30 / numRows, INITIAL_DURATION) * 10) / 10;
         setDuration(dur);
 
         setConstants(newColumnConstants);
@@ -185,6 +190,7 @@ const UploadTimeSeriesFileInput = ({
                         </div>
                     </div>
                 </form>
+            <hr />
             </>}
         </>
     );

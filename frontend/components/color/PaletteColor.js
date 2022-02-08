@@ -6,7 +6,7 @@ const PaletteColor = ({id, color, handlePaletteClick, selected}) => {
     const style = {
         backgroundColor: colorCssRgb,
         border: `2px solid ${colorCssRgb}`,
-        borderRadius: '50%',
+        borderRadius: '20%',
         minWidth: '50px',
         minHeight: '50px',
     };
@@ -15,14 +15,14 @@ const PaletteColor = ({id, color, handlePaletteClick, selected}) => {
         style.border = "2px solid black";
     }
 
-    return (<li className="list-inline-item p-0 ml-1 mb-1">
+    return (
         <button
             id={id}
             style={style}
             onClick={handlePaletteClick}
-            className=""
+            className="mr-2"
         />
-    </li>);
+    );
 };
 PaletteColor.propTypes = {
     id: PropTypes.number,

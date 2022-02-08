@@ -154,12 +154,14 @@ const GesturesToSound = () => {
     //         pitch:{low:newValue[0], high:newValue[1]}}));
     // };
 
-    return (<ToolTemplate 
+    return (<ToolTemplate
         title='Gestures'
         description={
-            allMouseCoords.length === 0
-                ? <p>First, draw something!</p>
-                : <p>You can configure the settings for your sonification below.</p>
+            <p>
+            This module tracks your mouse movement and converts the direction and speed of your
+            gesture into sound. First, draw something, then click Sonify! at the bottom of the page
+            to hear your gestures in motion.
+            </p>
         }
         instrumentSamples={instrumentSamples}
         music={music}
@@ -170,7 +172,7 @@ const GesturesToSound = () => {
         }}
         tool={<>
             <div className="row">
-                <div className="col">
+                <div className="col-12 col-md-10 px-0">
                     <canvas
                         className={`
                             ${STYLES.canvas}
@@ -179,7 +181,9 @@ const GesturesToSound = () => {
                         ref={canvasRef}
                         width="500" height="500"
                     />
-                    <div className="btn-group w-100 mb-2" role="group">
+                </div>
+                <div className='col-12 col-md-2 px-0 px-md-2'>
+                    <div className="btn-group-vertical w-100 mx-0 mb-2" role="group">
                         <button
                             className="btn btn-outline-dark"
                             onClick={undoGesture} disabled={allMouseCoords.length === 0}>
@@ -191,7 +195,7 @@ const GesturesToSound = () => {
                             Redo
                         </button>
                         <button className="btn btn-outline-dark" onClick={handleNewGestures}>
-                            New Canvas
+                            Clear
                         </button>
                     </div>
                 </div>

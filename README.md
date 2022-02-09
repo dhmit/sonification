@@ -4,4 +4,4 @@ _Sonification Toolkit_ is a project by the [MIT Programs in Digital Humanities](
  
 ## Installing the project
  
-Instructions for installing the project are available here: https://urop.dhmit.xyz/sonification/
+Instructions for installing the project are available here: https://sonification.dhlab.mit.edu/

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-NAME="sonification"                                            # Name of the application
-DJANGODIR=/home/ubuntu/sonification/backend                    # Django project directory
-SOCKFILE=/home/ubuntu/run/gunicorn.sock 	                # we will communicate using this unix socket
-LOGFILE=/home/ubuntu/run/logs/gunicorn_supervisor.log
+NAME="exploratorium"                                            # Name of the application
+DJANGODIR=/home/ubuntu/exploratorium/backend                    # Django project directory
+SOCKFILE=/home/ubuntu/run/exploratorium_gunicorn.sock 	                # we will communicate using this unix socket
+LOGFILE=/home/ubuntu/run/logs/exploratorium_gunicorn_supervisor.log
 NUM_WORKERS=4                                               # how many worker processes should Gunicorn spawn
 DJANGO_WSGI_MODULE=config.wsgi                              # WSGI module name
 
@@ -11,7 +11,7 @@ echo "Starting $NAME as `whoami`"
 
 # Activate the virtual environment
 cd $DJANGODIR
-source /home/ubuntu/sonification/venv/bin/activate
+source /home/ubuntu/exploratorium/venv/bin/activate
 
 # Create the run directory if it doesn't exist
 RUNDIR=$(dirname $SOCKFILE)

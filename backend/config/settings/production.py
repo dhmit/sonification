@@ -16,7 +16,7 @@ SECRET_KEY = os.environ['DJANGO_SECRET_KEY']  # set in venv activate
 ADMINS = [('Ryaan', 'rahmed@mit.edu')]  # Django will email Ryaan on internal server errors
 
 ALLOWED_HOSTS = [
-    'sonification.dhlab.mit.edu',
+    'exploratorium.dhlab.mit.edu',
 ]
 
 CORS_ORIGIN_WHITELIST = []

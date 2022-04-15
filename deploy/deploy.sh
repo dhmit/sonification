@@ -5,7 +5,7 @@
 # TODO(ra): automatically generate nginx, gunicorn, and supervisor conf files
 #           from this deploy script, based on $PROJECT_NAME
 
-PROJECT_NAME="sonification"
+PROJECT_NAME="exploratorium"
 
 echo 'Run as sudo'
 

@@ -5,9 +5,13 @@ import ColorPicker from "./ColorPicker";
 import ToolTemplate from "../templates/ToolTemplate";
 import {ALL_DEFAULT_INSTRUMENTS} from "../instruments/InstrumentPicker";
 
+import ColorExploratorium from "./ColorExploratorium";
+/*********************************************************************************
+ * COLOR UTILITIES
+ ********************************************************************************/
 // input: r,g,b in [0,1], out: h in [0,360) and s,v in [0,1]
 // https://stackoverflow.com/questions/8022885/rgb-to-hsv-color-in-javascript
-function rgb2hsv(color) {
+export function rgb2hsv(color) {
     let {r,g,b} = color;
     let v=Math.max(r,g,b), c=v-Math.min(r,g,b);
     let h= c && ((v===r) ? (g-b)/c : ((v===g) ? 2+(b-r)/c : 4+(r-g)/c));
@@ -22,6 +26,15 @@ function rgb2hex(color) {
     }
 
     return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+}
+
+export function hex2rgb(hex) {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+        r: parseInt(result[1], 16),
+        g: parseInt(result[2], 16),
+        b: parseInt(result[3], 16),
+    } : null;
 }
 
 class ColorSonifier extends React.Component {
@@ -105,9 +118,10 @@ class ColorSonifier extends React.Component {
             </div>
         );
 
-        return (
+        return (<>
+            <ColorExploratorium />
             <ToolTemplate
-                title='Colors'
+                title='Make Your Own!'
                 description={<>
                     <p>
                         Choose up to seven colors below, then click Sonify! at the bottom of the
@@ -129,7 +143,8 @@ class ColorSonifier extends React.Component {
                 }}
                 tool={toolLayout}
             />
-        );
+
+        </>);
     }
 }
 

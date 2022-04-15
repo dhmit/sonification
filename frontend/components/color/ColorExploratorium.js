@@ -2,7 +2,8 @@ import React from "react";
 import {fetchPost} from "../../common";
 import PaletteColor from "./PaletteColor";
 import InstrumentPicker from '../instruments/InstrumentPicker';
-import {ALL_DEFAULT_INSTRUMENTS} from "../instruments/InstrumentPicker";
+import {ALL_INSTRUMENTS_NO_MUSIC} from "../instruments/InstrumentPicker";
+import {rgb2hsv, hex2rgb} from "./ColorSonifier";
 
 import MoveIcon from "../../images/MoveIcon.svg";
 
@@ -17,7 +18,7 @@ const STARRY_NIGHT_COLORS = [
 const STARRY_NIGHT_DATA = {
     colors: STARRY_NIGHT_COLORS,
     img: STARRY_NIGHT_IMG,
-    imgAlt: "Painting Starry Night by Van Gogh",
+    title: "The Starry Night by Vincent van Gogh",
 };
 
 
@@ -32,7 +33,22 @@ const KISS_COLORS = [
 const KISS_DATA = {
     colors: KISS_COLORS,
     img: KISS_IMG,
-    imgAlt: "The Kiss by Klimt",
+    title: "The Kiss by Gustav Klimt",
+};
+
+
+import GUITARIST_IMG from "./paintings/guitarist.jpg";
+const GUITARIST_COLORS = [
+    hex2rgb("#314259"),
+    hex2rgb("#64818C"),
+    hex2rgb("#222621"),
+    hex2rgb("#A68C5B"),
+    hex2rgb("#735439"),
+];
+const GUITARIST_DATA = {
+    colors: GUITARIST_COLORS,
+    img: GUITARIST_IMG,
+    title: "The Old Guitarist by Pablo Picasso",
 };
 
 /*
@@ -48,39 +64,13 @@ Marc Chagall
 
  */
 
-// input: r,g,b in [0,1], out: h in [0,360) and s,v in [0,1]
-// https://stackoverflow.com/questions/8022885/rgb-to-hsv-color-in-javascript
-function rgb2hsv(color) {
-    let {r,g,b} = color;
-    let v=Math.max(r,g,b), c=v-Math.min(r,g,b);
-    let h= c && ((v===r) ? (g-b)/c : ((v===g) ? 2+(b-r)/c : 4+(r-g)/c));
-    return {h: 60*(h<0?h+6:h), s: 100*(v&&c/v), v: 100*v/255};
-}
-
-function hex2rgb(hex) {
-    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
-    return result ? {
-        r: parseInt(result[1], 16),
-        g: parseInt(result[2], 16),
-        b: parseInt(result[3], 16),
-    } : null;
-}
-
-function rgb2hex(color) {
-    let {r,g,b} = color;
-    function componentToHex(c) {
-        const hex = c.toString(16);
-        return hex.length === 1 ? "0" + hex : hex;
-    }
-    return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
-}
 
 class PaintingSonifier extends React.Component {
     constructor(props) {
         super(props);
         this.colors = props.data.colors;
         this.img = props.data.img;
-        this.imgAlt = props.data.imgAlt;
+        this.title = props.data.title;
         this.state = {};
     }
 
@@ -98,10 +88,11 @@ class PaintingSonifier extends React.Component {
         return (
             <div className="row mb-4 border p-2 py-4">
                 <div className="col">
-                    <img className="img-fluid h100" alt={this.imgAlt} src={this.img} />
+                    <img className="img-fluid h100" alt={this.title} src={this.img} />
                 </div>
                 <div className="col">
-                    <div className="row"><div className="col">
+                    <div className="row mb-4"><div className="col w-100">
+                        <h4 className="mb-4">{this.title}</h4>
                         {this.colors.map((color, i) =>
                             <PaletteColor
                                 key={i} id={i}
@@ -116,7 +107,7 @@ class PaintingSonifier extends React.Component {
                             <InstrumentPicker
                                 samples={this.state.instrumentSamples}
                                 music={this.state.music}
-                                includedDefaultInstruments={ALL_DEFAULT_INSTRUMENTS}
+                                includedDefaultInstruments={ALL_INSTRUMENTS_NO_MUSIC}
                             />}
                     </div></div>
                 </div>
@@ -126,55 +117,6 @@ class PaintingSonifier extends React.Component {
 }
 
 class ColorExploratorium extends React.Component {
-    constructor(props) {
-        super(props);
-
-        this.handlePaletteClick = this.handlePaletteClick.bind(this);
-
-        // rainbow-ish -- taken from default swatches in the color picker
-        const initialColors = [
-            {r: 255, g: 0, b: 0},
-            {r: 255, g: 159, b: 0},
-            {r: 255, g: 231, b: 0},
-            {r: 134, g: 255, b: 0},
-            {r: 0, g: 116, b: 255},
-            {r: 137, g: 0, b: 255},
-            {r: 255, g: 0, b: 168},
-        ];
-
-        this.state = {
-            instrumentSamples: null,
-            music: null,
-            selected: 0,
-            colorPickerColor: initialColors[0],
-            listOfColors: initialColors,
-        };
-    }
-
-    handlePaletteClick = (e) => {
-        const index = Number(e.target.id);
-        this.setState({
-            selected: index,
-            colorPickerColor: this.state.listOfColors[index],
-        });
-    }
-
-    handleChangeComplete = (color) => {
-        const currentColorState = [...this.state.listOfColors];
-        currentColorState[this.state.selected] = color.rgb;
-        this.setState({listOfColors: [...currentColorState], colorPickerColor: color.rgb});
-    };
-
-    handleSubmit = async () => {
-        let requestBody = {colors: this.state.listOfColors.map(color => rgb2hsv(color))};
-        await fetchPost('/api/color_to_audio/', requestBody, response => {
-            this.setState({
-                instrumentSamples: response.samples,
-                music: response.music,
-            });
-        });
-    };
-
     render() {
         return (<>
             <div className="card">
@@ -188,18 +130,11 @@ class ColorExploratorium extends React.Component {
             </div>
 
             <p>
-                Copy here about the sonification.
-            </p>
-            <p>
-                Each color's:<ul>
-                    <li><strong>Hue</strong> is mapped to the pitch of the sound</li>
-                    <li><strong>Saturation</strong> is mapped to its loudness</li>
-                    <li><strong>Value</strong> to its timbre.</li>
-                </ul>
+                Copy here about the sonification. How does it work?
             </p>
             <PaintingSonifier data={STARRY_NIGHT_DATA} />
             <PaintingSonifier data={KISS_DATA} />
-            <PaintingSonifier data={STARRY_NIGHT_DATA} />
+            <PaintingSonifier data={GUITARIST_DATA} />
         </>);
     }
 }

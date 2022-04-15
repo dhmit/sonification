@@ -53,7 +53,15 @@ MusicPlayer.propTypes = {
     music: PropTypes.string,
 };
 
+export const ALL_INSTRUMENTS_NO_MUSIC = [
+    'Pads',
+    'Slider Looper',
+    'Spatial Instrument',
+    'Step Sequencer',
+];
+
 export const ALL_DEFAULT_INSTRUMENTS = [
+    'Music',
     'Pads',
     'Slider Looper',
     'Spatial Instrument',
@@ -88,14 +96,14 @@ const InstrumentPicker = ({
             title: "Download",
             component: <DownloadSamples samples={samples}/>,
         },
-    ];
-
-    const instruments = [
-        ...customInstruments,
         {
             title: "Music",
             component: <MusicPlayer music={music}/>,
         },
+    ];
+
+    const instruments = [
+        ...customInstruments,
         ...defaultInstruments.filter(
             instrument => includedDefaultInstruments.includes(instrument.title)
         ),

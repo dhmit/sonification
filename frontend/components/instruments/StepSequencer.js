@@ -2,8 +2,9 @@ import React, {useEffect, useState, useRef} from "react";
 import PropTypes from "prop-types";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./StepSequencer.module.scss";
+import {createAudioContextWithCompressor} from "./common";
 
-const Step = ({sample, audioContext, colIsPlaying, vol}) => {
+const Step = ({sample, audioContext, compressor, colIsPlaying, vol}) => {
     const [isActive, setIsActive] = useState(false);
 
     const handleClick = () => {
@@ -27,6 +28,7 @@ const Step = ({sample, audioContext, colIsPlaying, vol}) => {
             loop={false}
             volume={vol}
             audioContext={audioContext}
+            compressor={compressor}
         />
     </>);
 };
@@ -52,7 +54,7 @@ Metronome.propTypes = {
     colIsPlaying: PropTypes.bool,
 };
 
-const Row = ({sample, audioContext, numSteps, playbackPosition, isPlaying}) => {
+const Row = ({sample, audioContext, compressor, numSteps, playbackPosition, isPlaying}) => {
     const [volume, setVolume] = useState(100);
 
     const handleUpdateVolume = (event) => {
@@ -67,6 +69,7 @@ const Row = ({sample, audioContext, numSteps, playbackPosition, isPlaying}) => {
                     key={colIndex}
                     sample={sample}
                     audioContext={audioContext}
+                    compressor={compressor}
                     colIsPlaying={isPlaying && colIndex === playbackPosition}
                     vol = {volume}
                 />
@@ -88,7 +91,9 @@ Row.propTypes = {
 };
 
 const StepSequencer = ({samples}) => {
-    const audioContextRef = useRef(new AudioContext());
+    const {audioCtx, compressor} = createAudioContextWithCompressor();
+    const audioContextRef = useRef(audioCtx);
+
     useEffect(() => {
         // Cleanup function
         return () => void audioContextRef.current.close();
@@ -152,6 +157,7 @@ const StepSequencer = ({samples}) => {
                     key={rowIndex}
                     sample={sample}
                     audioContext={audioContextRef.current}
+                    compressor={compressor}
                     numSteps={numSteps}
                     playbackPosition={playbackPosition}
                     isPlaying={isPlaying}

@@ -73,6 +73,7 @@ const SamplePlayer = ({
     sample,
     volume,
     audioContext,
+    compressor,
 }) => {
     if (!sample) return null;
 
@@ -83,10 +84,9 @@ const SamplePlayer = ({
     const [isPlaying, setIsPlaying] = useState(false);
     const [shouldSetupAudio, setShouldSetupAudio] = useState(true);
 
-
     const setupAudioRouting = () => {
         const audioGainNode = audioGainNodeRef.current;
-        audioGainNode.connect(audioContext.destination);
+        audioGainNode.connect(compressor);
 
         // NOTE(ra): Could do this via createMediaElementSource instead - maybe simpler. Not sure.
         const audioSource = audioContext.createBufferSource();
@@ -135,7 +135,6 @@ const SamplePlayer = ({
 
     return null;  // this component doesn't render any UI!
 };
-
 SamplePlayer.propTypes = {
     isPlaying: PropTypes.bool,
     loop: PropTypes.bool,

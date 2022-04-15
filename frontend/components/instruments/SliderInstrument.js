@@ -2,6 +2,7 @@ import React, {useState, useRef, useEffect} from "react";
 import PropTypes from "prop-types";
 import Slider from "../inputs/Slider";
 import SamplePlayer from "./SamplePlayer";
+import {createAudioContextWithCompressor} from "./common";
 
 /*
  * A simple playback component with a slider volume control
@@ -11,9 +12,11 @@ const SliderPlayer = ({
     isPlaying,
     index,
     audioContext,
+    compressor,
     initialVolume=0,
 }) => {
     const [volume, setVolume] = useState(initialVolume);
+
     return (<>
         <SamplePlayer
             loop={true}
@@ -21,6 +24,7 @@ const SliderPlayer = ({
             volume={volume}
             shouldPlay={isPlaying}
             audioContext={audioContext}
+            compressor={compressor}
         />
         <Slider
             id={index}
@@ -34,6 +38,7 @@ SliderPlayer.propTypes = {
     index: PropTypes.number,
     isPlaying: PropTypes.bool,
     audioContext: PropTypes.object,
+    compressor: PropTypes.object,
     initialVolume: PropTypes.number,
 };
 
@@ -45,7 +50,9 @@ SliderPlayer.propTypes = {
 const SliderInstrument = ({samples}) => {
     const [isPlaying, setIsPlaying] = useState(true);
     const toggleAudio = () => setIsPlaying(!isPlaying);
-    const audioContextRef = useRef(new AudioContext());
+
+    const {audioCtx, compressor} = createAudioContextWithCompressor();
+    const audioContextRef = useRef(audioCtx);
 
     useEffect(() => {
         // Cleanup function
@@ -64,6 +71,7 @@ const SliderInstrument = ({samples}) => {
                     isPlaying={isPlaying}
                     loop={true}
                     audioContext={audioContextRef.current}
+                    compressor={compressor}
                     initialVolume={i === 0 ? 100 : 0}
                 />
             </li>);

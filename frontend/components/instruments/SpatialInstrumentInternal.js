@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import SoundPoint from "./SoundPoint";
 import SamplePlayer from "./SamplePlayer";
 import STYLES from "./SpatialInstrument.module.scss";
+import {createAudioContextWithCompressor} from "./common";
 
 /* TODO: there is a bug in which the player crashes
     not sure how to reproduce.
@@ -27,7 +28,8 @@ const SpatialInstrumentInternal = ({
     maxPointRadius=5,
     updateSize,
 }) => {
-    const audioContextRef = useRef(new AudioContext());
+    const {audioCtx, compressor} = createAudioContextWithCompressor();
+    const audioContextRef = useRef(audioCtx);
 
     useEffect(() => {
         // Cleanup function
@@ -128,7 +130,8 @@ const SpatialInstrumentInternal = ({
                             // shouldPlay={sampleShouldPlay(soundPoint)}
                             shouldPlay={true}
                             volume={sampleVolume(soundPoint)}
-                            audioContext={audioContextRef.current}
+                            audioContext={audioCtx}
+                            compressor={compressor}
                         />
                         {showPoints && <circle
                             key={`circle-${i}`}

@@ -170,7 +170,7 @@ class PaintingSonifier extends React.Component {
     }
 }
 
-const InfoCard = ({children}) => {
+export const InfoCard = ({children}) => {
     return (<div className="card mb-4">
         <div className="card-body">
             {children}

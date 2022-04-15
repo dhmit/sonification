@@ -11,7 +11,6 @@ def generate_samples(colors):
     :return: list of audio samples corresponding to each color
     '''
     samples = []
-    print("another one!")
     for hsv in colors:
         h, s, v = hsv['h']/360, hsv['s']/100, hsv['v']/100
 

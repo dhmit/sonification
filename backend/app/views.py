@@ -108,6 +108,18 @@ def time_series(request):
     }
     return render(request, 'index.html', context)
 
+def time_series_exploratorium(request):
+    """ Time Series Page """
+
+    context = {
+        'page_metadata': {
+            'title': 'Time Series'
+        },
+        'component_name': 'TimeSeriesExploratorium'
+    }
+    return render(request, 'index.html', context)
+
+
 
 def numbers_before(request):
     """ Page for demoing refactor possibilities  """

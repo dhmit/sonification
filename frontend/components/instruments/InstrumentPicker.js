@@ -53,6 +53,17 @@ MusicPlayer.propTypes = {
     music: PropTypes.string,
 };
 
+const ExploratoriumMusicPlayer = ({music}) => {
+};
+ExploratoriumMusicPlayer.propTypes = {
+    music: PropTypes.string,
+};
+
+
+
+export const ONLY_MUSIC = ['Music'];
+export const EXPLORATORIUM_MUSIC = ['Exploratorium Music'];
+
 export const ALL_INSTRUMENTS_NO_MUSIC = [
     'Pads',
     'Slider Looper',
@@ -99,6 +110,10 @@ const InstrumentPicker = ({
         {
             title: "Music",
             component: <MusicPlayer music={music}/>,
+        },
+        {
+            title: "Exploratorium Music",
+            component: <ExploratoriumMusicPlayer music={music}/>,
         },
     ];
 

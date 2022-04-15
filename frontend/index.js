@@ -15,6 +15,7 @@ import GesturesToSound from "./components/gestureToSound/GesturesToSound";
 import SynthesizePolygons from './components/synthesizePolygons/SynthesizePolygons';
 import TimeSeries from "./components/timeSeries/TimeSeries";
 import ColorSonifier from "./components/color/ColorSonifier";
+import ColorExploratorium from "./components/color/ColorExploratorium";
 import PlaybackDemo from "./components/instruments/PlaybackDemo";
 import {NumbersDemoBefore, NumbersDemoAfter} from "./components/numbersDemo/Numbers";
 
@@ -29,6 +30,7 @@ const COMPONENTS = {
     SynthesizePolygons,
     TimeSeries,
     ColorSonifier,
+    ColorExploratorium,
     PlaybackDemo,
     NumbersDemoBefore,
     NumbersDemoAfter,

@@ -56,6 +56,21 @@ def colors(request):
     return render(request, 'index.html', context)
 
 
+def colors_exploratorium(request):
+    """
+    Landing page for Colors part of project
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Colors'
+        },
+        'component_name': 'ColorExploratorium'
+    }
+
+    return render(request, 'index.html', context)
+
+
 def gestures(request):
     """ Gestures page"""
 

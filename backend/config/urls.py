@@ -43,6 +43,7 @@ urlpatterns = [
     # View paths
     path('', views.index, name='index'),
     path('colors/', views.colors),
+    path('colors-exploratorium/', views.colors_exploratorium),
     path('gestures/', views.gestures),
     path('playback-demo/', views.playback_demo),
     path('polygons/', views.polygons),

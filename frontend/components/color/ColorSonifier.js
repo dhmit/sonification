@@ -37,6 +37,7 @@ export function hex2rgb(hex) {
     } : null;
 }
 
+
 class ColorSonifier extends React.Component {
     constructor(props) {
         super(props);

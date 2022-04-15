@@ -46,7 +46,6 @@ DragSampleTarget.propTypes = {
     onDrop: PropTypes.func,
 };
 
-
 const DragPadInstrument = ({samples}) => {
     const audioContextRef = useRef(new AudioContext());
     const NUM_PADS = 5;

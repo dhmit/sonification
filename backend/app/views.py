@@ -160,6 +160,21 @@ def polygons(request):
     return render(request, 'index.html', context)
 
 
+def polygons_exploratorium(request):
+    """
+    Page showing the synthesize polygon tool
+    """
+
+    context = {
+        'page_metadata': {
+            'title': 'Synthesize Polygons'
+        },
+        'component_name': 'PolygonExploratorium'
+    }
+
+    return render(request, 'index.html', context)
+
+
 def playback_demo(request):
     """ Page for demoing all of the playback options """
 

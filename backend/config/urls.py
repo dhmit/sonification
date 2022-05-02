@@ -46,9 +46,10 @@ urlpatterns = [
     path('colors-exploratorium/', views.colors_exploratorium),
     path('gestures/', views.gestures),
     path('playback-demo/', views.playback_demo),
-    path('polygons/', views.polygons),
+    path('polygons-original/', views.polygons),
+    path('polygons/', views.polygons_exploratorium),
     path('text-shape/', views.text_shape_analysis),
-    # path('time-series/', views.time_series),
+    path('time-series-original/', views.time_series),
     path('time-series/', views.time_series_exploratorium),
 
     # Ryaan demo code - eventually delete me!

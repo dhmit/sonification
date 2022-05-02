@@ -45,6 +45,7 @@ urlpatterns = [
     path('colors/', views.colors),
     path('colors-exploratorium/', views.colors_exploratorium),
     path('gestures/', views.gestures),
+    path('gestures-exploratorium/', views.gestures_exploratorium),
     path('playback-demo/', views.playback_demo),
     path('polygons-original/', views.polygons),
     path('polygons/', views.polygons_exploratorium),

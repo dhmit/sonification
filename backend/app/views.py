@@ -83,6 +83,18 @@ def gestures(request):
 
     return render(request, 'index.html', context)
 
+def gestures_exploratorium(request):
+    """ Gestures page"""
+
+    context = {
+        'page_metadata': {
+            'title': 'Gestures'
+        },
+        'component_name': 'GesturesExploratorium'
+    }
+
+    return render(request, 'index.html', context)
+
 
 def text_shape_analysis(request):
     """ Text Shape Page """

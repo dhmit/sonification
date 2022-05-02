@@ -20,6 +20,7 @@ import PlaybackDemo from "./components/instruments/PlaybackDemo";
 import {NumbersDemoBefore, NumbersDemoAfter} from "./components/numbersDemo/Numbers";
 import TimeSeriesExploratorium from "./components/timeSeries/TimeSeriesExploratorium";
 import PolygonExploratorium from "./components/synthesizePolygons/PolygonExploratorium";
+import GesturesExploratorium from "./components/gestureToSound/GesturesExploratorium";
 
 // Register each new view component here
 const COMPONENTS = {
@@ -38,6 +39,7 @@ const COMPONENTS = {
     ColorExploratorium,
     TimeSeriesExploratorium,
     PolygonExploratorium,
+    GesturesExploratorium,
 };
 
 // Here, we take the data for our components specified by Django in our views.py file,

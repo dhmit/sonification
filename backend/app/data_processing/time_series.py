@@ -1,8 +1,13 @@
 import base64
 from io import BytesIO
+from time import sleep
 
 import matplotlib
 import matplotlib.pyplot as plt
+
+from matplotlib.backends import backend_agg
+
+
 import numpy as np
 
 from app.synthesis.audio_encoding import audio_samples_to_wav_base64
@@ -10,10 +15,10 @@ from app.synthesis import synthesizers as synths
 
 from app.notes import NOTES
 
-
-# https://stackoverflow.com/questions/50157759/runtimeerror-main-thread-is-not-in-main-loop-using-matplotlib-with-django
-matplotlib.use('Agg')
-
+# https://matplotlib.org/3.5.0/users/explain/backends.html
+# Use the agg backend, so matplotlib runs in non-interactive mode and can
+# write out raster images in savefig
+matplotlib.use('agg')
 
 # pylint: disable=too-many-locals
 def time_series_to_music(request):
@@ -72,6 +77,13 @@ def time_series_to_music(request):
 
     time_steps = np.arange(0, len(csv_data))
     new_csv = np.array(new_csv)
+
+    # Another process is creating a figure using plt, so wait.
+    # pyplot is a stateful interface, so tricky to get this working on multiple processes at once
+    while plt.fignum_exists(1):
+        sleep(1)
+    figure = plt.figure(1)
+
     plt.plot(time_steps, new_csv)
 
     min_f = np.amin(new_csv) - 10
@@ -86,7 +98,7 @@ def time_series_to_music(request):
             plt.text(len(new_csv) - 1, f, each["Note"])
 
     # TODO(ra) - let's add this back once it looks a bit nicer
-    # plt.legend(["Col " + str(i + 1) for i in range(len(new_csv[0]))])
+    plt.legend(["Col " + str(i + 1) for i in range(len(new_csv[0]))])
 
     plt.xlabel("Time Step")
     plt.ylabel("Frequency (Hz)")
@@ -97,7 +109,7 @@ def time_series_to_music(request):
     buffer.seek(0)
     img_str = base64.b64encode(buffer.getvalue())
 
-    plt.clf()
+    plt.close(figure)
 
     return {"sound": sound, "img": img_str}
 

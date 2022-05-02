@@ -40,11 +40,6 @@ const Nav = () => {
                         Time Series
                     </a>
                 </li>
-                <li className="nav-item">
-                    <a className="nav-link" href="/text-shape/">
-                        Text Shape
-                    </a>
-                </li>
             </ul>
             <a className={STYLES.linkLab} href="https://digitalhumanities.mit.edu/" target="_blank" rel="noreferrer">
                 <img alt="MIT Digital Humanities Logo" className={STYLES.imageLab} src={DH_LOGO} />

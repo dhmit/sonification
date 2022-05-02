@@ -42,14 +42,6 @@ const Home = () => {
             title: 'Polygons',
             route: '/polygons/',
         },
-        {
-            title: 'Text Shape',
-            route: '/text-shape/',
-        },
-        {
-            title: 'Summer 2021 Prototypes',
-            route: '/summer-prototypes/',
-        },
     ];
 
     const projectCards = projects.map((project, i) => (
@@ -75,13 +67,6 @@ const Home = () => {
                         two dozen undergraduate research associates</a>,
                         and the <a href='https://digitalhumanities.mit.edu/people/'> instructional
                         staff</a> of the DH Lab.
-                    </p>
-                    <p className='col-12 col-md-10'>
-                    This site is a work-in-progress prototype, so pardon our dust. Some modules
-                    won't work on mobile devices.
-                    </p>
-                    <p>
-                    Choose a module below to begin transforming data into music!
                     </p>
                 </div>
 

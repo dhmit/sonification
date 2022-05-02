@@ -48,8 +48,8 @@ urlpatterns = [
     path('playback-demo/', views.playback_demo),
     path('polygons/', views.polygons),
     path('text-shape/', views.text_shape_analysis),
-    path('time-series/', views.time_series),
-    path('time-series-exploratorium/', views.time_series_exploratorium),
+    # path('time-series/', views.time_series),
+    path('time-series/', views.time_series_exploratorium),
 
     # Ryaan demo code - eventually delete me!
     path('numbers-before/', views.numbers_before),

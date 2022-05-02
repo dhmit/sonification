@@ -4,6 +4,7 @@ import {fetchPost} from "../../common";
 import ToolTemplate from "../templates/ToolTemplate";
 import InstrumentPicker, {EXPLORATORIUM_MUSIC} from "../instruments/InstrumentPicker";
 import {InfoCard} from "../color/ColorExploratorium";
+import Loading from "../global/Loading";
 import MoveIcon from "../../images/MoveIcon.svg";
 
 const SUNRISE_SUNSET_BOSTON = {
@@ -97,26 +98,26 @@ class TimeSeriesSonifier extends React.Component {
     }
 
     render() {
-        if (!this.state.music) return null;
-        if (!this.state.image) return null;
+
         const musicDataAsUrl = `data:audio/wav;base64, ${this.state.music}`;
 
         return (
             <div className="row mb-4 border p-2 py-4">
                 <div className="col">
-                    <img
+                    {this.state.image && <img
                         src={`data:image/png;base64, ${this.state.image}`}
                         className="img-fluid"
                         alt="A line chart showing the frequencies of the sonified data"
-                    />
+                    />}
                 </div>
                 <div className="col">
                     <div className="row mb-4"><div className="col w-100">
                         <h4 className="mb-4">{this.title}</h4>
                     </div></div>
                     <div className="row"><div className="col">
-                        {this.state.music &&
-                            <audio controls controlsList="nodownload" src={musicDataAsUrl} />
+                        {this.state.music
+                            ? <audio controls controlsList="nodownload" src={musicDataAsUrl} />
+                            : <Loading />
                         }
                     </div></div>
                 </div>

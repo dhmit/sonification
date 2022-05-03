@@ -43,6 +43,11 @@ export const createAudioCallbacks = (samples, audioContext) => {
 
         let audioSource;
 
+        const lopassFilter = audioContext.createBiquadFilter();
+        lopassFilter.connect(gainNode);  //
+        lopassFilter.frequency.setValueAtTime(2000, audioContext.currentTime);
+        lopassFilter.gain.setValueAtTime(25, audioContext.currentTime);
+
         const startCallback = (loop=false) => {
             gainNode.gain.setTargetAtTime(1, 0, 1);
             audioSource = audioContext.createBufferSource();
@@ -59,7 +64,7 @@ export const createAudioCallbacks = (samples, audioContext) => {
         };
 
         const endCallback = () => {
-            gainNode.gain.setTargetAtTime(0, 0, 1);
+            gainNode.gain.setTargetAtTime(0, 0, 0.075);
         };
 
         startCallbacks.push(startCallback);

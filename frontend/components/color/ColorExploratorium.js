@@ -82,6 +82,28 @@ const DESATURATING_COLORS = [
     hex2rgb("#FFFFFF"),
 ];
 
+const VALUE_COLORS_BLUE = [
+    hex2rgb("4000FF"),
+    hex2rgb("3A00E6"),
+    hex2rgb("3300CD"),
+    hex2rgb("2D00B3"),
+    hex2rgb("26009A"),
+    hex2rgb("200080"),
+];
+
+const VALUE_COLORS_ORANGE = [
+    hex2rgb("FF9500"),
+    hex2rgb("E68600"),
+    hex2rgb("CD7700"),
+    hex2rgb("B36900"),
+    hex2rgb("9A5A00"),
+    hex2rgb("804B00"),
+    hex2rgb("663C00"),
+    hex2rgb("4D2D00"),
+];
+
+
+
 class ColorSonifierExplainer extends React.Component {
     constructor(props) {
         super(props);
@@ -192,6 +214,8 @@ class ColorExploratorium extends React.Component {
             <PaintingSonifier data={STARRY_NIGHT_DATA} />
 
             <ColorSonifierExplainer colors={RAINBOW_COLORS} />
+            <ColorSonifierExplainer colors={VALUE_COLORS_ORANGE} />
+            <ColorSonifierExplainer colors={VALUE_COLORS_BLUE} />
 
             <PaintingSonifier data={KISS_DATA} />
 

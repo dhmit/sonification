@@ -14,16 +14,14 @@ def generate_wave_weighted_harmonics(frequency, duration, harmonic_weights):
     Create a wave from the addition of weighted harmonics of a given frequency.
     '''
     num_samples = int(duration * WAV_SAMPLE_RATE)
-    # time_steps = np.linspace(0, duration, num=num_samples, retstep=False)
-
     wave = np.zeros(num_samples)
 
     for i, weight in enumerate(harmonic_weights):
         harmonic_wave = generate_sine_wave_with_envelope(frequency*i, duration,
-                            a_percentage=0.1,
-                            s_percentage=0.5,
-                            d_percentage=0.3,
-                            r_percentage=0.1)
+            a_percentage=0.2,
+            d_percentage=0.1,
+            s_percentage=0.6,
+            r_percentage=0.1)
 
         wave += weight*harmonic_wave
 

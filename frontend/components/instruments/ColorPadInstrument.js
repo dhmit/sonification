@@ -35,6 +35,7 @@ const ColorPad = ({keyBind, color, startCallback, endCallback}) => {
             style={{backgroundColor: colorCssRgb}}
             onMouseDown={() => startPlaying()}
             onMouseUp={() => stopPlaying()}
+            onMouseLeave={() => stopPlaying()}
         >
             {keyBind}
         </button>

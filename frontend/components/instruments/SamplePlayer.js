@@ -24,21 +24,27 @@ const sampleBase64StrToArrayBuffer = (sampleStr) => {
  *                  make a call to start the audio and the second will make a call to stop it.
  */
 export const createAudioCallbacks = (samples, audioContext) => {
-    const gainNode = audioContext.createGain();
     const compressor = audioContext.createDynamicsCompressor();
+    compressor.threshold.value = -50;
+    compressor.knee.value = 40;
+    compressor.ratio.value = 12;
+    compressor.attack.value = 0;
+    compressor.release.value = 0.25;
     compressor.connect(audioContext.destination);
-    gainNode.connect(compressor);
+
     const buffers = samples.map(sample => sampleBase64StrToArrayBuffer(sample));
 
     const startCallbacks = [];
     const endCallbacks = [];
 
     buffers.forEach(buffer => {
+        const gainNode = audioContext.createGain();
+        gainNode.connect(compressor);
 
         let audioSource;
 
         const startCallback = (loop=false) => {
-            if (audioSource) audioSource.stop();
+            gainNode.gain.setTargetAtTime(1, 0, 1);
             audioSource = audioContext.createBufferSource();
             audioSource.loop = loop;
             audioSource.connect(gainNode);
@@ -53,7 +59,7 @@ export const createAudioCallbacks = (samples, audioContext) => {
         };
 
         const endCallback = () => {
-            // audioSource.stop();
+            gainNode.gain.setTargetAtTime(0, 0, 1);
         };
 
         startCallbacks.push(startCallback);
@@ -130,7 +136,7 @@ const SamplePlayer = ({
 
     useEffect(() => {
         const audioGainNode = audioGainNodeRef.current;
-        audioGainNode.gain.setValueAtTime(volume / 100, audioContext.currentTime);
+        audioGainNode.gain.linearRampToValueAtTime(volume / 100, audioContext.currentTime);
     }, [volume]);
 
     return null;  // this component doesn't render any UI!

@@ -14,12 +14,10 @@ def generate_samples(colors):
     for hsv in colors:
         h, s, v = hsv['h']/360, hsv['s']/100, hsv['v']/100
 
-        freq = 110 + 880 * h
-        gain = s*s*s
-        print(gain)
+        freq = 50 + 600*h
         harmonic_weights = get_harmonic_weights(v)
 
-        sample = gain*synths.generate_wave_weighted_harmonics(freq, 1, harmonic_weights)
+        sample = synths.generate_wave_weighted_harmonics(freq, 1, harmonic_weights)
 
         samples.append(sample)
     return samples
@@ -35,7 +33,7 @@ def get_harmonic_weights(value):
     triangle_harmonics = np.array([0, 0.8106, 0, 0.0901, 0, 0.324, 0, 0.0165])
     sawtooth_harmonics = np.array([0, 0.6366, -0.3183, 0.2122, -0.1592, 0.1273, -0.1061, 0.0909])
 
-    waves = [sawtooth_harmonics, sine_harmonics]
+    waves = [triangle_harmonics, sine_harmonics]
     spacing = 1 / (len(waves) - 1)
     distances = [abs((i*spacing - value)) for i in range(len(waves))]
     distances = [d if d < spacing else spacing for d in distances]

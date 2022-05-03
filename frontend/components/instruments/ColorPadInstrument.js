@@ -9,29 +9,22 @@ TODO(ra): Clean this up into PadInstrument -- this is copypasta
 
 const ColorPad = ({keyBind, color, startCallback, endCallback}) => {
     const [keyStatusClass, setKeyStatusClass] = useState('');
-
-    let isPlaying = false;
+    const [isPlaying, setIsPlaying] = useState(false);
 
     const startPlaying = () => {
         if (isPlaying) return;
-        isPlaying = true;
+        console.log('start!');
+        setIsPlaying(true);
         startCallback();
         setKeyStatusClass(STYLES.keypress);
     };
 
     const stopPlaying = () => {
         if (!isPlaying) return;
-        isPlaying = false;
+        console.log('stop!');
         endCallback();
+        setIsPlaying(false);
         setKeyStatusClass('');
-    };
-
-    const handlePadClick = () => {
-        startPlaying();
-        const timeout = setTimeout(() => {
-            stopPlaying();
-        }, 1000);
-        return () => clearInterval(timeout);
     };
 
     const colorCssRgb = `rgb(${color.r},${color.g},${color.b})`;
@@ -40,7 +33,8 @@ const ColorPad = ({keyBind, color, startCallback, endCallback}) => {
         <button
             className={`${STYLES.colorPad} ${keyStatusClass} inactive`}
             style={{backgroundColor: colorCssRgb}}
-            onClick={() => handlePadClick()}
+            onMouseDown={() => startPlaying()}
+            onMouseUp={() => stopPlaying()}
         >
             {keyBind}
         </button>
@@ -86,7 +80,6 @@ const ColorPadInstrument = ({samples, colors}) => {
                 {pads}
             </div>
             <div className="">
-                Click to play
             </div>
         </section>
     );

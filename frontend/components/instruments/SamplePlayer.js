@@ -53,7 +53,7 @@ export const createAudioCallbacks = (samples, audioContext) => {
         };
 
         const endCallback = () => {
-            audioSource.stop();
+            // audioSource.stop();
         };
 
         startCallbacks.push(startCallback);

@@ -26,27 +26,6 @@ const ColorPad = ({keyBind, color, startCallback, endCallback}) => {
         setKeyStatusClass('');
     };
 
-    const handleKeyDown = (event) => {
-        if (event.key === keyBind) {
-            startPlaying();
-        }
-    };
-
-    const handleKeyUp = (event) => {
-        if (event.key === keyBind) {
-            stopPlaying();
-        }
-    };
-
-    useEffect(() => {
-        document.addEventListener('keydown', handleKeyDown);
-        document.addEventListener('keyup', handleKeyUp);
-        return () => {
-            document.removeEventListener('keydown', handleKeyDown);
-            document.removeEventListener('keyup', handleKeyUp);
-        };
-    }, []);
-
     const handlePadClick = () => {
         startPlaying();
         const timeout = setTimeout(() => {
@@ -83,7 +62,6 @@ ColorPad.propTypes = {
  */
 const ColorPadInstrument = ({samples, colors}) => {
     const audioContextRef = useRef(new AudioContext());
-    const keyBinds = ['q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p'];
 
     useEffect(() => {
         // Cleanup function
@@ -94,7 +72,6 @@ const ColorPadInstrument = ({samples, colors}) => {
 
     const pads = samples.map((sample, i) => (
         <ColorPad
-            keyBind={keyBinds[i]}
             key={i}
             sample={samples[i]}
             color={colors[i]}

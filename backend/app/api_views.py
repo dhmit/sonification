@@ -105,6 +105,20 @@ def color_to_audio(request):
     })
 
 
+@api_view(['POST'])
+def single_color_to_sample(request):
+    """
+    :param request: includes property 'colors' which is a list of HSV dictionaries.
+    :return: wav file of the generated music as well as a list of samples for the pad instrument.
+    """
+    color = request.data['color']
+    samples = color_processing.generate_samples([color])
+    raw_audio = samples[0]
+    sample_base64 = audio_samples_to_wav_base64(raw_audio)
+    return Response({'sample': sample_base64})
+
+
+
 ################################################################################
 # GESTURE
 ################################################################################

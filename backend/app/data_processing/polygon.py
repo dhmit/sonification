@@ -157,7 +157,6 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
     note_delay_samples = int(note_delay * WAV_SAMPLE_RATE)
     # Total length of sound in samples
     total_length = (num_notes - 1) * note_delay_samples + note_length_samples
-    print("Total sound length:", total_length)
 
     # Compute sides and angles of polygon
     sides_list = sides_of_polygon(points)

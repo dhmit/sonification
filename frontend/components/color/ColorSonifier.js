@@ -4,8 +4,9 @@ import PaletteColor from "./PaletteColor";
 import ColorPicker from "./ColorPicker";
 import ToolTemplate from "../templates/ToolTemplate";
 import {ALL_DEFAULT_INSTRUMENTS} from "../instruments/InstrumentPicker";
+import {createAudioCallbacks} from "../instruments/SamplePlayer";
+import Loading from "../global/Loading";
 
-import ColorExploratorium from "./ColorExploratorium";
 /*********************************************************************************
  * COLOR UTILITIES
  ********************************************************************************/
@@ -42,6 +43,8 @@ class ColorSonifier extends React.Component {
     constructor(props) {
         super(props);
 
+        this.audioContextRef = React.createRef();
+        this.audioContextRef.current = new AudioContext();
         this.handlePaletteClick = this.handlePaletteClick.bind(this);
 
         // rainbow-ish -- taken from default swatches in the color picker
@@ -52,16 +55,19 @@ class ColorSonifier extends React.Component {
             {r: 134, g: 255, b: 0},
             {r: 0, g: 116, b: 255},
             {r: 137, g: 0, b: 255},
-            {r: 255, g: 0, b: 168},
         ];
 
         this.state = {
             instrumentSamples: null,
             music: null,
+            startCallbacks: null,
+            endCallbacks: null,
             selected: 0,
+            loading: null,
             colorPickerColor: initialColors[0],
             listOfColors: initialColors,
         };
+
     }
 
     handlePaletteClick = (e) => {
@@ -72,34 +78,58 @@ class ColorSonifier extends React.Component {
         });
     }
 
-    handleChangeComplete = (color) => {
+    handleChangeComplete = async (color) => {
+        const currentColor = this.state.listOfColors[this.state.selected];
+        if(currentColor.r === color.rgb.r &&
+           currentColor.g === color.rgb.g &&
+           currentColor.b === color.rgb.b ) return;
+
         const currentColorState = [...this.state.listOfColors];
         currentColorState[this.state.selected] = color.rgb;
-        this.setState({listOfColors: [...currentColorState], colorPickerColor: color.rgb});
-    };
 
-    handleSubmit = async () => {
-        let requestBody = {colors: this.state.listOfColors.map(color => rgb2hsv(color))};
-        await fetchPost('/api/color_to_audio/', requestBody, response => {
+        this.setState({
+            listOfColors: [...currentColorState],
+            colorPickerColor: color.rgb,
+            loading: this.state.selected,
+        });
+
+        const requestBody = {color: rgb2hsv(color.rgb)};
+        await fetchPost('/api/single_color_to_sample/', requestBody, response => {
+            const newSamples = this.state.instrumentSamples.slice();
+            newSamples[this.state.selected] = response.sample;
+
+            // TODO(ra): Just update the single start and end callbacks, not everything!
+            const [startCallbacks, endCallbacks] =
+                createAudioCallbacks(newSamples, this.audioContextRef.current);
+
             this.setState({
-                instrumentSamples: response.samples,
-                music: response.music,
+                instrumentSamples: newSamples,
+                startCallbacks,
+                endCallbacks,
+                loading: null,
             });
         });
     };
 
+    async componentDidMount() {
+        let requestBody = {colors: this.state.listOfColors.map(color => rgb2hsv(color))};
+        await fetchPost('/api/color_to_audio/', requestBody, response => {
+
+            const [startCallbacks, endCallbacks] =
+                createAudioCallbacks(response.samples, this.audioContextRef.current);
+
+            this.setState({
+                instrumentSamples: response.samples,
+                startCallbacks,
+                endCallbacks,
+            });
+        });
+    }
+
     render() {
-        const colorDisplay = this.state.listOfColors.map((color, i) =>
-            <PaletteColor
-                key={i} id={i}
-                color={color}
-                selected={i === Number(this.state.selected)}
-                handlePaletteClick={this.handlePaletteClick}
-            />
-        );
-
+        if(!(this.state.startCallbacks && this.state.endCallbacks)) return <Loading />;
+        const keyMap = ['Q', 'W', 'E', 'R', 'T', 'Y'];
         const hsv = rgb2hsv(this.state.colorPickerColor);
-
         const toolLayout = (
             <div className='row'>
                 <div className='col'>
@@ -114,37 +144,46 @@ class ColorSonifier extends React.Component {
                     </div>
                 </div>
                 <div className='col d-flex justify-content-between mt-4 mt-lg-0'>
-                    {colorDisplay}
+                    {this.state.listOfColors.map((color, i) =>
+                        <div key={i}>
+                            <div>
+                            </div>
+                            <div>
+                                <PaletteColor
+                                    key={i} id={i}
+                                    color={color}
+                                    selected={i === Number(this.state.selected)}
+                                    handlePaletteClick={this.handlePaletteClick}
+                                    keyBind={keyMap[i]}
+                                    startCallback={this.state.startCallbacks[i]}
+                                    endCallback={this.state.endCallbacks[i]}
+                                >
+                                    {i === this.state.loading
+                                        ? <Loading/>
+                                        : <>{keyMap[i]}</>
+                                    }
+                                </PaletteColor>
+                            </div>
+                        </div>
+                    )}
                 </div>
             </div>
         );
 
         return (<>
-            <ColorExploratorium />
-            <ToolTemplate
-                title='Make Your Own!'
-                description={<>
-                    <p>
-                        Choose up to seven colors below, then click Sonify! at the bottom of the
-                        page to hear your palette.
-                    </p>
-                    <p>
-                        Each color's:<ul>
-                            <li><strong>Hue</strong> is mapped to the pitch of the sound</li>
-                            <li><strong>Saturation</strong> is mapped to its loudness</li>
-                            <li><strong>Value</strong> to its timbre.</li>
-                        </ul>
-                    </p>
-                </>}
-                instrumentSamples={this.state.instrumentSamples}
-                music={this.state.music}
-                handleSubmit={this.handleSubmit}
-                instrumentPickerProps={{
-                    includedDefaultInstruments: ALL_DEFAULT_INSTRUMENTS,
-                }}
-                tool={toolLayout}
-            />
-
+            <h3>Try it out!</h3>
+            <p>
+                You can choose up to seven colors below, and use the letters Q-Y on the keyboard
+                to play the palette that you've chosen.
+            </p>
+            <p>
+                Each color's:<ul>
+                    <li><strong>Hue</strong> is mapped to the pitch of the sound</li>
+                    <li><strong>Saturation</strong> is mapped to its loudness</li>
+                    <li><strong>Value</strong> to its timbre.</li>
+                </ul>
+            </p>
+            {toolLayout}
         </>);
     }
 }

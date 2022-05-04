@@ -26,6 +26,7 @@ urlpatterns = [
 
     # API endpoints
     path('api/color_to_audio/', api_views.color_to_audio),
+    path('api/single_color_to_sample/', api_views.single_color_to_sample),
 
     path('api/gesture_to_audio/', api_views.gesture_to_audio),
 
@@ -42,16 +43,18 @@ urlpatterns = [
 
     # View paths
     path('', views.index, name='index'),
-    path('colors/', views.colors),
-    path('colors-exploratorium/', views.colors_exploratorium),
-    path('gestures/', views.gestures),
-    path('gestures-exploratorium/', views.gestures_exploratorium),
-    path('playback-demo/', views.playback_demo),
+    path('colors-original/', views.colors),
+    path('gestures-original/', views.gestures),
     path('polygons-original/', views.polygons),
-    path('polygons/', views.polygons_exploratorium),
-    path('text-shape/', views.text_shape_analysis),
     path('time-series-original/', views.time_series),
+    path('text-shape/', views.text_shape_analysis),
+    path('playback-demo/', views.playback_demo),
+
+    # exploratorium views
+    path('colors/', views.colors_exploratorium),
     path('time-series/', views.time_series_exploratorium),
+    path('polygons/', views.polygons_exploratorium),
+    path('gestures/', views.gestures_exploratorium),
 
     # Ryaan demo code - eventually delete me!
     path('numbers-before/', views.numbers_before),

@@ -7,13 +7,12 @@ import STYLES from "./ColorPadInstrument.module.scss";
 TODO(ra): Clean this up into PadInstrument -- this is copypasta
  */
 
-const ColorPad = ({keyBind, color, startCallback, endCallback}) => {
+export const ColorPad = ({keyBind, color, startCallback, endCallback}) => {
     const [keyStatusClass, setKeyStatusClass] = useState('');
     const [isPlaying, setIsPlaying] = useState(false);
 
     const startPlaying = () => {
         if (isPlaying) return;
-        console.log('start!');
         setIsPlaying(true);
         startCallback();
         setKeyStatusClass(STYLES.keypress);
@@ -21,7 +20,6 @@ const ColorPad = ({keyBind, color, startCallback, endCallback}) => {
 
     const stopPlaying = () => {
         if (!isPlaying) return;
-        console.log('stop!');
         endCallback();
         setIsPlaying(false);
         setKeyStatusClass('');

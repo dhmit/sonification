@@ -60,18 +60,15 @@ def generate_wave_weighted_harmonics(frequency, duration, harmonic_weights):
     wave = np.zeros(num_samples)
 
     for i, weight in enumerate(harmonic_weights):
-        harmonic_wave = generate_sine_wave_with_envelope(frequency*i, duration,
-            a_percentage=0.2,
-            d_percentage=0.1,
-            s_percentage=0.6,
-            r_percentage=0.1)
-
+        harmonic_wave = generate_sine_wave(frequency*i, duration)
         wave += weight*harmonic_wave
 
+    # normalize
     norm = sum(harmonic_weights)
-
     if norm != 0:
         wave /= norm
+
+    wave = apply_envelope(wave, 0.7, a=0.2, d=0.1, s=0.6, r=0.1)
 
     return wave
 

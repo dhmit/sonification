@@ -1,8 +1,9 @@
 import React from "react";
 import {fetchPost} from "../../common";
-import PaletteColor from "./PaletteColor";
 import {rgb2hsv, hex2rgb} from "./ColorSonifier";
 import ColorPadInstrument from "../instruments/ColorPadInstrument";
+import Loading from "../global/Loading";
+import ColorSonifier from "./ColorSonifier";
 
 import MoveIcon from "../../images/MoveIcon.svg";
 
@@ -108,7 +109,6 @@ class ColorSonifierExplainer extends React.Component {
     constructor(props) {
         super(props);
         this.colors = props.colors;
-        this.body = props.body;
         this.state = {};
     }
 
@@ -135,12 +135,7 @@ class ColorSonifierExplainer extends React.Component {
                         }
                     </div></div>
                     <div className="row"><div className="col">
-                        <p>
-                            Copy about how the hue maps to the pitch?
-                        </p>
-                        <p>
-                            Hue diagram?
-                        </p>
+                        {this.props.children}
                     </div></div>
                 </div>
             </div>
@@ -169,22 +164,22 @@ class PaintingSonifier extends React.Component {
     }
 
     render() {
+        if (!(this.state.music && this.state.instrumentSamples)) return <Loading />;
+
         return (
             <div className="row mb-4 border p-2 py-4">
                 <div className="col">
-                    <img className="img-fluid h100" alt={this.title} src={this.img} />
+                    <img className="img-fluid h100" alt={this.title} src={this.img}/>
                 </div>
                 <div className="col">
                     <div className="row mb-4"><div className="col w-100">
                         <h4 className="mb-4">{this.title}</h4>
                     </div></div>
                     <div className="row"><div className="col">
-                        {this.state.music && this.state.instrumentSamples &&
-                            <ColorPadInstrument
-                                samples={this.state.instrumentSamples}
-                                colors={this.colors}
-                            />
-                        }
+                        <ColorPadInstrument
+                            samples={this.state.instrumentSamples}
+                            colors={this.colors}
+                        />
                     </div></div>
                 </div>
             </div>
@@ -213,9 +208,17 @@ class ColorExploratorium extends React.Component {
 
             <PaintingSonifier data={STARRY_NIGHT_DATA} />
 
-            <ColorSonifierExplainer colors={RAINBOW_COLORS} />
-            <ColorSonifierExplainer colors={VALUE_COLORS_ORANGE} />
-            <ColorSonifierExplainer colors={VALUE_COLORS_BLUE} />
+            <ColorSonifierExplainer colors={RAINBOW_COLORS}>
+                <p>
+                    Copy here about how the hue maps to pitch. Include a hue diagram.
+                </p>
+            </ColorSonifierExplainer>
+            <ColorSonifierExplainer colors={VALUE_COLORS_BLUE}>
+                <p>
+                    Copy here about how the value maps to timbre. Explain value in HSV.
+                    Maybe make a more contrast-y example of the timbre changing.
+                </p>
+            </ColorSonifierExplainer>
 
             <PaintingSonifier data={KISS_DATA} />
 
@@ -236,6 +239,8 @@ class ColorExploratorium extends React.Component {
                     src={MoveIcon} width="100px" height="100%" />
                 Could put more copy here about the sonification. How does it work?
             </InfoCard>
+
+            <ColorSonifier />
         </>);
     }
 }

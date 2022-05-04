@@ -1,8 +1,5 @@
-import React, {useState} from "react";
-import UploadTimeSeriesFileInput from "../inputs/UploadTimeSeriesFileInput";
+import React from "react";
 import {fetchPost} from "../../common";
-import ToolTemplate from "../templates/ToolTemplate";
-import InstrumentPicker, {EXPLORATORIUM_MUSIC} from "../instruments/InstrumentPicker";
 import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
 import MoveIcon from "../../images/MoveIcon.svg";

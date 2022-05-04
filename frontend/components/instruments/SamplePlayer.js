@@ -54,6 +54,7 @@ export const createAudioCallbacks = (samples, audioContext) => {
             audioSource.loop = loop;
             audioSource.connect(gainNode);
 
+
             audioContext.decodeAudioData(
                 buffer.slice(0),
                 (b) => {

@@ -35,7 +35,7 @@ class ColorPicker extends Component {
             ],
         });
 
-        this.colorPicker.on(['color:init', 'color:change'], color => {
+        this.colorPicker.on(['color:change'], color => {
             if (this.props.onColorChange) {
                 this.props.onColorChange(color);
             }

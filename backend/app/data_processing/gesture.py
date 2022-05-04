@@ -123,7 +123,7 @@ def generate_samples_from_gesture(gesture, canvas):
     t = np.array([(c['t']-first_coord['t'])/1000 for c in gesture])
 
     base_freq = 110
-    octaves = 4
+    octaves = 3
     freq = np.array([
         # linear mapping over the octaves above the base frequency
         base_freq + (base_freq*2**octaves)*(1 - (gesture[i]['y']/canvas['width'])) for i in range(

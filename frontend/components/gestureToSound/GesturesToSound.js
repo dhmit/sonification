@@ -201,21 +201,6 @@ const GesturesToSound = () => {
                     </div>
                 </div>
             </div>
-            {/* <div className="row">
-                <div className="col">
-                    <div>
-                        <strong>Pitch</strong>
-                        <RangeSliderInput
-                            name="pitch"
-                            units="Hz"
-                            minValue={131} // range of tenor-alto
-                            maxValue={698}
-                            updateValues={updatePitch}
-                            step={1}
-                        />
-                    </div>
-                </div>
-            </div> */}
         </>}
     />);
 };

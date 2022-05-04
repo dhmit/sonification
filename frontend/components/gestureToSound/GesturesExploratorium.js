@@ -95,9 +95,8 @@ const GesturesExploratorium = () => {
         <GestureSonifier data={otherDoodah} />
         <GestureSonifier data={squiggle} />
 
-        {/*
+        <h3>Try it yourself!</h3>
         <GesturesToSound />
-        */}
     </>);
 
 };

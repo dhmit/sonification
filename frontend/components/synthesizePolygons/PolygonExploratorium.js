@@ -46,6 +46,7 @@ class PolygonSonifier extends React.Component {
         this.state = {
             music: null,
             currentTime: null,
+            playing: false,
         };
         this.audioRef = React.createRef();
     }
@@ -53,8 +54,8 @@ class PolygonSonifier extends React.Component {
     async componentDidMount() {
         const requestBody = {
             points: this.points,
-            noteLength: 1,
-            noteDelay: 1,
+            noteLength: 0.75,
+            noteDelay: 0.75,
             baseFrequency: 220,
             floorFrequency: 220,
             ceilFrequency: 880,
@@ -70,6 +71,16 @@ class PolygonSonifier extends React.Component {
         });
     }
 
+    toggleAudio() {
+        if(this.state.playing) {
+            this.audioRef.current.pause();
+            this.setState({playing: false});
+        } else {
+            this.audioRef.current.play();
+            this.setState({playing: true});
+        }
+    }
+
     render() {
         return (
             <div className="row mb-4 border p-2 py-4">
@@ -82,8 +93,16 @@ class PolygonSonifier extends React.Component {
                         />
                     </div>
                     <div className="col">
+                        <button
+                            onClick={() => this.toggleAudio()}
+                            className='btn btn-primary'>
+                            {this.state.playing
+                                ? 'Stop'
+                                : 'Start'
+                            }
+                        </button>
                         <audio
-                            controls
+                            loop
                             controlsList={"nodownload"}
                             ref={this.audioRef}
                             onTimeUpdate={() => this.setState({currentTime: this.audioRef.current.currentTime}) }

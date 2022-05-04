@@ -5,6 +5,8 @@ import numpy as np
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 from app.synthesis import synthesizers as synths
 
+# from matplotlib import pyplot as plt
+
 
 def check_valid_polygon(polygon):
     """
@@ -102,32 +104,6 @@ def sides_to_duration(sides, base_duration):
     return duration_list, total_duration
 
 
-def amplitude_decay(frequency):
-    """
-    Decays the amplitude to counterbalance psycho-acoustic effects in which we hear higher
-    pitches as louder. Returns the decay as a scaling factor for amplitude.
-    :param frequency: frequency of the note in Hz
-    :return: an amplitude scaling factor
-    """
-    if frequency < 700:
-        return 1
-    # exponential decay based on frequency
-    return 0.5 ** ((frequency - 700) / 2000)
-
-
-def generate_note_with_amplitude(frequency, duration, amplitude):
-    """
-    Generates a note with the given frequency, duration, and amplitude.
-    :param frequency: frequency of the note
-    :param duration: duration in seconds
-    :param amplitude: amplitude as a scaling factor
-    :return: numpy array which represents the note
-    """
-    time_steps = np.linspace(0, duration, int(duration * WAV_SAMPLE_RATE), False)
-    note = np.sin(frequency * time_steps * 2 * np.pi) * amplitude * amplitude_decay(frequency)
-    return note
-
-
 def generate_time_stamps(duration_list, note_delay, sides_as_duration=False):
     """
     Generates a list indicating when the sound associated with each line of the polygon should
@@ -197,12 +173,13 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
     # initialize the empty sound
     sound = np.zeros(total_length)
     # add each note to the sound
-    for note_ind in range(num_notes):
-        cur_freq = freqs[note_ind]
+    for note_idx in range(num_notes):
+        cur_freq = freqs[note_idx]
         # generate note and ensure it has correct length
         if sides_as_duration:
             # base amplitude of 1
-            note = generate_note_with_amplitude(cur_freq, duration_list[note_ind], 1)
+            duration = duration_list[note_idx]
+            note = synths.generate_sine_wave_with_envelope(cur_freq, duration)
             duration_samples = len(note)
 
             #  append note samples
@@ -212,13 +189,17 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
             # update the current time
             cur_time += duration_samples
         else:
-            note = generate_note_with_amplitude(
-                cur_freq, note_length, sides_list[note_ind] / sides_list[0]
+            note = synths.generate_sine_wave_with_envelope(
+                cur_freq, note_length,
+                a_percentage=0.05,
+                d_percentage=0.1,
+                s_percentage=0.8,
+                r_percentage=0.05,
             )
             assert len(note) == note_length_samples, "Incorrect note length computation"
             #  append note samples
             for i in range(0, note_length_samples):
-                sound[note_ind * note_delay_samples + i] += note[i]
+                sound[note_idx * note_delay_samples + i] += note[i]
 
         # update current frequency
         # cur_freq *= freq_change[note_ind]
@@ -343,9 +324,18 @@ def generate_perimeter_samples(polygon_data):
     note_len = polygon_data['note_length']
 
     freqs = generate_perimeter_freqs(points, base_freq)
+    sustain_gain = 0.7  # percentage of peak gain
     samples = [
-        synths.generate_sine_wave(freq, note_len) for freq in freqs
+        synths.apply_envelope(
+            synths.generate_sine_wave_with_envelope(freq, note_len), sustain_gain
+        )
+        for freq in freqs
     ]
+
+    # for sample in samples:
+    #     plt.plot(sample)
+    #     plt.show()
+
     return samples
 
 

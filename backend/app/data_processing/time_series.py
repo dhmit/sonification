@@ -15,10 +15,6 @@ from app.synthesis import synthesizers as synths
 
 from app.notes import NOTES
 
-# https://matplotlib.org/3.5.0/users/explain/backends.html
-# Use the agg backend, so matplotlib runs in non-interactive mode and can
-# write out raster images in savefig
-matplotlib.use('agg')
 
 # pylint: disable=too-many-locals
 def time_series_to_music(request):
@@ -77,6 +73,12 @@ def time_series_to_music(request):
 
     time_steps = np.arange(0, len(csv_data))
     new_csv = np.array(new_csv)
+
+
+    # https://matplotlib.org/3.5.0/users/explain/backends.html
+    # Use the agg backend, so matplotlib runs in non-interactive mode and can
+    # write out raster images in savefig
+    matplotlib.use('agg')
 
     # Another process is creating a figure using plt, so wait.
     # pyplot is a stateful interface, so tricky to get this working on multiple processes at once

@@ -9,6 +9,49 @@ from app.common import NOTE_FREQ_SIMPLE
 from app.synthesis.audio_encoding import WAV_SAMPLE_RATE
 
 
+def quadratic_growth(x, max_x):
+    return 2 ** (x / max_x) - 1
+
+def quadratic_decay(x, max_x):
+    return 2 ** (1 - x / max_x) - 1
+
+def apply_envelope(samples, sustain_gain, a=10/100, d=20/100, s=60/100, r=10/100):
+    num_samples = len(samples)
+    len_a = int(a * num_samples)
+    len_d = int(d * num_samples)
+    len_s = int(s * num_samples)
+    len_r = int(r * num_samples)
+    len_r += num_samples - len_a - len_d - len_s - len_r  # account for any rounding error
+
+    peak_gain = 1
+    final_gain = 0
+
+    # Compute weights for the attack portion of the audio
+    a_weights = [
+        peak_gain * quadratic_growth(x, len_a)
+        for x in range(len_a)
+    ]
+
+    # Compute weights for the decay portion of the audio
+    d_weights = [
+        sustain_gain
+        + (peak_gain - sustain_gain) * quadratic_decay(x, len_d)
+        for x in range(len_d)
+    ]
+
+    # Fill out length of the sustain portion with the sustain weight
+    s_weights = [sustain_gain for _ in range(len_s)]
+
+    # Compute weights for the release portion of the audio
+    r_weights = [
+        final_gain + sustain_gain * quadratic_decay(x, len_r)
+        for x in range(len_r)
+    ]
+
+    # Concatenate weights for the full envelope
+    adsr_envelope_weights = np.array(a_weights + d_weights + s_weights + r_weights)
+    return samples * adsr_envelope_weights
+
 def generate_wave_weighted_harmonics(frequency, duration, harmonic_weights):
     '''
     Create a wave from the addition of weighted harmonics of a given frequency.
@@ -154,57 +197,18 @@ def generate_wave_with_envelope(frequency, duration, a_percentage=0.1, d_percent
     :param wave_type: wave type
     :return:
     """
-    peak_weight = 1
-    sustain_weight = peak_weight * 0.7
-    final_weight = 0
+    sustain_gain = 0.7
 
     try:
         assert math.isclose(a_percentage + d_percentage + s_percentage + r_percentage, 1.0)
     except AssertionError:
         print("ADSR percentages should add up to 1")
 
-    total_num_samples = int(duration * WAV_SAMPLE_RATE)
-    len_a = int(a_percentage * total_num_samples)
-    len_d = int(d_percentage * total_num_samples)
-    len_s = int(s_percentage * total_num_samples)
-    len_r = int(r_percentage * total_num_samples)
-    len_r += total_num_samples - len_a - len_d - len_s - len_r  # account for any rounding error
-
-    def quadratic_growth(x, max_x):
-        return 2 ** (x / max_x) - 1
-
-    def quadratic_decay(x, max_x):
-        return 2 ** (1 - x / max_x) - 1
-
-    # Compute weights for the attack portion of the audio
-    a_weights = [
-        peak_weight * quadratic_growth(x, len_a)
-        for x in range(len_a)
-    ]
-
-    # Compute weights for the decay portion of the audio
-    d_weights = [
-        sustain_weight
-        + (peak_weight - sustain_weight) * quadratic_decay(x, len_d)
-        for x in range(len_d)
-    ]
-
-    # Fill out length of the sustain portion with the sustain weight
-    s_weights = [sustain_weight for _ in range(len_s)]
-
-    # Compute weights for the release portion of the audio
-    r_weights = [
-        final_weight + sustain_weight * quadratic_decay(x, len_r)
-        for x in range(len_r)
-    ]
-
-    # Concatenate weights for the full envelope
-    adsr_envelope_weights = np.array(a_weights + d_weights + s_weights + r_weights)
-
     wave_samples = generate_wave(frequency, duration, harmonics, vibrato, wave_type)
 
     # apply the envelope weights to the generated sine wave
-    audio_samples_with_adsr_envelope = wave_samples * adsr_envelope_weights
+    audio_samples_with_adsr_envelope =\
+        apply_envelope(wave_samples, 0.7, a_percentage, d_percentage, s_percentage, r_percentage)
 
     return audio_samples_with_adsr_envelope
 

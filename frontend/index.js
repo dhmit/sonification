@@ -2,6 +2,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import {normalizeAudioContext} from "./AudioContextMonkeyPatch";
 
 // Our imports
 import "./scss/index.scss";
@@ -41,6 +42,9 @@ const COMPONENTS = {
     PolygonExploratorium,
     GesturesExploratorium,
 };
+
+// Safari and Firefox support AudioContext fixes, basically
+normalizeAudioContext();
 
 // Here, we take the data for our components specified by Django in our views.py file,
 // and we parse it to hand off to React

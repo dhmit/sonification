@@ -126,9 +126,9 @@ def generate_samples_from_gesture(gesture, canvas):
     octaves = 3
     freq = np.array([
         # linear mapping over the octaves above the base frequency
-        base_freq + (base_freq*2**octaves)*(1 - (gesture[i]['y']/canvas['width'])) for i in range(
-        len(
-        gesture))
+        base_freq + (base_freq*2**octaves)*(1 - (gesture[i]['normalizedY'])) for i
+         in range(
+        len(gesture))
     ])
     samples = generate_wave_phase_mod(duration, t, freq)
 

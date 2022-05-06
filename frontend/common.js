@@ -2,6 +2,7 @@
  * Common.js -- miscellaneous routines useful throughout the system
  */
 
+import * as React from "react";
 
 /**
  * Get the value of a cookie, given its name
@@ -71,4 +72,26 @@ export function debounce(func, timeout = 300) {
             func.apply(this, args);
         }, timeout);
     };
+}
+
+
+// Uses a map to allow dynamically set refs
+// https://github.com/fitzmode/use-dynamic-refs/blob/master/src/index.tsx
+
+const refMap = new Map();
+
+function setRef(key) {
+    if (!key) return console.warn(`useDynamicRefs: Cannot set ref without key `);
+    const ref = React.createRef();
+    refMap.set(key, ref);
+    return ref;
+}
+
+function getRef(key) {
+    if (!key) return console.warn(`useDynamicRefs: Cannot get ref without key`);
+    return refMap.get(key);
+}
+
+export function useDynamicRefs() {
+    return [getRef, setRef];
 }

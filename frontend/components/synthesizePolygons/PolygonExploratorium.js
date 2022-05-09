@@ -4,7 +4,7 @@ import {fetchPost} from "../../common";
 import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
 import MoveIcon from "../../images/MoveIcon.svg";
-import SynthesizePolygons from "./SynthesizePolygons";
+import PolygonEditor from "./PolygonEditor";
 import {createAudioContextWithCompressor} from "../instruments/common";
 
 
@@ -189,6 +189,8 @@ class PolygonSonifier extends React.Component {
 const PolygonExploratorium = () => {
     const {audioCtx, compressor} = createAudioContextWithCompressor();
     const audioContextRef = useRef(audioCtx);
+    const [newPolygonPoints, setNewPolygonPoints] = useState(null);
+    const [userPolygons, setUserPolygons] = useState([]);
 
     return (<>
         <InfoCard>
@@ -214,7 +216,30 @@ const PolygonExploratorium = () => {
         </InfoCard>
 
 
-        <SynthesizePolygons />
+        {/* PolygonEditor queries its container div for height and width */}
+        <div style={{height: '500px', width: '500px'}}>
+            <PolygonEditor
+                outerWidth={500}
+                onPointsUpdate={setNewPolygonPoints}
+                onEdit={() => {}}
+            />
+        </div>
+        <button
+            onClick={() => {
+                const newUserPolygons = userPolygons.slice();
+                newUserPolygons.push({points: newPolygonPoints});
+                setUserPolygons(newUserPolygons);
+            }}
+        >
+            Add
+        </button>
+        {userPolygons.map((data, i) =>
+            <PolygonSonifier
+                key={i+20}
+                data={data} audioContextRef={audioContextRef} compressor={compressor} />
+        )}
+
+
     </>);
 
 };

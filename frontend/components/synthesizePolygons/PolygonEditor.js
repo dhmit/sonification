@@ -10,7 +10,7 @@ import TrashIcon from "../../images/TrashIcon.svg";
 import ReactTooltipDefaultExport from "react-tooltip";
 
 /**
- * A simple polygon editor with specified width and height. A custom callback onPointsUpdate 
+ * A simple polygon editor with specified width and height. A custom callback onPointsUpdate
  * should point to the parent element's state variable update function for the points.
  */
 const PolygonEditor = (
@@ -20,6 +20,7 @@ const PolygonEditor = (
         onEdit,
         onPointsUpdate,
         outerWidth,
+        clearFunction,
     }
 ) => {
     // editor modes and edit handling
@@ -494,44 +495,6 @@ const PolygonEditor = (
                 /> }
                 {loading && <circle cx="50%" cy="50%" r={20} className={STYLES.svgLoadingCircle}/>}
             </svg>
-            <div className={STYLES.buttonRow}>
-                {editorIconButtonGroups.map((buttonGroup, bgi) => (
-                    <div key={`button-group-${bgi}`} className={STYLES.buttonGroup}>
-                        {buttonGroup.map(({svg, tooltip, name, ...button}, i) => (
-                            <div key={`button-group-${bgi}-${name}`}>
-                                <span data-tip data-for={name} data-tip-disable={false}>
-                                    <button
-                                        className={`btn btn-primary ${STYLES.editorButton} p-2 m-1`}
-                                        {...button}
-                                        key={`editor-icon-${bgi}-${i}`}
-                                    >
-                                        {svg}
-                                    </button>
-                                </span>
-                                <ReactTooltipDefaultExport id={name} place="top">
-                                    {tooltip}
-                                </ReactTooltipDefaultExport>
-                            </div>
-                        ))}
-                    </div>
-                ))}
-            </div>
-            <a
-                hidden
-                style={{display: "hidden"}}
-                download="points.csv"
-                ref={fileDownloadRef}
-                href={fileDownloadUrl}
-            />
-            <input
-                hidden
-                style={{display: "hidden"}}
-                type="file"
-                ref={fileUploadRef}
-                accept=".txt,.csv"
-                onChange={uploadPolygon}
-            />
-
         </div>
     );
 

@@ -95,3 +95,5 @@ function getRef(key) {
 export function useDynamicRefs() {
     return [getRef, setRef];
 }
+
+export const base64AudioToDataURI = (audioBase64) => `data:audio/wav;base64,${audioBase64}`;

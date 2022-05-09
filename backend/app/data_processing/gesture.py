@@ -1,7 +1,8 @@
 import math
 import numpy as np
 from app.synthesis.synthesizers import \
-    generate_sine_wave_with_envelope, generate_wave_phase_mod, interp_envelope
+    generate_sine_wave_with_envelope, generate_wave_phase_mod, interp_envelope, apply_envelope
+
 
 
 def compress_coordinates(gestures, factor):
@@ -115,7 +116,6 @@ def generate_samples_from_gesture(gesture, canvas):
     if len(gesture) < 2:
         return np.array([0])
 
-    print(gesture)
     first_coord, final_coord = gesture[0], gesture[-1]
 
     # convert milliseconds -> seconds
@@ -141,6 +141,7 @@ def generate_samples_from_gesture(gesture, canvas):
 
     # apply envelope to generated samples
     samples = envelope * samples
+    samples = apply_envelope(samples, .95, a=0, d=0, s=0.99, r=0.01)
     return samples
 
 

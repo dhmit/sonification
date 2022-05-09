@@ -1,77 +1,86 @@
-import React from "react";
+import React, {useCallback, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
-import {fetchPost} from "../../common";
+import {base64AudioToDataURI, fetchPost} from "../../common";
 import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
+import {useDynamicRefs} from "../../common";
 import MoveIcon from "../../images/MoveIcon.svg";
 import GesturesToSound from "./GesturesToSound";
 import {GESTURE_WAVE, GESTURE_SQUIGGLES, GESTURE_CORNERS} from "./GesturesData";
+import {createAudioCallbacks} from "../instruments/SamplePlayer";
+import {createAudioContextWithCompressor} from "../instruments/common";
+import {drawGesture, MiniGestureCanvas, drawGestureOnMiniCanvas} from "./GesturesToSound";
 
-class GestureSonifier extends React.Component {
-    constructor(props) {
-        super(props);
-        this.allMouseCoords = props.data;
-        this.state = {};
-        this.canvasRef = React.createRef();
-    }
+// NOTE(ra): We have a separate set of names for ref IDs in here to avoid
+// collisions with the ones over in GesturesToSound
+const getRefIdForExampleMiniCanvas = (i, id) => `exampleMiniCanvasRef${i}-${id}`;
 
-    drawLine = (coords) => {
-        const canvas = this.canvasRef.current;
-        const context = canvas.getContext("2d");
-        if (context) {
-            context.beginPath();
-            context.lineWidth = 5;
-            context.lineJoin = "round";
-            context.lineCap = "round";
-            context.globalCompositeOperation = "source-over";
-            context.moveTo(coords[0].x, coords[0].y);
-            for (let i = 0; i < coords.length - 1; i++) {
-                const c = (coords[i].x + coords[i + 1].x) / 2;
-                const d = (coords[i].y + coords[i + 1].y) / 2;
-                context.quadraticCurveTo(coords[i].x, coords[i].y, c, d);
-            }
-            context.stroke();
-        }
-    };
-    async componentDidMount() {
-        for(const gesture of this.allMouseCoords) this.drawLine(gesture);
+const GestureSonifier = ({coords, id}) => {
+    const mainCanvasRef = useRef(null);
+    const [loading, setLoading] = useState(false);
+    const [music, setMusic] = useState(null);
+    const [instrumentSamples, setInstrumentSamples] = useState([]);
+    const [getRef, setRef] = useDynamicRefs();
+    const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
+    const {audioCtx, compressor} = createAudioContextWithCompressor();
+    const audioContextRef = useRef(audioCtx);
 
-        const canvas = this.canvasRef.current;
+    useEffect(async () => {
+        for(const gesture of coords) drawGesture(mainCanvasRef, gesture);
+
+        const canvas = mainCanvasRef.current;
         const canvasSettings = {
             width: canvas.width,
             height: canvas.height,
         };
         const requestBody = {
-            gestures: this.allMouseCoords,
+            gestures: coords,
             canvas: canvasSettings,
         };
+
         await fetchPost('/api/gesture_to_audio/', requestBody, (response) => {
-            this.setState({
-                music: response.music,
+            const [startCallbacks, _] =
+                createAudioCallbacks(response.samples, audioContextRef.current);
+            setMusic(response.music);
+            setInstrumentSamples(response.samples);
+            setAudioStartCallbacks(startCallbacks);
+
+            response.samples.forEach((_, i) => {
+                console.log('drawing mini canvas', i);
+                const miniCanvas = getRef(getRefIdForExampleMiniCanvas(i, id));
+                if (!miniCanvas) return;
+                drawGestureOnMiniCanvas(miniCanvas, coords[i]);
             });
         });
-    }
+    }, []);
 
-    render() {
-        return (
-            <div className="row mb-4 border p-2 py-4">
-                <div className="col">
-                    <canvas
-                        className={STYLES.canvas}
-                        ref={this.canvasRef}
-                        width="500" height="500"
-                    />
-                </div>
-                <div className="col">
-                    {this.state.music
-                        ? <audio controls controlsList="nodownload" src={`data:audio/wav;base64,${this.state.music}`} />
-                        : <Loading />
-                    }
-                </div>
+    return (
+        <div className="row mb-4 border p-2 py-4">
+            <div className="col">
+                <canvas
+                    className={STYLES.canvas}
+                    ref={mainCanvasRef}
+                    width="500" height="500"
+                />
             </div>
-        );
-    }
-}
+            <div className="col">
+                {music
+                    ? <audio controls controlsList="nodownload"
+                        src={base64AudioToDataURI(music)} />
+                    : <Loading />
+                }
+
+                {instrumentSamples.map((sample, i) =>
+                    <MiniGestureCanvas
+                        audioCallback={audioStartCallbacks[i]}
+                        canvasRef={setRef(getRefIdForExampleMiniCanvas(i, id))}
+                        key={i}
+                    />
+                )}
+            </div>
+        </div>
+    );
+};
 
 const GesturesExploratorium = () => {
     return (<>
@@ -83,7 +92,7 @@ const GesturesExploratorium = () => {
             Student pull quote goes here.
         </ InfoCard>
 
-        <GestureSonifier data={GESTURE_WAVE} />
+        <GestureSonifier coords={GESTURE_WAVE} id={"wave"}/>
 
         <InfoCard>
             <img
@@ -92,13 +101,12 @@ const GesturesExploratorium = () => {
                 src={MoveIcon} width="100px" height="100%" />
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
-        <GestureSonifier data={GESTURE_CORNERS} />
-        <GestureSonifier data={GESTURE_SQUIGGLES} />
+        <GestureSonifier coords={GESTURE_CORNERS} id={"corners"} />
+        <GestureSonifier coords={GESTURE_SQUIGGLES} id={"squiggles"} />
 
         <h3>Try it yourself!</h3>
         <GesturesToSound />
     </>);
-
 };
 
 export default GesturesExploratorium;

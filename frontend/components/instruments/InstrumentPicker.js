@@ -5,9 +5,10 @@ import PadInstrument from "./PadInstrument";
 import SpatialInstrument from "./SpatialInstrument";
 import StepSequencer from "./StepSequencer";
 import SliderInstrument from "./SliderInstrument";
+import {base64AudioToDataURI} from "../../common";
 
 const DownloadSamples = ({samples}) => {
-    const samplesDataURLs = samples.map(sample => `data:audio/wav;base64, ${sample}`);
+    const samplesDataURLs = samples.map(sample => base64AudioToDataURI(sample));
 
     return (<div>
         <p>Preview and download the samples you've sonified, for use in external projects.</p>

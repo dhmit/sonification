@@ -4,6 +4,8 @@ import {fetchPost} from "../../common";
 import ToolTemplate from "../templates/ToolTemplate";
 import {ALL_DEFAULT_INSTRUMENTS} from "../instruments/InstrumentPicker";
 import {useDynamicRefs} from "../../common";
+import {createAudioCallbacks} from "../instruments/SamplePlayer";
+import {createAudioContextWithCompressor} from "../instruments/common";
 
 const musicDataToUrl = (music) => `data:audio/wav;base64, ${music}`;
 
@@ -26,27 +28,38 @@ const GesturesToSound = () => {
     const [submitted, setSubmitted] = useState(false);
     const [music, setMusic] = useState(null);
     const [instrumentSamples, setInstrumentSamples] = useState([]);
+    const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
+    const [audioEndCallbacks, setAudioEndCallbacks] = useState([]);
     const [undoneGestures, setUndoneGestures] = useState([]);
 
+    const {audioCtx, compressor} = createAudioContextWithCompressor();
+    const audioContextRef = useRef(audioCtx);
+
     useEffect(() => {
+        const [startCallbacks, endCallbacks] =
+            createAudioCallbacks(instrumentSamples, audioContextRef.current);
+
+        console.log('setting callbacks');
+        setAudioStartCallbacks(startCallbacks);
+        setAudioEndCallbacks(endCallbacks);
+
         instrumentSamples.forEach((_, i) => {
             const miniCanvas = getRef(getRefIdForMiniCanvas(i));
             if (!miniCanvas) return;
 
-            // TODO: normalize the gesture into the width/height of the canvas
             const rawCoords = allMouseCoords[i];
 
-            const pad = 10; // maybe scale this padding?
+            const pad = 10; // TODO(ra): maybe scale this padding?
             const minX = Math.min(...rawCoords.map(coord => coord.x)) - pad;
             const minY = Math.min(...rawCoords.map(coord => coord.y)) - pad;
             const maxY = Math.max(...rawCoords.map(coord => coord.y)) + pad;
             const maxX = Math.max(...rawCoords.map(coord => coord.x)) + pad;
+
             const originalWidth = maxX - minX;
             const originalHeight = maxY - minY;
-
             const scale = miniCanvas.current.width / Math.max(originalWidth, originalHeight);
-            console.log(scale);
 
+            // TODO(ra): center by width if tall, center by height if squat
             const newCoords = [];
             for (const coord of rawCoords) {
                 newCoords.push({
@@ -196,12 +209,6 @@ const GesturesToSound = () => {
         }
     };
 
-    const playMiniCanvasGesture = (i) => {
-        const miniCanvasAudio = getRef(getRefIdForMiniCanvasAudio(i));
-        console.log(miniCanvasAudio);
-        // miniCanvasAudio.current.play();
-    };
-
     const drawingIsEmpty = (allMouseCoords.length === 0);
 
     let sonifyButtonText;
@@ -258,15 +265,11 @@ const GesturesToSound = () => {
                 </button>
                 {music && <audio controls controlsList="nodownload" src={musicDataToUrl(music)}/> }
 
-                {instrumentSamples.length > 1 &&
-                instrumentSamples.map((sample, i) => <React.Fragment key={i}>
-                    <audio
-                        controls
-                        ref={setRef(getRefIdForMiniCanvasAudio(i))}
-                        src={musicDataToUrl(sample)}
-                    />
+                {instrumentSamples.map((sample, i) => <React.Fragment key={i}>
                     <canvas
-                        onClick={() => playMiniCanvasGesture(i)}
+                        style={{border: "1px solid grey"}}
+                        className="mr-2"
+                        onClick={() => audioStartCallbacks[i]()}
                         height="100" width="100" ref={setRef(getRefIdForMiniCanvas(i))}
                     />
                 </React.Fragment>)}

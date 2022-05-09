@@ -82,6 +82,9 @@ class PolygonSonifier extends React.Component {
     }
 
     render() {
+        // TODO(ra): onTimeUpdate has poor granularity (doesn't guarantee better than 250 ms)
+        // so we need to query the audio element's currentTime ourselves in a setInterval loop
+
         return (
             <div className="row mb-4 border p-2 py-4">
                 {this.state.music && <>

@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
  * as input and draws the polygon based on these points. Also auto scales the polygon to
  * fit/fill the svg.
  */
-const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
+const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps, active}) => {
     const [points, setPoints] = useState([]);
 
     useEffect(() => {
@@ -61,10 +61,13 @@ const PolygonViewer = ({rawPoints, width, height, currentTime, timestamps}) => {
                         key={`point-${i}`}
                         cx={p[0]}
                         cy={p[1]}
-                        className={(currentTime >= timestamps[i][0] &&
-                            currentTime <= timestamps[i][1]) 
-                            ? STYLES.playedPoint 
-                            : STYLES.displayPoint}
+                        className={
+                            active
+                                ? (currentTime >= timestamps[i][0] && currentTime <= timestamps[i][1])
+                                    ? STYLES.playedPoint
+                                    : STYLES.displayPoint
+                                : STYLES.inactivePoint
+                        }
                     />
                 </React.Fragment>
             ))}

@@ -1,14 +1,65 @@
-import React, {useState} from "react";
+import React, {useState, useRef} from "react";
 import PolygonViewer from "./PolygonViewer";
 import {fetchPost} from "../../common";
 import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
 import MoveIcon from "../../images/MoveIcon.svg";
 import SynthesizePolygons from "./SynthesizePolygons";
+import {createAudioContextWithCompressor} from "../instruments/common";
+
 
 const SQUARE_DATA = {
-    points: [[208.6666565,391.7291565], [590.6666565,62.72915649], [962.6666565,400.7291565], [586.6666565,640.7291565]],
+    points: [
+        [0, 100],
+        [100, 100],
+        [100, 0],
+        [0, 0],
+    ],
 };
+
+const STARRISH_DATA = {
+    points: [
+        [169, 438],
+        [428, 392],
+        [416, 138],
+        [608, 405],
+        [892, 363],
+        [653, 565],
+        [735, 794],
+        [436, 549],
+        [286, 777],
+        [329, 489],
+    ],
+};
+
+
+const FLOWERISH_DATA = {
+    points: [
+        [116,376],
+        [398,436],
+        [268,228],
+        [394,150],
+        [416,427],
+        [512,147],
+        [620,181],
+        [428,435],
+        [729,347],
+        [727,486],
+        [433,448],
+        [704,569],
+        [582,632],
+        [428,472],
+        [454,663],
+        [344,652],
+        [392,467],
+        [201,634],
+        [166,533],
+        [356,466],
+        [95,450],
+    ]
+};
+
+
 
 const OVAL_DATA = {
     points: [[192.6666565, 368.7291565],
@@ -36,26 +87,34 @@ const OVAL_DATA = {
 };
 
 const TRIANGLE_DATA = {
-    points: [[325.6666565, 552.7291565], [572.6666565, 70.72915649], [876.6666565, 558.7291565]],
+    points: [
+        [0, 0],
+        [0, 100],
+        [100, 50],
+    ],
 };
 
 class PolygonSonifier extends React.Component {
     constructor(props) {
         super(props);
         this.points = props.data.points;
+        this.compressor = props.compressor;
+        this.audioContextRef = props.audioContextRef;
         this.state = {
             music: null,
             currentTime: null,
             playing: false,
         };
         this.audioRef = React.createRef();
+        this.activeTimeoutId = null;
+        this.mediaElementSource = null;
     }
 
     async componentDidMount() {
         const requestBody = {
             points: this.points,
-            noteLength: 0.75,
-            noteDelay: 0.75,
+            noteLength: 1/6,
+            noteDelay: 1/6,
             baseFrequency: 220,
             floorFrequency: 220,
             ceilFrequency: 880,
@@ -74,51 +133,63 @@ class PolygonSonifier extends React.Component {
     toggleAudio() {
         if(this.state.playing) {
             this.audioRef.current.pause();
+            clearTimeout(this.activeTimeoutId);
+            this.activeTimeoutId = null;
             this.setState({playing: false});
         } else {
+            if(!this.mediaElementSource) {
+                this.mediaElementSource =
+                    this.audioContextRef.current.createMediaElementSource(this.audioRef.current);
+                const gainNode = this.audioContextRef.current.createGain();
+                gainNode.connect(this.compressor);
+                this.mediaElementSource.connect(gainNode);
+            }
             this.audioRef.current.play();
+            this.activeTimeoutId = setInterval(
+                () => this.setState({currentTime: this.audioRef.current.currentTime}),
+                10
+            );
             this.setState({playing: true});
         }
     }
 
     render() {
-        // TODO(ra): onTimeUpdate has poor granularity (doesn't guarantee better than 250 ms)
-        // so we need to query the audio element's currentTime ourselves in a setInterval loop
+        if (!this.state.music) return <Loading />;
 
         return (
-            <div className="row mb-4 border p-2 py-4">
-                {this.state.music && <>
-                    <div className="col">
-                        <PolygonViewer width={300} height={300}
-                                       rawPoints={this.points}
-                                       currentTime={this.state.currentTime}
-                                       timestamps={this.state.timestamps}
-                        />
-                    </div>
-                    <div className="col">
-                        <button
-                            onClick={() => this.toggleAudio()}
-                            className='btn btn-primary'>
-                            {this.state.playing
-                                ? 'Stop'
-                                : 'Start'
-                            }
-                        </button>
-                        <audio
-                            loop
-                            controlsList={"nodownload"}
-                            ref={this.audioRef}
-                            onTimeUpdate={() => this.setState({currentTime: this.audioRef.current.currentTime}) }
-                            src={`data:audio/wav;base64, ${this.state.music}`}/>
-                    </div>
-                </>
-                }
+            <div
+                onClick={() => this.toggleAudio()}
+                className={`
+                    btn
+                    ${this.state.playing
+                        ? 'btn-outline-primary'
+                        : 'btn-outline-secondary'
+                    }
+                    col-4 mb-4`}
+            >
+                <PolygonViewer
+                    width={275}
+                    height={275}
+                    rawPoints={this.points}
+                    currentTime={this.state.currentTime}
+                    timestamps={this.state.timestamps}
+                    active={this.state.playing}
+                />
+                <audio
+                    loop
+                    controlsList={"nodownload"}
+                    ref={this.audioRef}
+                    src={`data:audio/wav;base64, ${this.state.music}`}
+                />
             </div>
         );
     }
 }
 
 const PolygonExploratorium = () => {
+    const {audioCtx, compressor} = createAudioContextWithCompressor();
+    const audioContextRef = useRef(audioCtx);
+
     return (<>
         <InfoCard>
             <img
@@ -128,7 +199,11 @@ const PolygonExploratorium = () => {
             Student pull quote goes here.
         </ InfoCard>
 
-        <PolygonSonifier data={SQUARE_DATA} />
+        {[SQUARE_DATA, FLOWERISH_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
+            <PolygonSonifier
+                key={i}
+                data={data} audioContextRef={audioContextRef} compressor={compressor} />
+        )}
 
         <InfoCard>
             <img
@@ -138,8 +213,6 @@ const PolygonExploratorium = () => {
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
 
-        <PolygonSonifier data={OVAL_DATA} />
-        <PolygonSonifier data={TRIANGLE_DATA} />
 
         <SynthesizePolygons />
     </>);

@@ -80,6 +80,12 @@
     fill: red;
 }
 
+.inactivePoint {
+    r: 5;
+    stroke-width: 2;
+    fill: grey;
+}
+
 $edit-color: #ffff88;
 .editPoint:hover, .focusEditPoint {
     //stroke: #8a8a8a;

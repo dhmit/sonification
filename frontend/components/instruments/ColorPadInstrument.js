@@ -53,7 +53,7 @@ ColorPad.propTypes = {
  * A basic instrument: takes in a bunch of samples, and
  * provides buttons that the user can click to trigger the sample.
  */
-const ColorPadInstrument = ({samples, colors}) => {
+const ColorPadInstrument = ({samples, colors, vertical=false}) => {
     const audioContextRef = useRef(new AudioContext());
 
     useEffect(() => {
@@ -73,9 +73,13 @@ const ColorPadInstrument = ({samples, colors}) => {
         />
     ));
 
+    let padContainerClass = "text-white";
+    if (vertical) {
+        padContainerClass += " d-flex flex-column justify-content-between";
+    }
     return (
         <section id="pad-instrument">
-            <div className="text-white">
+            <div className={padContainerClass}>
                 {pads}
             </div>
             <div className="">

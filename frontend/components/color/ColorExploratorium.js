@@ -169,19 +169,20 @@ class PaintingSonifier extends React.Component {
 
         return (
             <div className="row mb-4 border p-2 py-4">
+            <h4 className="mb-4">{this.title}</h4>
                 <div className="col">
                     <img className="img-fluid h100" alt={this.title} src={this.img}/>
                 </div>
                 <div className="col">
-                    <div className="row mb-4"><div className="col w-100">
-                        <h4 className="mb-4">{this.title}</h4>
-                    </div></div>
-                    <div className="row"><div className="col">
-                        <ColorPadInstrument
-                            samples={this.state.instrumentSamples}
-                            colors={this.colors}
-                        />
-                    </div></div>
+                    <div className="row">
+                        <div className="d-flex flex-column justify-content-between">
+                            <ColorPadInstrument
+                                samples={this.state.instrumentSamples}
+                                colors={this.colors}
+                                vertical
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         );

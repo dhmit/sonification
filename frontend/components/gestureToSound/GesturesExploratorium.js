@@ -10,6 +10,7 @@ import {GESTURE_WAVE, GESTURE_SQUIGGLES, GESTURE_CORNERS} from "./GesturesData";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
 import {drawGesture, MiniGestureCanvas, drawGestureOnMiniCanvas} from "./GesturesToSound";
+import {StudentQuote, GRACE_QUOTE, PEIHUA_QUOTE} from "../../studentQuotes";
 
 // NOTE(ra): We have a separate set of names for ref IDs in here to avoid
 // collisions with the ones over in GesturesToSound
@@ -84,13 +85,8 @@ const GestureSonifier = ({coords, id}) => {
 
 const GesturesExploratorium = () => {
     return (<>
-        <InfoCard>
-            <img
-                className="mr-2"
-                alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100%" />
-            Student pull quote goes here.
-        </ InfoCard>
+        <StudentQuote quoteData={PEIHUA_QUOTE} />
+        <StudentQuote quoteData={GRACE_QUOTE} />
 
         <GestureSonifier coords={GESTURE_WAVE} id={"wave"}/>
 

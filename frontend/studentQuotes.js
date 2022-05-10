@@ -1,44 +1,108 @@
+import React from "react";
+import NiceAudioPlayer from "./components/instruments/NiceAudioPlayer";
+
+import ANGELINA_IMG from "./images/headshots/Wu_Angelina.jpg";
+import EESHA_IMG from "./images/headshots/Banerjee_Eesha.jpg";
+import EMEKA_IMG from "./images/headshots/Echezona_Emeka.jpg";
+import GRACE_IMG from "./images/headshots/Jau_Grace.jpg";
+import MOISES_IMG from "./images/headshots/Trejo_Moises.jpg";
+import PEIHUA_IMG from "./images/headshots/Huang_Peihua.jpg";
+import QUINCY_IMG from "./images/headshots/Johnson_Quincy.jpg";
+
+import ANGELINA_AUDIO from "./audio/Polygons_Angelina_2022-05-04.mp4";
+import EESHA_AUDIO from "./audio/TimeSeries_Eesha_2022-05-02.m4a";
+import EMEKA_AUDIO from "./audio/Colors_Emeka_2022-05-04.m4a";
+import GRACE_AUDIO from "./audio/Gestures_Grace_2022-04-28.mp4";
+import MOISES_AUDIO from "./audio/TimeSeries_Moises_2022-04-27.m4a";
+import PEIHUA_AUDIO from "./audio/Gestures_Peihua_2022-05-02.m4a";
+import QUINCY_AUDIO from "./audio/Polygons_Quincy_2022-05-02.mp3";
+
+
+
+
+
+
+
+// TODO(ra): import the actual audio / img for all of these students!
+
 // COLORS
 export const EMEKA_QUOTE = {
     quote: "My favorite part of working on the colors feature was collaborating to figure out" +
         " what the final representation of a color would be.",
-    speaker: "Emeka E.",
+    speaker: "Emeka Echezona",
+    img: EMEKA_IMG,
+    audio: EMEKA_AUDIO,
 };
 
 // Gestures:
 export const GRACE_QUOTE = {
     quote: "It was really cool to see the intersections between math and programming and music, and how all of that could come together to form a final project. [...] It really helped me understand how the different pieces fit together to form a product.",
     speaker: "Grace J.",
+    img: GRACE_IMG,
+    audio: GRACE_AUDIO,
 };
 
 export const PEIHUA_QUOTE = {
     quote: "My favorite part of the project was learning more about how pitches and notes work and seeing our final feature at the end. I personally don’t have any musical background, so a lot of this was new to me. [...] Normally when you look at something visual, you don’t think ‘Oh, this is what it would sound like.’",
     speaker: "Peihua H.",
+    img: PEIHUA_IMG,
+    audio: PEIHUA_AUDIO,
 };
 
 // Polygons
 export const ANGELINA_QUOTE = {
     quote: "This project is all about making tools to get people to play with sound in hopefully new ways, so of course we had to ourselves stretch what we knew to different shapes. That creative process was really fun.",
     speaker: "Angelina W.",
+    img: ANGELINA_IMG,
+    audio: ANGELINA_AUDIO,
 };
 
 export const QUINCY_QUOTE = {
     quote: "I really enjoyed being able to combine my computer science and musical background to create something unique and memorable.",
     speaker: "Quincy J",
+    img: QUINCY_IMG,
+    audio: QUINCY_AUDIO,
 };
 
 // Time Series
 export const EESHA_QUOTE = {
     quote: "I really enjoyed was the imagination that had to go into it in order to find connections between two different types of data.",
     speaker: "Eesha B.",
+    img: EESHA_IMG,
+    audio: EESHA_AUDIO,
 };
 
 export const MOISES_QUOTE = {
     quote: "I really enjoyed being able to use computer science to make something out of nothing. It felt like I could make music out of thin air, out of sunset data, out of CO2 emission data, and use it to make something that could move people.",
     speaker: "Moises T.",
+    img: MOISES_IMG,
+    audio: MOISES_AUDIO,
 };
 
-export const StudentQuote = (quoteData) => {
-    // TODO(ra): Implement me!
-    return null;
+
+
+export const StudentQuote = ({quoteData}) => {
+    const {quote, speaker, img, audio} = quoteData;
+    return (
+        <div className="mb-2">
+            <div className="row">
+                <div className="col-1">
+                    <NiceAudioPlayer audioUrl={audio} />
+                    <img
+                        className='img-fluid'
+                        alt={`Headshot of ${speaker}`} src={img}
+                    />
+                </div>
+                <div className="col-11">
+                    <blockquote className="blockquote">
+                        {quote}
+                    </blockquote>
+                    <footer className="blockquote-footer">
+                        {speaker}
+                    </footer>
+                </div>
+            </div>
+        </div>
+    );
+
 };

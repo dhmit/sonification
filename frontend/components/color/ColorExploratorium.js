@@ -4,6 +4,7 @@ import {rgb2hsv, hex2rgb} from "./ColorSonifier";
 import ColorPadInstrument from "../instruments/ColorPadInstrument";
 import Loading from "../global/Loading";
 import ColorSonifier from "./ColorSonifier";
+import {StudentQuote, EMEKA_QUOTE} from "../../studentQuotes";
 
 import MoveIcon from "../../images/MoveIcon.svg";
 
@@ -198,14 +199,7 @@ export const InfoCard = ({children}) => {
 class ColorExploratorium extends React.Component {
     render() {
         return (<>
-            <InfoCard>
-                <img
-                    className="mr-2"
-                    alt="Portrait of student"
-                    src={MoveIcon} width="100px" height="100%" />
-                Student pull quote goes here.
-            </ InfoCard>
-
+            <StudentQuote quoteData={EMEKA_QUOTE} />
             <PaintingSonifier data={STARRY_NIGHT_DATA} />
 
             <ColorSonifierExplainer colors={RAINBOW_COLORS}>

@@ -6,6 +6,7 @@ import Loading from "../global/Loading";
 import MoveIcon from "../../images/MoveIcon.svg";
 import PolygonEditor from "./PolygonEditor";
 import {createAudioContextWithCompressor} from "../instruments/common";
+import {StudentQuote, ANGELINA_QUOTE, QUINCY_QUOTE} from "../../studentQuotes";
 
 
 const SQUARE_DATA = {
@@ -211,13 +212,8 @@ const PolygonExploratorium = () => {
     };
 
     return (<>
-        <InfoCard>
-            <img
-                className="mr-2"
-                alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100%" />
-            Student pull quote goes here.
-        </ InfoCard>
+        <StudentQuote quoteData={ANGELINA_QUOTE} />
+        <StudentQuote quoteData={QUINCY_QUOTE} />
 
         {[SQUARE_DATA, FLOWERISH_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
             <PolygonSonifier

@@ -3,6 +3,7 @@ import {fetchPost} from "../../common";
 import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
 import MoveIcon from "../../images/MoveIcon.svg";
+import {StudentQuote, MOISES_QUOTE, EESHA_QUOTE} from "../../studentQuotes";
 
 const SUNRISE_SUNSET_BOSTON = {
     title: "Sunrise and Sunset Times in Boston",
@@ -125,13 +126,8 @@ class TimeSeriesSonifier extends React.Component {
 
 const TimeSeriesExploratorium = () => {
     return (<>
-        <InfoCard>
-            <img
-                className="mr-2"
-                alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100%" />
-            Student pull quote goes here.
-        </ InfoCard>
+        <StudentQuote quoteData={MOISES_QUOTE} />
+        <StudentQuote quoteData={EESHA_QUOTE} />
 
         <TimeSeriesSonifier data={SUNRISE_SUNSET_BOSTON} />
 

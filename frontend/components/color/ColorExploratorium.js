@@ -7,6 +7,7 @@ import ColorSonifier from "./ColorSonifier";
 import {StudentQuote, EMEKA_QUOTE} from "../../studentQuotes";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
+import ExploratoriumLayout from "../global/ExploratoriumLayout";
 
 import MoveIcon from "../../images/MoveIcon.svg";
 
@@ -251,66 +252,76 @@ export const InfoCard = ({children}) => {
     </div>);
 };
 
-class ColorExploratorium extends React.Component {
-    render() {
-        return (<>
-            <StudentQuote quoteData={EMEKA_QUOTE} />
+const ColorExploratoriumMain = () => {
+    return (<>
+        <ColorSonifierExplainer colors={M3_COLORS}>
+            <p>
+                Example of ascending pure (5/4) major thirds traversing the hue/pitch space.
+            </p>
+        </ColorSonifierExplainer>
 
-            <ColorSonifierExplainer colors={M3_COLORS}>
-                <p>
-                    Example of ascending pure (5/4) major thirds traversing the hue/pitch space.
-                </p>
-            </ColorSonifierExplainer>
+        <ColorSonifierExplainer colors={FIFTH_COLORS}>
+            <p>
+                Example of ascending pure fifths traversing the hue/pitch space.
+            </p>
+        </ColorSonifierExplainer>
 
-            <ColorSonifierExplainer colors={FIFTH_COLORS}>
-                <p>
-                    Example of ascending pure fifths traversing the hue/pitch space.
-                </p>
-            </ColorSonifierExplainer>
+        <ColorSonifierExplainer colors={OCTAVE_COLORS}>
+            <p>
+                Example of ascending octaves traversing the hue/pitch space.
+            </p>
+        </ColorSonifierExplainer>
 
-            <ColorSonifierExplainer colors={OCTAVE_COLORS}>
-                <p>
-                    Example of ascending octaves traversing the hue/pitch space.
-                </p>
-            </ColorSonifierExplainer>
+        <ColorSonifierExplainer colors={OVERTONE_SEMITONE_COLORS}>
+            <p>
+                Example of ascending 17/16 semitones traversing the hue/pitch space.
+            </p>
+        </ColorSonifierExplainer>
 
-            <ColorSonifierExplainer colors={OVERTONE_SEMITONE_COLORS}>
-                <p>
-                    Example of ascending 17/16 semitones traversing the hue/pitch space.
-                </p>
-            </ColorSonifierExplainer>
+        <ColorSonifierExplainer colors={VALUE_COLORS_BLUE}>
+            <p>
+                Copy here about how the value maps to timbre. Explain value in HSV.
+                Maybe make a more contrast-y example of the timbre changing.
+            </p>
+        </ColorSonifierExplainer>
 
-            <ColorSonifierExplainer colors={VALUE_COLORS_BLUE}>
-                <p>
-                    Copy here about how the value maps to timbre. Explain value in HSV.
-                    Maybe make a more contrast-y example of the timbre changing.
-                </p>
-            </ColorSonifierExplainer>
+        <ColorSonifier />
 
-            <ColorSonifier />
+        <InfoCard>
+            <div className="col-2">
+                <img
+                    className="mr-2"
+                    alt="Portrait of student"
+                    src={MoveIcon} width="100px" height="100%" />
+            </div>
+            <div className="col-10">
+                Below, we've sonified a few paintings. Click on the painting itself to start or pause a loop representing the
+                colors in the painting. Click the buttons next to the painting to hear the sound of individual colors.
+            </div>
 
-            <InfoCard>
-                <div className="col-2">
-                    <img
-                        className="mr-2"
-                        alt="Portrait of student"
-                        src={MoveIcon} width="100px" height="100%" />
-                </div>
-                <div className="col-10">
-                    Below, we've sonified a few paintings. Click on the painting itself to start or pause a loop representing the
-                    colors in the painting. Click the buttons next to the painting to hear the sound of individual colors.
-                </div>
+        </InfoCard>
 
-            </InfoCard>
-
-            <PaintingSonifier data={MURAKAMI_DATA} />
-            <PaintingSonifier data={JOAN_MITCHELL_DATA} />
-            <PaintingSonifier data={OKEEFFE_DATA} />
-            <PaintingSonifier data={STARRY_NIGHT_DATA} />
+        <PaintingSonifier data={MURAKAMI_DATA} />
+        <PaintingSonifier data={JOAN_MITCHELL_DATA} />
+        <PaintingSonifier data={OKEEFFE_DATA} />
+        <PaintingSonifier data={STARRY_NIGHT_DATA} />
+    </>);
+};
 
 
-        </>);
-    }
-}
+const ColorExploratoriumSidebar = () => {
+    return (
+        <StudentQuote quoteData={EMEKA_QUOTE} />
+    );
+};
+
+const ColorExploratorium = () => {
+    return (
+        <ExploratoriumLayout
+            main={<ColorExploratoriumMain />}
+            sidebar={<ColorExploratoriumSidebar />}
+        />
+    );
+};
 
 export default ColorExploratorium;

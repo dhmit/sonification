@@ -4,4 +4,10 @@
 
 .container {
   margin: 0;
+
+  /*
+  NOTE(ra): These are exploratorium specific styles -- we're hardcoding in a big viewport.
+   */
+  max-width: 100%;
+  width: 1400px;
 }

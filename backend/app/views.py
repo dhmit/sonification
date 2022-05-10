@@ -65,7 +65,8 @@ def colors_exploratorium(request):
         'page_metadata': {
             'title': 'Colors'
         },
-        'component_name': 'ColorExploratorium'
+        'component_name': 'ColorExploratorium',
+        'component_props': {'overrideBase': True}
     }
 
     return render(request, 'index.html', context)

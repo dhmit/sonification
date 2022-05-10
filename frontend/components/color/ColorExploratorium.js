@@ -5,6 +5,8 @@ import ColorPadInstrument from "../instruments/ColorPadInstrument";
 import Loading from "../global/Loading";
 import ColorSonifier from "./ColorSonifier";
 import {StudentQuote, EMEKA_QUOTE} from "../../studentQuotes";
+import {createAudioCallbacks} from "../instruments/SamplePlayer";
+import {createAudioContextWithCompressor} from "../instruments/common";
 
 import MoveIcon from "../../images/MoveIcon.svg";
 
@@ -151,17 +153,35 @@ class PaintingSonifier extends React.Component {
         this.colors = props.data.colors;
         this.img = props.data.img;
         this.title = props.data.title;
-        this.state = {};
+        this.audioContextRef = React.createRef();
+        const {audioCtx, compressor} = createAudioContextWithCompressor();
+        this.audioContextRef.current = audioCtx;
+        this.state = {
+            playing: false,
+        };
     }
 
     async componentDidMount() {
         const requestBody = {colors: this.colors.map(color => rgb2hsv(color))};
         await fetchPost('/api/color_to_audio/', requestBody, response => {
+            const [startCallbacks, endCallbacks] =
+                createAudioCallbacks(response.samples, this.audioContextRef.current, true);
+
             this.setState({
                 instrumentSamples: response.samples,
                 music: response.music,
+                audioStartCallbacks: startCallbacks,
+                audioEndCallbacks: endCallbacks,
             });
         });
+    }
+
+    toggleLoops = () => {
+        // TODO(ra): visual indicator of playing
+        // TODO(ra): Maybe the color pickers should turn on and off loops here
+        if (this.state.playing) this.state.audioEndCallbacks.forEach(f => f());
+        else this.state.audioStartCallbacks.forEach(f => f());
+        this.setState({playing: !this.state.playing});
     }
 
     render() {
@@ -171,7 +191,12 @@ class PaintingSonifier extends React.Component {
             <div className="row mb-4 border p-2 py-4">
             <h4 className="mb-4">{this.title}</h4>
                 <div className="col">
-                    <img className="img-fluid h100" alt={this.title} src={this.img}/>
+                    <img
+                        onClick={this.toggleLoops}
+                        className="img-fluid h100"
+                        alt={this.title}
+                        src={this.img}
+                    />
                 </div>
                 <div className="col">
                     <div className="row">
@@ -229,6 +254,7 @@ class ColorExploratorium extends React.Component {
                     Below, we've sonified a few paintings. Click on the painting itself to start or pause a loop representing the
                     colors in the painting. Click the buttons next to the painting to hear the sound of individual colors.
                 </div>
+
             </InfoCard>
 
             <PaintingSonifier data={STARRY_NIGHT_DATA} />

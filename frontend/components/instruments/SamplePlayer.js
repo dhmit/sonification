@@ -20,10 +20,11 @@ const sampleBase64StrToArrayBuffer = (sampleStr) => {
  *
  * @param {list} samples list of base64-encoded audio samples
  * @param {object} audioContext audioContext for the controlling component
+ * @param {boolean} loop should the sample loop?
  * @returns {list} list where each index holds a list of two functions where the first will
  *                  make a call to start the audio and the second will make a call to stop it.
  */
-export const createAudioCallbacks = (samples, audioContext) => {
+export const createAudioCallbacks = (samples, audioContext, loop=false) => {
     const compressor = audioContext.createDynamicsCompressor();
     compressor.threshold.value = -50;
     compressor.knee.value = 40;
@@ -48,12 +49,11 @@ export const createAudioCallbacks = (samples, audioContext) => {
         lopassFilter.frequency.setValueAtTime(2000, audioContext.currentTime);
         lopassFilter.gain.setValueAtTime(25, audioContext.currentTime);
 
-        const startCallback = (loop=false) => {
+        const startCallback = () => {
             gainNode.gain.setTargetAtTime(1, 0, 1);
             audioSource = audioContext.createBufferSource();
             audioSource.loop = loop;
             audioSource.connect(gainNode);
-
 
             audioContext.decodeAudioData(
                 buffer.slice(0),

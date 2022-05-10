@@ -1,7 +1,8 @@
 import React, {useState, useEffect} from "react";
+import STYLES from "./NiceAudioPlayer.module.scss";
 
-const NiceAudioPlayer = ({audioUrl}) => {
-    const [audioPlayer] = useState(new Audio(audioUrl));
+const NiceAudioPlayer = ({src, text}) => {
+    const [audioPlayer] = useState(new Audio(src));
     const [playing, setPlaying] = useState(false);
     const toggleAudio = () => setPlaying(!playing);
 
@@ -17,16 +18,26 @@ const NiceAudioPlayer = ({audioUrl}) => {
     }, []);
 
     // TODO(ra): Playback icon design
-    return (<div>
-        <button onClick={toggleAudio}>
-            <span className="code">
-                {playing
-                    ? '⏸'
-                    : '▶'
-                }
-            </span>
+    return (
+        <button
+            onClick={toggleAudio}
+            className={playing ? STYLES.niceAudioPlayerPlaying : STYLES.niceAudioPlayer}
+        >
+            <div className="row">
+                <div className="col-2 mr-0">
+                    <span className="code">
+                        {playing
+                            ? '⏸'
+                            : '▶'
+                        }
+                    </span>
+                </div>
+                <div className="col-10 text-left">
+                    {text}
+                </div>
+            </div>
         </button>
-    </div>);
+    );
 };
 
 export default NiceAudioPlayer;

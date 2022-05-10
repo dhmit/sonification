@@ -14,12 +14,8 @@ import EESHA_AUDIO from "./audio/TimeSeries_Eesha_2022-05-02.m4a";
 import EMEKA_AUDIO from "./audio/Colors_Emeka_2022-05-04.m4a";
 import GRACE_AUDIO from "./audio/Gestures_Grace_2022-04-28.mp4";
 import MOISES_AUDIO from "./audio/TimeSeries_Moises_2022-04-27.m4a";
-import PEIHUA_AUDIO from "./audio/Gestures_Peihua_2022-05-02.m4a";
+import PEIHUA_AUDIO from "./audio/Gestures_Peihua_2022-05-02.mp3";
 import QUINCY_AUDIO from "./audio/Polygons_Quincy_2022-05-02.mp3";
-
-
-
-
 
 
 
@@ -87,7 +83,6 @@ export const StudentQuote = ({quoteData}) => {
         <div className="mb-2">
             <div className="row">
                 <div className="col-1">
-                    <NiceAudioPlayer audioUrl={audio} />
                     <img
                         className='img-fluid'
                         alt={`Headshot of ${speaker}`} src={img}
@@ -101,6 +96,10 @@ export const StudentQuote = ({quoteData}) => {
                         {speaker}
                     </footer>
                 </div>
+                <NiceAudioPlayer
+                    src={audio}
+                    text={`Click to hear ${speaker} say more about working on the Sonification Toolkit`}
+                />
             </div>
         </div>
     );

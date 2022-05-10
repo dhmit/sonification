@@ -11,6 +11,7 @@ import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
 import {drawGesture, MiniGestureCanvas, drawGestureOnMiniCanvas} from "./GesturesToSound";
 import {StudentQuote, GRACE_QUOTE, PEIHUA_QUOTE} from "../../studentQuotes";
+import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 
 // NOTE(ra): We have a separate set of names for ref IDs in here to avoid
 // collisions with the ones over in GesturesToSound
@@ -65,19 +66,28 @@ const GestureSonifier = ({coords, id}) => {
                 />
             </div>
             <div className="col">
-                {music
-                    ? <audio controls controlsList="nodownload"
-                        src={base64AudioToDataURI(music)} />
-                    : <Loading />
-                }
+                <div className="mb-4">
+                    {music
+                        ? <NiceAudioPlayer src={base64AudioToDataURI(music)} text="Play the full drawing"/>
+                        : <Loading />
+                    }
+                </div>
 
-                {instrumentSamples.map((sample, i) =>
-                    <MiniGestureCanvas
-                        audioCallback={audioStartCallbacks[i]}
-                        canvasRef={setRef(getRefIdForExampleMiniCanvas(i, id))}
-                        key={i}
-                    />
-                )}
+                <div>
+                    {(instrumentSamples.length > 1) && (<>
+                        <p>
+                            Click to play each gesture:
+                        </p>
+                        {instrumentSamples.map((sample, i) =>
+                            <MiniGestureCanvas
+                            audioCallback={audioStartCallbacks[i]}
+                            canvasRef={setRef(getRefIdForExampleMiniCanvas(i, id))}
+                            key={i}
+                            />
+                            )}
+                        </>)
+                    }
+                </div>
             </div>
         </div>
     );
@@ -94,7 +104,7 @@ const GesturesExploratorium = () => {
             <img
                 className="mr-2"
                 alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100%" />
+                src={MoveIcon} width="100px" height="100px" />
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
         <GestureSonifier coords={GESTURE_CORNERS} id={"corners"} />

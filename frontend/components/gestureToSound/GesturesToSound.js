@@ -5,7 +5,7 @@ import {useDynamicRefs} from "../../common";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
 import {base64AudioToDataURI} from "../../common";
-
+import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 
 const loadResults = async (event, handleSubmit, setLoading) => {
     setLoading(true);
@@ -267,15 +267,20 @@ const GesturesToSound = () => {
                     }
                 </button>
 
-                {music && <audio controls controlsList="nodownload" src={base64AudioToDataURI(music)}/> }
+                {music && <NiceAudioPlayer src={base64AudioToDataURI(music)} text="Play the full drawing"/> }
 
-                {instrumentSamples.map((sample, i) =>
-                    <MiniGestureCanvas
-                        audioCallback={audioStartCallbacks[i]}
-                        canvasRef={setRef(getRefIdForMiniCanvas(i))}
-                        key={i}
-                    />
-                )}
+                {instrumentSamples.length > 1 && (<>
+                    <p>
+                        Click to play each gesture:
+                    </p>
+                    {instrumentSamples.map((sample, i) =>
+                        <MiniGestureCanvas
+                            audioCallback={audioStartCallbacks[i]}
+                            canvasRef={setRef(getRefIdForMiniCanvas(i))}
+                            key={i}
+                        />
+                    )}
+                </>)}
 
             </div>
         </div>

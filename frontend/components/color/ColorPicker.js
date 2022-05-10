@@ -11,28 +11,8 @@ class ColorPicker extends Component {
 
     componentDidMount() {
         this.colorPicker = new iro.ColorPicker(this.el, {
-            color: this.props.initColor ?? '#03ecfc',
-            width: 450,
-            layout: [
-                {
-                    component: iro.ui.Slider,
-                    options: {
-                        sliderType: 'hue',
-                    },
-                },
-                {
-                    component: iro.ui.Slider,
-                    options: {
-                        sliderType: 'saturation',
-                    },
-                },
-                {
-                    component: iro.ui.Slider,
-                    options: {
-                        sliderType: 'value',
-                    },
-                },
-            ],
+            color: this.props.initColor,
+            width: 500,
         });
 
         this.colorPicker.on(['color:change'], color => {

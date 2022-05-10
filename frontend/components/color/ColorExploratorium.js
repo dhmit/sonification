@@ -191,7 +191,9 @@ class PaintingSonifier extends React.Component {
 export const InfoCard = ({children}) => {
     return (<div className="card mb-4">
         <div className="card-body">
-            {children}
+            <div className="row">
+                {children}
+            </div>
         </div>
     </div>);
 };
@@ -200,7 +202,6 @@ class ColorExploratorium extends React.Component {
     render() {
         return (<>
             <StudentQuote quoteData={EMEKA_QUOTE} />
-            <PaintingSonifier data={STARRY_NIGHT_DATA} />
 
             <ColorSonifierExplainer colors={RAINBOW_COLORS}>
                 <p>
@@ -214,27 +215,29 @@ class ColorExploratorium extends React.Component {
                 </p>
             </ColorSonifierExplainer>
 
-            <PaintingSonifier data={KISS_DATA} />
+            <ColorSonifier />
 
             <InfoCard>
-                <img
-                    className="mr-2"
-                    alt="Portrait of student"
-                    src={MoveIcon} width="100px" height="100%" />
-                Could put more copy here about the sonification. How does it work?
+                <div className="col-2">
+                    <img
+                        className="mr-2"
+                        alt="Portrait of student"
+                        src={MoveIcon} width="100px" height="100%" />
+                </div>
+                <div className="col-10">
+                    Below, we've sonified a few paintings. Click on the painting itself to start or pause a loop representing the
+                    colors in the painting. Click the buttons next to the painting to hear the sound of individual colors.
+                </div>
             </InfoCard>
+
+            <PaintingSonifier data={STARRY_NIGHT_DATA} />
+
+
+            <PaintingSonifier data={KISS_DATA} />
+
 
             <PaintingSonifier data={GUITARIST_DATA} />
 
-            <InfoCard>
-                <img
-                    className="mr-2"
-                    alt="Portrait of student"
-                    src={MoveIcon} width="100px" height="100%" />
-                Could put more copy here about the sonification. How does it work?
-            </InfoCard>
-
-            <ColorSonifier />
         </>);
     }
 }

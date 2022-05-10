@@ -126,65 +126,57 @@ class ColorSonifier extends React.Component {
         });
     }
 
+    handleKeypress = (i) => {
+        this.setState({selected: i});
+        this.state.startCallbacks[i]();
+    };
+
     render() {
         if(!(this.state.startCallbacks && this.state.endCallbacks)) return <Loading />;
         const keyMap = ['Q', 'W', 'E', 'R', 'T', 'Y'];
         const hsv = rgb2hsv(this.state.colorPickerColor);
+
         const toolLayout = (
-            <div className='row'>
-                <div className='col'>
+            <div className='d-flex justify-content-center'>
+                <div className="mr-5">
                     <ColorPicker
                         initColor={rgb2hex(this.state.listOfColors[this.state.selected])}
                         onColorChange={this.handleChangeComplete}
                     />
-                    <div className='row mt-2 text-center'>
-                        <div className='col mr-1'><b>Hue</b><br/> {Math.round(hsv.h)}&deg;</div>
-                        <div className='col mr-1'><b>Saturation</b><br/> {Math.round(hsv.s)}%</div>
-                        <div className='col mr-1'><b>Value</b><br/> {Math.round(hsv.v)}%</div>
-                    </div>
                 </div>
-                <div className='col d-flex justify-content-between mt-4 mt-lg-0'>
+                <div className='d-flex flex-column justify-content-between mt-4 mt-lg-0'>
                     {this.state.listOfColors.map((color, i) =>
                         <div key={i}>
-                            <div>
-                            </div>
-                            <div>
-                                <PaletteColor
-                                    key={i} id={i}
-                                    color={color}
-                                    selected={i === Number(this.state.selected)}
-                                    handlePaletteClick={this.handlePaletteClick}
-                                    keyBind={keyMap[i]}
-                                    startCallback={this.state.startCallbacks[i]}
-                                    endCallback={this.state.endCallbacks[i]}
-                                >
-                                    {i === this.state.loading
-                                        ? <Loading/>
-                                        : <>{keyMap[i]}</>
-                                    }
-                                </PaletteColor>
-                            </div>
+                            <PaletteColor
+                                key={i} id={i}
+                                color={color}
+                                selected={i === Number(this.state.selected)}
+                                handlePaletteClick={this.handlePaletteClick}
+                                keyBind={keyMap[i]}
+                                startCallback={() => this.handleKeypress(i)}
+                                endCallback={this.state.endCallbacks[i]}
+                            >
+                                {i === this.state.loading
+                                    ? <Loading/>
+                                    : <>{keyMap[i]}</>
+                                }
+                            </PaletteColor>
                         </div>
                     )}
                 </div>
             </div>
         );
 
-        return (<>
+        return (<div className="mb-4">
             <h3>Try it out!</h3>
             <p>
-                You can choose up to seven colors below, and use the letters Q-Y on the keyboard
-                to play the palette that you've chosen.
+                <strong>Click</strong> on a color button and <strong>drag</strong> the circles to change the colors below.
             </p>
             <p>
-                Each color's:<ul>
-                    <li><strong>Hue</strong> is mapped to the pitch of the sound</li>
-                    <li><strong>Saturation</strong> is mapped to its loudness</li>
-                    <li><strong>Value</strong> to its timbre.</li>
-                </ul>
+                <strong>Play</strong> your palette using the letters Q-Y on the keyboard.
             </p>
             {toolLayout}
-        </>);
+        </div>);
     }
 }
 

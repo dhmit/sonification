@@ -16,7 +16,7 @@ def generate_samples(colors):
 
         freq = 50 + 350*h
         harmonic_weights = get_harmonic_weights(v)
-        gain = s
+        gain = 1
 
         sample = gain * synths.generate_wave_weighted_harmonics(freq, 1, harmonic_weights)
 

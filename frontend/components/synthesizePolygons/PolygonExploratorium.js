@@ -144,6 +144,11 @@ class PolygonSonifier extends React.Component {
                 gainNode.connect(this.compressor);
                 this.mediaElementSource.connect(gainNode);
             }
+
+            if (this.audioContextRef.current.state !== 'running') {
+                this.audioContextRef.current.resume();
+            }
+
             this.audioRef.current.play();
             this.activeTimeoutId = setInterval(
                 () => this.setState({currentTime: this.audioRef.current.currentTime}),
@@ -157,7 +162,7 @@ class PolygonSonifier extends React.Component {
         if (!this.state.music) return <Loading />;
 
         return (
-            <div
+            <button
                 onClick={() => this.toggleAudio()}
                 className={`
                     btn
@@ -181,7 +186,7 @@ class PolygonSonifier extends React.Component {
                     ref={this.audioRef}
                     src={`data:audio/wav;base64, ${this.state.music}`}
                 />
-            </div>
+            </button>
         );
     }
 }

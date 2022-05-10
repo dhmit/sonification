@@ -147,7 +147,6 @@ const GesturesToSound = () => {
         if (canvas.height !== rect.height) canvas.height = rect.height;
         if (canvas.width !== rect.width) canvas.width = rect.width;
 
-
         canvas.addEventListener("mousedown", beginDrawing);
         canvas.addEventListener("mousemove", draw);
         canvas.addEventListener("mouseup", endDrawing);

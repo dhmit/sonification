@@ -50,6 +50,7 @@ export const createAudioCallbacks = (samples, audioContext, loop=false) => {
         lopassFilter.gain.setValueAtTime(25, audioContext.currentTime);
 
         const startCallback = () => {
+            if(audioContext.state !== 'running') audioContext.resume();
             gainNode.gain.setTargetAtTime(1, 0, 1);
             audioSource = audioContext.createBufferSource();
             audioSource.loop = loop;

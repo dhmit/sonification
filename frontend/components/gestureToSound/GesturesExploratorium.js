@@ -48,7 +48,6 @@ const GestureSonifier = ({coords, id}) => {
             setAudioStartCallbacks(startCallbacks);
 
             response.samples.forEach((_, i) => {
-                console.log('drawing mini canvas', i);
                 const miniCanvas = getRef(getRefIdForExampleMiniCanvas(i, id));
                 if (!miniCanvas) return;
                 drawGestureOnMiniCanvas(miniCanvas, coords[i]);

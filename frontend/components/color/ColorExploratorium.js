@@ -1,6 +1,6 @@
 import React from "react";
 import {fetchPost} from "../../common";
-import {rgb2hsv, hex2rgb} from "./ColorSonifier";
+import {rgb2hsv, hex2rgb, hsv2rgb, freqToHsv, freqToHue} from "./ColorSonifier";
 import ColorPadInstrument from "../instruments/ColorPadInstrument";
 import Loading from "../global/Loading";
 import ColorSonifier from "./ColorSonifier";
@@ -57,14 +57,7 @@ const GUITARIST_DATA = {
 /*
 Using:
 https://color.adobe.com/create/image
-
 To create color themes
-
-monet water lillies
-van gogh sunflowers
-matisse
-Marc Chagall
-
  */
 
 const RAINBOW_COLORS = [
@@ -76,6 +69,22 @@ const RAINBOW_COLORS = [
     {r: 137, g: 0, b: 255},
     {r: 255, g: 0, b: 168},
 ];
+
+const produceColorsForRatio = (baseFreq, numerator, denominator, count) => {
+    const result = [];
+    for (let i = 0; i < count; i++) {
+        const freq = baseFreq * ((numerator/denominator) ** i);
+        const h = freqToHue(freq);
+        result.push(hsv2rgb(h, 1, 1));
+    }
+    return result;
+};
+
+// https://www.kylegann.com/Octave.html
+const M3_COLORS = produceColorsForRatio(55, 5, 4, 10);
+const FIFTH_COLORS = produceColorsForRatio(55, 3, 2, 6);
+const OCTAVE_COLORS = produceColorsForRatio(55, 2, 1, 4);
+const OVERTONE_SEMITONE_COLORS = produceColorsForRatio(220, 17, 16, 12);
 
 const DESATURATING_COLORS = [
     hex2rgb("#0000FF"),
@@ -229,11 +238,30 @@ class ColorExploratorium extends React.Component {
         return (<>
             <StudentQuote quoteData={EMEKA_QUOTE} />
 
-            <ColorSonifierExplainer colors={RAINBOW_COLORS}>
+            <ColorSonifierExplainer colors={M3_COLORS}>
                 <p>
-                    Copy here about how the hue maps to pitch. Include a hue diagram.
+                    Example of ascending pure (5/4) major thirds traversing the hue/pitch space.
                 </p>
             </ColorSonifierExplainer>
+
+            <ColorSonifierExplainer colors={FIFTH_COLORS}>
+                <p>
+                    Example of ascending pure fifths traversing the hue/pitch space.
+                </p>
+            </ColorSonifierExplainer>
+
+            <ColorSonifierExplainer colors={OCTAVE_COLORS}>
+                <p>
+                    Example of ascending octaves traversing the hue/pitch space.
+                </p>
+            </ColorSonifierExplainer>
+
+            <ColorSonifierExplainer colors={OVERTONE_SEMITONE_COLORS}>
+                <p>
+                    Example of ascending 17/16 semitones traversing the hue/pitch space.
+                </p>
+            </ColorSonifierExplainer>
+
             <ColorSonifierExplainer colors={VALUE_COLORS_BLUE}>
                 <p>
                     Copy here about how the value maps to timbre. Explain value in HSV.

@@ -14,7 +14,10 @@ def generate_samples(colors):
     for hsv in colors:
         h, s, v = hsv['h']/360, hsv['s']/100, hsv['v']/100
 
-        freq = 50 + 350*h
+        base_freq = 55
+        freq_range = 440
+
+        freq = base_freq + freq_range*h
         harmonic_weights = get_harmonic_weights(v)
         gain = 1
 

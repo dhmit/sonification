@@ -19,6 +19,34 @@ export function rgb2hsv(color) {
     return {h: 60*(h<0?h+6:h), s: 100*(v&&c/v), v: 100*v/255};
 }
 
+// input: h,s,v in [0,1] - output: r,g,b in [0,255]
+// https://stackoverflow.com/a/54024653
+export function hsv2rgb(h,s,v) {
+    h = h*360;
+    let f = (n, k=(n+h/60) % 6) => v - v*s*Math.max(Math.min(k,4-k,1), 0);
+    return {
+        r: f(5) * 255,
+        g: f(3) * 255,
+        b: f(1) * 255,
+    };
+}
+
+// Take a midi pitch number and return its frequency in 12TET
+export function midiToFreq(midi) {
+    return 440 * (2**(69-midi/12));
+}
+
+
+// Take a frequency and produce the associated hue value
+// This function needs to stay in sync with color.generate_samples in the backend --
+// particularly the two constant values.
+export function freqToHue(freq) {
+    const baseFreq = 55;
+    const freqRange = 440;
+    const hue = (freq - baseFreq) / freqRange;
+    return hue;
+}
+
 function rgb2hex(color) {
     let {r,g,b} = color;
     function componentToHex(c) {

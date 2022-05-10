@@ -17,10 +17,9 @@ const PolygonEditor = (
     {
         width = 0,
         height = 0,
-        onEdit,
+        onSubmit,
         onPointsUpdate,
         outerWidth,
-        clearFunction,
     }
 ) => {
     // editor modes and edit handling
@@ -59,60 +58,10 @@ const PolygonEditor = (
     const [focusPointIndex, setFocusPointIndex] = useState(-1);
     const [focusLine, setFocusLine] = useState(-1);
 
-    useEffect(() => {
-        window.addEventListener("keydown", handleKeyDown);
-        return () => window.removeEventListener("keydown", handleKeyDown);
-    });
-
     const updatePoints = async (...args) => {
         setPoints(...args);
         onPointsUpdate(...args);
     };
-
-    function handleKeyDown(e) {
-        // console.log(e);
-        // handle Ctrl+S
-        if (e.code === 'KeyS' && e.ctrlKey) {
-            e.preventDefault();
-            handleSubmit();
-            return;
-        }
-
-        // handle Ctrl+O
-        if (e.code === 'KeyO' && e.ctrlKey) {
-            e.preventDefault();
-            handleClickUpload();
-            return;
-        }
-
-        // handle Ctrl+D
-        if (e.code === 'KeyD' && e.ctrlKey) {
-            e.preventDefault();
-            handleClickDownload();
-            return;
-        }
-
-        // handle enter/space
-        if (e.code === 'Space' || e.code === 'Enter') {
-            if (editorMode === EditorModes.EDIT) {
-                if (focusPointIndex !== -1) {
-                    e.preventDefault();
-                    setFocusPointIndex(-1);
-                } else if (focusLine !== -1) {
-                    e.preventDefault();
-                    insertPointAtCursor(focusLine);
-                }
-            } else if (editorMode === EditorModes.ADD) {
-                e.preventDefault();
-                addPointAtCursor();
-            }
-            return;
-        }
-
-        if (keyboardShortcuts[e.code]) {
-            keyboardShortcuts[e.code](e);
-        }
-    }
 
     function handleMovePoint(dx, dy, event) {
         if (editorMode === EditorModes.EDIT && focusPointIndex !== -1) {
@@ -140,10 +89,6 @@ const PolygonEditor = (
         setEditorMode(newMode);
         setFocusPointIndex(-1);
         setFocusLine(-1);
-    }
-
-    function handleEdit() {
-        onEdit();
     }
 
     useEffect(() => {
@@ -217,7 +162,6 @@ const PolygonEditor = (
         });
 
         updatePoints(scaledPoints);
-        handleEdit();
         fileUploadRef.current.value = null;
         setLoading(false);
     };
@@ -234,6 +178,7 @@ const PolygonEditor = (
     function insertPointAtCursor(lineIndex) {
         if (lineIndex >= points.length) return;
         // if (lineIndex === points.length - 1) return addPointAtCursor();
+
         if (cursorLocation && cursorLocation.length === 2) {
             const editedPoints = points.slice(0, lineIndex + 1);
             editedPoints.push([cursorLocation[0], cursorLocation[1]]);
@@ -242,15 +187,21 @@ const PolygonEditor = (
             // change focus to new point
             setFocusLine(-1);
             setFocusPointIndex(lineIndex + 1);
-            handleEdit();
         }
     }
 
     function addPointAtCursor() {
-        if (cursorLocation && cursorLocation.length === 2) {
-            updatePoints([...points, [cursorLocation[0], cursorLocation[1]]]);
-            handleEdit();
+        if (!cursorLocation) return;
+        if (cursorLocation.length !== 2) return;
+
+        const [x, y] = cursorLocation;
+        if (points.length) {
+            // prevent duplicate adjacent points
+            const lastPoints = points[points.length - 1];
+            if (lastPoints[0] === x && lastPoints[1] === y) return;
         }
+
+        updatePoints([...points, [x, y]]);
     }
 
     // mouse events
@@ -281,7 +232,6 @@ const PolygonEditor = (
             }
         } else if (editorMode === EditorModes.DELETE) {
             const editedPoints = points.filter((v, i) => i !== index);
-            handleEdit();
             updatePoints(editedPoints);
         }
     }
@@ -318,7 +268,6 @@ const PolygonEditor = (
     function handleClearDrawing() {
         if (points.length === 0) return;
         updatePoints([]);
-        handleEdit();
     }
 
     function handleSubmit() {
@@ -381,6 +330,25 @@ const PolygonEditor = (
     return (
         <div className={STYLES.editorContainer} ref={containerRef}>
             <div className={STYLES.buttonRow}>
+                {points.length === 0
+                    ? <button disabled className='btn btn-outline-primary w-100'>
+                          Create a polygon
+                    </button>
+                    : <>
+                        <button
+                            className="btn btn-primary w-100"
+                            onClick={onSubmit}
+                        >
+                            Add
+                        </button>
+                        <button
+                            className="btn btn-primary w-100"
+                            onClick={handleClearDrawing}
+                        >
+                            Clear
+                        </button>
+                    </>
+                }
             </div>
             <svg
                 className={loading ? STYLES.svgDisplayLoading
@@ -504,7 +472,7 @@ const PolygonEditor = (
 PolygonEditor.propTypes = {
     width: PropTypes.number,
     height: PropTypes.number,
-    onEdit: PropTypes.func,
+    onSubmit: PropTypes.func,
     onPointsUpdate: PropTypes.func,
     outerWidth: PropTypes.number,
 };

@@ -100,6 +100,8 @@ class PolygonSonifier extends React.Component {
         this.points = props.data.points;
         this.compressorRef = props.compressorRef;
         this.audioContextRef = props.audioContextRef;
+        this.size = props.size ? props.size : 275;
+
         this.state = {
             music: null,
             currentTime: null,
@@ -173,8 +175,8 @@ class PolygonSonifier extends React.Component {
                 `}
             >
                 <PolygonViewer
-                    width={275}
-                    height={275}
+                    width={this.size}
+                    height={this.size}
                     rawPoints={this.points}
                     currentTime={this.state.currentTime}
                     timestamps={this.state.timestamps}
@@ -201,6 +203,12 @@ const PolygonExploratorium = () => {
     }
     const [newPolygonPoints, setNewPolygonPoints] = useState(null);
     const [userPolygons, setUserPolygons] = useState([]);
+
+    const updateNewPolygon = () => {
+        const newUserPolygons = userPolygons.slice();
+        newUserPolygons.push({points: newPolygonPoints});
+        setUserPolygons(newUserPolygons);
+    };
 
     return (<>
         <InfoCard>
@@ -229,33 +237,33 @@ const PolygonExploratorium = () => {
         {/* PolygonEditor queries its container div for height and width */}
         <div className="row">
             <div className="col-6">
-                <div style={{height: '500px', width: '500px'}}>
+                <div style={{height: '540px', width: '100%'}}>
                     <PolygonEditor
                         outerWidth={500}
                         onPointsUpdate={setNewPolygonPoints}
-                        onEdit={() => {}}
+                        onSubmit={updateNewPolygon}
                     />
                 </div>
-                <button
-                    className="btn btn-primary w-100"
-                    onClick={() => {
-                        const newUserPolygons = userPolygons.slice();
-                        newUserPolygons.push({points: newPolygonPoints});
-                        setUserPolygons(newUserPolygons);
-                    }}
-                >
-                    Add
-                </button>
             </div>
-            {userPolygons.map((data, i) =>
-                <div className="col-4" key={i}>
-                    <div style={{width: "275px"}}>
-                        <PolygonSonifier
-                            key={i+20}
-                            data={data} audioContextRef={audioContextRef} compressorRef={compressorRef} />
-                    </div>
+            <div className="col-6">
+                <div className="row">
+                    {userPolygons.length !== 0 && <h3 className="mb-4">Click to play or pause</h3>}
+                    {userPolygons.map((data, i) =>
+                        <div className="col-4 mb-3" key={i}>
+                            <div style={{width: "150px"}}>
+                                <PolygonSonifier
+                                    key={i+20}
+                                    data={data}
+                                    audioContextRef={audioContextRef}
+                                    compressorRef={compressorRef}
+                                    size={150}
+                                />
+
+                            </div>
+                        </div>
+                    )}
                 </div>
-            )}
+            </div>
         </div>
 
 

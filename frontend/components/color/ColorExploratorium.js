@@ -10,6 +10,53 @@ import {createAudioContextWithCompressor} from "../instruments/common";
 
 import MoveIcon from "../../images/MoveIcon.svg";
 
+
+import MURAKAMI_IMG from "../../images/paintings/murakami.jpg";
+const MURAKAMI_COLORS = [
+    hex2rgb("#0433BF"),
+    hex2rgb("#0442BF"),
+    hex2rgb("#0476D9"),
+    hex2rgb("#F2E205"),
+    hex2rgb("#F2CB05"),
+];
+const MURAKAMI_DATA = {
+    colors: MURAKAMI_COLORS,
+    img: MURAKAMI_IMG,
+    title: "Takashi Murakami",
+};
+
+
+import JOAN_MITCHELL_IMG from "../../images/paintings/JoanMitchell.jpg";
+const JOAN_MITCHELL_COLORS = [
+    hex2rgb("#0433BF"),
+    hex2rgb("#0442BF"),
+    hex2rgb("#0476D9"),
+    hex2rgb("#F2E205"),
+    hex2rgb("#F2CB05"),
+];
+const JOAN_MITCHELL_DATA = {
+    colors: JOAN_MITCHELL_COLORS,
+    img: JOAN_MITCHELL_IMG,
+    title: "Joan Mitchell",
+};
+
+// TODO(ra): Probably reduce the resolution on this one
+import OKEEFFE_IMG from "../../images/paintings/GeorgiaOKeeffe.jpg";
+const OKEEFFE_COLORS = [
+    hex2rgb("#0433BF"),
+    hex2rgb("#0442BF"),
+    hex2rgb("#0476D9"),
+    hex2rgb("#F2E205"),
+    hex2rgb("#F2CB05"),
+];
+const OKEEFFE_DATA = {
+    colors: OKEEFFE_COLORS,
+    img: OKEEFFE_IMG,
+    title: "Georgia O'Keeffe",
+};
+
+
+
 import STARRY_NIGHT_IMG from "./paintings/starry-night.jpg";
 const STARRY_NIGHT_COLORS = [
     hex2rgb("#0433BF"),
@@ -24,35 +71,6 @@ const STARRY_NIGHT_DATA = {
     title: "The Starry Night by Vincent van Gogh",
 };
 
-
-import KISS_IMG from "./paintings/kiss.jpg";
-const KISS_COLORS = [
-    hex2rgb("#F2CB05"),
-    hex2rgb("#82B4A1"),
-    hex2rgb("#B73A41"),
-    hex2rgb("#733702"),
-    hex2rgb("#D767C2"),
-];
-const KISS_DATA = {
-    colors: KISS_COLORS,
-    img: KISS_IMG,
-    title: "The Kiss by Gustav Klimt",
-};
-
-
-import GUITARIST_IMG from "./paintings/guitarist.jpg";
-const GUITARIST_COLORS = [
-    hex2rgb("#314259"),
-    hex2rgb("#64818C"),
-    hex2rgb("#222621"),
-    hex2rgb("#A68C5B"),
-    hex2rgb("#735439"),
-];
-const GUITARIST_DATA = {
-    colors: GUITARIST_COLORS,
-    img: GUITARIST_IMG,
-    title: "The Old Guitarist by Pablo Picasso",
-};
 
 /*
 Using:
@@ -285,13 +303,11 @@ class ColorExploratorium extends React.Component {
 
             </InfoCard>
 
+            <PaintingSonifier data={MURAKAMI_DATA} />
+            <PaintingSonifier data={JOAN_MITCHELL_DATA} />
+            <PaintingSonifier data={OKEEFFE_DATA} />
             <PaintingSonifier data={STARRY_NIGHT_DATA} />
 
-
-            <PaintingSonifier data={KISS_DATA} />
-
-
-            <PaintingSonifier data={GUITARIST_DATA} />
 
         </>);
     }

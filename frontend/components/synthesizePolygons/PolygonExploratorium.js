@@ -98,7 +98,7 @@ class PolygonSonifier extends React.Component {
     constructor(props) {
         super(props);
         this.points = props.data.points;
-        this.compressor = props.compressor;
+        this.compressorRef = props.compressorRef;
         this.audioContextRef = props.audioContextRef;
         this.state = {
             music: null,
@@ -141,7 +141,7 @@ class PolygonSonifier extends React.Component {
                 this.mediaElementSource =
                     this.audioContextRef.current.createMediaElementSource(this.audioRef.current);
                 const gainNode = this.audioContextRef.current.createGain();
-                gainNode.connect(this.compressor);
+                gainNode.connect(this.compressorRef.current);
                 this.mediaElementSource.connect(gainNode);
             }
 
@@ -170,7 +170,7 @@ class PolygonSonifier extends React.Component {
                         ? 'btn-outline-primary'
                         : 'btn-outline-secondary'
                     }
-                    col-4 mb-4`}
+                `}
             >
                 <PolygonViewer
                     width={275}
@@ -192,8 +192,13 @@ class PolygonSonifier extends React.Component {
 }
 
 const PolygonExploratorium = () => {
-    const {audioCtx, compressor} = createAudioContextWithCompressor();
-    const audioContextRef = useRef(audioCtx);
+    const audioContextRef = useRef(null);
+    const compressorRef = useRef(null);
+    if (!audioContextRef.current) {
+        const {audioCtx, compressor} = createAudioContextWithCompressor();
+        audioContextRef.current = audioCtx;
+        compressorRef.current = compressor;
+    }
     const [newPolygonPoints, setNewPolygonPoints] = useState(null);
     const [userPolygons, setUserPolygons] = useState([]);
 
@@ -209,7 +214,7 @@ const PolygonExploratorium = () => {
         {[SQUARE_DATA, FLOWERISH_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
             <PolygonSonifier
                 key={i}
-                data={data} audioContextRef={audioContextRef} compressor={compressor} />
+                data={data} audioContextRef={audioContextRef} compressorRef={compressorRef} />
         )}
 
         <InfoCard>
@@ -222,27 +227,36 @@ const PolygonExploratorium = () => {
 
 
         {/* PolygonEditor queries its container div for height and width */}
-        <div style={{height: '500px', width: '500px'}}>
-            <PolygonEditor
-                outerWidth={500}
-                onPointsUpdate={setNewPolygonPoints}
-                onEdit={() => {}}
-            />
+        <div className="row">
+            <div className="col-6">
+                <div style={{height: '500px', width: '500px'}}>
+                    <PolygonEditor
+                        outerWidth={500}
+                        onPointsUpdate={setNewPolygonPoints}
+                        onEdit={() => {}}
+                    />
+                </div>
+                <button
+                    className="btn btn-primary w-100"
+                    onClick={() => {
+                        const newUserPolygons = userPolygons.slice();
+                        newUserPolygons.push({points: newPolygonPoints});
+                        setUserPolygons(newUserPolygons);
+                    }}
+                >
+                    Add
+                </button>
+            </div>
+            {userPolygons.map((data, i) =>
+                <div className="col-4" key={i}>
+                    <div style={{width: "275px"}}>
+                        <PolygonSonifier
+                            key={i+20}
+                            data={data} audioContextRef={audioContextRef} compressorRef={compressorRef} />
+                    </div>
+                </div>
+            )}
         </div>
-        <button
-            onClick={() => {
-                const newUserPolygons = userPolygons.slice();
-                newUserPolygons.push({points: newPolygonPoints});
-                setUserPolygons(newUserPolygons);
-            }}
-        >
-            Add
-        </button>
-        {userPolygons.map((data, i) =>
-            <PolygonSonifier
-                key={i+20}
-                data={data} audioContextRef={audioContextRef} compressor={compressor} />
-        )}
 
 
     </>);

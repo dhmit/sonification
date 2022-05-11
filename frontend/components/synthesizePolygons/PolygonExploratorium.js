@@ -212,9 +212,6 @@ const PolygonExploratorium = () => {
     };
 
     return (<>
-        <StudentQuote quoteData={ANGELINA_QUOTE} />
-        <StudentQuote quoteData={QUINCY_QUOTE} />
-
         {[SQUARE_DATA, FLOWERISH_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
             <PolygonSonifier
                 key={i}
@@ -225,7 +222,7 @@ const PolygonExploratorium = () => {
             <img
                 className="mr-2"
                 alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100%" />
+                src={MoveIcon} width="100px" height="100px" />
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
 
@@ -266,5 +263,13 @@ const PolygonExploratorium = () => {
     </>);
 
 };
+
+export const PolygonExploratoriumSidebar = () => {
+    return (<>
+        <StudentQuote quoteData={ANGELINA_QUOTE} />
+        <StudentQuote quoteData={QUINCY_QUOTE} />
+    </>);
+};
+
 
 export default PolygonExploratorium;

@@ -1,9 +1,8 @@
-import React, {useCallback, useLayoutEffect, useEffect, useState, useRef} from "react";
+import React, {useLayoutEffect, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
 import {useDynamicRefs} from "../../common";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
-import {createAudioContextWithCompressor} from "../instruments/common";
 import {base64AudioToDataURI} from "../../common";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 
@@ -15,7 +14,6 @@ const loadResults = async (event, handleSubmit, setLoading) => {
 
 // NOTE(ra)
 const getRefIdForMiniCanvas = (i) => `miniCanvasRef${i}`;
-
 
 export const MiniGestureCanvas = ({audioCallback, canvasRef}) => {
     const handleClick = (e) => {
@@ -153,7 +151,9 @@ const GesturesToSound = ({audioContextRef}) => {
     const endDrawing = () => {
         if (!isGesturing) return;
         setIsGesturing(false);
-        setAllMouseCoords(prevCoords => [...prevCoords, currMouseCoords]);
+        if (currMouseCoords.length > 2) {
+            setAllMouseCoords(prevCoords => [...prevCoords, currMouseCoords]);
+        }
     };
 
     useEffect(() => {
@@ -255,13 +255,13 @@ const GesturesToSound = ({audioContextRef}) => {
         sonifyButtonText = 'First, draw something.';
     }
     else {
-        if (instrumentSamples) sonifyButtonText = 'Update';
-        else sonifyButtonText = 'Sonify';
+        if (instrumentSamples.length) sonifyButtonText = 'Update';
+        else sonifyButtonText = 'Sonify!';
     }
 
     return (<>
         <p>
-            First, draw something, then click Sonify! at the bottom of the page to hear your gestures in motion.
+            First, draw something, then click Sonify! to hear your gestures in motion.
         </p>
 
         <div className="row">

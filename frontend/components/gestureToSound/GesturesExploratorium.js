@@ -91,7 +91,7 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
     );
 };
 
-const GesturesExploratoriumMain = () => {
+const GesturesExploratorium = () => {
     const {audioCtx, compressor} = createAudioContextWithCompressor();
     const audioContextRef = useRef(audioCtx);
 
@@ -108,20 +108,18 @@ const GesturesExploratoriumMain = () => {
         <GestureSonifier coords={GESTURE_CORNERS} id={"corners"} audioContextRef={audioContextRef}/>
         <GestureSonifier coords={GESTURE_SQUIGGLES} id={"squiggles"} audioContextRef={audioContextRef}/>
 
-        <h3>Try it yourself!</h3>
+        <h3>Make Your Own</h3>
         <GesturesToSound audioContextRef={audioContextRef} />
     </>);
 };
 
 
-const GesturesExploratoriumSidebar = () => {
+export const GesturesExploratoriumSidebar = () => {
     return (<>
         <StudentQuote quoteData={PEIHUA_QUOTE}/>
         <StudentQuote quoteData={GRACE_QUOTE}/>
     </>);
 };
 
-
-const GesturesExploratorium = () => <ExploratoriumLayout main={<GesturesExploratoriumMain />} sidebar={<GesturesExploratoriumSidebar />} />;
 
 export default GesturesExploratorium;

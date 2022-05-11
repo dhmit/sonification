@@ -17,11 +17,17 @@ import SynthesizePolygons from './components/synthesizePolygons/SynthesizePolygo
 import TimeSeries from "./components/timeSeries/TimeSeries";
 import ColorSonifier from "./components/color/ColorSonifier";
 import ColorExploratorium from "./components/color/ColorExploratorium";
+import {ColorExploratoriumSidebar} from "./components/color/ColorExploratorium";
 import PlaybackDemo from "./components/instruments/PlaybackDemo";
 import {NumbersDemoBefore, NumbersDemoAfter} from "./components/numbersDemo/Numbers";
 import TimeSeriesExploratorium from "./components/timeSeries/TimeSeriesExploratorium";
+import {TimeSeriesExploratoriumSidebar} from "./components/timeSeries/TimeSeriesExploratorium";
 import PolygonExploratorium from "./components/synthesizePolygons/PolygonExploratorium";
+import {PolygonExploratoriumSidebar} from "./components/synthesizePolygons/PolygonExploratorium";
 import GesturesExploratorium from "./components/gestureToSound/GesturesExploratorium";
+import {GesturesExploratoriumSidebar} from "./components/gestureToSound/GesturesExploratorium";
+import ExploratoriumLayout from "./components/global/ExploratoriumLayout";
+
 
 // Register each new view component here
 const COMPONENTS = {
@@ -38,9 +44,13 @@ const COMPONENTS = {
     NumbersDemoBefore,
     NumbersDemoAfter,
     ColorExploratorium,
+    ColorExploratoriumSidebar,
     TimeSeriesExploratorium,
+    TimeSeriesExploratoriumSidebar,
     PolygonExploratorium,
+    PolygonExploratoriumSidebar,
     GesturesExploratorium,
+    GesturesExploratoriumSidebar,
 };
 
 // Safari and Firefox support AudioContext fixes, basically
@@ -57,7 +67,16 @@ const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponen
 
 let components;
 
-if (COMPONENT_PROPS['overrideBase']) {
+if (COMPONENT_PROPS['twoCol']) {
+    const main = <PreselectedComponent {...COMPONENT_PROPS} />;
+    const SIDEBAR_COMPONENT_NAME = COMPONENT_NAME + 'Sidebar';
+    const SidebarComponent = COMPONENTS[SIDEBAR_COMPONENT_NAME || "ErrorNotFoundComponent"];
+    components =
+        <ExploratoriumLayout
+            main={main}
+            sidebar={<SidebarComponent />}
+        />;
+} else if (COMPONENT_PROPS['noBase']) {
     components = <PreselectedComponent {...COMPONENT_PROPS} />;
 } else {
     components = <Base><PreselectedComponent {...COMPONENT_PROPS} /></Base>;

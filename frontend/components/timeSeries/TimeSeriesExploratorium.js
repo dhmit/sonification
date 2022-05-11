@@ -126,21 +126,25 @@ class TimeSeriesSonifier extends React.Component {
 
 const TimeSeriesExploratorium = () => {
     return (<>
-        <StudentQuote quoteData={MOISES_QUOTE} />
-        <StudentQuote quoteData={EESHA_QUOTE} />
-
         <TimeSeriesSonifier data={SUNRISE_SUNSET_BOSTON} />
 
         <InfoCard>
             <img
                 className="mr-2"
                 alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100%" />
+                src={MoveIcon} width="100px" height="100px" />
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
 
         <TimeSeriesSonifier data={PI} />
         <TimeSeriesSonifier data={GOLDEN} />
+    </>);
+};
+
+export const TimeSeriesExploratoriumSidebar = () => {
+    return (<>
+        <StudentQuote quoteData={MOISES_QUOTE}/>
+        <StudentQuote quoteData={EESHA_QUOTE}/>
     </>);
 };
 

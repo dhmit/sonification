@@ -77,7 +77,6 @@ const GesturesToSound = () => {
     const [loading, setLoading] = useState(false);
     const [currMouseCoords, setCurrMouseCoords] = useState([]);
     const [allMouseCoords, setAllMouseCoords] = useState([]);
-    const [submitted, setSubmitted] = useState(false);
     const [music, setMusic] = useState(null);
     const [instrumentSamples, setInstrumentSamples] = useState([]);
     const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
@@ -88,20 +87,39 @@ const GesturesToSound = () => {
     const audioContextRef = useRef(audioCtx);
 
     useLayoutEffect(() => {
+        if (!mainCanvasRef.current) return;
+        const canvas = mainCanvasRef.current;
+        const rect = canvas.getBoundingClientRect();
+        if (canvas.height !== rect.height) canvas.height = rect.height;
+        if (canvas.width !== rect.width) canvas.width = rect.width;
+
+        canvas.addEventListener("mousedown", beginDrawing);
+        canvas.addEventListener("mousemove", draw);
+        canvas.addEventListener("mouseup", endDrawing);
+        canvas.addEventListener("mouseleave", endDrawing);
+
+        return () => {
+            canvas.removeEventListener("mousedown", beginDrawing);
+            canvas.removeEventListener("mousemove", draw);
+            canvas.removeEventListener("mouseup", endDrawing);
+            canvas.removeEventListener("mouseleave", endDrawing);
+        };
+    }, []);
+
+    useLayoutEffect(() => {
         const [startCallbacks, endCallbacks] =
             createAudioCallbacks(instrumentSamples, audioContextRef.current);
 
         setAudioStartCallbacks(startCallbacks);
         setAudioEndCallbacks(endCallbacks);
 
-        console.log(instrumentSamples);
         instrumentSamples.forEach((_, i) => {
             const miniCanvas = getRef(getRefIdForMiniCanvas(i));
+            if (!miniCanvas) return;
             if (!miniCanvas.current) return;
             drawGestureOnMiniCanvas(miniCanvas, allMouseCoords[i]);
         });
     }, [instrumentSamples]);
-
 
     const getCoords = (event) => {
         if (!mainCanvasRef.current) return;
@@ -116,52 +134,60 @@ const GesturesToSound = () => {
         };
     };
 
-
-    const beginDrawing = useCallback((event) => {
+    const beginDrawing = (event) => {
         const coords = getCoords(event);
-        if (coords) {
-            setIsGesturing(true);
-            setCurrMouseCoords(prevCoords => [...prevCoords, coords]);
-        }
-    }, []);
+        if (!coords) return;
+        setIsGesturing(true);
+        setCurrMouseCoords([coords]);
+    };
 
-    const draw = useCallback((event) => {
-        if (isGesturing && !submitted.drawing) {
-            const newMouseCoord = getCoords(event);
-            if (newMouseCoord) {
-                setCurrMouseCoords(prevCoords => [...prevCoords, newMouseCoord]);
-                drawGesture(mainCanvasRef, currMouseCoords);
-            }
+    const draw = (event) => {
+        if (!isGesturing) return;
+        const newMouseCoord = getCoords(event);
+        if (newMouseCoord) {
+            setCurrMouseCoords(prevCoords => [...prevCoords, newMouseCoord]);
+            drawGesture(mainCanvasRef, currMouseCoords);
         }
-    }, [isGesturing, currMouseCoords]);
+    };
 
-    const endDrawing = useCallback(() => {
+    const endDrawing = () => {
+        if (!isGesturing) return;
         setIsGesturing(false);
-        setCurrMouseCoords([]);
-    }, []);
+        setAllMouseCoords(prevCoords => [...prevCoords, currMouseCoords]);
+    };
 
-    useLayoutEffect(() => {
+    useEffect(() => {
         if (!mainCanvasRef.current) return;
         const canvas = mainCanvasRef.current;
-
-        const rect = canvas.getBoundingClientRect();
-        if (canvas.height !== rect.height) canvas.height = rect.height;
-        if (canvas.width !== rect.width) canvas.width = rect.width;
-
-        canvas.addEventListener("mousedown", beginDrawing);
-        canvas.addEventListener("mousemove", draw);
         canvas.addEventListener("mouseup", endDrawing);
         canvas.addEventListener("mouseleave", endDrawing);
-        if (!isGesturing && currMouseCoords.length) {
-            setAllMouseCoords(prevLines => [...prevLines, currMouseCoords]);
-        }
+
         return () => {
-            canvas.removeEventListener("mousedown", beginDrawing);
-            canvas.removeEventListener("mousemove", draw);
             canvas.removeEventListener("mouseup", endDrawing);
             canvas.removeEventListener("mouseleave", endDrawing);
         };
-    }, [beginDrawing, draw, endDrawing]);
+    }, [beginDrawing, draw]);
+
+    useEffect(() => {
+        if (!mainCanvasRef.current) return;
+        const canvas = mainCanvasRef.current;
+
+        canvas.addEventListener("mousedown", beginDrawing);
+
+        return () => {
+            canvas.removeEventListener("mousedown", beginDrawing);
+        };
+    }, [endDrawing]);
+
+    useEffect(() => {
+        if (!mainCanvasRef.current) return;
+        const canvas = mainCanvasRef.current;
+        canvas.addEventListener("mousemove", draw);
+
+        return () => {
+            canvas.removeEventListener("mousemove", draw);
+        };
+    }, [beginDrawing, endDrawing]);
 
     const resetCanvas = (event) => {
         event.preventDefault();
@@ -173,7 +199,6 @@ const GesturesToSound = () => {
 
     const clearCanvas = (event) => {
         resetCanvas(event);
-        setSubmitted(false);
         setInstrumentSamples([]);
         setMusic(null);
     };
@@ -190,11 +215,12 @@ const GesturesToSound = () => {
             // parameters: gestureParams,
             canvas: canvasSettings,
         };
+        setInstrumentSamples([]);
+        setMusic(null);
         await fetchPost('/api/gesture_to_audio/', requestBody, (response) => {
             setMusic(response.music);
             setInstrumentSamples(response.samples);
         });
-        setSubmitted(true);
     };
 
     /* NOTE(ra): No undo or redo for now, but leaving this here in case we restore it.
@@ -243,7 +269,7 @@ const GesturesToSound = () => {
                 <canvas
                     className={`
                                 ${STYLES.canvas}
-                                ${submitted ? "" : STYLES.activeCanvas}
+                                ${STYLES.activeCanvas}
                                 width='500px' height='500px'
                             `}
                     ref={mainCanvasRef}
@@ -269,7 +295,7 @@ const GesturesToSound = () => {
 
                 {music && <NiceAudioPlayer src={base64AudioToDataURI(music)} text="Play the full drawing"/> }
 
-                {instrumentSamples.length > 1 && (<>
+                {instrumentSamples.length > 0 && (<>
                     <p>
                         Click to play each gesture:
                     </p>

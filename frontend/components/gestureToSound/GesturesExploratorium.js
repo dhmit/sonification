@@ -74,7 +74,7 @@ const GestureSonifier = ({coords, id}) => {
                 </div>
 
                 <div>
-                    {(instrumentSamples.length > 1) && (<>
+                    {(instrumentSamples.length > 0) && (<>
                         <p>
                             Click to play each gesture:
                         </p>

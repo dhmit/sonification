@@ -1,5 +1,6 @@
 const baseConfig = require('./webpack.config');
 
+baseConfig.devtool = 'eval-source-map';
 baseConfig.output.publicPath = "http://localhost:3000/build/";
 baseConfig.devServer = {
     port: 3000,
@@ -7,7 +8,7 @@ baseConfig.devServer = {
         "Access-Control-Allow-Origin": "*"
     },
     compress: true,
-    hot: true
+    hot: true,
 };
 
 module.exports = baseConfig;

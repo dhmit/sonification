@@ -350,7 +350,7 @@ class PaintingSonifier extends React.Component {
 }
 
 export const InfoCard = ({children}) => {
-    return (<div className="card mb-4">
+    return (<div className="card mb-4 row">
         <div className="card-body">
             <div className="row">
                 {children}

@@ -100,6 +100,7 @@ class ColorSonifier extends React.Component {
 
     handlePaletteClick = (e) => {
         const index = Number(e.target.id);
+        this.state.startCallbacks[index]();
         this.setState({
             selected: index,
             colorPickerColor: this.state.listOfColors[index],

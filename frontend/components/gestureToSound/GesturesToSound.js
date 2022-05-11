@@ -12,13 +12,77 @@ const loadResults = async (event, handleSubmit, setLoading) => {
     setLoading(false);
 };
 
-// NOTE(ra)
-const getRefIdForMiniCanvas = (i) => `miniCanvasRef${i}`;
+const scaleCoordsToCanvas = (canvasRef, rawCoords) => {
+    const canvas = canvasRef.current;
+    const pad = 10; // TODO(ra): maybe scale this padding?
+    const minX = Math.min(...rawCoords.map(coord => coord.x)) - pad;
+    const minY = Math.min(...rawCoords.map(coord => coord.y)) - pad;
+    const maxY = Math.max(...rawCoords.map(coord => coord.y)) + pad;
+    const maxX = Math.max(...rawCoords.map(coord => coord.x)) + pad;
 
-export const MiniGestureCanvas = ({audioCallback, canvasRef}) => {
+    const originalWidth = maxX - minX;
+    const originalHeight = maxY - minY;
+    const scale = canvas.width / Math.max(originalWidth, originalHeight);
+
+    // TODO(ra): center by width if tall, center by height if squat
+    const scaledCoords = [];
+    for (const coord of rawCoords) {
+        scaledCoords.push({
+            ...coord,
+            x: (coord.x - minX) * scale,
+            y: (coord.y - minY) * scale,
+        });
+    }
+    return scaledCoords;
+};
+
+const drawGestureOnMiniCanvas = (miniCanvasRef, rawCoords) => {
+    const scaledCoords = scaleCoordsToCanvas(miniCanvasRef, rawCoords);
+    drawGesture(miniCanvasRef, scaledCoords);
+};
+
+const clearMiniCanvas = (miniCanvasRef) => {
+    const canvas = miniCanvasRef.current;
+    const context = canvas.getContext('2d');
+    context.clearRect(0, 0, canvas.width, canvas.height);
+};
+
+export const MiniGestureCanvas = ({audioCallback, coords}) => {
+    const canvasRef = useRef();
+    const [isAnimating, setIsAnimating] = useState(false);
+
     const handleClick = (e) => {
         audioCallback();
+        setIsAnimating(true);
     };
+
+    useLayoutEffect(() => {
+        if (!canvasRef.current) return;
+        drawGestureOnMiniCanvas(canvasRef, coords);
+    }, [audioCallback]);
+
+    useEffect(() => {
+        if (!isAnimating) return;
+
+        const scaledCoords = scaleCoordsToCanvas(canvasRef, coords);
+
+        let startTime;
+        const render = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const timeElapsed = timestamp - startTime;
+
+            clearMiniCanvas(canvasRef);
+            const coordsToDraw = scaledCoords.filter(coord => {
+                return coord.normalizedT <= timeElapsed;
+            });
+            if (coordsToDraw.length > 0) {
+                drawGesture(canvasRef, coordsToDraw);
+            }
+            requestAnimationFrame(render);
+        };
+        requestAnimationFrame(render);
+        setIsAnimating(false);
+    }, [isAnimating]);
 
     return (
         <canvas
@@ -31,47 +95,24 @@ export const MiniGestureCanvas = ({audioCallback, canvasRef}) => {
     );
 };
 
-export const drawGestureOnMiniCanvas = (miniCanvas, rawCoords) => {
-    const pad = 10; // TODO(ra): maybe scale this padding?
-    const minX = Math.min(...rawCoords.map(coord => coord.x)) - pad;
-    const minY = Math.min(...rawCoords.map(coord => coord.y)) - pad;
-    const maxY = Math.max(...rawCoords.map(coord => coord.y)) + pad;
-    const maxX = Math.max(...rawCoords.map(coord => coord.x)) + pad;
-
-    const originalWidth = maxX - minX;
-    const originalHeight = maxY - minY;
-    const scale = miniCanvas.current.width / Math.max(originalWidth, originalHeight);
-
-    // TODO(ra): center by width if tall, center by height if squat
-    const newCoords = [];
-    for (const coord of rawCoords) {
-        newCoords.push({
-            x: (coord.x - minX) * scale,
-            y: (coord.y - minY) * scale,
-        });
-    }
-
-    drawGesture(miniCanvas, newCoords);
-};
-
 export const drawGesture = (thisCanvasRef, coords) => {
     if (!thisCanvasRef.current) return;
     const canvas = thisCanvasRef.current;
     const context = canvas.getContext("2d");
-    if (context) {
-        context.beginPath();
-        context.lineWidth = 5;
-        context.lineJoin = "round";
-        context.lineCap = "round";
-        context.globalCompositeOperation = "source-over";
-        context.moveTo(coords[0].x, coords[0].y);
-        for (let i = 0; i < coords.length - 1; i++) {
-            const c = (coords[i].x + coords[i + 1].x) / 2;
-            const d = (coords[i].y + coords[i + 1].y) / 2;
-            context.quadraticCurveTo(coords[i].x, coords[i].y, c, d);
-        }
-        context.stroke();
+    if (!context) return;
+
+    context.beginPath();
+    context.lineWidth = 5;
+    context.lineJoin = "round";
+    context.lineCap = "round";
+    context.globalCompositeOperation = "source-over";
+    context.moveTo(coords[0].x, coords[0].y);
+    for (let i = 0; i < coords.length - 1; i++) {
+        const c = (coords[i].x + coords[i + 1].x) / 2;
+        const d = (coords[i].y + coords[i + 1].y) / 2;
+        context.quadraticCurveTo(coords[i].x, coords[i].y, c, d);
     }
+    context.stroke();
 };
 
 const GesturesToSound = ({audioContextRef}) => {
@@ -112,10 +153,6 @@ const GesturesToSound = ({audioContextRef}) => {
         setAudioStartCallbacks(startCallbacks);
 
         instrumentSamples.forEach((_, i) => {
-            const miniCanvas = getRef(getRefIdForMiniCanvas(i));
-            if (!miniCanvas) return;
-            if (!miniCanvas.current) return;
-            drawGestureOnMiniCanvas(miniCanvas, allMouseCoords[i]);
         });
     }, [instrumentSamples]);
 
@@ -151,8 +188,16 @@ const GesturesToSound = ({audioContextRef}) => {
     const endDrawing = () => {
         if (!isGesturing) return;
         setIsGesturing(false);
-        if (currMouseCoords.length > 2) {
-            setAllMouseCoords(prevCoords => [...prevCoords, currMouseCoords]);
+
+        const coordsWithNormalizedTimes = currMouseCoords.map((coord) => {
+            return {
+                ...coord,
+                normalizedT: coord.t - currMouseCoords[0].t,
+            };
+        });
+
+        if (coordsWithNormalizedTimes.length > 2) {
+            setAllMouseCoords(prevCoords => [...prevCoords, coordsWithNormalizedTimes]);
         }
     };
 
@@ -205,6 +250,7 @@ const GesturesToSound = ({audioContextRef}) => {
 
     const handleSubmitGestures = async (event) => {
         event.preventDefault();
+        console.log(allMouseCoords);
         const canvas = mainCanvasRef.current;
         const canvasSettings = {
             width: canvas.width,
@@ -302,7 +348,7 @@ const GesturesToSound = ({audioContextRef}) => {
                     {instrumentSamples.map((sample, i) =>
                         <MiniGestureCanvas
                             audioCallback={audioStartCallbacks[i]}
-                            canvasRef={setRef(getRefIdForMiniCanvas(i))}
+                            coords={allMouseCoords[i]}
                             key={i}
                         />
                     )}

@@ -4,6 +4,7 @@ import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
 import MoveIcon from "../../images/MoveIcon.svg";
 import {StudentQuote, MOISES_QUOTE, EESHA_QUOTE} from "../../studentQuotes";
+import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 
 const SUNRISE_SUNSET_BOSTON = {
     title: "Sunrise and Sunset Times in Boston",
@@ -114,7 +115,7 @@ class TimeSeriesSonifier extends React.Component {
                     </div></div>
                     <div className="row"><div className="col">
                         {this.state.music
-                            ? <audio controls controlsList="nodownload" src={musicDataAsUrl} />
+                            ? <NiceAudioPlayer src={musicDataAsUrl} />
                             : <Loading />
                         }
                     </div></div>

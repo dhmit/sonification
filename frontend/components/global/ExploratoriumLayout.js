@@ -13,7 +13,9 @@ const ExploratoriumLayout = ({main, sidebar}) => {
                             {main}
                         </div>
                         <div className='col-4 pl-4'>
-                            {sidebar}
+                            <div className='sticky-top'>
+                                {sidebar}
+                            </div>
                         </div>
                     </div>
                 </main>

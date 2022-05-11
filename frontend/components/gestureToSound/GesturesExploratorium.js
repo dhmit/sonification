@@ -3,31 +3,24 @@ import STYLES from "./GesturesToSound.module.scss";
 import {base64AudioToDataURI, fetchPost} from "../../common";
 import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
-import {useDynamicRefs} from "../../common";
 import MoveIcon from "../../images/MoveIcon.svg";
 import GesturesToSound from "./GesturesToSound";
 import {GESTURE_WAVE, GESTURE_SQUIGGLES, GESTURE_CORNERS} from "./GesturesData";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
-import {drawGesture, MiniGestureCanvas, drawGestureOnMiniCanvas} from "./GesturesToSound";
+import {drawGesture, MiniGestureCanvas} from "./GesturesToSound";
 import {StudentQuote, GRACE_QUOTE, PEIHUA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
-import ExploratoriumLayout from "../global/ExploratoriumLayout";
 
-// NOTE(ra): We have a separate set of names for ref IDs in here to avoid
-// collisions with the ones over in GesturesToSound
-const getRefIdForExampleMiniCanvas = (i, id) => `exampleMiniCanvasRef${i}-${id}`;
 
 const GestureSonifier = ({coords, id, audioContextRef}) => {
     const mainCanvasRef = useRef(null);
-    const [loading, setLoading] = useState(false);
     const [music, setMusic] = useState(null);
     const [instrumentSamples, setInstrumentSamples] = useState([]);
-    const [getRef, setRef] = useDynamicRefs();
     const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
 
     useEffect(async () => {
-        for(const gesture of coords) drawGesture(mainCanvasRef, gesture);
+        for (const gesture of coords) drawGesture(mainCanvasRef, gesture);
 
         const canvas = mainCanvasRef.current;
         const canvasSettings = {
@@ -46,11 +39,11 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
             setInstrumentSamples(response.samples);
             setAudioStartCallbacks(startCallbacks);
 
-            response.samples.forEach((_, i) => {
-                const miniCanvas = getRef(getRefIdForExampleMiniCanvas(i, id));
-                if (!miniCanvas) return;
-                drawGestureOnMiniCanvas(miniCanvas, coords[i]);
-            });
+            // response.samples.forEach((_, i) => {
+            //     const miniCanvas = getRef(getRefIdForExampleMiniCanvas(i, id));
+            //     if (!miniCanvas) return;
+            //     drawGestureOnMiniCanvas(miniCanvas, coords[i]);
+            // });
         });
     }, []);
 
@@ -66,7 +59,9 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
             <div className="col">
                 <div className="mb-4">
                     {music
-                        ? <NiceAudioPlayer src={base64AudioToDataURI(music)} text="Play the full drawing"/>
+                        ? <NiceAudioPlayer
+                            src={base64AudioToDataURI(music)}
+                            text="Play the full drawing"/>
                         : <Loading />
                     }
                 </div>
@@ -78,12 +73,12 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
                         </p>
                         {instrumentSamples.map((sample, i) =>
                             <MiniGestureCanvas
-                            audioCallback={audioStartCallbacks[i]}
-                            canvasRef={setRef(getRefIdForExampleMiniCanvas(i, id))}
-                            key={i}
+                                audioCallback={audioStartCallbacks[i]}
+                                coords={coords[i]}
+                                key={i}
                             />
-                            )}
-                        </>)
+                        )}
+                    </>)
                     }
                 </div>
             </div>
@@ -105,8 +100,8 @@ const GesturesExploratorium = () => {
                 src={MoveIcon} width="100px" height="100px" />
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
-        <GestureSonifier coords={GESTURE_CORNERS} id={"corners"} audioContextRef={audioContextRef}/>
-        <GestureSonifier coords={GESTURE_SQUIGGLES} id={"squiggles"} audioContextRef={audioContextRef}/>
+        {/*<GestureSonifier coords={GESTURE_CORNERS} id={"corners"} audioContextRef={audioContextRef}/>*/}
+        {/*<GestureSonifier coords={GESTURE_SQUIGGLES} id={"squiggles"} audioContextRef={audioContextRef}/>*/}
 
         <h3>Make Your Own</h3>
         <GesturesToSound audioContextRef={audioContextRef} />

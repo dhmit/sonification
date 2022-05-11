@@ -13,6 +13,9 @@ module.exports = {
         publicPath: "/static/bundles/",
         filename: "[name].bundle.js"
     },
+    optimization: {
+        minimize: false
+    },
     plugins: [
         new BundleTracker({filename: "./webpack-stats.json"}),
         new MiniCssExtractPlugin({ filename: "[name].bundle.css" }),

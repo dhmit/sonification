@@ -17,15 +17,21 @@ const loadResults = async (event, handleSubmit, setLoading) => {
 const getRefIdForMiniCanvas = (i) => `miniCanvasRef${i}`;
 
 
-export const MiniGestureCanvas = ({audioCallback, canvasRef}) =>
-    <canvas
-        style={{border: "1px solid grey"}}
-        className="mr-2"
-        onClick={() => audioCallback()}
-        height="100" width="100"
-        ref={canvasRef}
-    />
-;
+export const MiniGestureCanvas = ({audioCallback, canvasRef}) => {
+    const handleClick = (e) => {
+        audioCallback();
+    };
+
+    return (
+        <canvas
+            style={{border: "1px solid grey"}}
+            className="mr-2"
+            onClick={(e) => handleClick(e)}
+            height="100" width="100"
+            ref={canvasRef}
+        />
+    );
+};
 
 export const drawGestureOnMiniCanvas = (miniCanvas, rawCoords) => {
     const pad = 10; // TODO(ra): maybe scale this padding?

@@ -12,6 +12,7 @@ import {createAudioContextWithCompressor} from "../instruments/common";
 import {drawGesture, MiniGestureCanvas, drawGestureOnMiniCanvas} from "./GesturesToSound";
 import {StudentQuote, GRACE_QUOTE, PEIHUA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
+import ExploratoriumLayout from "../global/ExploratoriumLayout";
 
 // NOTE(ra): We have a separate set of names for ref IDs in here to avoid
 // collisions with the ones over in GesturesToSound
@@ -92,11 +93,8 @@ const GestureSonifier = ({coords, id}) => {
     );
 };
 
-const GesturesExploratorium = () => {
+const GesturesExploratoriumMain = () => {
     return (<>
-        <StudentQuote quoteData={PEIHUA_QUOTE} />
-        <StudentQuote quoteData={GRACE_QUOTE} />
-
         <GestureSonifier coords={GESTURE_WAVE} id={"wave"}/>
 
         <InfoCard>
@@ -113,5 +111,16 @@ const GesturesExploratorium = () => {
         <GesturesToSound />
     </>);
 };
+
+
+const GesturesExploratoriumSidebar = () => {
+    return (<>
+        <StudentQuote quoteData={PEIHUA_QUOTE}/>
+        <StudentQuote quoteData={GRACE_QUOTE}/>
+    </>);
+};
+
+
+const GesturesExploratorium = () => <ExploratoriumLayout main={<GesturesExploratoriumMain />} sidebar={<GesturesExploratoriumSidebar />} />;
 
 export default GesturesExploratorium;

@@ -75,7 +75,7 @@ const ColorPadInstrument = ({samples, colors, vertical=false}) => {
 
     let padContainerClass = "text-white";
     if (vertical) {
-        padContainerClass += " d-flex flex-column justify-content-between";
+        padContainerClass += " d-flex flex-wrap justify-content-between";
     }
     return (
         <section id="pad-instrument">

@@ -91,7 +91,8 @@ def gestures_exploratorium(request):
         'page_metadata': {
             'title': 'Gestures'
         },
-        'component_name': 'GesturesExploratorium'
+        'component_name': 'GesturesExploratorium',
+        'component_props': {'overrideBase': True}
     }
 
     return render(request, 'index.html', context)

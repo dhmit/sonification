@@ -18,15 +18,13 @@ import ExploratoriumLayout from "../global/ExploratoriumLayout";
 // collisions with the ones over in GesturesToSound
 const getRefIdForExampleMiniCanvas = (i, id) => `exampleMiniCanvasRef${i}-${id}`;
 
-const GestureSonifier = ({coords, id}) => {
+const GestureSonifier = ({coords, id, audioContextRef}) => {
     const mainCanvasRef = useRef(null);
     const [loading, setLoading] = useState(false);
     const [music, setMusic] = useState(null);
     const [instrumentSamples, setInstrumentSamples] = useState([]);
     const [getRef, setRef] = useDynamicRefs();
     const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
-    const {audioCtx, compressor} = createAudioContextWithCompressor();
-    const audioContextRef = useRef(audioCtx);
 
     useEffect(async () => {
         for(const gesture of coords) drawGesture(mainCanvasRef, gesture);
@@ -94,8 +92,11 @@ const GestureSonifier = ({coords, id}) => {
 };
 
 const GesturesExploratoriumMain = () => {
+    const {audioCtx, compressor} = createAudioContextWithCompressor();
+    const audioContextRef = useRef(audioCtx);
+
     return (<>
-        <GestureSonifier coords={GESTURE_WAVE} id={"wave"}/>
+        <GestureSonifier coords={GESTURE_WAVE} id={"wave"} audioContextRef={audioContextRef}/>
 
         <InfoCard>
             <img
@@ -104,11 +105,11 @@ const GesturesExploratoriumMain = () => {
                 src={MoveIcon} width="100px" height="100px" />
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
-        <GestureSonifier coords={GESTURE_CORNERS} id={"corners"} />
-        <GestureSonifier coords={GESTURE_SQUIGGLES} id={"squiggles"} />
+        <GestureSonifier coords={GESTURE_CORNERS} id={"corners"} audioContextRef={audioContextRef}/>
+        <GestureSonifier coords={GESTURE_SQUIGGLES} id={"squiggles"} audioContextRef={audioContextRef}/>
 
         <h3>Try it yourself!</h3>
-        <GesturesToSound />
+        <GesturesToSound audioContextRef={audioContextRef} />
     </>);
 };
 

@@ -76,7 +76,7 @@ export const drawGesture = (thisCanvasRef, coords) => {
     }
 };
 
-const GesturesToSound = () => {
+const GesturesToSound = ({audioContextRef}) => {
     const mainCanvasRef = useRef(null);
     const [getRef, setRef] = useDynamicRefs();
     const [isGesturing, setIsGesturing] = useState(false);
@@ -86,11 +86,6 @@ const GesturesToSound = () => {
     const [music, setMusic] = useState(null);
     const [instrumentSamples, setInstrumentSamples] = useState([]);
     const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
-    const [audioEndCallbacks, setAudioEndCallbacks] = useState([]);
-    const [undoneGestures, setUndoneGestures] = useState([]);
-
-    const {audioCtx, compressor} = createAudioContextWithCompressor();
-    const audioContextRef = useRef(audioCtx);
 
     useLayoutEffect(() => {
         if (!mainCanvasRef.current) return;
@@ -113,11 +108,10 @@ const GesturesToSound = () => {
     }, []);
 
     useLayoutEffect(() => {
-        const [startCallbacks, endCallbacks] =
+        const [startCallbacks, _] =
             createAudioCallbacks(instrumentSamples, audioContextRef.current);
 
         setAudioStartCallbacks(startCallbacks);
-        setAudioEndCallbacks(endCallbacks);
 
         instrumentSamples.forEach((_, i) => {
             const miniCanvas = getRef(getRefIdForMiniCanvas(i));

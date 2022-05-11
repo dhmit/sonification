@@ -140,7 +140,7 @@ const GesturesToSound = () => {
         setCurrMouseCoords([]);
     }, []);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         if (!mainCanvasRef.current) return;
         const canvas = mainCanvasRef.current;
 

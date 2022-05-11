@@ -1,13 +1,39 @@
+@import "./variables";
+
+body {
+    font-family: $font-family-base;
+}
+
+blockquote {
+    font-family: $font-family-semibold;
+}
+
 #main-container {
-  padding: 1em 2em;
+    padding: 1em 2em;
 }
 
 .container {
-  margin: 0;
+    margin: 0;
 
-  /*
-  NOTE(ra): These are exploratorium specific styles -- we're hardcoding in a big viewport.
-   */
-  max-width: 100%;
-  width: 1400px;
+    /*
+    NOTE(ra): These are exploratorium specific styles -- we're hardcoding in a big viewport.
+     */
+    max-width: 100%;
+    width: 1400px;
+}
+
+
+// sidebar
+.sidebar-top {
+    border-bottom: 15px solid $color-blue;
+    font-size: 3em;
+    a > {
+        color: black !important;
+        text-decoration: none;
+        border-right: 15px solid $color-blue;
+    }
+    > .col {
+        padding: 2em 1em;
+
+    }
 }

@@ -1,0 +1,20 @@
+@font-face {
+    font-family: 'manrope_semibold';
+    src: url('../fonts/manrope-semibold-webfont.woff2') format('woff2'),
+    url('../fonts/manrope-semibold-webfont.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'manrope_medium';
+    src: url('../fonts/manrope-medium-webfont.woff2') format('woff2'),
+    url('../fonts/manrope-medium-webfont.woff') format('woff');
+    font-weight: 300;
+    font-style: normal;
+}
+
+$font-family-base: "manrope_medium", sans-serif !important;
+$font-family-semibold: "manrope_semibold", sans-serif;
+$font-size-base: 24px;
+

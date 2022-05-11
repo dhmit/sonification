@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useState, useRef} from "react";
+import React, {useCallback, useLayoutEffect, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
 import {useDynamicRefs} from "../../common";
@@ -87,7 +87,7 @@ const GesturesToSound = () => {
     const {audioCtx, compressor} = createAudioContextWithCompressor();
     const audioContextRef = useRef(audioCtx);
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         const [startCallbacks, endCallbacks] =
             createAudioCallbacks(instrumentSamples, audioContextRef.current);
 

@@ -94,9 +94,10 @@ const GesturesToSound = () => {
         setAudioStartCallbacks(startCallbacks);
         setAudioEndCallbacks(endCallbacks);
 
+        console.log(instrumentSamples);
         instrumentSamples.forEach((_, i) => {
             const miniCanvas = getRef(getRefIdForMiniCanvas(i));
-            if (!miniCanvas) return;
+            if (!miniCanvas.current) return;
             drawGestureOnMiniCanvas(miniCanvas, allMouseCoords[i]);
         });
     }, [instrumentSamples]);

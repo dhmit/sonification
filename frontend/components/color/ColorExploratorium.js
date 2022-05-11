@@ -8,6 +8,7 @@ import {StudentQuote, EMEKA_QUOTE} from "../../studentQuotes";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
 import ExploratoriumLayout from "../global/ExploratoriumLayout";
+import PaletteColor from "./PaletteColor";
 
 import MoveIcon from "../../images/MoveIcon.svg";
 
@@ -251,7 +252,7 @@ class PaintingSonifier extends React.Component {
         const {audioCtx, compressor} = createAudioContextWithCompressor();
         this.audioContextRef.current = audioCtx;
         this.state = {
-            playing: false,
+            colorsPlaying: [],
         };
     }
 
@@ -270,23 +271,60 @@ class PaintingSonifier extends React.Component {
         });
     }
 
-    toggleLoops = () => {
+
+    colorIsActive = (i) => {
+        return this.state.colorsPlaying.includes(i);
+    }
+
+    toggleColor = (i) => {
+        const newColorsPlaying = this.state.colorsPlaying.slice();
+
+        if (this.colorIsActive(i)) {
+            const colorIndex = newColorsPlaying.indexOf(i);
+            newColorsPlaying.splice(colorIndex, 1);
+            this.state.audioEndCallbacks[i]();
+        } else {
+            newColorsPlaying.push(i);
+            this.state.audioStartCallbacks[i]();
+        }
+
+        this.setState({colorsPlaying: newColorsPlaying});
+    }
+
+    toggleAllColors = () => {
         // TODO(ra): visual indicator of playing
-        // TODO(ra): Maybe the color pickers should turn on and off loops here
-        if (this.state.playing) this.state.audioEndCallbacks.forEach(f => f());
-        else this.state.audioStartCallbacks.forEach(f => f());
-        this.setState({playing: !this.state.playing});
+
+        const colorsPlaying = [];
+        if (this.state.colorsPlaying.length === 0) {
+            // Start everything!
+            this.state.audioStartCallbacks.forEach((startCallback, i) => {
+                startCallback();
+                colorsPlaying.push(i);
+            });
+        } else {
+            // Turn everything that's playing off
+            this.state.audioEndCallbacks.forEach((endCallback, i) => {
+                if (this.colorIsActive(i)) endCallback();
+            });
+        }
+
+        this.setState({colorsPlaying});
     }
 
     render() {
         if (!(this.state.music && this.state.instrumentSamples)) return <Loading />;
 
+        // TODO(ra): move all of this to CSS after getting out of CSS modules
+        const imgStyle = {};
+        if (this.state.colorsPlaying.length > 0) imgStyle.border = "2px solid black";
+
         return (
             <div className="row mb-4 border p-2 py-4">
-            <h4 className="mb-4">{this.title}</h4>
+                <h4 className="mb-4">{this.title}</h4>
                 <div className="col">
                     <img
-                        onClick={this.toggleLoops}
+                        style={imgStyle}
+                        onClick={this.toggleAllColors}
                         className="img-fluid h100"
                         alt={this.title}
                         src={this.img}
@@ -294,12 +332,15 @@ class PaintingSonifier extends React.Component {
                 </div>
                 <div className="col">
                     <div className="row">
-                        <div className="d-flex flex-row justify-content-between">
-                            <ColorPadInstrument
-                                samples={this.state.instrumentSamples}
-                                colors={this.colors}
-                                vertical
-                            />
+                        <div className="d-flex flex-wrap justify-content-between">
+                            {this.state.instrumentSamples.map((sample, i) =>
+                                <PaletteColor
+                                    key={i} id={i}
+                                    color={this.colors[i]}
+                                    selected={this.colorIsActive(i)}
+                                    handlePaletteClick={() => this.toggleColor(i)}
+                                />
+                            )}
                         </div>
                     </div>
                 </div>
@@ -354,22 +395,17 @@ const ColorExploratoriumMain = () => {
         <ColorSonifier />
 
         <InfoCard>
-            <div className="col-2">
-                <img
-                    className="mr-2"
-                    alt="Portrait of student"
-                    src={MoveIcon} width="100px" height="100%" />
+            <h5>The Sound of Paintings</h5>
+            <div className='col'>
+                Below, we've sonified a few paintings.
+                Click on the painting itself to start or pause a loop representing all of the colors in the painting.
+                Click the buttons next to the painting to toggle individual colors on or off.
             </div>
-            <div className="col-10">
-                Below, we've sonified a few paintings. Click on the painting itself to start or pause a loop representing the
-                colors in the painting. Click the buttons next to the painting to hear the sound of individual colors.
-            </div>
-
         </InfoCard>
 
+        <PaintingSonifier data={OKEEFFE_DATA} />
         <PaintingSonifier data={MURAKAMI_DATA} />
         <PaintingSonifier data={JOAN_MITCHELL_DATA} />
-        <PaintingSonifier data={OKEEFFE_DATA} />
         <PaintingSonifier data={STARRY_NIGHT_DATA} />
     </>);
 };

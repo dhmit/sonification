@@ -195,7 +195,7 @@ class ColorSonifier extends React.Component {
             </div>
         );
 
-        return (<div className="mb-4">
+        return (<div className="row mb-4 border p-4 py-4">
             <h3>Try it out!</h3>
             <p>
                 <strong>Click</strong> on a color button and <strong>drag</strong> the circles to change the colors below.

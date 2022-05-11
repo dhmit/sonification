@@ -6,7 +6,8 @@ const PaletteColor = ({
     id, color, handlePaletteClick, selected, children,
     keyBind, padClassName, startCallback, endCallback
 }) => {
-    keyBind = keyBind.toLowerCase();
+
+    if (keyBind) keyBind = keyBind.toLowerCase();
 
     const [keyStatusClass, setKeyStatusClass] = useState('');
 
@@ -53,6 +54,8 @@ const PaletteColor = ({
     };
 
     useEffect(() => {
+        if (!keyBind) return;
+
         document.addEventListener('keydown', handleKeyDown);
         document.addEventListener('keyup', handleKeyUp);
         return () => {
@@ -66,7 +69,7 @@ const PaletteColor = ({
             id={id}
             style={style}
             onClick={handlePaletteClick}
-            className="mr-2"
+            className="mr-2 mb-2"
         >
             {children}
         </button>

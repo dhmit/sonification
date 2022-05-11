@@ -5,7 +5,7 @@ import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
 import MoveIcon from "../../images/MoveIcon.svg";
 import GesturesToSound from "./GesturesToSound";
-import {GESTURE_WAVE, GESTURE_SQUIGGLES, GESTURE_CORNERS} from "./GesturesData";
+import {GESTURE_WAVE, GESTURE_LINES, GESTURE_CORNERS} from "./GesturesData";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
 import {drawGesture, MiniGestureCanvas} from "./GesturesToSound";
@@ -92,6 +92,7 @@ const GesturesExploratorium = () => {
 
     return (<>
         <GestureSonifier coords={GESTURE_WAVE} id={"wave"} audioContextRef={audioContextRef}/>
+        <GestureSonifier coords={GESTURE_LINES} id={"wave"} audioContextRef={audioContextRef}/>
 
         <InfoCard>
             <img
@@ -100,8 +101,7 @@ const GesturesExploratorium = () => {
                 src={MoveIcon} width="100px" height="100px" />
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
-        {/*<GestureSonifier coords={GESTURE_CORNERS} id={"corners"} audioContextRef={audioContextRef}/>*/}
-        {/*<GestureSonifier coords={GESTURE_SQUIGGLES} id={"squiggles"} audioContextRef={audioContextRef}/>*/}
+        <GestureSonifier coords={GESTURE_CORNERS} id={"wave"} audioContextRef={audioContextRef}/>
 
         <h3>Make Your Own</h3>
         <GesturesToSound audioContextRef={audioContextRef} />

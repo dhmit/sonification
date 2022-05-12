@@ -131,3 +131,18 @@ $player-height: 75px;
     background-color: rgb(4, 118, 217);
     color: white;
 }
+
+
+.btn.btn-sonification {
+    border: 6px solid black;
+    
+    &.btn-default {
+        background-color: white;
+    }
+    &.btn-primary {
+        background-color: $color-green;
+    }
+    &.btn-secondary {
+        background-color: $color-yellow;
+    }
+}

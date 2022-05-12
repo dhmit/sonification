@@ -7,6 +7,7 @@ import MoveIcon from "../../images/MoveIcon.svg";
 import PolygonEditor from "./PolygonEditor";
 import {createAudioContextWithCompressor} from "../instruments/common";
 import {StudentQuote, ANGELINA_QUOTE, QUINCY_QUOTE} from "../../studentQuotes";
+import ExploratoriumLayout from "../global/ExploratoriumLayout";
 
 
 const SQUARE_DATA = {
@@ -36,30 +37,29 @@ const STARRISH_DATA = {
 
 const FLOWERISH_DATA = {
     points: [
-        [116,376],
-        [398,436],
-        [268,228],
-        [394,150],
-        [416,427],
-        [512,147],
-        [620,181],
-        [428,435],
-        [729,347],
-        [727,486],
-        [433,448],
-        [704,569],
-        [582,632],
-        [428,472],
-        [454,663],
-        [344,652],
-        [392,467],
-        [201,634],
-        [166,533],
-        [356,466],
-        [95,450],
+        [116, 376],
+        [398, 436],
+        [268, 228],
+        [394, 150],
+        [416, 427],
+        [512, 147],
+        [620, 181],
+        [428, 435],
+        [729, 347],
+        [727, 486],
+        [433, 448],
+        [704, 569],
+        [582, 632],
+        [428, 472],
+        [454, 663],
+        [344, 652],
+        [392, 467],
+        [201, 634],
+        [166, 533],
+        [356, 466],
+        [95, 450],
     ]
 };
-
 
 
 const OVAL_DATA = {
@@ -116,8 +116,8 @@ class PolygonSonifier extends React.Component {
     async componentDidMount() {
         const requestBody = {
             points: this.points,
-            noteLength: 1/6,
-            noteDelay: 1/6,
+            noteLength: 1 / 6,
+            noteDelay: 1 / 6,
             baseFrequency: 220,
             floorFrequency: 220,
             ceilFrequency: 880,
@@ -134,13 +134,13 @@ class PolygonSonifier extends React.Component {
     }
 
     toggleAudio() {
-        if(this.state.playing) {
+        if (this.state.playing) {
             this.audioRef.current.pause();
             clearTimeout(this.activeTimeoutId);
             this.activeTimeoutId = null;
             this.setState({playing: false});
         } else {
-            if(!this.mediaElementSource) {
+            if (!this.mediaElementSource) {
                 this.mediaElementSource =
                     this.audioContextRef.current.createMediaElementSource(this.audioRef.current);
                 const gainNode = this.audioContextRef.current.createGain();
@@ -162,7 +162,7 @@ class PolygonSonifier extends React.Component {
     }
 
     render() {
-        if (!this.state.music) return <Loading />;
+        if (!this.state.music) return <Loading/>;
 
         return (
             <button
@@ -170,9 +170,9 @@ class PolygonSonifier extends React.Component {
                 className={`
                     btn
                     ${this.state.playing
-                        ? 'btn-outline-primary'
-                        : 'btn-outline-secondary'
-                    }
+                    ? 'btn-outline-primary'
+                    : 'btn-outline-secondary'
+                }
                 `}
             >
                 <PolygonViewer
@@ -194,7 +194,8 @@ class PolygonSonifier extends React.Component {
     }
 }
 
-const PolygonExploratorium = () => {
+
+const PolygonExploratoriumMain = () => {
     const audioContextRef = useRef(null);
     const compressorRef = useRef(null);
     if (!audioContextRef.current) {
@@ -212,20 +213,16 @@ const PolygonExploratorium = () => {
     };
 
     return (<>
-        <StudentQuote quoteData={ANGELINA_QUOTE} />
-        <StudentQuote quoteData={QUINCY_QUOTE} />
-
         {[SQUARE_DATA, FLOWERISH_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
             <PolygonSonifier
                 key={i}
-                data={data} audioContextRef={audioContextRef} compressorRef={compressorRef} />
+                data={data} audioContextRef={audioContextRef} compressorRef={compressorRef}/>
         )}
 
         <InfoCard>
-            <img
-                className="mr-2"
+            <img className="mr-2"
                 alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100%" />
+                src={MoveIcon} width="100px" height="100%"/>
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
 
@@ -248,7 +245,7 @@ const PolygonExploratorium = () => {
                         <div className="col-4 mb-3" key={i}>
                             <div style={{width: "150px"}}>
                                 <PolygonSonifier
-                                    key={i+20}
+                                    key={i + 20}
                                     data={data}
                                     audioContextRef={audioContextRef}
                                     compressorRef={compressorRef}
@@ -266,5 +263,16 @@ const PolygonExploratorium = () => {
     </>);
 
 };
+
+const PolygonExploratoriumSidebar = () => {
+    return <>
+        <StudentQuote quoteData={ANGELINA_QUOTE} color={"#A5E0EC"}/>
+        <StudentQuote quoteData={QUINCY_QUOTE} color={"#DAFBB1"}/>
+    </>;
+};
+
+const PolygonExploratorium = () => <ExploratoriumLayout main={<PolygonExploratoriumMain/>}
+                                                        sidebar={<PolygonExploratoriumSidebar/>}/>;
+
 
 export default PolygonExploratorium;

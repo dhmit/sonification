@@ -1,12 +1,10 @@
 import React from "react";
-import Nav from "./Nav";
 import * as PropTypes from "prop-types";
 import Home from "../../images/icons/home.svg";
 
 const ExploratoriumLayout = ({main, sidebar}) => {
     return (
         <>
-            <Nav/>
             <div id="main-container">
                 <main className='container mx-auto' role="main">
                     <div className='main-content'>
@@ -29,15 +27,13 @@ const ExploratoriumLayout = ({main, sidebar}) => {
                     </div>
                 </main>
             </div>
-
         </>
-    )
-        ;
+    );
 };
 
 ExploratoriumLayout.propTypes = {
     main: PropTypes.object,
-    sidebar: PropTypes.object,
+    sidebar: PropTypes.object
 };
 
 

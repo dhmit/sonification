@@ -6,11 +6,6 @@ import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {base64AudioToDataURI} from "../../common";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 
-const loadResults = async (event, handleSubmit, setLoading) => {
-    setLoading(true);
-    await handleSubmit(event);
-    setLoading(false);
-};
 
 const scaleCoordsToCanvas = (canvasRef, rawCoords) => {
     const canvas = canvasRef.current;
@@ -126,6 +121,7 @@ const GesturesToSound = ({audioContextRef}) => {
     const [music, setMusic] = useState(null);
     const [instrumentSamples, setInstrumentSamples] = useState([]);
     const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
+    const [animatingIndex, setAnimatingIndex] = useState(null);
 
     useLayoutEffect(() => {
         if (!mainCanvasRef.current) return;
@@ -245,6 +241,7 @@ const GesturesToSound = ({audioContextRef}) => {
 
     const handleSubmitGestures = async (event) => {
         event.preventDefault();
+        setLoading(true);
         const canvas = mainCanvasRef.current;
         const canvasSettings = {
             width: canvas.width,
@@ -260,6 +257,7 @@ const GesturesToSound = ({audioContextRef}) => {
         await fetchPost('/api/gesture_to_audio/', requestBody, (response) => {
             setMusic(response.music);
             setInstrumentSamples(response.samples);
+            setLoading(false);
         });
     };
 
@@ -290,6 +288,7 @@ const GesturesToSound = ({audioContextRef}) => {
 
     const handleMiniCanvasClick = (i) => {
         audioStartCallbacks[i]();
+        setAnimatingIndex(i);
     };
 
     const drawingIsEmpty = (allMouseCoords.length === 0);
@@ -302,6 +301,39 @@ const GesturesToSound = ({audioContextRef}) => {
         if (instrumentSamples.length) sonifyButtonText = 'Update';
         else sonifyButtonText = 'Sonify!';
     }
+
+    // TODO(ra): Refactor copypasta from GestureSonifier
+    useEffect(() => {
+        if (animatingIndex === null) return;
+
+        clearCanvas(mainCanvasRef);
+        const allOtherGestures =
+            allMouseCoords.filter((coord, coordIndex) => coordIndex !== animatingIndex);
+        for (const gesture of allOtherGestures) drawGesture(mainCanvasRef, gesture);
+
+        const gestureCoords = allMouseCoords[animatingIndex];
+
+        let startTime;
+        const render = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const timeElapsed = timestamp - startTime;
+
+            clearCanvas(mainCanvasRef);
+            for (const gesture of allOtherGestures) drawGesture(mainCanvasRef, gesture);
+
+            const coordsToDraw = gestureCoords.filter(coord => {
+                return coord.normalizedT <= timeElapsed;
+            });
+            if (coordsToDraw.length > 0) {
+                drawGesture(mainCanvasRef, coordsToDraw);
+            }
+            if(timeElapsed < gestureCoords[gestureCoords.length - 1].normalizedT) {
+                requestAnimationFrame(render);
+            }
+        };
+        requestAnimationFrame(render);
+        setAnimatingIndex(null);
+    }, [animatingIndex]);
 
     return (<>
         <p>
@@ -329,7 +361,7 @@ const GesturesToSound = ({audioContextRef}) => {
                 <button
                     disabled={drawingIsEmpty}
                     className="w-100 btn btn-outline-primary mb-4"
-                    onClick={(event) => loadResults(event, handleSubmitGestures, setLoading)}
+                    onClick={(e) => handleSubmitGestures(e)}
                 >
                     {loading
                         ? <div className='spinner-border' role="status"/>

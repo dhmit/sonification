@@ -5,6 +5,7 @@ import Loading from "../global/Loading";
 import MoveIcon from "../../images/MoveIcon.svg";
 import {StudentQuote, MOISES_QUOTE, EESHA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
+import {base64AudioToDataURI} from "../../common";
 
 const SUNRISE_SUNSET_BOSTON = {
     title: "Sunrise and Sunset Times in Boston",
@@ -92,14 +93,12 @@ class TimeSeriesSonifier extends React.Component {
             this.setState({
                 music: response.musicData.sound,
                 image: response.musicData.img,
+                samples: response.samples,
             });
         });
     }
 
     render() {
-
-        const musicDataAsUrl = `data:audio/wav;base64, ${this.state.music}`;
-
         return (
             <div className="row mb-4 border p-2 py-4">
                 <div className="col">
@@ -115,9 +114,12 @@ class TimeSeriesSonifier extends React.Component {
                     </div></div>
                     <div className="row"><div className="col">
                         {this.state.music
-                            ? <NiceAudioPlayer src={musicDataAsUrl} />
+                            ? <NiceAudioPlayer src={base64AudioToDataURI(this.state.music)} />
                             : <Loading />
                         }
+                        {this.state.samples && this.state.samples.map((sample, i) =>
+                            <NiceAudioPlayer key={i} src={base64AudioToDataURI(sample)} />
+                        )}
                     </div></div>
                 </div>
             </div>

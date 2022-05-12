@@ -26,7 +26,7 @@ def time_series_to_music(request):
     column_constants = request.data['constants']
     duration = float(request.data['duration'])
     every_n = int(request.data['everyN'])
-    csv_data = csv_data[::every_n]
+    # csv_data = csv_data[::every_n]
 
     new_csv = []
     audio_samples = None
@@ -64,6 +64,7 @@ def time_series_to_music(request):
             else:
                 sound += note
         new_csv += [new_csv_row]
+
         if audio_samples is None:
             audio_samples = sound
         else:

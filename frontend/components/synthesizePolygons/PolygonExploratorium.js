@@ -168,10 +168,10 @@ class PolygonSonifier extends React.Component {
             <button
                 onClick={() => this.toggleAudio()}
                 className={`
-                    btn
+                    btn polygon
                     ${this.state.playing
-                    ? 'btn-outline-primary'
-                    : 'btn-outline-secondary'
+                    ? 'polygon-playing'
+                    : 'polygon-not-playing'
                 }
                 `}
             >

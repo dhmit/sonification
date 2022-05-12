@@ -24,7 +24,6 @@ blockquote {
 
     .main-content {
         grid-area: content;
-        max-width: 75%;
     }
 }
 
@@ -101,11 +100,14 @@ blockquote {
         max-width: 70%;
         margin: 0 auto;
     }
+
     footer {
         text-align: right;
     }
+
     .quote-icon {
         position: absolute;
+
         &.right {
             transform: scaleX(-1);
             right: 0;
@@ -135,13 +137,21 @@ $player-height: 75px;
 
 .btn.btn-sonification {
     border: 6px solid black;
-    
+    border-radius: 2em;
+    font-size: 1.75em;
+    font-family: $font-family-semibold;
+    color: black;
+    &:disabled, &[disabled] {
+        background-color: white !important;
+    }
     &.btn-default {
         background-color: white;
     }
+
     &.btn-primary {
         background-color: $color-green;
     }
+
     &.btn-secondary {
         background-color: $color-yellow;
     }

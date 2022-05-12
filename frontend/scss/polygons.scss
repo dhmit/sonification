@@ -1,0 +1,155 @@
+// slowly transfering styles here
+.editor-container {
+    display: grid;
+    //align-items: center;
+    grid-template-areas: "svg . buttons";
+    grid-template-columns: 60% 15% 25%;
+    width: 100%;
+    height: 100%;
+}
+
+.button-row {
+    grid-area: buttons;
+    text-align: center;
+    .btn {
+        margin-bottom: 0.5em;
+        width: 200px;
+    }
+}
+
+.buttonGroup {
+    display: flex;
+    flex-direction: row;
+}
+
+.editorButton {
+    min-height: 40px;
+    min-width: 40px;
+}
+
+.editor-button:disabled {
+    background-color: #8a8a8a;
+    border: 1px solid #8a8a8a;
+}
+
+.svg-display, .svg-display-loading, .svg-display-no-cursor {
+    border: 6px solid black;
+}
+
+.svg-display-no-cursor {
+    cursor: none;
+}
+
+.svg-display-loading {
+    pointer-events: none;
+    filter: grayscale(100%);
+    opacity: 1;
+}
+
+@keyframes spin {
+    from {
+        stroke-dashoffset: 0;
+    }
+    to {
+        stroke-dashoffset: 125.66;
+    }
+}
+
+.svg-loading-circle {
+    fill: none;
+    stroke: #484848;
+    stroke-width: 3;
+    stroke-dasharray: 55 7;
+    animation: spin 1s linear infinite;
+}
+
+.add-point, .edit-point, .delete-point, .focusAdd-point, .focus-edit-point, .display-point {
+    stroke: black;
+    r: 7;
+}
+
+.add-point, .edit-point, .delete-point, .display-point {
+    fill: aqua;
+    stroke-width: 3;
+}
+
+.display-point {
+    r: 5;
+    stroke-width: 2;
+}
+
+.played-point {
+    r: 5;
+    stroke-width: 2;
+    fill: red;
+}
+
+.inactive-point {
+    r: 5;
+    stroke-width: 2;
+    fill: grey;
+}
+
+$edit-color: #ffff88;
+.edit-point:hover, .focus-edit-point {
+    //stroke: #8a8a8a;
+    fill: $edit-color;
+    stroke-width: 2;
+}
+
+.delete-point:hover {
+    fill: #ee4f4f;
+    stroke-width: 2;
+}
+
+.focus-add-point {
+    //stroke: #8a8a8a;
+    stroke-width: 2;
+    fill: #5ddc40;
+}
+
+.line {
+    stroke: black;
+    stroke-width: 4;
+}
+
+.edit-line {
+    stroke: black;
+    stroke-width: 8;
+}
+
+.edit-line-inner {
+    stroke: $edit-color;
+    stroke-width: 4;
+}
+
+.played-line {
+    stroke: #f50808;
+    stroke-width: 5;
+}
+
+.temp-line {
+    stroke: #8a8a8a;
+    stroke-width: 2;
+}
+
+
+.btn.polygon {
+    svg > line {
+        stroke-width: 7px;
+        stroke: black;
+    }
+
+    &:hover, &:active, &:focus {
+        outline: none !important;
+        box-shadow: none;
+    }
+
+    &.polygon-playing {
+        svg {
+            line {
+                stroke: $color-red;
+            }
+        }
+    }
+}

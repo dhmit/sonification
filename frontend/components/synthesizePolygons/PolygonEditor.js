@@ -68,20 +68,22 @@ const PolygonEditor = (
             event.preventDefault();
             updatePoints(
                 prevPoints => [...prevPoints.slice(0, focusPointIndex),
-                    {focusPointIndex : [prevPoints[focusPointIndex][0] + dx,
-                        prevPoints[focusPointIndex][1] + dy]},
+                    {
+                        focusPointIndex: [prevPoints[focusPointIndex][0] + dx,
+                            prevPoints[focusPointIndex][1] + dy]
+                    },
                     prevPoints.slice(focusPointIndex + 1)]);
         }
     }
 
     function switchEditorMode(addOption, editOption, deleteOption) {
         switch (editorMode) {
-        case EditorModes.ADD:
-            return addOption;
-        case EditorModes.EDIT:
-            return editOption;
-        case EditorModes.DELETE:
-            return deleteOption;
+            case EditorModes.ADD:
+                return addOption;
+            case EditorModes.EDIT:
+                return editOption;
+            case EditorModes.DELETE:
+                return deleteOption;
         }
     }
 
@@ -165,6 +167,7 @@ const PolygonEditor = (
         fileUploadRef.current.value = null;
         setLoading(false);
     };
+
     function handleClickUpload() {
         fileUploadRef.current.click();
     }
@@ -282,14 +285,14 @@ const PolygonEditor = (
         [
             {
                 name: "upload",
-                svg: <img alt="Upload Icon" src={UploadIcon} width={"auto"} height="100%" />,
+                svg: <img alt="Upload Icon" src={UploadIcon} width={"auto"} height="100%"/>,
                 onClick: () => handleClickUpload(),
                 tooltip: "Upload polygon. Shortcut: Ctrl+O",
                 disabled: false,
             },
             {
                 name: "download",
-                svg: <img alt="Download Icon" src={DownloadIcon} width={"auto"} height="100%" />,
+                svg: <img alt="Download Icon" src={DownloadIcon} width={"auto"} height="100%"/>,
                 onClick: () => handleClickDownload(),
                 tooltip: "Download polygon. Shortcut: Ctrl+D",
                 disabled: points.length === 0,
@@ -298,28 +301,28 @@ const PolygonEditor = (
         [
             {
                 name: "add",
-                svg: <img alt="Add Icon" src={AddIcon} width="auto" height="100%" />,
+                svg: <img alt="Add Icon" src={AddIcon} width="auto" height="100%"/>,
                 onClick: () => handleChangeEditorMode(EditorModes.ADD),
                 tooltip: "Add new points. Shortcut: a",
                 disabled: editorMode === EditorModes.ADD,
             },
             {
                 name: "move",
-                svg: <img alt="Move Icon" src={MoveIcon} width="auto" height="100%" />,
+                svg: <img alt="Move Icon" src={MoveIcon} width="auto" height="100%"/>,
                 onClick: () => handleChangeEditorMode(EditorModes.EDIT),
                 tooltip: "Edit points and lines. Shortcut: e",
                 disabled: editorMode === EditorModes.EDIT,
             },
             {
                 name: "erase",
-                svg: <img alt="Eraser Icon" src={EraserIcon} width="auto" height="100%" />,
+                svg: <img alt="Eraser Icon" src={EraserIcon} width="auto" height="100%"/>,
                 onClick: () => handleChangeEditorMode(EditorModes.DELETE),
                 tooltip: "Delete points. Shortcut: d",
                 disabled: editorMode === EditorModes.DELETE,
             },
             {
                 name: "trash",
-                svg: <img alt="Trash Icon" src={TrashIcon} width="auto" height="100%" />,
+                svg: <img alt="Trash Icon" src={TrashIcon} width="auto" height="100%"/>,
                 onClick: () => handleClearDrawing(),
                 tooltip: "Clear all points. Shortcut: c",
                 disabled: false,
@@ -328,32 +331,11 @@ const PolygonEditor = (
     ];
 
     return (
-        <div className={STYLES.editorContainer} ref={containerRef}>
-            <div className={STYLES.buttonRow}>
-                {points.length === 0
-                    ? <button disabled className='btn btn-outline-primary w-100'>
-                          Create a polygon
-                    </button>
-                    : <>
-                        <button
-                            className="btn btn-primary w-100"
-                            onClick={onSubmit}
-                        >
-                            Add
-                        </button>
-                        <button
-                            className="btn btn-primary w-100"
-                            onClick={handleClearDrawing}
-                        >
-                            Clear
-                        </button>
-                    </>
-                }
-            </div>
+        <div className="editor-container" ref={containerRef}>
             <svg
-                className={loading ? STYLES.svgDisplayLoading
+                className={loading ? "svg-display svg-display-loading"
                     : ((editorMode === EditorModes.ADD || focusPointIndex !== -1)
-                        ? STYLES.svgDisplayNoCursor : STYLES.svgDisplay)}
+                        ? "svg-display svg-display-no-cursor" : "svg-display")}
                 width={internalWidth}
                 height={internalHeight}
                 onClick={handleClickSvg}
@@ -383,63 +365,63 @@ const PolygonEditor = (
                 </>
                 }
                 {(!cursorLocation || editorMode !== EditorModes.ADD) && points.length >= 3 &&
-                    <>
-                        <line
-                            key={`line-${points.length-1}`}
-                            x1={points[points.length - 1][0]}
-                            y1={points[points.length - 1][1]}
-                            x2={points[0][0]}
-                            y2={points[0][1]}
-                            className={(focusLine !== -1 && focusLine === (points.length - 1))
-                                ? STYLES.editLine : STYLES.line}
-                            onMouseEnter={() => handleMouseEnterLine(points.length - 1)}
-                            onMouseLeave={handleMouseLeaveLine}
-                            onClick={() => handleClickLine(points.length - 1)}
-                        />
-                        {(focusLine !== -1 && focusLine === points.length - 1) &&
-                            <line
-                                key={`internal-line-${points.length-1}`}
-                                x1={points[points.length - 1][0]}
-                                y1={points[points.length - 1][1]}
-                                x2={points[0][0]}
-                                y2={points[0][1]}
-                                className={STYLES.editLineInner}
-                                onMouseEnter={() => handleMouseEnterLine(points.length - 1)}
-                                onMouseLeave={handleMouseLeaveLine}
-                                onClick={() => handleClickLine(points.length - 1)}
-                            />
-                        }
-                    </>
+                <>
+                    <line
+                        key={`line-${points.length - 1}`}
+                        x1={points[points.length - 1][0]}
+                        y1={points[points.length - 1][1]}
+                        x2={points[0][0]}
+                        y2={points[0][1]}
+                        className={(focusLine !== -1 && focusLine === (points.length - 1))
+                            ? STYLES.editLine : STYLES.line}
+                        onMouseEnter={() => handleMouseEnterLine(points.length - 1)}
+                        onMouseLeave={handleMouseLeaveLine}
+                        onClick={() => handleClickLine(points.length - 1)}
+                    />
+                    {(focusLine !== -1 && focusLine === points.length - 1) &&
+                    <line
+                        key={`internal-line-${points.length - 1}`}
+                        x1={points[points.length - 1][0]}
+                        y1={points[points.length - 1][1]}
+                        x2={points[0][0]}
+                        y2={points[0][1]}
+                        className={STYLES.editLineInner}
+                        onMouseEnter={() => handleMouseEnterLine(points.length - 1)}
+                        onMouseLeave={handleMouseLeaveLine}
+                        onClick={() => handleClickLine(points.length - 1)}
+                    />
+                    }
+                </>
                 }
                 {points.map((p, i) => (
                     <React.Fragment key={`fragment-${i}`}>
                         {i < points.length - 1 &&
-                            <>
-                                <line
-                                    key={`line-${i}`}
-                                    x1={points[i][0]}
-                                    y1={points[i][1]}
-                                    x2={points[i + 1][0]}
-                                    y2={points[i + 1][1]}
-                                    className={focusLine === i ? STYLES.editLine : STYLES.line}
-                                    onMouseEnter={() => handleMouseEnterLine(i)}
-                                    onMouseLeave={handleMouseLeaveLine}
-                                    onClick={() => handleClickLine(i)}
-                                />
-                                {focusLine === i &&
-                                    <line
-                                        key={`internal-line-${i}`}
-                                        x1={points[i][0]}
-                                        y1={points[i][1]}
-                                        x2={points[i + 1][0]}
-                                        y2={points[i + 1][1]}
-                                        className={STYLES.editLineInner}
-                                        onMouseEnter={() => handleMouseEnterLine(i)}
-                                        onMouseLeave={handleMouseLeaveLine}
-                                        onClick={() => handleClickLine(i)}
-                                    />
-                                }
-                            </>
+                        <>
+                            <line
+                                key={`line-${i}`}
+                                x1={points[i][0]}
+                                y1={points[i][1]}
+                                x2={points[i + 1][0]}
+                                y2={points[i + 1][1]}
+                                className={focusLine === i ? STYLES.editLine : STYLES.line}
+                                onMouseEnter={() => handleMouseEnterLine(i)}
+                                onMouseLeave={handleMouseLeaveLine}
+                                onClick={() => handleClickLine(i)}
+                            />
+                            {focusLine === i &&
+                            <line
+                                key={`internal-line-${i}`}
+                                x1={points[i][0]}
+                                y1={points[i][1]}
+                                x2={points[i + 1][0]}
+                                y2={points[i + 1][1]}
+                                className={STYLES.editLineInner}
+                                onMouseEnter={() => handleMouseEnterLine(i)}
+                                onMouseLeave={handleMouseLeaveLine}
+                                onClick={() => handleClickLine(i)}
+                            />
+                            }
+                        </>
                         }
                         <circle
                             key={`point-${i}`}
@@ -447,7 +429,7 @@ const PolygonEditor = (
                             cy={p[1]}
                             r={5}
                             className={switchEditorMode(STYLES.addPoint,
-                                (i === focusPointIndex) ? STYLES.focusEditPoint: STYLES.editPoint,
+                                (i === focusPointIndex) ? STYLES.focusEditPoint : STYLES.editPoint,
                                 STYLES.deletePoint)}
                             onClick={() => handleClickPoint(i)}
                         />
@@ -460,9 +442,30 @@ const PolygonEditor = (
                     cy={cursorLocation[1]}
                     r={5}
                     className={STYLES.focusAddPoint}
-                /> }
+                />}
                 {loading && <circle cx="50%" cy="50%" r={20} className={STYLES.svgLoadingCircle}/>}
             </svg>
+            <div className="button-row">
+                {points.length === 0
+                    ? <><button className="btn btn-primary btn-sonification" disabled>
+                            Create
+                        </button>
+                        <button className="btn btn-sonification"
+                               disabled>
+                            Clear
+                        </button></>
+                    : <><button className="btn btn-primary btn-sonification"
+                                onClick={onSubmit}>
+                            Create
+                        </button>
+                        <button className="btn btn-sonification"
+                                onClick={handleClearDrawing}>
+                            Clear
+                        </button>
+
+                    </>}
+
+            </div>
         </div>
     );
 

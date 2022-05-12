@@ -1,4 +1,5 @@
-import React from "react";
+import React, {useState} from "react";
+import * as PropTypes from "prop-types";
 import NiceAudioPlayer from "./components/instruments/NiceAudioPlayer";
 
 import ANGELINA_IMG from "./images/headshots/Wu_Angelina.jpg";
@@ -17,7 +18,12 @@ import MOISES_AUDIO from "./audio/TimeSeries_Moises_2022-04-27.m4a";
 import PEIHUA_AUDIO from "./audio/Gestures_Peihua_2022-05-02.mp3";
 import QUINCY_AUDIO from "./audio/Polygons_Quincy_2022-05-02.mp3";
 
+import Blob1 from "./images/blobs/blob1.svg";
+import Blob2 from "./images/blobs/blob2.svg";
+import Blob3 from "./images/blobs/blob3.svg";
+import Blob4 from "./images/blobs/blob4.svg";
 
+import QuoteIcon from "./images/icons/leftquote.svg";
 
 // TODO(ra): import the actual audio / img for all of these students!
 
@@ -76,9 +82,21 @@ export const MOISES_QUOTE = {
 };
 
 
+export const StudentQuote = ({quoteData, color = "#EF724F"}) => {
+    const [blobStyles, setBlobStyles] = useState({
+        width: "200px", height: "150px", left: "20px", top: "10px"
+    });
+    const blobs = [
+        <Blob1 key={1} className="quote-blob" fill={color} width={blobStyles.width} height={blobStyles.height} top={blobStyles.top} left={blobStyles.left}/>,
+        <Blob2 key={2} className="quote-blob" fill={color} width={blobStyles.width} height={blobStyles.height} top={blobStyles.top} left={blobStyles.left}/>,
+        <Blob3 key={3} className="quote-blob" fill={color} width={blobStyles.width} height={blobStyles.height} top={blobStyles.top} left={blobStyles.left}/>,
+        <Blob4 key={4} className="quote-blob" fill={color} width={blobStyles.width} height={blobStyles.height} top={blobStyles.top} left={blobStyles.left}/>
+    ];
 
-export const StudentQuote = ({quoteData}) => {
+    const randomBlob = blobs[Math.floor(Math.random() * blobs.length)];
+
     const {quote, speaker, img, audio} = quoteData;
+
     return (
         <div className="mb-2">
             <div className="row">
@@ -88,20 +106,28 @@ export const StudentQuote = ({quoteData}) => {
                         alt={`Headshot of ${speaker}`} src={img}
                     />
                 </div>
-                <div className="col-11">
+                {randomBlob}
+                <div className="col-11 quotation">
+                    <QuoteIcon className={"quote-icon"}/>
                     <blockquote className="blockquote">
                         {quote}
                     </blockquote>
+                    <QuoteIcon className={"quote-icon right"}/>
                     <footer className="blockquote-footer">
                         {speaker}
                     </footer>
                 </div>
                 <NiceAudioPlayer
                     src={audio}
-                    text={`Click to hear ${speaker} say more about working on the Sonification Toolkit`}
+                    text={`Click to hear ${speaker} say more about this project`}
                 />
             </div>
         </div>
     );
+};
 
+
+StudentQuote.propTypes = {
+    color: PropTypes.string,
+    quoteData: PropTypes.object
 };

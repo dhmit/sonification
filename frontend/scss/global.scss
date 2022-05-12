@@ -5,6 +5,10 @@ body {
     font-size: $font-size-base;
 }
 
+h1 {
+    font-size: 8em;
+}
+
 blockquote {
     font-family: $font-family-semibold;
 }
@@ -36,19 +40,22 @@ blockquote {
 
 .quote-blob {
     position: absolute;
-    right: 40px;
     z-index: -1
 }
 
 
 // sidebar
 .sidebar {
-    border-left: 10px solid black;
+    border-left: 10px solid #515151;
     position: fixed;
     grid-area: sidebar;
     max-width: 25%;
     right: 0;
     height: 100%;
+
+    .sidebar-content {
+        padding: 2em;
+    }
 }
 
 .sidebar-top {
@@ -86,4 +93,41 @@ blockquote {
         padding: 2em 1em;
 
     }
+}
+
+
+.quotation {
+    blockquote {
+        max-width: 70%;
+        margin: 0 auto;
+    }
+    footer {
+        text-align: right;
+    }
+    .quote-icon {
+        position: absolute;
+        &.right {
+            transform: scaleX(-1);
+            right: 0;
+            margin-top: -40px;
+        }
+    }
+}
+
+//audio player
+$player-height: 75px;
+
+.audio-player {
+    border: 6px solid $color-neutral;
+    padding: 0.3em;
+    border-radius: $player-height / 2;
+    width: 80%;
+    min-height: $player-height;
+    background-color: white;
+}
+
+.audio-player-on {
+    @extend .audio-player;
+    background-color: rgb(4, 118, 217);
+    color: white;
 }

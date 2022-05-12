@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from "react";
-import STYLES from "./NiceAudioPlayer.module.scss";
+import PlayIcon from "../../images/icons/play.svg";
+import StopIcon from "../../images/icons/stop.svg";
 
 const NiceAudioPlayer = ({src, text}) => {
     const [audioPlayer] = useState(new Audio(src));
@@ -21,14 +22,13 @@ const NiceAudioPlayer = ({src, text}) => {
     return (
         <button
             onClick={toggleAudio}
-            className={playing ? STYLES.niceAudioPlayerPlaying : STYLES.niceAudioPlayer}
-        >
+            className={playing ? ".audio-player-on" : "audio-player"}>
             <div className="row">
                 <div className="col-2 mr-0">
                     <span className="code">
                         {playing
-                            ? '⏸'
-                            : '▶'
+                            ? <StopIcon fill={"#44616B"}/>
+                            : <PlayIcon fill={"#44616B"}/>
                         }
                     </span>
                 </div>

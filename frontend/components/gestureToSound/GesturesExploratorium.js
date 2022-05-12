@@ -115,8 +115,8 @@ const GesturesExploratoriumMain = () => {
 
 const GesturesExploratoriumSidebar = () => {
     return (<>
-        <StudentQuote quoteData={PEIHUA_QUOTE}/>
-        <StudentQuote quoteData={GRACE_QUOTE}/>
+        <StudentQuote quoteData={PEIHUA_QUOTE} color={"#A5E0EC"}/>
+        <StudentQuote quoteData={GRACE_QUOTE} color={"#DAFBB1"}/>
     </>);
 };
 

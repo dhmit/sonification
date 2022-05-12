@@ -416,6 +416,10 @@ const GesturesToSound = ({audioContextRef}) => {
             First, draw something, then click Sonify! to hear your gestures in motion.
         </p>
 
+        <p>
+            Try drawing slowly vs. quickly, and explore the full space of the canvas.
+        </p>
+
         <div className="row">
             <div className="col-8">
                 <canvas

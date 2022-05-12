@@ -13,7 +13,7 @@ import {StudentQuote, GRACE_QUOTE, PEIHUA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 
 
-const GestureSonifier = ({coords, id, audioContextRef}) => {
+const GestureSonifier = ({coords, id, audioContextRef, children}) => {
     const mainCanvasRef = useRef(null);
     const [music, setMusic] = useState(null);
     const [instrumentSamples, setInstrumentSamples] = useState([]);
@@ -64,7 +64,7 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
 
         const gestureCoords = coords[animatingIndex];
 
-        // TODO(ra): Factor out this and simlar code in MiniGestureCanvas
+        // TODO(ra): Factor out this and similar code in MiniGestureCanvas
         // once this all settles down.
         let startTime;
         const render = (timestamp) => {
@@ -94,45 +94,50 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
         [isAnimatingAllGestures]
     );
 
-    return (
+    return (<>
         <div className="row mb-4 border p-2 py-4">
-            <div className="col">
-                <canvas
-                    className={STYLES.canvas}
-                    ref={mainCanvasRef}
-                    width="500" height="500"
-                />
+            <div className="row">
+                {children}
             </div>
-            <div className="col">
-                <div className="mb-4">
-                    {music
-                        ? <NiceAudioPlayer
-                            src={base64AudioToDataURI(music)}
-                            text="Play the full drawing"
-                            onPlayCallback={() => setIsAnimatingAllGestures(true)}
-                        />
-                        : <Loading />
-                    }
+            <div className="row">
+                <div className="col">
+                    <canvas
+                        className={STYLES.canvas}
+                        ref={mainCanvasRef}
+                        width="500" height="500"
+                    />
                 </div>
-
-                <div>
-                    {(instrumentSamples.length > 0) && (<>
-                        <p>
-                            Click to play each gesture:
-                        </p>
-                        {instrumentSamples.map((sample, i) =>
-                            <MiniGestureCanvas
-                                clickCallback={() => handleMiniCanvasClick(i)}
-                                coords={coords[i]}
-                                key={i}
+                <div className="col">
+                    <div className="mb-4">
+                        {music
+                            ? <NiceAudioPlayer
+                                src={base64AudioToDataURI(music)}
+                                text="Play the full drawing"
+                                onPlayCallback={() => setIsAnimatingAllGestures(true)}
                             />
-                        )}
-                    </>)
-                    }
+                            : <Loading />
+                        }
+                    </div>
+
+                    <div>
+                        {(instrumentSamples.length > 0) && (<>
+                            <p>
+                                Click to play each gesture:
+                            </p>
+                            {instrumentSamples.map((sample, i) =>
+                                <MiniGestureCanvas
+                                    clickCallback={() => handleMiniCanvasClick(i)}
+                                    coords={coords[i]}
+                                    key={i}
+                                />
+                            )}
+                        </>)
+                        }
+                    </div>
                 </div>
             </div>
         </div>
-    );
+    </>);
 };
 
 const GesturesExploratorium = () => {
@@ -140,8 +145,24 @@ const GesturesExploratorium = () => {
     const audioContextRef = useRef(audioCtx);
 
     return (<>
-        <GestureSonifier coords={GESTURE_WAVE} id={"wave"} audioContextRef={audioContextRef}/>
-        <GestureSonifier coords={GESTURE_LINES} id={"wave"} audioContextRef={audioContextRef}/>
+        <GestureSonifier coords={GESTURE_WAVE} id={"wave"} audioContextRef={audioContextRef}>
+            <p>
+                Each of the drawings on this page appear to be two dimensional, but they have a hidden third dimension: time.
+            </p>
+            <p>
+                Click "Play the full drawing" or the individual gesture buttons underneath.
+            </p>
+        </GestureSonifier>
+        <GestureSonifier coords={GESTURE_LINES} id={"wave"} audioContextRef={audioContextRef}>
+            <p>
+                The qualities of each gesture&mdash;speed, direction, starting and ending positions&mdash;
+                are converted into pitch, volume, and tempo.
+            </p>
+            <p>
+                Each of these strokes appears similar, but the speed and direction of each stroke is
+                preserved in the sonification.
+            </p>
+        </GestureSonifier>
 
         <InfoCard>
             <img
@@ -150,7 +171,11 @@ const GesturesExploratorium = () => {
                 src={MoveIcon} width="100px" height="100px" />
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
-        <GestureSonifier coords={GESTURE_CORNERS} id={"wave"} audioContextRef={audioContextRef}/>
+        <GestureSonifier coords={GESTURE_CORNERS} id={"wave"} audioContextRef={audioContextRef}>
+            <p>
+                TODO: MORE COPY HERE -- probably a better sample gesture, too.
+            </p>
+        </GestureSonifier>
 
         <h3>Make Your Own</h3>
         <GesturesToSound audioContextRef={audioContextRef} />

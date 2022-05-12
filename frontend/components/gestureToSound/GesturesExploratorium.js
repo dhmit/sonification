@@ -8,7 +8,7 @@ import GesturesToSound from "./GesturesToSound";
 import {GESTURE_WAVE, GESTURE_LINES, GESTURE_CORNERS} from "./GesturesData";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
-import {drawGesture, clearCanvas, MiniGestureCanvas} from "./GesturesToSound";
+import {drawGesture, clearCanvas, MiniGestureCanvas, animateAllGestures} from "./GesturesToSound";
 import {StudentQuote, GRACE_QUOTE, PEIHUA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 
@@ -19,7 +19,7 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
     const [instrumentSamples, setInstrumentSamples] = useState([]);
     const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
     const [animatingIndex, setAnimatingIndex] = useState(null);
-    const [isAnimatingEverything, setIsAnimatingEverything] = useState(false);
+    const [isAnimatingAllGestures, setIsAnimatingAllGestures] = useState(false);
 
     useEffect(async () => {
         for (const gesture of coords) drawGesture(mainCanvasRef, gesture);
@@ -54,7 +54,6 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
         setAnimatingIndex(i);
     };
 
-    // TODO(ra): Refactor copypasta from GesturesToSound
     useEffect(() => {
         if (animatingIndex === null) return;
 
@@ -65,6 +64,8 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
 
         const gestureCoords = coords[animatingIndex];
 
+        // TODO(ra): Factor out this and simlar code in MiniGestureCanvas
+        // once this all settles down.
         let startTime;
         const render = (timestamp) => {
             if (!startTime) startTime = timestamp;
@@ -88,71 +89,10 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
     }, [animatingIndex]);
 
 
-    // TODO(ra): Refactor copypasta from GestureSonifier
-    useEffect(() => {
-        if (!isAnimatingEverything) return;
-
-        const gestureRelativeEndTimes =
-            coords.map(gesture => gesture[gesture.length - 1].normalizedT);
-
-        const gestureEndTimes = [];
-        for (let i = 0; i < gestureRelativeEndTimes.length; i++) {
-            if (i === 0) {
-                gestureEndTimes.push(gestureRelativeEndTimes[i]);
-            } else {
-                gestureEndTimes.push(gestureEndTimes[i - 1] + gestureRelativeEndTimes[i]);
-            }
-        }
-
-        let startTime;
-        let animatingGestureIndex = 0;
-        const render = (timestamp) => {
-            if (!startTime) startTime = timestamp;
-            const timeElapsed = timestamp - startTime;
-
-            for (; // initialized outside the render loop
-                animatingGestureIndex < coords.length;
-                animatingGestureIndex++)
-            {
-                if (timeElapsed <= gestureEndTimes[animatingGestureIndex]) break;
-            }
-
-            clearCanvas(mainCanvasRef);
-
-            // We've gone past the end of the array, which means we have a few coords left to draw,
-            // so draw everything and call it a day.
-            if (animatingGestureIndex === coords.length) {
-                for (const gesture of coords) drawGesture(mainCanvasRef, gesture);
-                return;
-            }
-
-            let timeOffset = 0;
-            if (animatingGestureIndex > 0) {
-                const fullyDrawnGestures = coords.slice(0, animatingGestureIndex);
-                for (const gesture of fullyDrawnGestures) drawGesture(mainCanvasRef, gesture);
-                timeOffset = gestureEndTimes[animatingGestureIndex - 1];
-            }
-
-            const gestureCoords = coords[animatingGestureIndex];
-
-            const coordsToDraw =
-                gestureCoords.filter(coord => coord.normalizedT+timeOffset <= timeElapsed);
-
-            if (coordsToDraw.length > 0) drawGesture(mainCanvasRef, coordsToDraw);
-
-            if(
-                animatingGestureIndex === (coords.length - 1) &&
-                coordsToDraw.length === gestureCoords.length)
-            {
-                return;
-            }
-
-            requestAnimationFrame(render);
-        };
-        requestAnimationFrame(render);
-        setIsAnimatingEverything(false);
-    }, [isAnimatingEverything]);
-
+    useEffect(
+        () => animateAllGestures(isAnimatingAllGestures, setIsAnimatingAllGestures, coords, mainCanvasRef),
+        [isAnimatingAllGestures]
+    );
 
     return (
         <div className="row mb-4 border p-2 py-4">
@@ -169,7 +109,7 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
                         ? <NiceAudioPlayer
                             src={base64AudioToDataURI(music)}
                             text="Play the full drawing"
-                            onPlayCallback={() => setIsAnimatingEverything(true)}
+                            onPlayCallback={() => setIsAnimatingAllGestures(true)}
                         />
                         : <Loading />
                     }

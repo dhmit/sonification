@@ -1,7 +1,6 @@
 import React, {useLayoutEffect, useEffect, useState, useRef} from "react";
 import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
-import {useDynamicRefs} from "../../common";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {base64AudioToDataURI} from "../../common";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
@@ -114,6 +113,74 @@ export const drawGesture = (thisCanvasRef, coords) => {
     context.stroke();
 };
 
+export const animateAllGestures = (
+    isAnimatingAllGestures, setIsAnimatingAllGestures, allGestures, canvasRef
+) => {
+    if (!isAnimatingAllGestures) return;
+
+    const gestureRelativeEndTimes =
+        allGestures.map(gesture => gesture[gesture.length - 1].normalizedT);
+
+    const gestureEndTimes = [];
+    for (let i = 0; i < gestureRelativeEndTimes.length; i++) {
+        if (i === 0) {
+            gestureEndTimes.push(gestureRelativeEndTimes[i]);
+        } else {
+            gestureEndTimes.push(gestureEndTimes[i - 1] + gestureRelativeEndTimes[i]);
+        }
+    }
+
+    let startTime;
+    let animatingGestureIndex = 0;
+    const render = (timestamp) => {
+        if (!startTime) startTime = timestamp;
+        const timeElapsed = timestamp - startTime;
+
+        for (; // initialized outside the render loop
+            animatingGestureIndex < allGestures.length;
+            animatingGestureIndex++)
+        {
+            if (timeElapsed <= gestureEndTimes[animatingGestureIndex]) break;
+        }
+
+        clearCanvas(canvasRef);
+
+        // We've gone past the end of the array, which means we have a few coords left to draw,
+        // so draw everything and call it a day.
+        if (animatingGestureIndex === allGestures.length) {
+            for (const gesture of allGestures) drawGesture(canvasRef, gesture);
+            return;
+        }
+
+        let timeOffset = 0;
+        if (animatingGestureIndex > 0) {
+            const fullyDrawnGestures = allGestures.slice(0, animatingGestureIndex);
+            for (const gesture of fullyDrawnGestures) drawGesture(canvasRef, gesture);
+            timeOffset = gestureEndTimes[animatingGestureIndex - 1];
+        }
+
+        const gestureCoords = allGestures[animatingGestureIndex];
+
+        const coordsToDraw =
+            gestureCoords.filter(coord => coord.normalizedT+timeOffset <= timeElapsed);
+
+        if (coordsToDraw.length > 0) drawGesture(canvasRef, coordsToDraw);
+
+        if(
+            animatingGestureIndex === (allGestures.length - 1) &&
+            coordsToDraw.length === gestureCoords.length)
+        {
+            return;
+        }
+
+        requestAnimationFrame(render);
+    };
+    requestAnimationFrame(render);
+    setIsAnimatingAllGestures(false);
+
+};
+
+
 const GesturesToSound = ({audioContextRef}) => {
     const mainCanvasRef = useRef(null);
     const [isGesturing, setIsGesturing] = useState(false);
@@ -124,7 +191,7 @@ const GesturesToSound = ({audioContextRef}) => {
     const [instrumentSamples, setInstrumentSamples] = useState([]);
     const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
     const [animatingIndex, setAnimatingIndex] = useState(null);
-    const [isAnimatingEverything, setIsAnimatingEverything] = useState(false);
+    const [isAnimatingAllGestures, setIsAnimatingAllGestures] = useState(false);
 
     useLayoutEffect(() => {
         if (!mainCanvasRef.current) return;
@@ -306,6 +373,7 @@ const GesturesToSound = ({audioContextRef}) => {
     }
 
     // TODO(ra): Refactor copypasta from GestureSonifier
+    // This is _straight up_ copied from over there; fix me later!
     useEffect(() => {
         if (animatingIndex === null) return;
 
@@ -338,73 +406,10 @@ const GesturesToSound = ({audioContextRef}) => {
         setAnimatingIndex(null);
     }, [animatingIndex]);
 
-    // TODO(ra): Refactor copypasta from GestureSonifier
-    useEffect(() => {
-        if (!isAnimatingEverything) return;
-
-        const gestureRelativeEndTimes =
-            allMouseCoords.map(gesture => gesture[gesture.length - 1].normalizedT);
-
-        const gestureEndTimes = [];
-        for (let i = 0; i < gestureRelativeEndTimes.length; i++) {
-            if (i === 0) {
-                gestureEndTimes.push(gestureRelativeEndTimes[i]);
-            } else {
-                gestureEndTimes.push(gestureEndTimes[i - 1] + gestureRelativeEndTimes[i]);
-            }
-        }
-
-        let startTime;
-        let animatingGestureIndex = 0;
-        const render = (timestamp) => {
-            if (!startTime) startTime = timestamp;
-            const timeElapsed = timestamp - startTime;
-
-            for (; // initialized outside the render loop
-                animatingGestureIndex < allMouseCoords.length;
-                animatingGestureIndex++)
-            {
-                if (timeElapsed <= gestureEndTimes[animatingGestureIndex]) break;
-            }
-
-            clearCanvas(mainCanvasRef);
-
-            // We've gone past the end of the array, which means we have a few coords left to draw,
-            // so draw everything and call it a day.
-            if (animatingGestureIndex === allMouseCoords.length) {
-                for (const gesture of allMouseCoords) drawGesture(mainCanvasRef, gesture);
-                return;
-            }
-
-            let timeOffset = 0;
-            if (animatingGestureIndex > 0) {
-                const fullyDrawnGestures = allMouseCoords.slice(0, animatingGestureIndex);
-                for (const gesture of fullyDrawnGestures) drawGesture(mainCanvasRef, gesture);
-                timeOffset = gestureEndTimes[animatingGestureIndex - 1];
-            }
-
-            const gestureCoords = allMouseCoords[animatingGestureIndex];
-
-            const coordsToDraw =
-                gestureCoords.filter(coord => coord.normalizedT+timeOffset <= timeElapsed);
-
-            if (coordsToDraw.length > 0) drawGesture(mainCanvasRef, coordsToDraw);
-
-            if(
-                animatingGestureIndex === (allMouseCoords.length - 1) &&
-                coordsToDraw.length === gestureCoords.length)
-            {
-                return;
-            }
-
-            requestAnimationFrame(render);
-        };
-        requestAnimationFrame(render);
-        setIsAnimatingEverything(false);
-    }, [isAnimatingEverything]);
-
-
-
+    useEffect(
+        () => animateAllGestures(isAnimatingAllGestures, setIsAnimatingAllGestures, allMouseCoords, mainCanvasRef),
+        [isAnimatingAllGestures]
+    );
 
     return (<>
         <p>
@@ -443,7 +448,7 @@ const GesturesToSound = ({audioContextRef}) => {
                 {music && <NiceAudioPlayer
                     src={base64AudioToDataURI(music)}
                     text="Play the full drawing"
-                    onPlayCallback={() => setIsAnimatingEverything(true)}
+                    onPlayCallback={() => setIsAnimatingAllGestures(true)}
                 /> }
 
                 {instrumentSamples.length > 0 && (<>

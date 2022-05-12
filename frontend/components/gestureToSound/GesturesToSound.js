@@ -36,9 +36,11 @@ const drawGestureOnMiniCanvas = (miniCanvasRef, rawCoords) => {
     drawGesture(miniCanvasRef, scaledCoords);
 };
 
-export const clearCanvas = (miniCanvasRef) => {
+export const clearCanvas = (miniCanvasRef, context) => {
     const canvas = miniCanvasRef.current;
-    const context = canvas.getContext('2d');
+    if (!context) {
+        context = canvas.getContext('2d');
+    }
     context.clearRect(0, 0, canvas.width, canvas.height);
 };
 
@@ -122,6 +124,7 @@ const GesturesToSound = ({audioContextRef}) => {
     const [instrumentSamples, setInstrumentSamples] = useState([]);
     const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
     const [animatingIndex, setAnimatingIndex] = useState(null);
+    const [isAnimatingEverything, setIsAnimatingEverything] = useState(false);
 
     useLayoutEffect(() => {
         if (!mainCanvasRef.current) return;
@@ -335,6 +338,74 @@ const GesturesToSound = ({audioContextRef}) => {
         setAnimatingIndex(null);
     }, [animatingIndex]);
 
+    // TODO(ra): Refactor copypasta from GestureSonifier
+    useEffect(() => {
+        if (!isAnimatingEverything) return;
+
+        const gestureRelativeEndTimes =
+            allMouseCoords.map(gesture => gesture[gesture.length - 1].normalizedT);
+
+        const gestureEndTimes = [];
+        for (let i = 0; i < gestureRelativeEndTimes.length; i++) {
+            if (i === 0) {
+                gestureEndTimes.push(gestureRelativeEndTimes[i]);
+            } else {
+                gestureEndTimes.push(gestureEndTimes[i - 1] + gestureRelativeEndTimes[i]);
+            }
+        }
+
+        let startTime;
+        let animatingGestureIndex = 0;
+        const render = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const timeElapsed = timestamp - startTime;
+
+            for (; // initialized outside the render loop
+                animatingGestureIndex < allMouseCoords.length;
+                animatingGestureIndex++)
+            {
+                if (timeElapsed <= gestureEndTimes[animatingGestureIndex]) break;
+            }
+
+            clearCanvas(mainCanvasRef);
+
+            // We've gone past the end of the array, which means we have a few coords left to draw,
+            // so draw everything and call it a day.
+            if (animatingGestureIndex === allMouseCoords.length) {
+                for (const gesture of allMouseCoords) drawGesture(mainCanvasRef, gesture);
+                return;
+            }
+
+            let timeOffset = 0;
+            if (animatingGestureIndex > 0) {
+                const fullyDrawnGestures = allMouseCoords.slice(0, animatingGestureIndex);
+                for (const gesture of fullyDrawnGestures) drawGesture(mainCanvasRef, gesture);
+                timeOffset = gestureEndTimes[animatingGestureIndex - 1];
+            }
+
+            const gestureCoords = allMouseCoords[animatingGestureIndex];
+
+            const coordsToDraw =
+                gestureCoords.filter(coord => coord.normalizedT+timeOffset <= timeElapsed);
+
+            if (coordsToDraw.length > 0) drawGesture(mainCanvasRef, coordsToDraw);
+
+            if(
+                animatingGestureIndex === (allMouseCoords.length - 1) &&
+                coordsToDraw.length === gestureCoords.length)
+            {
+                return;
+            }
+
+            requestAnimationFrame(render);
+        };
+        requestAnimationFrame(render);
+        setIsAnimatingEverything(false);
+    }, [isAnimatingEverything]);
+
+
+
+
     return (<>
         <p>
             First, draw something, then click Sonify! to hear your gestures in motion.
@@ -369,7 +440,11 @@ const GesturesToSound = ({audioContextRef}) => {
                     }
                 </button>
 
-                {music && <NiceAudioPlayer src={base64AudioToDataURI(music)} text="Play the full drawing"/> }
+                {music && <NiceAudioPlayer
+                    src={base64AudioToDataURI(music)}
+                    text="Play the full drawing"
+                    onPlayCallback={() => setIsAnimatingEverything(true)}
+                /> }
 
                 {instrumentSamples.length > 0 && (<>
                     <p>

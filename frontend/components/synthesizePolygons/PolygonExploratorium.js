@@ -164,16 +164,25 @@ class PolygonSonifier extends React.Component {
     render() {
         if (!this.state.music) return <Loading />;
 
+        const buttonBorderStyle = {
+            border: '5px solid',
+        };
+        if (!this.state.playing) {
+            buttonBorderStyle.color = 'transparent';
+        }
+
         return (
             <button
                 onClick={() => this.toggleAudio()}
                 className={`
                     btn
+                    mr-2 mb-2
                     ${this.state.playing
                         ? 'btn-outline-primary'
                         : 'btn-outline-secondary'
                     }
                 `}
+                style={buttonBorderStyle}
             >
                 <PolygonViewer
                     width={this.size}
@@ -211,10 +220,15 @@ const PolygonExploratorium = () => {
         setUserPolygons(newUserPolygons);
     };
 
+    const removeAllPolygons = () => {
+        setUserPolygons([]);
+    };
+
     return (<>
         {[SQUARE_DATA, FLOWERISH_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
             <PolygonSonifier
                 key={i}
+                size={150}
                 data={data} audioContextRef={audioContextRef} compressorRef={compressorRef} />
         )}
 
@@ -237,12 +251,17 @@ const PolygonExploratorium = () => {
                         onSubmit={updateNewPolygon}
                     />
                 </div>
+                {userPolygons.length > 0 &&
+                <button onClick={removeAllPolygons} className='w-100 btn btn-primary'>
+                    Remove all
+                </button>
+                }
             </div>
             <div className="col-6">
                 <div className="row">
-                    {userPolygons.length !== 0 && <h3 className="mb-4">Click to play or pause</h3>}
+                    {userPolygons.length > 0 && <h3 className="mb-4">Click to play or pause</h3>}
                     {userPolygons.map((data, i) =>
-                        <div className="col-4 mb-3" key={i}>
+                        <div className="col-6 mb-3" key={i}>
                             <div style={{width: "150px"}}>
                                 <PolygonSonifier
                                     key={i+20}

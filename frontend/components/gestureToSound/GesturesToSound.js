@@ -41,25 +41,25 @@ const drawGestureOnMiniCanvas = (miniCanvasRef, rawCoords) => {
     drawGesture(miniCanvasRef, scaledCoords);
 };
 
-const clearMiniCanvas = (miniCanvasRef) => {
+export const clearCanvas = (miniCanvasRef) => {
     const canvas = miniCanvasRef.current;
     const context = canvas.getContext('2d');
     context.clearRect(0, 0, canvas.width, canvas.height);
 };
 
-export const MiniGestureCanvas = ({audioCallback, coords}) => {
+export const MiniGestureCanvas = ({clickCallback, coords}) => {
     const canvasRef = useRef();
     const [isAnimating, setIsAnimating] = useState(false);
 
     const handleClick = (e) => {
-        audioCallback();
+        clickCallback();
         setIsAnimating(true);
     };
 
     useLayoutEffect(() => {
         if (!canvasRef.current) return;
         drawGestureOnMiniCanvas(canvasRef, coords);
-    }, [audioCallback]);
+    }, [clickCallback]);
 
     useEffect(() => {
         if (!isAnimating) return;
@@ -71,14 +71,16 @@ export const MiniGestureCanvas = ({audioCallback, coords}) => {
             if (!startTime) startTime = timestamp;
             const timeElapsed = timestamp - startTime;
 
-            clearMiniCanvas(canvasRef);
+            clearCanvas(canvasRef);
             const coordsToDraw = scaledCoords.filter(coord => {
                 return coord.normalizedT <= timeElapsed;
             });
             if (coordsToDraw.length > 0) {
                 drawGesture(canvasRef, coordsToDraw);
             }
-            requestAnimationFrame(render);
+            if(timeElapsed < scaledCoords[scaledCoords.length - 1].normalizedT) {
+                requestAnimationFrame(render);
+            }
         };
         requestAnimationFrame(render);
         setIsAnimating(false);
@@ -117,7 +119,6 @@ export const drawGesture = (thisCanvasRef, coords) => {
 
 const GesturesToSound = ({audioContextRef}) => {
     const mainCanvasRef = useRef(null);
-    const [getRef, setRef] = useDynamicRefs();
     const [isGesturing, setIsGesturing] = useState(false);
     const [loading, setLoading] = useState(false);
     const [currMouseCoords, setCurrMouseCoords] = useState([]);
@@ -234,23 +235,16 @@ const GesturesToSound = ({audioContextRef}) => {
         };
     }, [beginDrawing, endDrawing]);
 
-    const resetCanvas = (event) => {
+    const handleClearCanvas = (event) => {
         event.preventDefault();
-        const canvas = mainCanvasRef.current;
-        const context = canvas.getContext("2d");
-        context.clearRect(0, 0, canvas.width, canvas.height);
         setAllMouseCoords([]);
-    };
-
-    const clearCanvas = (event) => {
-        resetCanvas(event);
         setInstrumentSamples([]);
         setMusic(null);
+        clearCanvas(mainCanvasRef);
     };
 
     const handleSubmitGestures = async (event) => {
         event.preventDefault();
-        console.log(allMouseCoords);
         const canvas = mainCanvasRef.current;
         const canvasSettings = {
             width: canvas.width,
@@ -294,6 +288,10 @@ const GesturesToSound = ({audioContextRef}) => {
     };
      */
 
+    const handleMiniCanvasClick = (i) => {
+        audioStartCallbacks[i]();
+    };
+
     const drawingIsEmpty = (allMouseCoords.length === 0);
 
     let sonifyButtonText;
@@ -323,7 +321,7 @@ const GesturesToSound = ({audioContextRef}) => {
             </div>
             <div className='col-4 px-0 px-md-2'>
                 <div className="btn-group-vertical w-100 mx-0 mb-2" role="group">
-                    <button className="btn btn-outline-dark" onClick={clearCanvas}>
+                    <button className="btn btn-outline-dark" onClick={handleClearCanvas}>
                         Clear
                     </button>
                 </div>
@@ -347,7 +345,7 @@ const GesturesToSound = ({audioContextRef}) => {
                     </p>
                     {instrumentSamples.map((sample, i) =>
                         <MiniGestureCanvas
-                            audioCallback={audioStartCallbacks[i]}
+                            clickCallback={() => handleMiniCanvasClick(i)}
                             coords={allMouseCoords[i]}
                             key={i}
                         />

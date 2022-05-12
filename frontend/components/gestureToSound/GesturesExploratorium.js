@@ -8,7 +8,7 @@ import GesturesToSound from "./GesturesToSound";
 import {GESTURE_WAVE, GESTURE_LINES, GESTURE_CORNERS} from "./GesturesData";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
-import {drawGesture, MiniGestureCanvas} from "./GesturesToSound";
+import {drawGesture, clearCanvas, MiniGestureCanvas} from "./GesturesToSound";
 import {StudentQuote, GRACE_QUOTE, PEIHUA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 
@@ -18,6 +18,7 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
     const [music, setMusic] = useState(null);
     const [instrumentSamples, setInstrumentSamples] = useState([]);
     const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
+    const [animatingIndex, setAnimatingIndex] = useState(null);
 
     useEffect(async () => {
         for (const gesture of coords) drawGesture(mainCanvasRef, gesture);
@@ -47,6 +48,45 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
         });
     }, []);
 
+    const handleMiniCanvasClick = (i) => {
+        audioStartCallbacks[i]();
+        setAnimatingIndex(i);
+    };
+
+    // TODO(ra): Refactor copypasta from GesturesToSound
+    useEffect(() => {
+        if (animatingIndex === null) return;
+
+        clearCanvas(mainCanvasRef);
+        const allOtherGestures =
+            coords.filter((coord, coordIndex) => coordIndex !== animatingIndex);
+        for (const gesture of allOtherGestures) drawGesture(mainCanvasRef, gesture);
+
+        const gestureCoords = coords[animatingIndex];
+
+        let startTime;
+        const render = (timestamp) => {
+            if (!startTime) startTime = timestamp;
+            const timeElapsed = timestamp - startTime;
+
+            clearCanvas(mainCanvasRef);
+            for (const gesture of allOtherGestures) drawGesture(mainCanvasRef, gesture);
+
+            const coordsToDraw = gestureCoords.filter(coord => {
+                return coord.normalizedT <= timeElapsed;
+            });
+            if (coordsToDraw.length > 0) {
+                drawGesture(mainCanvasRef, coordsToDraw);
+            }
+            if(timeElapsed < gestureCoords[gestureCoords.length - 1].normalizedT) {
+                requestAnimationFrame(render);
+            }
+        };
+        requestAnimationFrame(render);
+        setAnimatingIndex(null);
+    }, [animatingIndex]);
+
+
     return (
         <div className="row mb-4 border p-2 py-4">
             <div className="col">
@@ -61,7 +101,9 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
                     {music
                         ? <NiceAudioPlayer
                             src={base64AudioToDataURI(music)}
-                            text="Play the full drawing"/>
+                            text="Play the full drawing"
+
+                        />
                         : <Loading />
                     }
                 </div>
@@ -73,7 +115,7 @@ const GestureSonifier = ({coords, id, audioContextRef}) => {
                         </p>
                         {instrumentSamples.map((sample, i) =>
                             <MiniGestureCanvas
-                                audioCallback={audioStartCallbacks[i]}
+                                clickCallback={() => handleMiniCanvasClick(i)}
                                 coords={coords[i]}
                                 key={i}
                             />

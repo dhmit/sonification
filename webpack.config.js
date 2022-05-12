@@ -26,8 +26,14 @@ module.exports = {
                 use: [MiniCssExtractPlugin.loader, "css-loader", "sass-loader"]
             },
             {test: /\.js|.jsx$/, exclude: /node_modules/, use: "babel-loader"},
-            {test: /\.(png|jpe?g|gif|svg|mp3|m4a|mp4)$/i, use: [{loader: "file-loader"}]},
+            {test: /\.(png|jpe?g|gif|mp3|m4a|mp4)$/i, use: [{loader: "file-loader"}]},
             {test: /\.(woff|woff2|eot|ttf)$/, use: "url-loader"},
+            {
+                test: /\.svg$/i,
+                issuer: /\.[jt]sx?$/,
+                use: ['@svgr/webpack'],
+            },
         ]
     }
 };
+

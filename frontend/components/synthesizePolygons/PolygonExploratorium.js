@@ -220,13 +220,13 @@ const PolygonExploratoriumMain = () => {
             <PolygonSonifier
                 key={i}
                 size={150}
-                data={data} audioContextRef={audioContextRef} compressorRef={compressorRef} />
+                data={data} audioContextRef={audioContextRef} compressorRef={compressorRef}/>
         )}
 
         <InfoCard>
             <img className="mr-2"
-                alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100%"/>
+                 alt="Portrait of student"
+                 src={MoveIcon} width="100px" height="100%"/>
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
 
@@ -280,8 +280,10 @@ export const PolygonExploratoriumSidebar = () => {
     </>;
 };
 
-const PolygonExploratorium = () => <ExploratoriumLayout extraClass={"polygons"}
-                                                        main={<PolygonExploratoriumMain/>}
-                                                        sidebar={<PolygonExploratoriumSidebar/>}/>;
+const PolygonExploratorium = () =>
+    <ExploratoriumLayout extraClass={"polygons"}
+                         title={"Polygons"}
+                         main={<PolygonExploratoriumMain/>}
+                         sidebar={<PolygonExploratoriumSidebar/>}/>;
 
 export default PolygonExploratorium;

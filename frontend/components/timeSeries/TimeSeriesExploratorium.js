@@ -1,27 +1,13 @@
-import React from "react";
+import React, {useRef, useState, useEffect} from "react";
 import {fetchPost} from "../../common";
-import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
-import MoveIcon from "../../images/MoveIcon.svg";
 import {StudentQuote, MOISES_QUOTE, EESHA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 import {base64AudioToDataURI} from "../../common";
 import ExploratoriumLayout from "../global/ExploratoriumLayout";
-
-const SUNRISE_SUNSET_BOSTON = {
-    title: "Sunrise and Sunset Times in Boston",
-    filename: "boston_sunrise_sunset",
-};
-
-const PI = {
-    title: "Digits of Pi",
-    filename: "pi",
-};
-
-const GOLDEN = {
-    title: "Golden Ratio",
-    filename: "golden",
-};
+import {createAudioContextWithCompressor} from "../instruments/common";
+import {PlayToggleButton} from "../instruments/NiceAudioPlayer";
+import {createAudioCallbacks} from "../instruments/SamplePlayer";
 
 
 const DEFAULT_COLUMN_CONSTANTS = {
@@ -34,109 +20,188 @@ const DEFAULT_COLUMN_CONSTANTS = {
     "r_percentage": .2,
 };
 
+const SUNRISE_SUNSET_BOSTON = {
+    title: "Sunrise and Sunset Times in Boston",
+    filename: "boston_sunrise_sunset",
+    headers: [
+        'Sunrise',
+        'Sunset',
+    ],
+    constants: DEFAULT_COLUMN_CONSTANTS,
+};
+
+const IRRATIONALS = {
+    title: "Irrational Numbers",
+    filename: "irrationals_demo",
+    headers: [
+        'Fibonnaci',
+        'Golden Ratio',
+        'Pi',
+    ],
+    constants: DEFAULT_COLUMN_CONSTANTS,
+};
+
+
 const INITIAL_EVERY_N = 1;
 const INITIAL_DURATION = .5;
 
 
-class TimeSeriesSonifier extends React.Component {
-    constructor(props) {
-        super(props);
-        this.title = props.data.title;
-        this.name = props.data.filename;
-        this.state = {};
-    }
+const TimeSeriesSonifier = ({data, audioContextRef, compressorRef}) => {
+    const title = data.title;
+    const filename = data.filename;
+    const headers = data.headers;
+    const defaultColumnConstants = data.constants;
+    const [playing, setPlaying] = useState(false);
+    const [graph, setGraph] = useState();
+    const [samples, setSamples] = useState([]);
+    const [startCallbacks, setStartCallbacks] = useState([]);
+    const [endCallbacks, setEndCallbacks] = useState([]);
+    const [unmuteCallbacks, setUnmuteCallbacks] = useState([]);
+    const [tracksPlaying, setTracksPlaying] = useState([]);
 
-    constantsDefaults = {
-        "base_frequency": {"label": "Base Frequency", "min": null, "max": null, "step": null},
-        "multiplier": {"label": "Multiplier", "min": null, "max": null, "step": null},
-        "offset": {"label": "Offset", "min": null, "max": null, "step": null},
-        "a_percentage": {"label": "A", "min": 0, "max": 1, "step": .1},
-        "d_percentage": {"label": "D", "min": 0, "max": 1, "step": .1},
-        "s_percentage": {"label": "S", "min": 0, "max": 1, "step": .1},
-        "r_percentage": {"label": "R", "min": 0, "max": 1, "step": .1},
-    };
-
-    setParsedCsvAndUpdateConstants(parsedData) {
-        // TODO(ra): we don't need any of this for this demo: just hardcode constants per example
-        const newColumnConstants = [];
-        parsedData[0].forEach(() => newColumnConstants.push({...DEFAULT_COLUMN_CONSTANTS}));
-        let nextFreq = 220;
-        for (const constants of newColumnConstants) {
-            constants.base_frequency = nextFreq;
-            nextFreq *= 2;
-        }
-
-        const numRows = parsedData.length;
-        // aim for 30 seconds of audio if too long
-        const dur = Math.round(Math.min(30 / numRows, INITIAL_DURATION) * 10) / 10;
-        this.setState({
-            duration: dur,
-            constants: newColumnConstants,
-            parsedCSV: parsedData,
-        });
-    };
-
-    async componentDidMount() {
+    useEffect(async () => {
         await fetchPost(
             '/api/time_series_sample_data/',
-            {name: this.name},
-            (res) => this.setParsedCsvAndUpdateConstants(res),
+            {name: filename},
+            async (parsedCSV) => {
+                // TODO(ra): this is a horrifying mess, but clean it up later
+                // Basically we shouldn't do a double round trip
+                const newColumnConstants = [];
+                parsedCSV[0].forEach(() => newColumnConstants.push({...defaultColumnConstants}));
+                let nextFreq = 220;
+                for (const constants of newColumnConstants) {
+                    constants.base_frequency = nextFreq;
+                    nextFreq *= 2;
+                }
+
+                const numRows = parsedCSV.length;
+                // aim for 30 seconds of audio if too long
+                const duration = Math.round(Math.min(30 / numRows, INITIAL_DURATION) * 10) / 10;
+
+                const requestBody = {
+                    parsedCSV,
+                    duration,
+                    everyN: INITIAL_EVERY_N,
+                    constants: newColumnConstants,
+                };
+
+                await fetchPost('/api/time_series_to_audio/', requestBody, response => {
+                    const [startCallbacks, endCallbacks, unmuteCallbacks] =
+                        createAudioCallbacks(response.samples, audioContextRef.current);
+                    setStartCallbacks(startCallbacks);
+                    setEndCallbacks(endCallbacks);
+                    setUnmuteCallbacks(unmuteCallbacks);
+                    setGraph(response.graph);
+                    setSamples(response.samples);
+                });
+            },
         );
+    }, []);
 
-        const requestBody = {
-            parsedCSV: this.state.parsedCSV,
-            duration: this.state.duration,
-            everyN: INITIAL_EVERY_N,
-            constants: this.state.constants,
-        };
-
-        await fetchPost('/api/time_series_to_audio/', requestBody, response => {
-            this.setState({
-                music: response.musicData.sound,
-                image: response.musicData.img,
-                samples: response.samples,
+    const toggleAllTracks = () => {
+        const newTracksPlaying = [];
+        if (playing) {
+            endCallbacks.forEach(f => f());
+            setPlaying(false);
+        } else {
+            startCallbacks.forEach((f, i) => {
+                newTracksPlaying.push(i);
+                f();
             });
-        });
-    }
+            setPlaying(true);
+        }
+        setTracksPlaying(newTracksPlaying);
+    };
 
-    render() {
-        return (
-            <div className="row mb-4 border p-2 py-4">
-                <div className="col">
-                    {this.state.image && <img
-                        src={`data:image/png;base64, ${this.state.image}`}
-                        className="img-fluid"
-                        alt="A line chart showing the frequencies of the sonified data"
-                    />}
-                </div>
-                <div className="col">
-                    <div className="row mb-4">
-                        <div className="col w-100">
-                            <h4 className="mb-4">{this.title}</h4>
-                        </div>
+    const toggleOneTrack = (i) => {
+        // TODO(ra): start global playing with individual track toggles?
+        if (!playing) return;
+
+        let newTracksPlaying = [];
+        if (tracksPlaying.includes(i)) {
+            newTracksPlaying = tracksPlaying.filter(t => t !== i);
+            endCallbacks[i]();
+        } else {
+            newTracksPlaying = [...tracksPlaying, i];
+            unmuteCallbacks[i]();
+        }
+        setTracksPlaying(newTracksPlaying);
+    };
+
+    return (
+        <div className="row mb-4 border p-2 py-4">
+            <div className="col-4">
+                {graph && <img
+                    src={`data:image/png;base64, ${graph}`}
+                    className="img-fluid"
+                    alt="A line chart showing the frequencies of the sonified data"
+                />}
+            </div>
+            <div className="col-8">
+                <div className="row mb-4">
+                    <div className="col w-100">
+                        <h4 className="mb-4">{title}</h4>
+                        <p>
+                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean vel est sollicitudin, scelerisque nunc at, dictum orci. Ut ut ultrices ex, in tristique leo. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum ultrices neque nec turpis mollis, non ornare lacus ullamcorper. Quisque efficitur tincidunt diam, et porta sapien volutpat a. Ut non tortor orci. Duis fringilla pharetra vulputate. Ut placerat est eget nibh vulputate, quis fermentum nunc euismod. Pellentesque ultricies tincidunt tortor, ac posuere purus posuere dapibus. Vivamus ut mi tortor.
+                        </p>
                     </div>
-                    <div className="row">
-                        <div className="col">
-                            {this.state.samples
-                                ? this.state.samples.map((sample, i) => <NiceAudioPlayer key={i}
-                                                                                         extraClass={"btn btn-sonification btn-primary"}
-                                                                                         text={"Play"}
-                                                                                         src={base64AudioToDataURI(sample)}/>)
-                                : <Loading/>
-                            }
-                        </div>
+                </div>
+                <div className="row">
+                    <div className="col">
+                        {samples.length > 0
+                            ? <>
+                                <PlayToggleButton
+                                    onClick={toggleAllTracks}
+                                    playing={playing}
+                                    text="Play all tracks"
+                                    extraClass="mb-4"
+                                />
+                                <p>
+                                Toggle each track:
+                                </p>
+                                {samples.map((sample, i) =>
+                                    <button
+                                        key={i}
+                                        className={
+                                            `btn btn-sonification btn-primary audio-player
+                                             ${tracksPlaying.includes(i) && "audio-player-on"}`}
+                                        onClick={() => toggleOneTrack(i)}
+                                    >
+                                        {headers[i]}
+                                    </button>
+                                )}
+                            </>
+
+                            : <Loading/>
+                        }
                     </div>
                 </div>
             </div>
-        );
-    }
-}
+        </div>
+    );
+};
 
 const TimeSeriesExploratoriumMain = () => {
+    const audioContextRef = useRef(null);
+    const compressorRef = useRef(null);
+    if (!audioContextRef.current) {
+        const {audioCtx, compressor} = createAudioContextWithCompressor();
+        audioContextRef.current = audioCtx;
+        compressorRef.current = compressor;
+    }
+
     return (<>
-        <TimeSeriesSonifier data={SUNRISE_SUNSET_BOSTON} />
-        <TimeSeriesSonifier data={PI} />
-        <TimeSeriesSonifier data={GOLDEN} />
+        <TimeSeriesSonifier
+            audioContextRef={audioContextRef}
+            compressorRef={compressorRef}
+            data={SUNRISE_SUNSET_BOSTON}
+        />
+
+        <TimeSeriesSonifier
+            audioContextRef={audioContextRef}
+            compressorRef={compressorRef}
+            data={IRRATIONALS}
+        />
     </>);
 };
 

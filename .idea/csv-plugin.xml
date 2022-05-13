@@ -24,6 +24,13 @@
             </Attribute>
           </value>
         </entry>
+        <entry key="\backend\app\sample_csvs\irrationals_demo.csv">
+          <value>
+            <Attribute>
+              <option name="separator" value="," />
+            </Attribute>
+          </value>
+        </entry>
         <entry key="\backend\app\sample_csvs\pi.csv">
           <value>
             <Attribute>

@@ -180,13 +180,13 @@ def time_series_to_audio(request):
     Takes a dictionary representing a parsed CSV and constructs a piece of music
     and a set of samples based on the data.
     """
-    music_data = time_series_processing.time_series_to_music(request)
+    graph = time_series_processing.time_series_to_graph(request)
     samples = time_series_processing.time_series_to_samples(request)
     samples_base64 = [audio_samples_to_wav_base64(s) for s in samples]
 
     return Response({
         'samples': samples_base64,
-        'musicData': music_data,
+        'graph': graph,
     })
 
 

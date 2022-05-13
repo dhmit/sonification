@@ -164,7 +164,7 @@ $player-height: 75px;
     border-radius: $player-height;
     width: 100%;
     min-height: $player-height;
-    background-color: white;
+    background-color: white !important;
     color: $color-neutral;
     font-size: 1.2em;
 
@@ -193,7 +193,7 @@ $player-height: 75px;
         }
 
         &.audio-player-on {
-            background-color: white !important;
+            background-color: $color-green !important;
         }
     }
 }

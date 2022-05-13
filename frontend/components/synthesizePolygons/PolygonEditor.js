@@ -335,7 +335,7 @@ const PolygonEditor = (
                 className={loading ? "svg-display svg-display-loading"
                     : ((editorMode === EditorModes.ADD || focusPointIndex !== -1)
                         ? "svg-display svg-display-no-cursor" : "svg-display")}
-                width={internalWidth}
+                width={internalWidth - 260}
                 height={internalHeight}
                 onClick={handleClickSvg}
                 onMouseMove={handleMoveSvg}

@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from "react";
+import * as PropTypes from "prop-types";
 import PlayIcon from "../../images/icons/play.svg";
 import StopIcon from "../../images/icons/stop.svg";
 
-const NiceAudioPlayer = ({src, text}) => {
+const NiceAudioPlayer = ({src, text, extraClass}) => {
     const [audioPlayer] = useState(new Audio(src));
     const [playing, setPlaying] = useState(false);
     const toggleAudio = () => setPlaying(!playing);
@@ -22,7 +23,9 @@ const NiceAudioPlayer = ({src, text}) => {
     return (
         <button
             onClick={toggleAudio}
-            className={playing ? "audio-player audio-player-on" : "audio-player"}>
+            className={playing
+                ? `audio-player audio-player-on ${extraClass}`
+                : `audio-player ${extraClass}`}>
             <div className="row">
                 <div className="col-2 mr-0 ml-2">
                     <span className="play-icon">
@@ -38,6 +41,12 @@ const NiceAudioPlayer = ({src, text}) => {
             </div>
         </button>
     );
+};
+
+NiceAudioPlayer.propTypes = {
+    src: PropTypes.string,
+    text: PropTypes.string,
+    extraClass: PropTypes.string
 };
 
 export default NiceAudioPlayer;

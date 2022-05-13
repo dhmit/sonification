@@ -1,5 +1,4 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
-import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
 import {useDynamicRefs} from "../../common";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
@@ -19,13 +18,11 @@ const getRefIdForMiniCanvas = (i) => `miniCanvasRef${i}`;
 
 export const MiniGestureCanvas = ({audioCallback, canvasRef}) =>
     <canvas
-        style={{border: "1px solid grey"}}
-        className="mr-2"
+        className="mr-2 mini-canvas"
         onClick={() => audioCallback()}
         height="100" width="100"
         ref={canvasRef}
-    />
-;
+    />;
 
 export const drawGestureOnMiniCanvas = (miniCanvas, rawCoords) => {
     const pad = 10; // TODO(ra): maybe scale this padding?
@@ -82,7 +79,7 @@ const GesturesToSound = () => {
     const [instrumentSamples, setInstrumentSamples] = useState([]);
     const [audioStartCallbacks, setAudioStartCallbacks] = useState([]);
     const [audioEndCallbacks, setAudioEndCallbacks] = useState([]);
-    const [undoneGestures, setUndoneGestures] = useState([]);
+    // const [undoneGestures, setUndoneGestures] = useState([]);
 
     const {audioCtx, compressor} = createAudioContextWithCompressor();
     const audioContextRef = useRef(audioCtx);
@@ -226,25 +223,21 @@ const GesturesToSound = () => {
     let sonifyButtonText;
     if (drawingIsEmpty) {
         sonifyButtonText = 'First, draw something.';
-    }
-    else {
+    } else {
         if (instrumentSamples) sonifyButtonText = 'Update';
         else sonifyButtonText = 'Sonify';
     }
 
     return (<>
         <p>
-            First, draw something, then click Sonify! at the bottom of the page to hear your gestures in motion.
+            First, draw something, then click Sonify! at the bottom of the page to hear your
+            gestures in motion.
         </p>
 
         <div className="row">
             <div className="col-8">
                 <canvas
-                    className={`
-                                ${STYLES.canvas}
-                                ${submitted ? "" : STYLES.activeCanvas}
-                                width='500px' height='500px'
-                            `}
+                    className={`draw-yourself canvas ${submitted ? "" : "active-canvas"}`}
                     ref={mainCanvasRef}
                 />
             </div>
@@ -258,15 +251,15 @@ const GesturesToSound = () => {
                 <button
                     disabled={drawingIsEmpty}
                     className="w-100 btn btn-outline-primary mb-4"
-                    onClick={(event) => loadResults(event, handleSubmitGestures, setLoading)}
-                >
+                    onClick={(event) => loadResults(event, handleSubmitGestures, setLoading)}>
                     {loading
                         ? <div className='spinner-border' role="status"/>
                         : sonifyButtonText
                     }
                 </button>
 
-                {music && <NiceAudioPlayer src={base64AudioToDataURI(music)} text="Play the full drawing"/> }
+                {music &&
+                <NiceAudioPlayer src={base64AudioToDataURI(music)} text="Play the full drawing"/>}
 
                 {instrumentSamples.length > 1 && (<>
                     <p>
@@ -285,7 +278,6 @@ const GesturesToSound = () => {
         </div>
     </>);
 };
-
 
 
 export default GesturesToSound;

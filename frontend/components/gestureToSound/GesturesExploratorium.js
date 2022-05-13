@@ -1,5 +1,4 @@
-import React, {useCallback, useEffect, useState, useRef} from "react";
-import STYLES from "./GesturesToSound.module.scss";
+import React, {useEffect, useState, useRef} from "react";
 import {base64AudioToDataURI, fetchPost} from "../../common";
 import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
@@ -29,7 +28,7 @@ const GestureSonifier = ({coords, id}) => {
     const audioContextRef = useRef(audioCtx);
 
     useEffect(async () => {
-        for(const gesture of coords) drawGesture(mainCanvasRef, gesture);
+        for (const gesture of coords) drawGesture(mainCanvasRef, gesture);
 
         const canvas = mainCanvasRef.current;
         const canvasSettings = {
@@ -57,10 +56,10 @@ const GestureSonifier = ({coords, id}) => {
     }, []);
 
     return (
-        <div className="row mb-4 border p-2 py-4">
+        <div className="row gestures">
             <div className="col">
                 <canvas
-                    className={STYLES.canvas}
+                    className="canvas"
                     ref={mainCanvasRef}
                     width="500" height="500"
                 />
@@ -68,8 +67,10 @@ const GestureSonifier = ({coords, id}) => {
             <div className="col">
                 <div className="mb-4">
                     {music
-                        ? <NiceAudioPlayer src={base64AudioToDataURI(music)} text="Play the full drawing"/>
-                        : <Loading />
+                        ? <NiceAudioPlayer extraClass={"btn btn-sonification btn-primary"}
+                                           src={base64AudioToDataURI(music)}
+                                           text="Play the drawing"/>
+                        : <Loading/>
                     }
                 </div>
 
@@ -80,12 +81,12 @@ const GestureSonifier = ({coords, id}) => {
                         </p>
                         {instrumentSamples.map((sample, i) =>
                             <MiniGestureCanvas
-                            audioCallback={audioStartCallbacks[i]}
-                            canvasRef={setRef(getRefIdForExampleMiniCanvas(i, id))}
-                            key={i}
+                                audioCallback={audioStartCallbacks[i]}
+                                canvasRef={setRef(getRefIdForExampleMiniCanvas(i, id))}
+                                key={i}
                             />
-                            )}
-                        </>)
+                        )}
+                    </>)
                     }
                 </div>
             </div>
@@ -101,14 +102,13 @@ const GesturesExploratoriumMain = () => {
             <img
                 className="mr-2"
                 alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100px" />
+                src={MoveIcon} width="100px" height="100px"/>
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
-        <GestureSonifier coords={GESTURE_CORNERS} id={"corners"} />
-        <GestureSonifier coords={GESTURE_SQUIGGLES} id={"squiggles"} />
+        <GestureSonifier coords={GESTURE_CORNERS} id={"corners"}/>
+        <GestureSonifier coords={GESTURE_SQUIGGLES} id={"squiggles"}/>
 
-        <h3>Try it yourself!</h3>
-        <GesturesToSound />
+        <GesturesToSound/>
     </>);
 };
 
@@ -121,6 +121,10 @@ const GesturesExploratoriumSidebar = () => {
 };
 
 
-const GesturesExploratorium = () => <ExploratoriumLayout main={<GesturesExploratoriumMain />} sidebar={<GesturesExploratoriumSidebar />} />;
+const GesturesExploratorium = () => <ExploratoriumLayout
+    extraClass={"gestures"}
+    main={<GesturesExploratoriumMain/>}
+    sidebar={
+        <GesturesExploratoriumSidebar/>}/>;
 
 export default GesturesExploratorium;

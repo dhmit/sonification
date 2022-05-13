@@ -1,11 +1,11 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 import Sidebar from "../global/Sidebar";
-const ExploratoriumLayout = ({main, sidebar}) => {
+const ExploratoriumLayout = ({main, sidebar, extraClass}) => {
     return (
         <>
-            <div id="main-container">
-                <main className='container mx-auto' role="main">
+            <div id={`main-container`} className={extraClass}>
+                <main className='container' role="main">
                     <div className='main-content'>
                         {main}
                     </div>
@@ -18,7 +18,8 @@ const ExploratoriumLayout = ({main, sidebar}) => {
 
 ExploratoriumLayout.propTypes = {
     main: PropTypes.object,
-    sidebar: PropTypes.object
+    sidebar: PropTypes.object,
+    extraClass: PropTypes.string
 };
 
 

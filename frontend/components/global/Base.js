@@ -7,7 +7,7 @@ const Base = ({children}) => {
         <>
             <Nav/>
             <div id="main-container">
-                <main className='container mx-auto' role="main">
+                <main className='container' role="main">
                     {children}
                 </main>
             </div>

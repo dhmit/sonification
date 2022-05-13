@@ -1,0 +1,19 @@
+.gestures {
+    .canvas {
+        border: 6px solid black;
+        width: 500px;
+        height: 500px;
+    }
+
+    .mini-canvas {
+        border: 6px solid $color-green;
+    }
+
+    .active-canvas {
+        cursor: crosshair;
+    }
+
+    .yAxis {
+        display: flex;
+    }
+}

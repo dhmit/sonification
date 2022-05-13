@@ -19,7 +19,7 @@ blockquote {
     > .container {
         width: 100%;
         display: grid;
-        grid-template-areas: "content content content 'sidebar";
+        grid-template-areas: "content content content sidebar";
     }
 
     .main-content {
@@ -137,6 +137,15 @@ $player-height: 75px;
     .play-icon {
         margin-top: 0.2em;
         margin-left: 0.2em;
+    }
+    &.btn-sonification {
+        width: auto;
+        svg {
+            display: none !important;
+        }
+        &.audio-player-on {
+            background-color: white !important;
+        }
     }
 }
 

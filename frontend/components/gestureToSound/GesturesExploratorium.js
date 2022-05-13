@@ -112,7 +112,7 @@ const GestureSonifier = ({coords, id, audioContextRef, children}) => {
                             ? <NiceAudioPlayer
                                 extraClass={"btn btn-sonification btn-primary"}
                                 src={base64AudioToDataURI(music)}
-                                text="Play the drawing"
+                                text="Play"
                                 onPlayCallback={() => setIsAnimatingAllGestures(true)}
                             />
                             : <Loading />

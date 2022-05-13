@@ -48,6 +48,7 @@ blockquote {
 .sidebar {
     border-left: 10px solid #515151;
     position: fixed;
+    overflow-y: scroll;
     grid-area: sidebar;
     max-width: 25%;
     right: 0;
@@ -63,30 +64,39 @@ blockquote {
     border-bottom: 0.2em solid $color-blue;
     font-size: 3em;
     display: grid;
-    grid-template-areas: "about about about home";
+    grid-template-areas: "about about about about home";
 
     .sidebar-about {
         grid-area: about;
         border-right: 0.2em solid $color-blue;
-        padding: 0 0.2em 0 0.2em;
+        padding: 0.1em 0.2em 0 0.2em;
 
         a {
             color: black !important;
             text-decoration: none;
+            &:hover, &:active, &:focus {
+                color: $color-link !important;
+            }
         }
     }
 
     .sidebar-home {
         grid-area: home;
         padding: 0.2em;
-        margin-top: -0.5em;
+        margin-top: -0.25em;
+        text-align: center;
 
         > a {
             &:hover {
                 svg {
-                    fill: $color-blue;
+                    fill: $color-link;
                 }
             }
+        }
+
+        svg {
+            width: 110px;
+            margin: 0 auto;
         }
     }
 
@@ -99,6 +109,8 @@ blockquote {
 
 .quotation {
     margin-bottom: 2em;
+
+
     blockquote {
         max-width: 70%;
         margin: 0 auto;
@@ -115,6 +127,8 @@ blockquote {
 
     .quote-icon {
         position: absolute;
+        margin-top: -25px;
+        margin-left: -10px;
 
         &.right {
             transform: scaleX(-1);
@@ -134,16 +148,31 @@ $player-height: 75px;
     width: 100%;
     min-height: $player-height;
     background-color: white;
+    color: $color-neutral;
     font-size: 1.2em;
-    .play-icon {
+
+    .icon-audio {
         margin-top: 0.2em;
         margin-left: 0.2em;
     }
+
+    .icon-play {
+        width: 40px;
+        margin-top: 0.25em;
+    }
+
+    .icon-stop {
+        width: 40px;
+        margin-top: 0.4em;
+    }
+
     &.btn-sonification {
         width: auto;
+
         svg {
             display: none !important;
         }
+
         &.audio-player-on {
             background-color: white !important;
         }
@@ -152,8 +181,6 @@ $player-height: 75px;
 
 .audio-player-on {
     @extend .audio-player;
-    background-color: rgb(4, 118, 217);
-    color: white;
 }
 
 
@@ -163,12 +190,15 @@ $player-height: 75px;
     font-size: 1.75em;
     font-family: $font-family-semibold;
     color: black;
+
     &:hover {
         background-color: $color-blue !important;
     }
+
     &:disabled, &[disabled] {
         background-color: white !important;
     }
+
     &.btn-default {
         background-color: white;
     }

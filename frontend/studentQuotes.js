@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import * as PropTypes from "prop-types";
 import NiceAudioPlayer from "./components/instruments/NiceAudioPlayer";
 
@@ -22,7 +22,8 @@ import Blob1 from "./images/blobs/blob1.svg";
 import Blob2 from "./images/blobs/blob2.svg";
 import Blob3 from "./images/blobs/blob3.svg";
 import Blob4 from "./images/blobs/blob4.svg";
-
+import Blob5 from "./images/blobs/blob5.svg";
+import Blob6 from "./images/blobs/blob6.svg";
 import QuoteIcon from "./images/icons/leftquote.svg";
 
 // TODO(ra): import the actual audio / img for all of these students!
@@ -81,20 +82,40 @@ export const MOISES_QUOTE = {
     audio: MOISES_AUDIO,
 };
 
+const blobWidthMin = 200;
+const blobWidthMax = 700;
+const leftMin = -200;
+const leftMax = 200;
+
+let blobStylesDefault = {width: "100%", height: "100px", left: "20px"};
 
 export const StudentQuote = ({quoteData, color = "#EF724F"}) => {
-    const [blobStyles, setBlobStyles] = useState({
-        width: "200px", height: "150px", left: "20px", top: "10px"
-    });
+    const [blobStyles, setBlobStyles] = useState(blobStylesDefault);
+    const [randomBlob, setRandomBlob] = useState(<></>);
+    const randomStyle = () => {
+        let height = Math.floor(Math.random() * (blobWidthMax - blobWidthMin) + blobWidthMin);
+        let left = Math.floor(Math.random() * (leftMax - leftMin) + leftMin);
+        blobStylesDefault.height = height + "px";
+        blobStylesDefault.left = left + "px";
+        console.log("blobStylesDefault", blobStylesDefault);
+        setBlobStyles(blobStylesDefault);
+    };
+
     const blobs = [
-        <Blob1 key={1} className="quote-blob" fill={color} width={blobStyles.width} height={blobStyles.height} top={blobStyles.top} left={blobStyles.left}/>,
-        <Blob2 key={2} className="quote-blob" fill={color} width={blobStyles.width} height={blobStyles.height} top={blobStyles.top} left={blobStyles.left}/>,
-        <Blob3 key={3} className="quote-blob" fill={color} width={blobStyles.width} height={blobStyles.height} top={blobStyles.top} left={blobStyles.left}/>,
-        <Blob4 key={4} className="quote-blob" fill={color} width={blobStyles.width} height={blobStyles.height} top={blobStyles.top} left={blobStyles.left}/>
+        <Blob1 key={1} className="quote-blob" fill={color} style={blobStyles}/>,
+        <Blob2 key={2} className="quote-blob" fill={color} style={blobStyles}/>,
+        <Blob3 key={3} className="quote-blob" fill={color} style={blobStyles}/>,
+        <Blob4 key={4} className="quote-blob" fill={color} style={blobStyles}/>,
+        <Blob5 key={5} className="quote-blob" fill={color} style={blobStyles}/>,
+        <Blob6 key={6} className="quote-blob" fill={color} style={blobStyles}/>
     ];
 
-    const randomBlob = blobs[Math.floor(Math.random() * blobs.length)];
-
+    useEffect(() => {
+        randomStyle();
+        let randomBlobNum = Math.floor(Math.random() * blobs.length);
+        console.log("randomBlobNum", randomBlobNum, blobStyles);
+        setRandomBlob(blobs[randomBlobNum]);
+    }, []);
     const {quote, speaker, img, audio} = quoteData;
 
     return (
@@ -119,6 +140,7 @@ export const StudentQuote = ({quoteData, color = "#EF724F"}) => {
                 </div>
                 <NiceAudioPlayer
                     src={audio}
+                    extraClass={"mb-5"}
                     text={`Click to hear ${speaker} say more about this project`}
                 />
             </div>

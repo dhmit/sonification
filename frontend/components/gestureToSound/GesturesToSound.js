@@ -356,14 +356,7 @@ const GesturesToSound = ({audioContextRef}) => {
     };
 
     const drawingIsEmpty = (allMouseCoords.length === 0);
-
-    let sonifyButtonText;
-    if (drawingIsEmpty) {
-        sonifyButtonText = 'First, draw something.';
-    } else {
-        if (instrumentSamples.length) sonifyButtonText = 'Update';
-        else sonifyButtonText = 'Sonify!';
-    }
+    
 
     // TODO(ra): Refactor copypasta from GestureSonifier
     // This is _straight up_ copied from over there; fix me later!
@@ -421,26 +414,26 @@ const GesturesToSound = ({audioContextRef}) => {
                 />
             </div>
             <div className='col-4 px-0 px-md-2'>
-                <div className="btn-group-vertical w-100 mx-0 mb-2" role="group">
-                    <button className="btn btn-outline-dark" onClick={handleClearCanvas}>
+                <div className="btn-group-vertical mx-0 mb-2" role="group">
+                    <button className="btn btn-sonification btn-default" onClick={handleClearCanvas}>
                         Clear
                     </button>
                 </div>
 
                 <button
                     disabled={drawingIsEmpty}
-                    className="w-100 btn btn-outline-primary mb-4"
+                    className="btn btn-sonification btn-primary mb-4"
                     onClick={(e) => handleSubmitGestures(e)}>
                     {loading
                         ? <div className='spinner-border' role="status"/>
-                        : sonifyButtonText
+                        : "Sonify!"
                     }
                 </button>
 
                 {music && <NiceAudioPlayer
                     extraClass={"btn btn-sonification btn-primary"}
                     src={base64AudioToDataURI(music)}
-                    text="Play the drawing"
+                    text="Play"
                     onPlayCallback={() => setIsAnimatingAllGestures(true)}
                 />}
 

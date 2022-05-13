@@ -1,4 +1,7 @@
 .gestures {
+    .btn-sonification {
+        width: 250px;
+    }
     .canvas {
         border: 6px solid black;
         width: 500px;
@@ -7,9 +10,9 @@
 
     .mini-canvas {
         cursor: pointer;
-        border: 6px solid $color-green;
+        border: 6px solid black;
         &:hover {
-            border: 6px solid $color-blue;
+            border: 6px solid $color-link;
         }
     }
 

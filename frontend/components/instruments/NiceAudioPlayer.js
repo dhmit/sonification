@@ -3,7 +3,7 @@ import * as PropTypes from "prop-types";
 import PlayIcon from "../../images/icons/play.svg";
 import StopIcon from "../../images/icons/stop.svg";
 
-const NiceAudioPlayer = ({src, text, extraClass, onPlayCallback}) => {
+const NiceAudioPlayer = ({src, text, extraClass="", onPlayCallback}) => {
     const [audioPlayer] = useState(new Audio(src));
     const [playing, setPlaying] = useState(false);
     const toggleAudio = () => setPlaying(!playing);
@@ -37,10 +37,10 @@ const NiceAudioPlayer = ({src, text, extraClass, onPlayCallback}) => {
                 : <div className="row">
 
                 <div className="col-2 mr-0 ml-2">
-                    <span className="play-icon">
+                    <span className="icon-audio">
                         {playing
-                            ? <StopIcon fill={"#44616B"}/>
-                            : <PlayIcon fill={"#44616B"}/>
+                            ? <StopIcon className="icon-stop" fill={"#44616B"}/>
+                            : <PlayIcon className="icon-play" fill={"#44616B"}/>
                         }
                     </span>
                 </div>

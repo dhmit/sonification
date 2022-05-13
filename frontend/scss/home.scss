@@ -21,7 +21,7 @@
     .projects {
         margin-left: 0;
     }
-    .btn-home {
+    .btn-home.btn-sonification {
         width: 90%;
         text-align: left;
         border: 6px solid black;
@@ -39,22 +39,22 @@
         }
         &.colors {
             &:hover, &:active, &:focus {
-                background-color: $color-red;
+                background-color: $color-red !important;
             }
         }
         &.gestures {
             &:hover, &:active, &:focus {
-                background-color: $color-green;
+                background-color: $color-green !important;
             }
         }
         &.time.series {
             &:hover, &:active, &:focus {
-                background-color: $color-yellow;
+                background-color: $color-yellow !important;
             }
         }
         &.polygons {
             &:hover, &:active, &:focus {
-                background-color: $color-blue;
+                background-color: $color-blue !important;
             }
         }
     }

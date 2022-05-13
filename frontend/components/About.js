@@ -13,7 +13,7 @@ const About = () => {
             <main id="about" className="container" role="main">
                 <div className="content">
                     <div className="row">
-                        <div className="col-8">
+                        <div className="col-8 pl-0">
                             <h1 className="title">MIT’s Digital<br/>
                                 Humanities Lab</h1>
                             <p className="description">
@@ -27,7 +27,7 @@ const About = () => {
                                 problems in the humanities, arts, and social sciences.
                             </p>
                         </div>
-                        <div className="col-4 sidebar-quotes">
+                        <div className="col-4 sidebar-quotes pl-0">
                             <nav>
                                 <div className="sidebar-home mb-5">
                                     <a href={"/"}>
@@ -52,9 +52,9 @@ const About = () => {
 
                     </div>
 
-                    <div className="container 2-100">
-                        <div className="row">
-                            <div className="col">
+                    <div className="container pl-0">
+                        <div className="row pl-0">
+                            <div className="col pl-0">
                                 <h3>About the lab (continued)</h3>
                                 <p>
                                     Now serving the largest cohort of UROP students at MIT, each

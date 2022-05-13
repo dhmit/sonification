@@ -182,9 +182,10 @@ def time_series_to_audio(request):
     """
     music_data = time_series_processing.time_series_to_music(request)
     samples = time_series_processing.time_series_to_samples(request)
+    samples_base64 = [audio_samples_to_wav_base64(s) for s in samples]
 
     return Response({
-        'samples': samples,
+        'samples': samples_base64,
         'musicData': music_data,
     })
 

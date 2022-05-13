@@ -3,6 +3,8 @@
 body {
     font-family: $font-family-base;
     font-size: $font-size-base;
+    background-image: url("/assets/grid.jpg");
+    background-repeat: repeat;
 }
 
 h1 {
@@ -47,6 +49,7 @@ blockquote {
 // sidebar
 .sidebar {
     border-left: 10px solid #515151;
+    background-color: white;
     position: fixed;
     overflow-y: scroll;
     grid-area: sidebar;
@@ -74,6 +77,7 @@ blockquote {
         a {
             color: black !important;
             text-decoration: none;
+
             &:hover, &:active, &:focus {
                 color: $color-link !important;
             }

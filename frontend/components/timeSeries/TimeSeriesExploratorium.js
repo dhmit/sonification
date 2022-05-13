@@ -6,6 +6,8 @@ import MoveIcon from "../../images/MoveIcon.svg";
 import {StudentQuote, MOISES_QUOTE, EESHA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 import {base64AudioToDataURI} from "../../common";
+import ExploratoriumLayout from "../global/ExploratoriumLayout";
+import {GesturesExploratoriumSidebar} from "../gestureToSound/GesturesExploratorium";
 
 const SUNRISE_SUNSET_BOSTON = {
     title: "Sunrise and Sunset Times in Boston",
@@ -109,43 +111,57 @@ class TimeSeriesSonifier extends React.Component {
                     />}
                 </div>
                 <div className="col">
-                    <div className="row mb-4"><div className="col w-100">
-                        <h4 className="mb-4">{this.title}</h4>
-                    </div></div>
-                    <div className="row"><div className="col">
-                        {this.state.samples
-                            ? this.state.samples.map((sample, i) => <NiceAudioPlayer key={i} src={base64AudioToDataURI(sample)} />)
-                            : <Loading />
-                        }
-                    </div></div>
+                    <div className="row mb-4">
+                        <div className="col w-100">
+                            <h4 className="mb-4">{this.title}</h4>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col">
+                            {this.state.samples
+                                ? this.state.samples.map((sample, i) => <NiceAudioPlayer key={i}
+                                                                                         src={base64AudioToDataURI(sample)}/>)
+                                : <Loading/>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         );
     }
 }
 
-const TimeSeriesExploratorium = () => {
+const TimeSeriesExploratoriumMain = () => {
     return (<>
-        <TimeSeriesSonifier data={SUNRISE_SUNSET_BOSTON} />
+        <TimeSeriesSonifier data={SUNRISE_SUNSET_BOSTON}/>
 
         <InfoCard>
             <img
                 className="mr-2"
                 alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100px" />
+                src={MoveIcon} width="100px" height="100px"/>
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
 
-        <TimeSeriesSonifier data={PI} />
-        <TimeSeriesSonifier data={GOLDEN} />
+        <TimeSeriesSonifier data={PI}/>
+        <TimeSeriesSonifier data={GOLDEN}/>
     </>);
 };
 
 export const TimeSeriesExploratoriumSidebar = () => {
     return (<>
-        <StudentQuote quoteData={MOISES_QUOTE}/>
-        <StudentQuote quoteData={EESHA_QUOTE}/>
+        <StudentQuote quoteData={MOISES_QUOTE} blob={2}/>
+        <StudentQuote quoteData={EESHA_QUOTE} blob={3}/>
     </>);
 };
+
+
+const TimeSeriesExploratorium = () => <ExploratoriumLayout
+    extraClass={"time series"}
+    title={"Time Series"}
+    main={<TimeSeriesExploratoriumMain/>}
+    sidebar={
+        <TimeSeriesExploratoriumSidebar/>}/>;
+
 
 export default TimeSeriesExploratorium;

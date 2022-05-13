@@ -12,12 +12,20 @@ h1 {
     margin: 0;
 }
 
+mark {
+    background-color: white;
+}
+
 blockquote {
     font-family: $font-family-semibold;
 }
 
 a {
     color: $color-link;
+}
+
+p {
+    font-size: 1.5em;
 }
 
 #main-container {
@@ -95,6 +103,7 @@ a {
         text-align: center;
 
         > a {
+            cursor: pointer;
             &:hover {
                 svg {
                     fill: $color-link;

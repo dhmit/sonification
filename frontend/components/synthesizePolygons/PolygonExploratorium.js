@@ -275,8 +275,8 @@ const PolygonExploratoriumMain = () => {
 
 export const PolygonExploratoriumSidebar = () => {
     return <>
-        <StudentQuote quoteData={ANGELINA_QUOTE} color={"#A5E0EC"}/>
-        <StudentQuote quoteData={QUINCY_QUOTE} color={"#DAFBB1"}/>
+        <StudentQuote quoteData={ANGELINA_QUOTE} blob={3}/>
+        <StudentQuote quoteData={QUINCY_QUOTE} blob={5}/>
     </>;
 };
 

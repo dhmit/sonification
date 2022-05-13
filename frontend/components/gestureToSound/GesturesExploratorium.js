@@ -147,22 +147,31 @@ const GesturesExploratoriumMain = () => {
     return (<>
         <GestureSonifier coords={GESTURE_WAVE} id={"wave"} audioContextRef={audioContextRef}>
             <p>
-                Each of the drawings on this page appear to be two dimensional, but they have a
-                hidden third dimension: time.
+                <mark>
+                    Each of the drawings on this page appear to be two dimensional, but they have a
+                    hidden third dimension: time.
+                </mark>
             </p>
             <p>
-                Click "Play the full drawing" or the individual gesture buttons underneath.
+                <mark>
+                    Click "Play the full drawing" or the individual gesture buttons underneath.
+                </mark>
             </p>
         </GestureSonifier>
         <GestureSonifier coords={GESTURE_LINES} id={"wave"} audioContextRef={audioContextRef}>
             <p>
-                The qualities of each gesture&mdash;speed, direction, starting and ending
-                positions&mdash;
-                are converted into pitch, volume, and tempo.
+                <mark>
+                    The qualities of each gesture&mdash;speed, direction, starting and ending
+                    positions&mdash;
+                    are converted into pitch, volume, and tempo.
+                </mark>
             </p>
             <p>
-                Each of these strokes appears similar, but the speed and direction of each stroke is
-                preserved in the sonification.
+                <mark>
+                    Each of these strokes appears similar, but the speed and direction of each
+                    stroke is
+                    preserved in the sonification.
+                </mark>
             </p>
         </GestureSonifier>
 
@@ -174,9 +183,9 @@ const GesturesExploratoriumMain = () => {
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
         <GestureSonifier coords={GESTURE_CORNERS} id={"wave"} audioContextRef={audioContextRef}>
-            <p>
+            <p><mark>
                 TODO: MORE COPY HERE -- probably a better sample gesture, too.
-            </p>
+            </mark></p>
         </GestureSonifier>
 
         <h3>Make Your Own</h3>

@@ -5,76 +5,46 @@ from time import sleep
 import matplotlib
 import matplotlib.pyplot as plt
 
-from matplotlib.backends import backend_agg
-
-
 import numpy as np
 
-from app.synthesis.audio_encoding import audio_samples_to_wav_base64
 from app.synthesis import synthesizers as synths
 
 from app.notes import NOTES
 
 
-# pylint: disable=too-many-locals
-def time_series_to_music(request):
+def frequency_for_value(value, base_freq, col_max, col_min):
+    return base_freq * (1 + (value-col_min)/(col_max-col_min))
+
+
+def time_series_to_graph(request):
     """
     Takes a dictionary representing a parsed CSV and constructs samples based on
     those ratios.
     """
     csv_data = request.data['parsedCSV']
     column_constants = request.data['constants']
-    duration = float(request.data['duration'])
-    every_n = int(request.data['everyN'])
-    # csv_data = csv_data[::every_n]
-
     new_csv = []
-    audio_samples = None
 
     csv_data_cols = np.array(csv_data)
     column_maxes = np.max(csv_data_cols, axis=0)
     column_mins = np.min(csv_data_cols, axis=0)
 
     for i, row in enumerate(csv_data):
-        sound = None
         new_csv_row = []
-        for j, frequency in enumerate(row):
-            if frequency == "":
+        for j, value in enumerate(row):
+            if value == "":
                 new_csv_row += [0]
                 continue
             column_constant = column_constants[j]
-
             base_freq = column_constant["base_frequency"]
-            min_freq = column_mins[j]
-            max_freq = column_maxes[j]
-            frequency = base_freq * (1 + (frequency-min_freq)/(max_freq-min_freq))
-
+            column_min_value = column_mins[j]
+            column_max_value = column_maxes[j]
+            frequency = frequency_for_value(value, base_freq, column_max_value, column_min_value)
             new_csv_row += [frequency]
-
-            note = synths.generate_sine_wave_with_envelope(
-                frequency=frequency,
-                duration=duration,
-                a_percentage=column_constant["a_percentage"],
-                d_percentage=column_constant["d_percentage"],
-                s_percentage=column_constant["s_percentage"],
-                r_percentage=column_constant["r_percentage"],
-            )
-            if sound is None:
-                sound = note
-            else:
-                sound += note
         new_csv += [new_csv_row]
-
-        if audio_samples is None:
-            audio_samples = sound
-        else:
-            audio_samples = np.append(audio_samples, sound)
-
-    sound = audio_samples_to_wav_base64(audio_samples)
 
     time_steps = np.arange(0, len(csv_data))
     new_csv = np.array(new_csv)
-
 
     # https://matplotlib.org/3.5.0/users/explain/backends.html
     # Use the agg backend, so matplotlib runs in non-interactive mode and can
@@ -94,16 +64,13 @@ def time_series_to_music(request):
     for each in NOTES:
         f = each["Frequency (Hz)"]
         if min_f <= f <= max_f:
-            if "A" in each["Note"] and len(each["Note"]) == 2:
-                plt.axhline(y=f, color='r', linestyle='-')
-            else:
-                plt.axhline(y=f, color='grey', linestyle='-.')
+            plt.axhline(y=f, color='grey', linestyle='-.')
             plt.text(len(new_csv) - 1, f, each["Note"])
 
     # TODO(ra) - let's add this back once it looks a bit nicer
-    plt.legend(["Col " + str(i + 1) for i in range(len(new_csv[0]))])
+    # plt.legend(["Col " + str(i + 1) for i in range(len(new_csv[0]))])
 
-    plt.xlabel("Time Step")
+    plt.xlabel("Time (Seconds)")
     plt.ylabel("Frequency (Hz)")
     plt.yscale('log')
 
@@ -114,7 +81,7 @@ def time_series_to_music(request):
 
     plt.close(figure)
 
-    return {"sound": sound, "img": img_str}
+    return img_str
 
 
 def time_series_to_samples(request):

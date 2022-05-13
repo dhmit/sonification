@@ -37,6 +37,7 @@ export const createAudioCallbacks = (samples, audioContext, loop=false) => {
 
     const startCallbacks = [];
     const endCallbacks = [];
+    const unmuteCallbacks = [];
 
     buffers.forEach(buffer => {
         const gainNode = audioContext.createGain();
@@ -69,11 +70,16 @@ export const createAudioCallbacks = (samples, audioContext, loop=false) => {
             gainNode.gain.setTargetAtTime(0, 0, 0.075);
         };
 
+        const unmuteCallback = () => {
+            gainNode.gain.setTargetAtTime(1, 0, .075);
+        };
+
         startCallbacks.push(startCallback);
         endCallbacks.push(endCallback);
+        unmuteCallbacks.push(unmuteCallback);
     });
 
-    return [startCallbacks, endCallbacks];
+    return [startCallbacks, endCallbacks, unmuteCallbacks];
 };
 
 

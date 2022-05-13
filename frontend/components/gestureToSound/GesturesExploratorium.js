@@ -40,12 +40,6 @@ const GestureSonifier = ({coords, id, audioContextRef, children}) => {
             setMusic(response.music);
             setInstrumentSamples(response.samples);
             setAudioStartCallbacks(startCallbacks);
-
-            // response.samples.forEach((_, i) => {
-            //     const miniCanvas = getRef(getRefIdForExampleMiniCanvas(i, id));
-            //     if (!miniCanvas) return;
-            //     drawGestureOnMiniCanvas(miniCanvas, coords[i]);
-            // });
         });
     }, []);
 

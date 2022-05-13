@@ -3,7 +3,7 @@
         width: 250px;
     }
     .canvas, .mini-canvas {
-        border: 6px solid black;
+        border: 5px solid black;
         background-color: white;
 
     }
@@ -15,7 +15,7 @@
     .mini-canvas {
         cursor: pointer;
         &:hover {
-            border: 6px solid $color-link;
+            border: 5px solid $color-link;
         }
     }
 

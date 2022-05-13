@@ -37,12 +37,10 @@ a {
 
 .container {
     margin: 0;
-
     /*
     NOTE(ra): These are exploratorium specific styles -- we're hardcoding in a big viewport.
      */
     max-width: 100%;
-    width: 1400px;
 }
 
 .quote-blob {
@@ -72,7 +70,8 @@ a {
     border-bottom: 0.2em solid $color-blue;
     font-size: 3em;
     display: grid;
-    grid-template-areas: "about about about about home";
+    grid-template-areas: "about home";
+    grid-template-columns: 75% 25%;
 
     .sidebar-about {
         grid-area: about;
@@ -104,7 +103,7 @@ a {
         }
 
         svg {
-            width: 110px;
+            width: 70px;
             margin: 0 auto;
         }
     }
@@ -151,7 +150,7 @@ a {
 $player-height: 75px;
 
 .audio-player {
-    border: 6px solid $color-neutral;
+    border: 5px solid $color-neutral;
     padding: 0.5em;
     border-radius: $player-height;
     width: 100%;
@@ -194,7 +193,7 @@ $player-height: 75px;
 
 
 .btn.btn-sonification {
-    border: 6px solid black;
+    border: 5px solid black;
     border-radius: 2em;
     font-size: 1.75em;
     font-family: $font-family-semibold;

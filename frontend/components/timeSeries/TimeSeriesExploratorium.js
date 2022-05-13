@@ -6,6 +6,7 @@ import MoveIcon from "../../images/MoveIcon.svg";
 import {StudentQuote, MOISES_QUOTE, EESHA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 import {base64AudioToDataURI} from "../../common";
+import ExploratoriumLayout from "../global/ExploratoriumLayout";
 
 const SUNRISE_SUNSET_BOSTON = {
     title: "Sunrise and Sunset Times in Boston",
@@ -124,18 +125,9 @@ class TimeSeriesSonifier extends React.Component {
     }
 }
 
-const TimeSeriesExploratorium = () => {
+const TimeSeriesExploratoriumMain = () => {
     return (<>
         <TimeSeriesSonifier data={SUNRISE_SUNSET_BOSTON} />
-
-        <InfoCard>
-            <img
-                className="mr-2"
-                alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100px" />
-            Could put more copy here about the sonification. How does it work?
-        </InfoCard>
-
         <TimeSeriesSonifier data={PI} />
         <TimeSeriesSonifier data={GOLDEN} />
     </>);
@@ -147,5 +139,13 @@ export const TimeSeriesExploratoriumSidebar = () => {
         <StudentQuote quoteData={EESHA_QUOTE}/>
     </>);
 };
+
+const TimeSeriesExploratorium = () => <ExploratoriumLayout
+    extraClass={"timeSeries"}
+    title={"Time Series"}
+    main={<TimeSeriesExploratoriumMain/>}
+    sidebar={
+        <TimeSeriesExploratoriumSidebar/>}/>;
+
 
 export default TimeSeriesExploratorium;

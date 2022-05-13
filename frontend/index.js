@@ -67,16 +67,6 @@ const PreselectedComponent = COMPONENTS[COMPONENT_NAME || "ErrorNotFoundComponen
 
 let components;
 
-// if (COMPONENT_PROPS['twoCol']) {
-//     const main = <PreselectedComponent {...COMPONENT_PROPS} />;
-//     const SIDEBAR_COMPONENT_NAME = COMPONENT_NAME + 'Sidebar';
-//     const SidebarComponent = COMPONENTS[SIDEBAR_COMPONENT_NAME || "ErrorNotFoundComponent"];
-//     components =
-//         <ExploratoriumLayout
-//             main={main}
-//             sidebar={<SidebarComponent />}
-//         />;
-// } else
 if (COMPONENT_PROPS['noBase']) {
     components = <PreselectedComponent {...COMPONENT_PROPS} />;
 } else {

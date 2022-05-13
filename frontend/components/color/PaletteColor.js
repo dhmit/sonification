@@ -14,11 +14,6 @@ const PaletteColor = ({
     const colorCssRgb = `rgb(${color.r},${color.g},${color.b})`;
     const style = {
         backgroundColor: colorCssRgb,
-        border: `2px solid ${colorCssRgb}`,
-        borderRadius: '20%',
-        minWidth: '75px',
-        minHeight: '75px',
-        textStroke: '1px',
     };
 
     if (selected) {
@@ -69,7 +64,7 @@ const PaletteColor = ({
             id={id}
             style={style}
             onClick={handlePaletteClick}
-            className="mr-2 mb-2"
+            className="color-pad mr-2 mb-2"
         >
             {children}
         </button>

@@ -60,7 +60,7 @@ p {
 // sidebar
 .sidebar {
     grid-area: sidebar;
-    border-left: 10px solid #515151;
+    border-left: 8px solid #515151;
     background-color: white;
     position: fixed;
     overflow-y: scroll;
@@ -78,6 +78,7 @@ p {
     border-bottom: 0.2em solid $color-blue;
     font-size: 3em;
     display: grid;
+    background-color: white;
     grid-template-areas: "about home";
     grid-template-columns: 75% 25%;
 

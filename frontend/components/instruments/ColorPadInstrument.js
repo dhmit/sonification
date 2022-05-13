@@ -1,7 +1,6 @@
 import React, {useEffect, useState, useRef} from "react";
 import PropTypes from "prop-types";
 import {createAudioCallbacks} from "./SamplePlayer";
-import STYLES from "./ColorPadInstrument.module.scss";
 
 /*
 TODO(ra): Clean this up into PadInstrument -- this is copypasta
@@ -15,26 +14,25 @@ export const ColorPad = ({keyBind, color, startCallback, endCallback}) => {
         if (isPlaying) return;
         setIsPlaying(true);
         startCallback();
-        setKeyStatusClass(STYLES.keypress);
+        setKeyStatusClass("keypress");
     };
 
     const stopPlaying = () => {
         if (!isPlaying) return;
         endCallback();
         setIsPlaying(false);
-        setKeyStatusClass('');
+        setKeyStatusClass("");
     };
 
     const colorCssRgb = `rgb(${color.r},${color.g},${color.b})`;
 
     return (<>
         <button
-            className={`${STYLES.colorPad} ${keyStatusClass} inactive`}
+            className={`color-pad ${keyStatusClass} inactive`}
             style={{backgroundColor: colorCssRgb}}
             onMouseDown={() => startPlaying()}
             onMouseUp={() => stopPlaying()}
-            onMouseLeave={() => stopPlaying()}
-        >
+            onMouseLeave={() => stopPlaying()}>
             {keyBind}
         </button>
     </>);
@@ -53,7 +51,7 @@ ColorPad.propTypes = {
  * A basic instrument: takes in a bunch of samples, and
  * provides buttons that the user can click to trigger the sample.
  */
-const ColorPadInstrument = ({samples, colors, wrap=false}) => {
+const ColorPadInstrument = ({samples, colors, wrap = false}) => {
     const audioContextRef = useRef(new AudioContext());
 
     useEffect(() => {
@@ -64,26 +62,18 @@ const ColorPadInstrument = ({samples, colors, wrap=false}) => {
     const [startCallbacks, endCallbacks] = createAudioCallbacks(samples, audioContextRef.current);
 
     const pads = samples.map((sample, i) => (
-        <ColorPad
-            key={i}
+        <li className="list-inline-item" key={i}>
+            <ColorPad
             sample={samples[i]}
             color={colors[i]}
             startCallback={startCallbacks[i]}
             endCallback={endCallbacks[i]}
-        />
+        /></li>
     ));
 
-    let padContainerClass = "text-white";
-    if (wrap) {
-        padContainerClass += " d-flex flex-wrap justify-content-between";
-    }
     return (
-        <section id="pad-instrument">
-            <div className={padContainerClass}>
-                {pads}
-            </div>
-            <div className="">
-            </div>
+        <section className="pad-instrument">
+            <ul className="list-inline">{pads}</ul>
         </section>
     );
 };

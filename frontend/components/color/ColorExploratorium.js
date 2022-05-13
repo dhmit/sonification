@@ -19,6 +19,7 @@ To create color themes
 const sortRGBsByHue = (rgbA, rgbB) => rgb2hsv(rgbA).h - rgb2hsv(rgbB).h;
 
 import MURAKAMI_IMG from "../../images/paintings/murakami.jpg";
+
 const MURAKAMI_COLORS = [
     hex2rgb("#A6B340"),
     hex2rgb("#05ADED"),
@@ -49,6 +50,7 @@ const MURAKAMI_DATA = {
 
 
 import JOAN_MITCHELL_IMG from "../../images/paintings/JoanMitchell.jpg";
+
 const JOAN_MITCHELL_COLORS = [
     hex2rgb("#3F4F21"),
     hex2rgb("#82822C"),
@@ -79,6 +81,7 @@ const JOAN_MITCHELL_DATA = {
 
 // TODO(ra): Probably reduce the resolution on this one
 import OKEEFFE_IMG from "../../images/paintings/GeorgiaOKeeffe.jpg";
+
 const OKEEFFE_COLORS = [
     hex2rgb("#9993B8"),
     hex2rgb("#6095B8"),
@@ -109,6 +112,7 @@ const OKEEFFE_DATA = {
 
 
 import STARRY_NIGHT_IMG from "../../images/paintings/starry-night.jpg";
+
 const STARRY_NIGHT_COLORS = [
     hex2rgb("#0433BF"),
     hex2rgb("#0442BF"),
@@ -157,7 +161,7 @@ const STARRY_NIGHT_DATA = {
 const produceColorsForRatio = (baseFreq, numerator, denominator, count) => {
     const result = [];
     for (let i = 0; i < count; i++) {
-        const freq = baseFreq * ((numerator/denominator) ** i);
+        const freq = baseFreq * ((numerator / denominator) ** i);
         const h = freqToHue(freq);
         result.push(hsv2rgb(h, 1, 1));
     }
@@ -200,7 +204,6 @@ const VALUE_COLORS_ORANGE = [
 ];
 
 
-
 class ColorSonifierExplainer extends React.Component {
     constructor(props) {
         super(props);
@@ -220,19 +223,23 @@ class ColorSonifierExplainer extends React.Component {
 
     render() {
         return (
-            <div className="row mb-4 border p-2 py-4">
+            <div className="row mb-4 py-4">
                 <div className="col">
-                    <div className="row mb-3"><div className="col">
-                        {this.state.music && this.state.instrumentSamples &&
+                    <div className="row mb-3">
+                        <div className="col">
+                            {this.state.music && this.state.instrumentSamples &&
                             <ColorPadInstrument
                                 samples={this.state.instrumentSamples}
                                 colors={this.colors}
                             />
-                        }
-                    </div></div>
-                    <div className="row"><div className="col">
-                        {this.props.children}
-                    </div></div>
+                            }
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col">
+                            {this.props.children}
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -310,15 +317,15 @@ class PaintingSonifier extends React.Component {
     }
 
     render() {
-        if (!(this.state.music && this.state.instrumentSamples)) return <Loading />;
+        if (!(this.state.music && this.state.instrumentSamples)) return <Loading/>;
 
         // TODO(ra): move all of this to CSS after getting out of CSS modules
         const imgStyle = {};
         if (this.state.colorsPlaying.length > 0) imgStyle.border = "2px solid black";
 
         return (
-            <div className="row mb-4 border p-2 py-4">
-                <h4 className="mb-4">{this.title}</h4>
+            <div className="row mb-4 py-4">
+                <h3 className="mb-4">{this.title}</h3>
                 <div className="col">
                     <img
                         style={imgStyle}
@@ -330,7 +337,7 @@ class PaintingSonifier extends React.Component {
                 </div>
                 <div className="col">
                     <div className="row">
-                        <div className="d-flex flex-wrap justify-content-between">
+                        <div className="d-flex flex-wrap color-pads">
                             {this.state.instrumentSamples.map((sample, i) =>
                                 <PaletteColor
                                     key={i} id={i}
@@ -348,7 +355,7 @@ class PaintingSonifier extends React.Component {
 }
 
 export const InfoCard = ({children}) => {
-    return (<div className="card mb-4 row">
+    return (<div className="card mb-4 mt-5 row">
         <div className="card-body">
             <div className="row">
                 {children}
@@ -361,65 +368,76 @@ const ColorExploratoriumMain = () => {
     return (<>
         <ColorSonifierExplainer colors={M3_COLORS}>
             <p>
+
                 Example of ascending pure (5/4) major thirds traversing the hue/pitch space.
+
             </p>
         </ColorSonifierExplainer>
 
         <ColorSonifierExplainer colors={FIFTH_COLORS}>
             <p>
+
                 Example of ascending pure fifths traversing the hue/pitch space.
+
             </p>
         </ColorSonifierExplainer>
 
         <ColorSonifierExplainer colors={OCTAVE_COLORS}>
             <p>
+
                 Example of ascending octaves traversing the hue/pitch space.
+
             </p>
         </ColorSonifierExplainer>
 
         <ColorSonifierExplainer colors={OVERTONE_SEMITONE_COLORS}>
             <p>
+
                 Example of ascending 17/16 semitones traversing the hue/pitch space.
+
             </p>
         </ColorSonifierExplainer>
 
         <ColorSonifierExplainer colors={VALUE_COLORS_BLUE}>
             <p>
+
                 Copy here about how the value maps to timbre. Explain value in HSV.
                 Maybe make a more contrast-y example of the timbre changing.
+
             </p>
         </ColorSonifierExplainer>
 
-        <ColorSonifier />
+        <ColorSonifier/>
 
         <InfoCard>
-            <h5>The Sound of Paintings</h5>
+            <h2>The Sound of Paintings</h2>
             <div className='col'>
-                Below, we've sonified a few paintings.
-                Click on the painting itself to start or pause a loop representing all of the colors in the painting.
-                Click the buttons next to the painting to toggle individual colors on or off.
+                <p>Below, we've sonified a few paintings.
+                    Click on the painting itself to start or pause a loop representing all of the
+                    colors in the painting. Click the buttons next to the painting to toggle
+                    individual colors on or off.
+                </p>
             </div>
         </InfoCard>
 
-        <PaintingSonifier data={OKEEFFE_DATA} />
-        <PaintingSonifier data={MURAKAMI_DATA} />
-        <PaintingSonifier data={JOAN_MITCHELL_DATA} />
-        <PaintingSonifier data={STARRY_NIGHT_DATA} />
+        <PaintingSonifier data={OKEEFFE_DATA}/>
+        <PaintingSonifier data={MURAKAMI_DATA}/>
+        <PaintingSonifier data={JOAN_MITCHELL_DATA}/>
+        <PaintingSonifier data={STARRY_NIGHT_DATA}/>
     </>);
 };
 
 
 export const ColorExploratoriumSidebar = () => {
     return (
-        <StudentQuote quoteData={EMEKA_QUOTE} />
+        <StudentQuote quoteData={EMEKA_QUOTE} blob={3} style={{top: "-20px", left: "200px"}}/>
     );
 };
 
 
-
-const ColorExploratorium = () => <ExploratoriumLayout extraClass={"polygons"}
+const ColorExploratorium = () => <ExploratoriumLayout extraClass={"colors"}
                                                       title={"Colors"}
-                                                        main={<ColorExploratoriumMain/>}
-                                                        sidebar={<ColorExploratoriumSidebar/>}/>;
+                                                      main={<ColorExploratoriumMain/>}
+                                                      sidebar={<ColorExploratoriumSidebar/>}/>;
 
 export default ColorExploratorium;

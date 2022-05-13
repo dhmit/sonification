@@ -90,7 +90,7 @@ const PadInstrument = ({samples}) => {
             keyBind={keyBinds[i]}
             key={i}
             sample={samples[i]}
-            padClassName={i < 4 ? STYLES.cyanPad : STYLES.magentaPad}
+            padClassName={i < 4 ? "cyan-pad" : "magenta-pad"}
             startCallback={startCallbacks[i]}
             endCallback={endCallbacks[i]}
         />

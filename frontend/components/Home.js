@@ -71,10 +71,6 @@ const Home = () => {
                     </div>
 
                 </div>
-
-                <Sidebar content={<div>
-                    This is a quote here
-                </div>}/>
             </main>
         </div>
 

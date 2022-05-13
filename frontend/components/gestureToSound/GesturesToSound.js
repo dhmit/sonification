@@ -406,48 +406,50 @@ const GesturesToSound = ({audioContextRef}) => {
             Try drawing slowly vs. quickly, and explore the full space of the canvas.
         </p>
 
-        <div className="row">
-            <div className="col-8">
+        <div className="canvas-row">
+            <div className="canvas-side">
                 <canvas
                     className={"canvas active-canvas"}
                     ref={mainCanvasRef}
                 />
             </div>
-            <div className='col-4 px-0 px-md-2'>
-                <div className="btn-group-vertical mx-0 mb-2" role="group">
-                    <button className="btn btn-sonification btn-default" onClick={handleClearCanvas}>
+            <div className='result-side'>
+                <div className="button-group" role="group">
+                    <button className="btn btn-sonification btn-default"
+                            onClick={handleClearCanvas}>
                         Clear
                     </button>
+                    <button
+                        disabled={drawingIsEmpty}
+                        className="btn btn-sonification btn-secondary"
+                        onClick={(e) => handleSubmitGestures(e)}>
+                        {loading
+                            ? <div className='spinner-border' role="status"/>
+                            : "Sonify!"
+                        }
+                    </button>
+                    {music && <NiceAudioPlayer
+                        extraClass={"btn btn-sonification btn-primary"}
+                        src={base64AudioToDataURI(music)}
+                        text="Play"
+                        onPlayCallback={() => setIsAnimatingAllGestures(true)}
+                    />}
                 </div>
 
-                <button
-                    disabled={drawingIsEmpty}
-                    className="btn btn-sonification btn-primary mb-4"
-                    onClick={(e) => handleSubmitGestures(e)}>
-                    {loading
-                        ? <div className='spinner-border' role="status"/>
-                        : "Sonify!"
-                    }
-                </button>
-
-                {music && <NiceAudioPlayer
-                    extraClass={"btn btn-sonification btn-primary"}
-                    src={base64AudioToDataURI(music)}
-                    text="Play"
-                    onPlayCallback={() => setIsAnimatingAllGestures(true)}
-                />}
 
                 {instrumentSamples.length > 0 && (<>
-                    <p>
-                        Click to play each gesture:
-                    </p>
-                    {instrumentSamples.map((sample, i) =>
-                        <MiniGestureCanvas
-                            clickCallback={() => handleMiniCanvasClick(i)}
-                            coords={allMouseCoords[i]}
-                            key={i}
-                        />
-                    )}
+                    <div className="mini-canvas-group">
+                        <p>
+                            Click to play each gesture:
+                        </p>
+                        {instrumentSamples.map((sample, i) =>
+                            <MiniGestureCanvas
+                                clickCallback={() => handleMiniCanvasClick(i)}
+                                coords={allMouseCoords[i]}
+                                key={i}
+                            />
+                        )}
+                    </div>
                 </>)}
 
             </div>

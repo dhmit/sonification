@@ -80,7 +80,7 @@ const GestureSonifier = ({coords, id, audioContextRef, children}) => {
             if (coordsToDraw.length > 0) {
                 drawGesture(mainCanvasRef, coordsToDraw);
             }
-            if(timeElapsed < gestureCoords[gestureCoords.length - 1].normalizedT) {
+            if (timeElapsed < gestureCoords[gestureCoords.length - 1].normalizedT) {
                 requestAnimationFrame(render);
             }
         };
@@ -99,14 +99,14 @@ const GestureSonifier = ({coords, id, audioContextRef, children}) => {
             <div className="row">
                 {children}
             </div>
-            <div className="row">
-                <div className="col">
+            <div className="canvas-row">
+                <div className="canvas-side">
                     <canvas className="canvas"
-                        ref={mainCanvasRef}
-                        width="500" height="500"
+                            ref={mainCanvasRef}
+                            width="500" height="500"
                     />
                 </div>
-                <div className="col">
+                <div className="result-side">
                     <div className="mb-4">
                         {music
                             ? <NiceAudioPlayer
@@ -115,7 +115,7 @@ const GestureSonifier = ({coords, id, audioContextRef, children}) => {
                                 text="Play"
                                 onPlayCallback={() => setIsAnimatingAllGestures(true)}
                             />
-                            : <Loading />
+                            : <Loading/>
                         }
                     </div>
 
@@ -147,7 +147,8 @@ const GesturesExploratoriumMain = () => {
     return (<>
         <GestureSonifier coords={GESTURE_WAVE} id={"wave"} audioContextRef={audioContextRef}>
             <p>
-                Each of the drawings on this page appear to be two dimensional, but they have a hidden third dimension: time.
+                Each of the drawings on this page appear to be two dimensional, but they have a
+                hidden third dimension: time.
             </p>
             <p>
                 Click "Play the full drawing" or the individual gesture buttons underneath.
@@ -155,7 +156,8 @@ const GesturesExploratoriumMain = () => {
         </GestureSonifier>
         <GestureSonifier coords={GESTURE_LINES} id={"wave"} audioContextRef={audioContextRef}>
             <p>
-                The qualities of each gesture&mdash;speed, direction, starting and ending positions&mdash;
+                The qualities of each gesture&mdash;speed, direction, starting and ending
+                positions&mdash;
                 are converted into pitch, volume, and tempo.
             </p>
             <p>
@@ -168,7 +170,7 @@ const GesturesExploratoriumMain = () => {
             <img
                 className="mr-2"
                 alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100px" />
+                src={MoveIcon} width="100px" height="100px"/>
             Could put more copy here about the sonification. How does it work?
         </InfoCard>
         <GestureSonifier coords={GESTURE_CORNERS} id={"wave"} audioContextRef={audioContextRef}>
@@ -178,14 +180,14 @@ const GesturesExploratoriumMain = () => {
         </GestureSonifier>
 
         <h3>Make Your Own</h3>
-        <GesturesToSound audioContextRef={audioContextRef} />
+        <GesturesToSound audioContextRef={audioContextRef}/>
     </>);
 };
 
 export const GesturesExploratoriumSidebar = () => {
     return (<>
-        <StudentQuote quoteData={PEIHUA_QUOTE} color={"#A5E0EC"}/>
-        <StudentQuote quoteData={GRACE_QUOTE} color={"#DAFBB1"}/>
+        <StudentQuote quoteData={PEIHUA_QUOTE} blob="blob1" color={"#A5E0EC"}/>
+        <StudentQuote quoteData={GRACE_QUOTE} blob="blob3" color={"#DAFBB1"}/>
     </>);
 };
 

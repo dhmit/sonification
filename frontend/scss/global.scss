@@ -120,8 +120,8 @@ a {
 
 
     blockquote {
-        max-width: 70%;
-        margin: 0 auto;
+        max-width: 80%;
+        margin: 0 0 0 3em;
         font-size: 1.3em;
         font-family: $font-family-base;
     }
@@ -176,6 +176,8 @@ $player-height: 75px;
 
     &.btn-sonification {
         width: auto;
+        padding: 0;
+        min-height: auto;
 
         svg {
             display: none !important;
@@ -194,6 +196,7 @@ $player-height: 75px;
 
 .btn.btn-sonification {
     border: 5px solid black;
+    padding: 0 1em;
     border-radius: 2em;
     font-size: 1.75em;
     font-family: $font-family-semibold;

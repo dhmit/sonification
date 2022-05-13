@@ -5,8 +5,7 @@ import * as PropTypes from "prop-types";
 const Base = ({children}) => {
     return (
         <>
-            <Nav/>
-            <div id="main-container">
+            <div id="base-main-container">
                 <main className='container' role="main">
                     {children}
                 </main>

@@ -3,13 +3,18 @@ import * as PropTypes from "prop-types";
 import PlayIcon from "../../images/icons/play.svg";
 import StopIcon from "../../images/icons/stop.svg";
 
-const NiceAudioPlayer = ({src, text, extraClass}) => {
+const NiceAudioPlayer = ({src, text, extraClass, onPlayCallback}) => {
     const [audioPlayer] = useState(new Audio(src));
     const [playing, setPlaying] = useState(false);
     const toggleAudio = () => setPlaying(!playing);
 
     useEffect(() => {
-        playing ? audioPlayer.play() : audioPlayer.pause();
+        if (playing) {
+            audioPlayer.play();
+            if (onPlayCallback) onPlayCallback();
+        } else {
+            audioPlayer.pause();
+        }
     }, [playing]);
 
     useEffect(() => {

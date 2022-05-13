@@ -357,7 +357,7 @@ export const InfoCard = ({children}) => {
     </div>);
 };
 
-const ColorExploratoriumMain = () => {
+const ColorExploratorium = () => {
     return (<>
         <ColorSonifierExplainer colors={M3_COLORS}>
             <p>
@@ -409,18 +409,9 @@ const ColorExploratoriumMain = () => {
 };
 
 
-const ColorExploratoriumSidebar = () => {
+export const ColorExploratoriumSidebar = () => {
     return (
         <StudentQuote quoteData={EMEKA_QUOTE} />
-    );
-};
-
-const ColorExploratorium = () => {
-    return (
-        <ExploratoriumLayout
-            main={<ColorExploratoriumMain />}
-            sidebar={<ColorExploratoriumSidebar />}
-        />
     );
 };
 

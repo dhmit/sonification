@@ -35,7 +35,7 @@ def index(request):
     # NOTE(ra): no page title for homepage, as it's taken care of in the index.html template
     context = {
         'component_name': 'Home',
-        'component_props': {'overrideBase': True}
+        'component_props': {'noBase': True}
     }
 
     return render(request, 'index.html', context)
@@ -66,7 +66,7 @@ def colors_exploratorium(request):
             'title': 'Colors'
         },
         'component_name': 'ColorExploratorium',
-        'component_props': {'overrideBase': True}
+        'component_props': {'twoCol': True}
     }
 
     return render(request, 'index.html', context)
@@ -92,7 +92,9 @@ def gestures_exploratorium(request):
             'title': 'Gestures'
         },
         'component_name': 'GesturesExploratorium',
-        'component_props': {'overrideBase': True}
+        'component_props': {
+            'twoCol': True,
+        }
     }
 
     return render(request, 'index.html', context)
@@ -129,7 +131,10 @@ def time_series_exploratorium(request):
         'page_metadata': {
             'title': 'Time Series'
         },
-        'component_name': 'TimeSeriesExploratorium'
+        'component_name': 'TimeSeriesExploratorium',
+        'component_props': {
+            'twoCol': True,
+        }
     }
     return render(request, 'index.html', context)
 
@@ -183,7 +188,10 @@ def polygons_exploratorium(request):
         'page_metadata': {
             'title': 'Synthesize Polygons'
         },
-        'component_name': 'PolygonExploratorium'
+        'component_name': 'PolygonExploratorium',
+        'component_props': {
+            'twoCol': True,
+        }
     }
 
     return render(request, 'index.html', context)

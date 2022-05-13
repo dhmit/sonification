@@ -173,8 +173,7 @@ class PolygonSonifier extends React.Component {
                     ? 'polygon-playing'
                     : 'polygon-not-playing'
                 }
-                `}
-            >
+                `}>
                 <PolygonViewer
                     width={this.size}
                     height={this.size}
@@ -212,11 +211,16 @@ const PolygonExploratoriumMain = () => {
         setUserPolygons(newUserPolygons);
     };
 
+    const removeAllPolygons = () => {
+        setUserPolygons([]);
+    };
+
     return (<>
         {[SQUARE_DATA, FLOWERISH_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
             <PolygonSonifier
                 key={i}
-                data={data} audioContextRef={audioContextRef} compressorRef={compressorRef}/>
+                size={150}
+                data={data} audioContextRef={audioContextRef} compressorRef={compressorRef} />
         )}
 
         <InfoCard>
@@ -237,12 +241,17 @@ const PolygonExploratoriumMain = () => {
                         onSubmit={updateNewPolygon}
                     />
                 </div>
+                {userPolygons.length > 0 &&
+                <button onClick={removeAllPolygons} className='w-100 btn btn-primary'>
+                    Remove all
+                </button>
+                }
             </div>
             <div className="col-6">
                 <div className="row">
-                    {userPolygons.length !== 0 && <h3 className="mb-4">Click to play or pause</h3>}
+                    {userPolygons.length > 0 && <h3 className="mb-4">Click to play or pause</h3>}
                     {userPolygons.map((data, i) =>
-                        <div className="col-4 mb-3" key={i}>
+                        <div className="col-6 mb-3" key={i}>
                             <div style={{width: "150px"}}>
                                 <PolygonSonifier
                                     key={i + 20}
@@ -264,15 +273,15 @@ const PolygonExploratoriumMain = () => {
 
 };
 
-const PolygonExploratoriumSidebar = () => {
+export const PolygonExploratoriumSidebar = () => {
     return <>
         <StudentQuote quoteData={ANGELINA_QUOTE} color={"#A5E0EC"}/>
         <StudentQuote quoteData={QUINCY_QUOTE} color={"#DAFBB1"}/>
     </>;
 };
 
-const PolygonExploratorium = () => <ExploratoriumLayout main={<PolygonExploratoriumMain/>}
+const PolygonExploratorium = () => <ExploratoriumLayout extraClass={"polygons"}
+                                                        main={<PolygonExploratoriumMain/>}
                                                         sidebar={<PolygonExploratoriumSidebar/>}/>;
-
 
 export default PolygonExploratorium;

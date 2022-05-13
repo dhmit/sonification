@@ -9,6 +9,23 @@ import {createAudioContextWithCompressor} from "../instruments/common";
 import {StudentQuote, ANGELINA_QUOTE, QUINCY_QUOTE} from "../../studentQuotes";
 import ExploratoriumLayout from "../global/ExploratoriumLayout";
 
+const DODECADON_DATA = {
+    points: [
+        [126, 3],
+        [74, 3],
+        [29, 29],
+        [3, 74],
+        [3, 126],
+        [29, 171],
+        [74, 197],
+        [126, 197],
+        [171, 171],
+        [197, 126],
+        [197, 74],
+        [171, 29],
+    ]
+};
+
 
 const SQUARE_DATA = {
     points: [
@@ -95,6 +112,30 @@ const TRIANGLE_DATA = {
     ],
 };
 
+
+const EQUILATERAL_TRIANGLE_DATA = {
+    points: [
+        [100, 0],
+        [13, 150],
+        [187, 150],
+    ],
+};
+
+const TEAPOT_DATA = {
+    points: [
+        [176, 230.875],
+        [177, 297.875],
+        [214, 333.875],
+        [218, 298.875],
+        [356, 297.875],
+        [460, 229.875],
+        [426, 190.875],
+        [356, 263.875],
+        [353, 156.875],
+        [212, 159.875],
+    ],
+};
+
 class PolygonSonifier extends React.Component {
     constructor(props) {
         super(props);
@@ -125,6 +166,7 @@ class PolygonSonifier extends React.Component {
             sidesAsDuration: false,
         };
 
+        console.log(this.points);
         await fetchPost('/api/polygon_to_audio', requestBody, (response) => {
             this.setState({
                 music: response.musicData.sound,
@@ -194,6 +236,19 @@ class PolygonSonifier extends React.Component {
 }
 
 
+const PolygonExplainer = ({polygon, children}) => {
+    return (
+        <div className="row mb-4">
+            <div className="my-auto col-6">
+                    {children}
+            </div>
+            <div className="col-6">
+                {polygon}
+            </div>
+        </div>
+    );
+};
+
 const PolygonExploratoriumMain = () => {
     const audioContextRef = useRef(null);
     const compressorRef = useRef(null);
@@ -216,6 +271,72 @@ const PolygonExploratoriumMain = () => {
     };
 
     return (<>
+        <PolygonExplainer
+            polygon={
+                <PolygonSonifier
+                    size={150}
+                    data={STARRISH_DATA}
+                    audioContextRef={audioContextRef} compressorRef={compressorRef}/>
+            }
+        >
+            <p>
+                This module takes polygons and turns them into arpeggios.
+            </p>
+            <p>
+                Click on any of the polygons on this page to activate or deactivate them!
+            </p>
+        </PolygonExplainer>
+
+        <PolygonExplainer
+            polygon={
+                <PolygonSonifier
+                    size={150}
+                    data={DODECADON_DATA}
+                    audioContextRef={audioContextRef} compressorRef={compressorRef}/>
+            }
+        >
+            <p>
+                The interval&mdash;that's the musical distance&mdash;between each pitch is based on the ratio between
+                the length of each side of the polygon and its total perimeter.
+            </p>
+            <p>
+                This regular dodecagon produces the Western equally-tempered chromatic scale, with
+                12 notes spaced at equal intervals.
+            </p>
+        </PolygonExplainer>
+
+        <PolygonExplainer
+            polygon={
+                <PolygonSonifier
+                    size={150}
+                    data={EQUILATERAL_TRIANGLE_DATA}
+                    audioContextRef={audioContextRef} compressorRef={compressorRef}/>
+            }
+        >
+            <p>
+                Simple shapes can produce relationships that sound familiar: this triangle produces three notes
+                that sound like a major chord in Western music. But the exact frequencies here are not the ones
+                on a normal piano. Instead, they're based on the pure geometric relationships from the shape itself!
+            </p>
+        </PolygonExplainer>
+
+        <PolygonExplainer
+            polygon={
+                <PolygonSonifier
+                    size={150}
+                    data={TEAPOT_DATA}
+                    audioContextRef={audioContextRef} compressorRef={compressorRef}/>
+            }
+        >
+            <p>
+                Irregular shapes can produce wild results!
+            </p>
+        </PolygonExplainer>
+
+
+        <p>
+            We've made a bunch for you to try: see what happens when you play them simultaneously, in counterpoint with each other!
+        </p>
         {[SQUARE_DATA, FLOWERISH_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
             <PolygonSonifier
                 key={i}
@@ -223,14 +344,10 @@ const PolygonExploratoriumMain = () => {
                 data={data} audioContextRef={audioContextRef} compressorRef={compressorRef}/>
         )}
 
-        <InfoCard>
-            <img className="mr-2"
-                 alt="Portrait of student"
-                 src={MoveIcon} width="100px" height="100%"/>
-            Could put more copy here about the sonification. How does it work?
-        </InfoCard>
 
-
+        <h2>
+        Make your own!
+        </h2>
         {/* PolygonEditor queries its container div for height and width */}
         <div className="row">
             <div className="col-6">
@@ -267,10 +384,7 @@ const PolygonExploratoriumMain = () => {
                 </div>
             </div>
         </div>
-
-
     </>);
-
 };
 
 export const PolygonExploratoriumSidebar = () => {

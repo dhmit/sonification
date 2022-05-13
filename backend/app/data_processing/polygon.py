@@ -168,6 +168,7 @@ def synthesize_polygon(points, note_length=1, note_delay=1, restrict_frequency=F
     # freq_change = change_in_frequency(angles_list)
     # cur_freq = base_frequency
     freqs = generate_perimeter_freqs(points, base_frequency)
+    print(freqs)
 
     # initialize the empty sound
     sound = np.zeros(total_length)
@@ -310,6 +311,7 @@ def generate_perimeter_freqs(points, base_freq):
     rel_distances = [d / distances_sum for d in distances]
     cumulative_distances = np.cumsum(rel_distances)
 
+    print(cumulative_distances)
     freqs = [base_freq] + [base_freq * (1 + dist) for dist in cumulative_distances]
     return freqs
 

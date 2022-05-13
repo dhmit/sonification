@@ -7,7 +7,6 @@ import {StudentQuote, MOISES_QUOTE, EESHA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 import {base64AudioToDataURI} from "../../common";
 import ExploratoriumLayout from "../global/ExploratoriumLayout";
-import {GesturesExploratoriumSidebar} from "../gestureToSound/GesturesExploratorium";
 
 const SUNRISE_SUNSET_BOSTON = {
     title: "Sunrise and Sunset Times in Boston",
@@ -120,6 +119,8 @@ class TimeSeriesSonifier extends React.Component {
                         <div className="col">
                             {this.state.samples
                                 ? this.state.samples.map((sample, i) => <NiceAudioPlayer key={i}
+                                                                                         extraClass={"btn btn-sonification btn-primary"}
+                                                                                         text={"Play"}
                                                                                          src={base64AudioToDataURI(sample)}/>)
                                 : <Loading/>
                             }

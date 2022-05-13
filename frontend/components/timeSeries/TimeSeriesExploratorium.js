@@ -110,15 +110,22 @@ class TimeSeriesSonifier extends React.Component {
                     />}
                 </div>
                 <div className="col">
-                    <div className="row mb-4"><div className="col w-100">
-                        <h4 className="mb-4">{this.title}</h4>
-                    </div></div>
-                    <div className="row"><div className="col">
-                        {this.state.samples
-                            ? this.state.samples.map((sample, i) => <NiceAudioPlayer key={i} src={base64AudioToDataURI(sample)} />)
-                            : <Loading />
-                        }
-                    </div></div>
+                    <div className="row mb-4">
+                        <div className="col w-100">
+                            <h4 className="mb-4">{this.title}</h4>
+                        </div>
+                    </div>
+                    <div className="row">
+                        <div className="col">
+                            {this.state.samples
+                                ? this.state.samples.map((sample, i) => <NiceAudioPlayer key={i}
+                                                                                         extraClass={"btn btn-sonification btn-primary"}
+                                                                                         text={"Play"}
+                                                                                         src={base64AudioToDataURI(sample)}/>)
+                                : <Loading/>
+                            }
+                        </div>
+                    </div>
                 </div>
             </div>
         );
@@ -135,8 +142,8 @@ const TimeSeriesExploratoriumMain = () => {
 
 export const TimeSeriesExploratoriumSidebar = () => {
     return (<>
-        <StudentQuote quoteData={MOISES_QUOTE}/>
-        <StudentQuote quoteData={EESHA_QUOTE}/>
+        <StudentQuote quoteData={MOISES_QUOTE} blob={2}/>
+        <StudentQuote quoteData={EESHA_QUOTE} blob={3}/>
     </>);
 };
 

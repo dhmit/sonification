@@ -5,10 +5,9 @@ import {StudentQuote, EVAN_QUOTE, EVAN_QUOTE2} from "../studentQuotes";
 import Photo1 from "../images/photos/photo-1.png";
 import Photo2 from "../images/photos/photo-2.png";
 import Photo3 from "../images/photos/photo-3.png";
+import Home from "../images/icons/home.svg";
 
 const About = () => {
-
-
     return (<>
         <div id="main-container">
             <main id="about" className="container" role="main">
@@ -28,9 +27,16 @@ const About = () => {
                                 problems in the humanities, arts, and social sciences.
                             </p>
                         </div>
-                        <div className="col-4 mt-5">
-                            <StudentQuote quoteData={EVAN_QUOTE} blob={5}/>
-                            <StudentQuote quoteData={EVAN_QUOTE2} blob={6}/>
+                        <div className="col-4 sidebar-quotes">
+                            <nav>
+                                <div className="sidebar-home mb-5">
+                                    <a href={"/"}>
+                                        <Home width="110px" fill={"#EF724F"}/>
+                                    </a>
+                                </div>
+                            </nav>
+                            <StudentQuote quoteData={EVAN_QUOTE} blob={5} style={{top: "100px", left: "150px"}}/>
+                            <StudentQuote quoteData={EVAN_QUOTE2} blob={6} color={"#FEDE6C"}/>
                         </div>
                         <ul className="list-inline photo-row">
                             <li className="list-inline-item">

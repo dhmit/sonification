@@ -3,9 +3,24 @@
     display: grid;
     grid-template-areas: "content";
     grid-template-columns: 100%;
+
     .container {
         background-color: white;
     }
+
+    .sidebar-quotes {
+        position: absolute;
+        right: -20px;
+    }
+
+    .sidebar-home {
+        text-align: right;
+        margin-right: 20px;
+        a:hover > svg {
+            fill: $color-blue;
+        }
+    }
+
     .title {
         line-height: 1em;
         margin-bottom: 0.1em;

@@ -53,7 +53,7 @@ const Home = () => {
 
     return (<>
         <div id="main-container">
-            <main id="home" role="main">
+            <main id="home" className="container" role="main">
                 <div className="content">
                     <h1 className="title">Sonification<br/>
                         Toolkit</h1>

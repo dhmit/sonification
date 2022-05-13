@@ -1,7 +1,7 @@
 #home {
     display: grid;
-    grid-template-areas: "content . sidebar";
-    grid-template-columns: 70% 5% 25%;
+    grid-template-areas: "content sidebar";
+    grid-template-columns: 75% 25%;
     .content {
         grid-area: content;
         margin-left: 1em;
@@ -26,6 +26,7 @@
         text-align: left;
         border: 6px solid black;
         margin: 0.5em 0;
+        background-color: white;
         .title {
             text-transform: uppercase;
             font-size: 1.8em;

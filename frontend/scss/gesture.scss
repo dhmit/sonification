@@ -2,15 +2,18 @@
     .btn-sonification {
         width: 250px;
     }
-    .canvas {
+    .canvas, .mini-canvas {
         border: 6px solid black;
+        background-color: white;
+
+    }
+    .canvas {
         width: 500px;
         height: 500px;
     }
 
     .mini-canvas {
         cursor: pointer;
-        border: 6px solid black;
         &:hover {
             border: 6px solid $color-link;
         }

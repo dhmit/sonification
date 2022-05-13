@@ -356,7 +356,7 @@ const GesturesToSound = ({audioContextRef}) => {
     };
 
     const drawingIsEmpty = (allMouseCoords.length === 0);
-    
+
 
     // TODO(ra): Refactor copypasta from GestureSonifier
     // This is _straight up_ copied from over there; fix me later!

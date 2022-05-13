@@ -16,13 +16,18 @@ blockquote {
     font-family: $font-family-semibold;
 }
 
+a {
+    color: $color-link;
+}
+
 #main-container {
     padding: 1em 2em;
 
     > main.container {
         width: 100%;
         display: grid;
-        grid-template-areas: "content content content sidebar";
+        grid-template-areas: "content sidebar";
+        grid-template-columns: 75% 25%;
     }
 
     .main-content {
@@ -48,15 +53,15 @@ blockquote {
 
 // sidebar
 .sidebar {
+    grid-area: sidebar;
     border-left: 10px solid #515151;
     background-color: white;
     position: fixed;
     overflow-y: scroll;
-    grid-area: sidebar;
-    max-width: 25%;
     right: 0;
     top: 0;
     height: 100%;
+    width: 25%;
 
     .sidebar-content {
         padding: 2em;

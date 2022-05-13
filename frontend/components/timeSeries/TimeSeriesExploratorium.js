@@ -113,13 +113,10 @@ class TimeSeriesSonifier extends React.Component {
                         <h4 className="mb-4">{this.title}</h4>
                     </div></div>
                     <div className="row"><div className="col">
-                        {this.state.music
-                            ? <NiceAudioPlayer src={base64AudioToDataURI(this.state.music)} />
+                        {this.state.samples
+                            ? this.state.samples.map((sample, i) => <NiceAudioPlayer key={i} src={base64AudioToDataURI(sample)} />)
                             : <Loading />
                         }
-                        {this.state.samples && this.state.samples.map((sample, i) =>
-                            <NiceAudioPlayer key={i} src={base64AudioToDataURI(sample)} />
-                        )}
                     </div></div>
                 </div>
             </div>

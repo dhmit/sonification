@@ -124,25 +124,43 @@ def time_series_to_samples(request):
     """
     csv_data = request.data['parsedCSV']
     column_constants = request.data['constants']
+    duration = float(request.data['duration'])
+    return generate_tracks_for_each_time_series(csv_data, column_constants, duration)
 
+
+def generate_tracks_for_each_time_series(csv_data, column_constants, duration):
     csv_np_array = np.array(csv_data).astype(np.float)
+    csv_data_cols = np.array(csv_data)
+    column_maxes = np.max(csv_data_cols, axis=0)
+    column_mins = np.min(csv_data_cols, axis=0)
 
-    csv_row_av = np.average(csv_np_array, axis=0)
-    wav_files = []
-    for j, frequency in enumerate(csv_row_av):
-        column_constant = column_constants[j]
-        freq_to_generate = column_constant["base_frequency"] + (
-            float(frequency) + column_constant["offset"]) * column_constant[
-                               "multiplier"]
-        note = synths.generate_sine_wave_with_envelope(
-            frequency=freq_to_generate,
-            duration=1,
-            a_percentage=column_constant["a_percentage"],
-            d_percentage=column_constant["d_percentage"],
-            s_percentage=column_constant["s_percentage"],
-            r_percentage=column_constant["r_percentage"]
-        )
-        wav_file_base64 = audio_samples_to_wav_base64(note)
-        wav_files.append(wav_file_base64)
+    csv_cols = []
+    for i in range(len(csv_np_array[0])):
+        csv_cols.append((csv_np_array[:,i]))
 
-    return wav_files
+    samples = []
+    for i, col in enumerate(csv_cols):
+        column_audio = np.array([])
+        column_constant = column_constants[i]
+        min_freq = column_mins[i]
+        max_freq = column_maxes[i]
+        base_freq = column_constant["base_frequency"]
+        for j, value in enumerate(col):
+            if value == "":
+                continue
+
+            frequency = base_freq * (1 + (value-min_freq)/(max_freq-min_freq))
+
+            samples_for_value = synths.generate_sine_wave_with_envelope(
+                frequency=frequency,
+                duration=duration,
+                a_percentage=column_constant["a_percentage"],
+                d_percentage=column_constant["d_percentage"],
+                s_percentage=column_constant["s_percentage"],
+                r_percentage=column_constant["r_percentage"],
+            )
+
+            column_audio = np.append(column_audio, samples_for_value)
+        samples.append(column_audio)
+
+    return samples

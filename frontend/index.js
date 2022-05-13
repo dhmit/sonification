@@ -11,6 +11,7 @@ import ErrorNotFoundComponent from "./components/global/ErrorNotFoundComponent";
 import ExampleId from "./components/global/ExampleId";
 import SummerPrototypes from "./components/summerPrototypes/SummerPrototypes";
 import Home from "./components/Home";
+import About from "./components/About";
 import TextShapeAnalysis from "./components/textShapeToSound/TextShapeAnalysis";
 import GesturesToSound from "./components/gestureToSound/GesturesToSound";
 import SynthesizePolygons from './components/synthesizePolygons/SynthesizePolygons';
@@ -34,6 +35,7 @@ const COMPONENTS = {
     ErrorNotFoundComponent,
     ExampleId,
     Home,
+    About,
     SummerPrototypes,
     TextShapeAnalysis,
     GesturesToSound,

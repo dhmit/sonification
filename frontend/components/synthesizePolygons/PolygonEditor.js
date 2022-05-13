@@ -445,7 +445,7 @@ const PolygonEditor = (
                 {loading && <circle cx="50%" cy="50%" r={20} className={STYLES.svgLoadingCircle}/>}
             </svg>
             <div className="button-row">
-                {points.length === 0
+                {points.length < 3
                     ? <><button className="btn btn-primary btn-sonification" disabled>
                             Create
                         </button>

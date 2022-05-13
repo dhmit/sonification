@@ -6,7 +6,11 @@
     }
 
     .mini-canvas {
+        cursor: pointer;
         border: 6px solid $color-green;
+        &:hover {
+            border: 6px solid $color-blue;
+        }
     }
 
     .active-canvas {

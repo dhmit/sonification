@@ -7,7 +7,7 @@ const NiceAudioPlayer = ({src, text, extraClass, onPlayCallback}) => {
     const [audioPlayer] = useState(new Audio(src));
     const [playing, setPlaying] = useState(false);
     const toggleAudio = () => setPlaying(!playing);
-
+    const simpleButton = extraClass && extraClass.indexOf("btn-sonification") > -1;
     useEffect(() => {
         if (playing) {
             audioPlayer.play();
@@ -31,7 +31,11 @@ const NiceAudioPlayer = ({src, text, extraClass, onPlayCallback}) => {
             className={playing
                 ? `audio-player audio-player-on ${extraClass}`
                 : `audio-player ${extraClass}`}>
-            <div className="row">
+            {simpleButton
+                ? <>{text}</>
+
+                : <div className="row">
+
                 <div className="col-2 mr-0 ml-2">
                     <span className="play-icon">
                         {playing
@@ -43,7 +47,7 @@ const NiceAudioPlayer = ({src, text, extraClass, onPlayCallback}) => {
                 <div className="col-9 text-left align-right">
                     {text}
                 </div>
-            </div>
+            </div>}
         </button>
     );
 };
@@ -51,7 +55,8 @@ const NiceAudioPlayer = ({src, text, extraClass, onPlayCallback}) => {
 NiceAudioPlayer.propTypes = {
     src: PropTypes.string,
     text: PropTypes.string,
-    extraClass: PropTypes.string
+    extraClass: PropTypes.string,
+    onPlayCallback: PropTypes.func
 };
 
 export default NiceAudioPlayer;

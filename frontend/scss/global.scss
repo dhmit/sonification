@@ -162,6 +162,9 @@ $player-height: 75px;
     font-size: 1.75em;
     font-family: $font-family-semibold;
     color: black;
+    &:hover {
+        background-color: $color-blue !important;
+    }
     &:disabled, &[disabled] {
         background-color: white !important;
     }

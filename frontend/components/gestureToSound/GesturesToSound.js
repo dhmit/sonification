@@ -438,8 +438,9 @@ const GesturesToSound = ({audioContextRef}) => {
                 </button>
 
                 {music && <NiceAudioPlayer
+                    extraClass={"btn btn-sonification btn-primary"}
                     src={base64AudioToDataURI(music)}
-                    text="Play the full drawing"
+                    text="Play the drawing"
                     onPlayCallback={() => setIsAnimatingAllGestures(true)}
                 />}
 

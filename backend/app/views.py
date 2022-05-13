@@ -41,6 +41,18 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+def about(request):
+    """ About page """
+
+    # NOTE(ra): no page title for homepage, as it's taken care of in the index.html template
+    context = {
+        'component_name': 'About',
+        'component_props': {'noBase': True}
+    }
+
+    return render(request, 'index.html', context)
+
+
 def colors(request):
     """
     Landing page for Colors part of project
@@ -84,6 +96,7 @@ def gestures(request):
 
     return render(request, 'index.html', context)
 
+
 def gestures_exploratorium(request):
     """ Gestures page"""
 
@@ -124,6 +137,7 @@ def time_series(request):
     }
     return render(request, 'index.html', context)
 
+
 def time_series_exploratorium(request):
     """ Time Series Page """
 
@@ -137,7 +151,6 @@ def time_series_exploratorium(request):
         }
     }
     return render(request, 'index.html', context)
-
 
 
 def numbers_before(request):

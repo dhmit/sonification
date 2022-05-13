@@ -1,0 +1,40 @@
+#main-container > main#about {
+    width: 100%;
+    display: grid;
+    grid-template-areas: "content";
+    grid-template-columns: 100%;
+    .container {
+        background-color: white;
+    }
+    .title {
+        line-height: 1em;
+        margin-bottom: 0.1em;
+    }
+
+    h3 {
+        font-family: $font-family-bold;
+    }
+
+    blockquote, .blockquote-footer {
+        font-size: 1.6em;
+        font-family: $font-family-semibold;
+    }
+
+    p {
+        background-color: white;
+        margin-bottom: 1em;
+        max-width: 80%;
+    }
+
+    .photo-row {
+        margin-bottom: 3em;
+    }
+
+    .col {
+        border-right: 6px solid #F15A24;
+
+        &:last-child {
+            border-right: 0;
+        }
+    }
+}

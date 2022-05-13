@@ -186,8 +186,8 @@ const GesturesExploratoriumMain = () => {
 
 export const GesturesExploratoriumSidebar = () => {
     return (<>
-        <StudentQuote quoteData={PEIHUA_QUOTE} blob="blob1" color={"#A5E0EC"}/>
-        <StudentQuote quoteData={GRACE_QUOTE} blob="blob3" color={"#DAFBB1"}/>
+        <StudentQuote quoteData={PEIHUA_QUOTE} blob={1} color={"#A5E0EC"}/>
+        <StudentQuote quoteData={GRACE_QUOTE} blob={2} color={"#DAFBB1"}/>
     </>);
 };
 

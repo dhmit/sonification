@@ -82,39 +82,30 @@ export const MOISES_QUOTE = {
     audio: MOISES_AUDIO,
 };
 
-const blobWidthMin = 200;
-const blobWidthMax = 700;
-const leftMin = -200;
-const leftMax = 200;
 
 let blobStylesDefault = {width: "100%", height: "100px", left: "20px"};
+const blobs = [
+    <Blob1 key={1} className="quote-blob" fill={"#A5E0EC"} style={{
+        height: "380px", left: "40px"
+    }}/>,
+    <Blob2 key={2} className="quote-blob" fill={"#DAFBB1"} style={{
+        width: "auto", height: "400px", left: "-80px"
 
-export const StudentQuote = ({quoteData, color = "#EF724F"}) => {
-    const [blobStyles, setBlobStyles] = useState(blobStylesDefault);
+    }}/>,
+    <Blob3 key={3} className="quote-blob" fill={"#FEDE6C"} style={blobStylesDefault}/>,
+    <Blob4 key={4} className="quote-blob" fill={"#ea957d"} style={blobStylesDefault}/>,
+    <Blob5 key={5} className="quote-blob" fill={"#A5E0EC"} style={blobStylesDefault}/>,
+    <Blob6 key={6} className="quote-blob" fill={"#DAFBB1"} style={blobStylesDefault}/>
+];
+export const StudentQuote = ({quoteData, color = "#EF724F", blob}) => {
     const [randomBlob, setRandomBlob] = useState(<></>);
-    const randomStyle = () => {
-        let height = Math.floor(Math.random() * (blobWidthMax - blobWidthMin) + blobWidthMin);
-        let left = Math.floor(Math.random() * (leftMax - leftMin) + leftMin);
-        blobStylesDefault.height = height + "px";
-        blobStylesDefault.left = left + "px";
-        console.log("blobStylesDefault", blobStylesDefault);
-        setBlobStyles(blobStylesDefault);
-    };
-
-    const blobs = [
-        <Blob1 key={1} className="quote-blob" fill={color} style={blobStyles}/>,
-        <Blob2 key={2} className="quote-blob" fill={color} style={blobStyles}/>,
-        <Blob3 key={3} className="quote-blob" fill={color} style={blobStyles}/>,
-        <Blob4 key={4} className="quote-blob" fill={color} style={blobStyles}/>,
-        <Blob5 key={5} className="quote-blob" fill={color} style={blobStyles}/>,
-        <Blob6 key={6} className="quote-blob" fill={color} style={blobStyles}/>
-    ];
 
     useEffect(() => {
-        randomStyle();
-        let randomBlobNum = Math.floor(Math.random() * blobs.length);
-        console.log("randomBlobNum", randomBlobNum, blobStyles);
-        setRandomBlob(blobs[randomBlobNum]);
+        if (blob) {
+            setRandomBlob(blobs[blob - 1]);
+        } else {
+            setRandomBlob(blobs[Math.floor(Math.random() * blobs.length)]);
+        }
     }, []);
     const {quote, speaker, img, audio} = quoteData;
 

@@ -238,20 +238,22 @@ class PolygonSonifier extends React.Component {
 
 const PolygonExplainer = ({polygon, children}) => {
     return (
-        <div className="row mb-4 py-4">
-            <div className="my-auto col-6">
-                    {children}
+        <div className="row polygon-explainer">
+            <div className="my-auto col-6 p-0">
+                {children}
             </div>
-            <div className="col-6">
+            <div className="col-6 p-0">
                 {polygon}
             </div>
         </div>
     );
 };
-
+let scrolledOnce = false;
 const PolygonExploratoriumMain = () => {
     const audioContextRef = useRef(null);
     const compressorRef = useRef(null);
+    const createdPolygons = useRef(null);
+
     if (!audioContextRef.current) {
         const {audioCtx, compressor} = createAudioContextWithCompressor();
         audioContextRef.current = audioCtx;
@@ -264,6 +266,15 @@ const PolygonExploratoriumMain = () => {
         const newUserPolygons = userPolygons.slice();
         newUserPolygons.push({points: newPolygonPoints});
         setUserPolygons(newUserPolygons);
+        if (!scrolledOnce) {
+            setTimeout(() => {
+                let y = createdPolygons.current.getBoundingClientRect().y;
+                if (window.innerHeight < y) {
+                    window.scrollTo(0, y);
+                    scrolledOnce = true;
+                }
+            }, 100);
+        }
     };
 
     const removeAllPolygons = () => {
@@ -277,13 +288,16 @@ const PolygonExploratoriumMain = () => {
                     size={200}
                     data={STARRISH_DATA}
                     audioContextRef={audioContextRef} compressorRef={compressorRef}/>
-            }
-        >
+            }>
             <p>
-                This module takes polygons and turns them into arpeggios and scales.
+                <mark>
+                    This module takes polygons and turns them into arpeggios and scales.
+                </mark>
             </p>
             <p>
-                Click on any of the polygons on this page to activate or deactivate them!
+                <mark>
+                    Click on any of the polygons on this page to activate or deactivate them!
+                </mark>
             </p>
         </PolygonExplainer>
 
@@ -292,16 +306,19 @@ const PolygonExploratoriumMain = () => {
                 <PolygonSonifier
                     size={200}
                     data={DODECADON_DATA}
-                    audioContextRef={audioContextRef} compressorRef={compressorRef}/>
-            }
-        >
+                    audioContextRef={audioContextRef} compressorRef={compressorRef}/>}>
             <p>
-                The interval&mdash;that's the musical distance&mdash;between each pitch is based on the ratio between
-                the length of each side of the polygon and its total perimeter.
+                <mark>
+                    The interval&mdash;that's the musical distance&mdash;between each pitch is based
+                    on the ratio between the length of each side of the polygon and its total
+                    perimeter.
+                </mark>
             </p>
             <p>
-                This regular dodecagon produces the Western equally-tempered chromatic scale, with
-                12 notes spaced at equal intervals.
+                <mark>
+                    This regular dodecagon produces the Western equally-tempered chromatic scale,
+                    with 12 notes spaced at equal intervals.
+                </mark>
             </p>
         </PolygonExplainer>
 
@@ -311,12 +328,15 @@ const PolygonExploratoriumMain = () => {
                     size={200}
                     data={EQUILATERAL_TRIANGLE_DATA}
                     audioContextRef={audioContextRef} compressorRef={compressorRef}/>
-            }
-        >
+            }>
             <p>
-                Simple shapes can produce relationships that sound familiar: this triangle produces three notes
-                that sound like a major chord in Western music. But the exact frequencies here are not the ones
-                on a normal piano. Instead, they're based on the pure geometric relationships from the shape itself!
+                <mark>
+                    Simple shapes can produce relationships that sound familiar: this triangle
+                    produces three notes that sound like a major chord in Western music. But the
+                    exact frequencies here are not the ones on a normal piano. Instead, they're
+                    based on the pure geometric
+                    relationships from the shape itself!
+                </mark>
             </p>
         </PolygonExplainer>
 
@@ -326,62 +346,77 @@ const PolygonExploratoriumMain = () => {
                     size={200}
                     data={FLOWERISH_DATA}
                     audioContextRef={audioContextRef} compressorRef={compressorRef}/>
-            }
-        >
+            }>
             <p>
-                Irregular shapes can produce wild results!
+                <mark>
+
+                    Irregular shapes can produce wild results!
+                </mark>
             </p>
         </PolygonExplainer>
 
+        <div className="row mb-4">
+            <div className="col-10 p-0">
+                <p>
+                    <mark>
+                        We've made a bunch for you to try: see what happens when you play them
+                        simultaneously, in counterpoint with each other!
+                    </mark>
+                </p>
+                <ul className="list-inline">
 
-        <p>
-            We've made a bunch for you to try: see what happens when you play them simultaneously, in counterpoint with each other!
-        </p>
-        {[SQUARE_DATA, TEAPOT_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
-            <PolygonSonifier
-                key={i}
-                size={150}
-                data={data} audioContextRef={audioContextRef} compressorRef={compressorRef}/>
-        )}
+                    {[SQUARE_DATA, TEAPOT_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA]
+                        .map((data, i) =>
+                            <li className="list-inline-item" key={i}>
+                                <PolygonSonifier key={i}
+                                                 size={150}
+                                                 data={data} audioContextRef={audioContextRef}
+                                                 compressorRef={compressorRef}/>
+                            </li>
+                        )}
+                </ul>
+            </div>
+        </div>
 
-
-        <h2>
-        Make your own!
-        </h2>
+        <div className="row">
+            <h2 className="mt-4 mb-2">
+                Make your own!
+            </h2>
+        </div>
         {/* PolygonEditor queries its container div for height and width */}
         <div className="row">
+            <div className="col-10">
+                <PolygonEditor
+                    outerWidth={500}
+                    onPointsUpdate={setNewPolygonPoints}
+                    onSubmit={updateNewPolygon}
+                    userPolygons={userPolygons}
+                />
+            </div>
             <div className="col-6">
-                <div style={{height: '540px', width: '100%'}}>
-                    <PolygonEditor
-                        outerWidth={500}
-                        onPointsUpdate={setNewPolygonPoints}
-                        onSubmit={updateNewPolygon}
-                    />
-                </div>
                 {userPolygons.length > 0 &&
-                <button onClick={removeAllPolygons} className='w-100 btn btn-primary'>
+                <button onClick={removeAllPolygons}
+                        className='btn btn-sonification btn-secondary mt-3 mb-2'>
                     Remove all
                 </button>
                 }
-            </div>
-            <div className="col-6">
-                <div className="row">
-                    {userPolygons.length > 0 && <h3 className="mb-4">Click to play or pause</h3>}
+                {userPolygons.length > 0 &&
+                <h3 className="mb-5" ref={createdPolygons}>Click to play or pause</h3>
+                }
+                <ul className="list-inline">
                     {userPolygons.map((data, i) =>
-                        <div className="col-6 mb-3" key={i}>
-                            <div style={{width: "150px"}}>
-                                <PolygonSonifier
-                                    key={i + 20}
-                                    data={data}
-                                    audioContextRef={audioContextRef}
-                                    compressorRef={compressorRef}
-                                    size={150}
-                                />
+                        <li className="list-inline-item" key={i} style={{width: "150px"}}>
+                            <PolygonSonifier
+                                key={i + 20}
+                                data={data}
+                                audioContextRef={audioContextRef}
+                                compressorRef={compressorRef}
+                                size={150}
+                            />
 
-                            </div>
-                        </div>
+                        </li>
                     )}
-                </div>
+                </ul>
             </div>
         </div>
     </>);
@@ -389,8 +424,8 @@ const PolygonExploratoriumMain = () => {
 
 export const PolygonExploratoriumSidebar = () => {
     return <>
-        <StudentQuote quoteData={ANGELINA_QUOTE} blob={3}/>
-        <StudentQuote quoteData={QUINCY_QUOTE} blob={5}/>
+        <StudentQuote quoteData={ANGELINA_QUOTE} blob={3} style={{top: "100px", left: "-200px"}}/>
+        <StudentQuote quoteData={QUINCY_QUOTE} blob={1}/>
     </>;
 };
 

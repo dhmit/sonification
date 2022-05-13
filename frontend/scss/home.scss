@@ -1,0 +1,61 @@
+#home {
+    display: grid;
+    grid-template-areas: "content . sidebar";
+    grid-template-columns: 70% 5% 25%;
+    .content {
+        grid-area: content;
+        margin-left: 1em;
+    }
+    h1 {
+        margin: 0;
+        font-size: 8em;
+        line-height: 0.9em;
+    }
+    .description {
+        font-size: 2em;
+        max-width: 80%;
+    }
+    .sidebar {
+        grid-area: sidebar;
+    }
+    .projects {
+        margin-left: 0;
+    }
+    .btn-home {
+        width: 80%;
+        text-align: left;
+        border: 6px solid black;
+        margin: 0.5em 0;
+        .title {
+            text-transform: uppercase;
+            font-size: 1.8em;
+            margin: 0.2em 0.3em 0.2em 0.6em;
+            letter-spacing: 0.02em;
+        }
+        .description {
+            font-size: 1.2em;
+            position: relative;
+            bottom: 0.2em;
+        }
+        &.colors {
+            &:hover, &:active, &:focus {
+                background-color: $color-red;
+            }
+        }
+        &.gestures {
+            &:hover, &:active, &:focus {
+                background-color: $color-green;
+            }
+        }
+        &.time.series {
+            &:hover, &:active, &:focus {
+                background-color: $color-yellow;
+            }
+        }
+        &.polygons {
+            &:hover, &:active, &:focus {
+                background-color: $color-blue;
+            }
+        }
+    }
+}

@@ -100,12 +100,12 @@ export const StudentQuote = ({quoteData, color = "#EF724F"}) => {
     return (
         <div className="mb-2">
             <div className="row">
-                <div className="col-1">
-                    <img
-                        className='img-fluid'
-                        alt={`Headshot of ${speaker}`} src={img}
-                    />
-                </div>
+                {/*<div className="col-1">*/}
+                {/*    <img*/}
+                {/*        className='img-fluid'*/}
+                {/*        alt={`Headshot of ${speaker}`} src={img}*/}
+                {/*    />*/}
+                {/*</div>*/}
                 {randomBlob}
                 <div className="col-11 quotation">
                     <QuoteIcon className={"quote-icon"}/>

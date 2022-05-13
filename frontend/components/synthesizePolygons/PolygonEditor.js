@@ -7,7 +7,6 @@ import MoveIcon from "../../images/MoveIcon.svg";
 import DownloadIcon from "../../images/DownloadIcon.svg";
 import UploadIcon from "../../images/UploadIcon.svg";
 import TrashIcon from "../../images/TrashIcon.svg";
-import ReactTooltipDefaultExport from "react-tooltip";
 
 /**
  * A simple polygon editor with specified width and height. A custom callback onPointsUpdate

@@ -22,17 +22,17 @@ const NiceAudioPlayer = ({src, text}) => {
     return (
         <button
             onClick={toggleAudio}
-            className={playing ? ".audio-player-on" : "audio-player"}>
+            className={playing ? "audio-player audio-player-on" : "audio-player"}>
             <div className="row">
-                <div className="col-2 mr-0">
-                    <span className="code">
+                <div className="col-2 mr-0 ml-2">
+                    <span className="play-icon">
                         {playing
                             ? <StopIcon fill={"#44616B"}/>
                             : <PlayIcon fill={"#44616B"}/>
                         }
                     </span>
                 </div>
-                <div className="col-10 text-left">
+                <div className="col-9 text-left align-right">
                     {text}
                 </div>
             </div>

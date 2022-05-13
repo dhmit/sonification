@@ -1,19 +1,13 @@
 import React from "react";
 import PropTypes from "prop-types";
-import {HomeNav} from "./global/Nav";
+import Sidebar from "./global/Sidebar";
 
 const ProjectCard = ({title, description, route}) => {
     return (
-        <div className="col-12 col-md-5 card mb-4 mr-4">
-            <div className="card-body">
-                <h2 className="card-title text-center">
-                    <a href={route} className="stretched-link">{title}</a>
-                </h2>
-                {description &&
-                    <h3 className="card-subtitle">{description}</h3>
-                }
-            </div>
-        </div>
+        <a href={route} className={`btn btn-sonification btn-home ${title.toLowerCase()}`}>
+            <span className="title">{title}</span>
+            <span className="description">{description}</span>
+        </a>
     );
 };
 ProjectCard.propTypes = {
@@ -23,24 +17,27 @@ ProjectCard.propTypes = {
 };
 
 
-
 const Home = () => {
     const projects = [
         {
-            title: 'Colors',
-            route: '/colors/',
+            title: "Colors",
+            description: "What's the sound of color?",
+            route: "/colors/",
         },
         {
-            title: 'Gestures',
-            route: '/gestures/',
+            title: "Gestures",
+            description: "What sound do gestures make?",
+            route: "/gestures/",
         },
         {
-            title: 'Time Series',
-            route: '/time-series/',
+            title: "Time Series",
+            description: "Hear the sound of time-based events",
+            route: "/time-series/",
         },
         {
-            title: 'Polygons',
-            route: '/polygons/',
+            title: "Polygons",
+            description: "What sound does a shape make?",
+            route: "/polygons/",
         },
     ];
 
@@ -55,24 +52,29 @@ const Home = () => {
 
 
     return (<>
-        <HomeNav/>
         <div id="main-container">
-            <main className='container mx-auto' role="main">
-                <div className="row">
-                    <p className='col-12 col-md-10'>
+            <main id="home" role="main">
+                <div className="content">
+                    <h1 className="title">Sonification<br/>
+                        Toolkit</h1>
+                    <p className="description">
                         This project was created in the MIT Digital Humanities Lab
                         as a collaboration between DH Fall 2021 Faculty Fellow&nbsp;
                         <a href='https://www.ziporyn.com/'>Prof. Evan Ziporyn</a>,&nbsp;
                         <a href='https://digitalhumanities.mit.edu/project/sonification-toolkit-for-musicians/'>
-                        two dozen undergraduate research associates</a>,
+                            two dozen undergraduate research associates</a>,
                         and the <a href='https://digitalhumanities.mit.edu/people/'> instructional
                         staff</a> of the DH Lab.
                     </p>
+                    <div className="projects">
+                        {projectCards}
+                    </div>
+
                 </div>
 
-                <div className="row">
-                    {projectCards}
-                </div>
+                <Sidebar content={<div>
+                    This is a quote here
+                </div>}/>
             </main>
         </div>
 

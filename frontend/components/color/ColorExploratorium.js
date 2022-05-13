@@ -10,8 +10,6 @@ import {createAudioContextWithCompressor} from "../instruments/common";
 import ExploratoriumLayout from "../global/ExploratoriumLayout";
 import PaletteColor from "./PaletteColor";
 
-import MoveIcon from "../../images/MoveIcon.svg";
-
 /*
 Using:
 https://colordesigner.io/color-palette-from-image
@@ -144,17 +142,17 @@ const STARRY_NIGHT_DATA = {
     title: "The Starry Night by Vincent van Gogh",
 };
 
-
-
-const RAINBOW_COLORS = [
-    {r: 255, g: 0, b: 0},
-    {r: 255, g: 159, b: 0},
-    {r: 255, g: 231, b: 0},
-    {r: 134, g: 255, b: 0},
-    {r: 0, g: 116, b: 255},
-    {r: 137, g: 0, b: 255},
-    {r: 255, g: 0, b: 168},
-];
+//
+//
+// const RAINBOW_COLORS = [
+//     {r: 255, g: 0, b: 0},
+//     {r: 255, g: 159, b: 0},
+//     {r: 255, g: 231, b: 0},
+//     {r: 134, g: 255, b: 0},
+//     {r: 0, g: 116, b: 255},
+//     {r: 137, g: 0, b: 255},
+//     {r: 255, g: 0, b: 168},
+// ];
 
 const produceColorsForRatio = (baseFreq, numerator, denominator, count) => {
     const result = [];

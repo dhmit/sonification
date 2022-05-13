@@ -19,7 +19,7 @@ blockquote {
     > .container {
         width: 100%;
         display: grid;
-        grid-template-areas: "content content content content sidebar";
+        grid-template-areas: "content content content 'sidebar";
     }
 
     .main-content {
@@ -50,6 +50,7 @@ blockquote {
     grid-area: sidebar;
     max-width: 25%;
     right: 0;
+    top: 0;
     height: 100%;
 
     .sidebar-content {
@@ -96,13 +97,19 @@ blockquote {
 
 
 .quotation {
+    margin-bottom: 2em;
     blockquote {
         max-width: 70%;
         margin: 0 auto;
+        font-size: 1.3em;
+        font-family: $font-family-base;
     }
 
     footer {
         text-align: right;
+        font-size: 1.1em;
+        margin-right: 4em;
+        margin-top: 0.5em;
     }
 
     .quote-icon {
@@ -121,11 +128,16 @@ $player-height: 75px;
 
 .audio-player {
     border: 6px solid $color-neutral;
-    padding: 0.3em;
-    border-radius: $player-height / 2;
-    width: 80%;
+    padding: 0.5em;
+    border-radius: $player-height;
+    width: 100%;
     min-height: $player-height;
     background-color: white;
+    font-size: 1.2em;
+    .play-icon {
+        margin-top: 0.2em;
+        margin-left: 0.2em;
+    }
 }
 
 .audio-player-on {

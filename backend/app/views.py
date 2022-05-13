@@ -78,7 +78,6 @@ def colors_exploratorium(request):
             'title': 'Colors'
         },
         'component_name': 'ColorExploratorium',
-        'component_props': {'twoCol': True}
     }
 
     return render(request, 'index.html', context)
@@ -106,7 +105,6 @@ def gestures_exploratorium(request):
         },
         'component_name': 'GesturesExploratorium',
         'component_props': {
-            'twoCol': True,
         }
     }
 
@@ -146,9 +144,6 @@ def time_series_exploratorium(request):
             'title': 'Time Series'
         },
         'component_name': 'TimeSeriesExploratorium',
-        'component_props': {
-            'twoCol': True,
-        }
     }
     return render(request, 'index.html', context)
 
@@ -202,9 +197,6 @@ def polygons_exploratorium(request):
             'title': 'Synthesize Polygons'
         },
         'component_name': 'PolygonExploratorium',
-        'component_props': {
-            'twoCol': True,
-        }
     }
 
     return render(request, 'index.html', context)

@@ -95,7 +95,7 @@ const GestureSonifier = ({coords, id, audioContextRef, children}) => {
     );
 
     return (<>
-        <div className="row mb-4 border p-2 py-4">
+        <div className="row mb-4 p-2 py-4">
             <div className="row">
                 {children}
             </div>

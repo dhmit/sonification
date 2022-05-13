@@ -16,7 +16,7 @@ blockquote {
 #main-container {
     padding: 1em 2em;
 
-    > .container {
+    > main.container {
         width: 100%;
         display: grid;
         grid-template-areas: "content content content sidebar";

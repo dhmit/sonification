@@ -6,9 +6,10 @@ const ExploratoriumLayout = ({main, sidebar, extraClass, title}) => {
     return (
         <>
             <div id="main-container" className={extraClass}>
-                <h1>{title}</h1>
                 <main className='container' role="main">
                     <div className='main-content'>
+                        <h1>{title}</h1>
+
                         {main}
                     </div>
                     <Sidebar content={sidebar}/>

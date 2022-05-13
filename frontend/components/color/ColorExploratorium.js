@@ -357,7 +357,7 @@ export const InfoCard = ({children}) => {
     </div>);
 };
 
-const ColorExploratorium = () => {
+const ColorExploratoriumMain = () => {
     return (<>
         <ColorSonifierExplainer colors={M3_COLORS}>
             <p>
@@ -414,5 +414,12 @@ export const ColorExploratoriumSidebar = () => {
         <StudentQuote quoteData={EMEKA_QUOTE} />
     );
 };
+
+
+
+const ColorExploratorium = () => <ExploratoriumLayout extraClass={"polygons"}
+                                                      title={"Colors"}
+                                                        main={<ColorExploratoriumMain/>}
+                                                        sidebar={<ColorExploratoriumSidebar/>}/>;
 
 export default ColorExploratorium;

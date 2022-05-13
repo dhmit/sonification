@@ -50,7 +50,10 @@ export const GRACE_QUOTE = {
 };
 
 export const PEIHUA_QUOTE = {
-    quote: "My favorite part of the project was learning more about how pitches and notes work and seeing our final feature at the end. I personally don’t have any musical background, so a lot of this was new to me. [...] Normally when you look at something visual, you don’t think ‘Oh, this is what it would sound like.’",
+    quote: "My favorite part of the project was learning more about how pitches and notes work." +
+     " [...]" +
+     "Normally when you look at something visual, you don’t think ‘Oh, this is what it" +
+      " would sound like.’",
     firstName: "Peihua",
     lastName: "Huang",
     classYear: 24,

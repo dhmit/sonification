@@ -151,7 +151,7 @@ const GesturesExploratoriumMain = () => {
                 hidden third dimension: time.
             </p>
             <p>
-                Click "Play the full drawing" or the individual gesture buttons underneath.
+                Click "Play" to hear the full drawing, or click any of the individual gestures below.
             </p>
         </GestureSonifier>
         <GestureSonifier coords={GESTURE_LINES} id={"wave"} audioContextRef={audioContextRef}>
@@ -166,13 +166,6 @@ const GesturesExploratoriumMain = () => {
             </p>
         </GestureSonifier>
 
-        <InfoCard>
-            <img
-                className="mr-2"
-                alt="Portrait of student"
-                src={MoveIcon} width="100px" height="100px"/>
-            Could put more copy here about the sonification. How does it work?
-        </InfoCard>
         <GestureSonifier coords={GESTURE_CORNERS} id={"wave"} audioContextRef={audioContextRef}>
             <p>
                 TODO: MORE COPY HERE -- probably a better sample gesture, too.

@@ -238,7 +238,7 @@ class PolygonSonifier extends React.Component {
 
 const PolygonExplainer = ({polygon, children}) => {
     return (
-        <div className="row mb-4">
+        <div className="row mb-4 py-4">
             <div className="my-auto col-6">
                     {children}
             </div>
@@ -274,13 +274,13 @@ const PolygonExploratoriumMain = () => {
         <PolygonExplainer
             polygon={
                 <PolygonSonifier
-                    size={150}
+                    size={200}
                     data={STARRISH_DATA}
                     audioContextRef={audioContextRef} compressorRef={compressorRef}/>
             }
         >
             <p>
-                This module takes polygons and turns them into arpeggios.
+                This module takes polygons and turns them into arpeggios and scales.
             </p>
             <p>
                 Click on any of the polygons on this page to activate or deactivate them!
@@ -290,7 +290,7 @@ const PolygonExploratoriumMain = () => {
         <PolygonExplainer
             polygon={
                 <PolygonSonifier
-                    size={150}
+                    size={200}
                     data={DODECADON_DATA}
                     audioContextRef={audioContextRef} compressorRef={compressorRef}/>
             }
@@ -308,7 +308,7 @@ const PolygonExploratoriumMain = () => {
         <PolygonExplainer
             polygon={
                 <PolygonSonifier
-                    size={150}
+                    size={200}
                     data={EQUILATERAL_TRIANGLE_DATA}
                     audioContextRef={audioContextRef} compressorRef={compressorRef}/>
             }
@@ -323,8 +323,8 @@ const PolygonExploratoriumMain = () => {
         <PolygonExplainer
             polygon={
                 <PolygonSonifier
-                    size={150}
-                    data={TEAPOT_DATA}
+                    size={200}
+                    data={FLOWERISH_DATA}
                     audioContextRef={audioContextRef} compressorRef={compressorRef}/>
             }
         >
@@ -337,7 +337,7 @@ const PolygonExploratoriumMain = () => {
         <p>
             We've made a bunch for you to try: see what happens when you play them simultaneously, in counterpoint with each other!
         </p>
-        {[SQUARE_DATA, FLOWERISH_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
+        {[SQUARE_DATA, TEAPOT_DATA, OVAL_DATA, TRIANGLE_DATA, STARRISH_DATA].map((data, i) =>
             <PolygonSonifier
                 key={i}
                 size={150}

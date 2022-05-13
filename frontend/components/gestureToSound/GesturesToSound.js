@@ -1,5 +1,4 @@
 import React, {useLayoutEffect, useEffect, useState, useRef} from "react";
-import STYLES from "./GesturesToSound.module.scss";
 import {fetchPost} from "../../common";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {base64AudioToDataURI} from "../../common";
@@ -83,13 +82,10 @@ export const MiniGestureCanvas = ({clickCallback, coords}) => {
     }, [isAnimating]);
 
     return (
-        <canvas
-            style={{border: "1px solid grey"}}
-            className="mr-2"
-            onClick={(e) => handleClick(e)}
-            height="100" width="100"
-            ref={canvasRef}
-        />
+        <canvas className="mini-canvas mr-2"
+                onClick={(e) => handleClick(e)}
+                height="100" width="100"
+                ref={canvasRef}/>
     );
 };
 
@@ -420,11 +416,7 @@ const GesturesToSound = ({audioContextRef}) => {
         <div className="row">
             <div className="col-8">
                 <canvas
-                    className={`
-                                ${STYLES.canvas}
-                                ${STYLES.activeCanvas}
-                                width='500px' height='500px'
-                            `}
+                    className={"canvas active-canvas"}
                     ref={mainCanvasRef}
                 />
             </div>

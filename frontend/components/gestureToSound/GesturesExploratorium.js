@@ -101,8 +101,7 @@ const GestureSonifier = ({coords, id, audioContextRef, children}) => {
             </div>
             <div className="row">
                 <div className="col">
-                    <canvas
-                        className={STYLES.canvas}
+                    <canvas className="canvas"
                         ref={mainCanvasRef}
                         width="500" height="500"
                     />
@@ -192,6 +191,7 @@ export const GesturesExploratoriumSidebar = () => {
 
 const GesturesExploratorium = () => <ExploratoriumLayout
     extraClass={"gestures"}
+    title={"Gestures"}
     main={<GesturesExploratoriumMain/>}
     sidebar={
         <GesturesExploratoriumSidebar/>}/>;

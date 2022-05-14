@@ -35,8 +35,6 @@ const About = () => {
                                     </a>
                                 </div>
                             </nav>
-                            <StudentQuote quoteData={EVAN_QUOTE} blob={null}
-                                          style={{top: "100px", left: "150px"}}/>
                             <StudentQuote quoteData={EVAN_QUOTE2} blob={6} color={"#FEDE6C"}/>
                         </div>
                         <ul className="list-inline photo-row">

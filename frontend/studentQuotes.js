@@ -13,10 +13,11 @@ import QUINCY_IMG from "./images/headshots/Johnson_Quincy.jpg";
 import ANGELINA_AUDIO from "./audio/Polygons_Angelina_2022-05-04.mp4";
 import EESHA_AUDIO from "./audio/TimeSeries_Eesha_2022-05-02.m4a";
 import EMEKA_AUDIO from "./audio/Colors_Emeka_2022-05-04.m4a";
-import GRACE_AUDIO from "./audio/Gestures_Grace_2022-04-28.mp4";
+// import GRACE_AUDIO from "./audio/Gestures_Grace_2022-04-28.mp4";
 import MOISES_AUDIO from "./audio/TimeSeries_Moises_2022-04-27.m4a";
 import PEIHUA_AUDIO from "./audio/Gestures_Peihua_2022-05-02.mp3";
 import QUINCY_AUDIO from "./audio/Polygons_Quincy_2022-05-02.mp3";
+import EVAN_AUDIO from "./audio/LandingPage_Ziporyn_2022-05-09.mp3";
 
 import Blob1 from "./images/blobs/blob1.svg";
 import Blob2 from "./images/blobs/blob2.svg";
@@ -107,9 +108,10 @@ export const MOISES_QUOTE = {
 export const EVAN_QUOTE = {
     quote: "Sonification is to sound as Data Visualization is to sight: " +
         "both allow us to understand information in a different way.",
-    firstName: "Prof. Evan",
+    firstName: "Evan",
     lastName: "Ziporyn",
-    classYear: ""
+    audio: EVAN_AUDIO,
+    classYear: "",
 };
 
 export const EVAN_QUOTE2 = {
@@ -117,6 +119,7 @@ export const EVAN_QUOTE2 = {
         "sound and gesture, sound and shape",
     firstName: "Evan",
     lastName: "Ziporyn",
+    audio: EVAN_AUDIO,
     classYear: ""
 };
 

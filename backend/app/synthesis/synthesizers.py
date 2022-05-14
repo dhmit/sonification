@@ -60,7 +60,8 @@ def generate_wave_weighted_harmonics(frequency, duration, harmonic_weights):
     wave = np.zeros(num_samples)
 
     for i, weight in enumerate(harmonic_weights):
-        harmonic_wave = generate_sine_wave(frequency*i, duration)
+        print(i)
+        harmonic_wave = generate_sine_wave(frequency*(i+1), duration)
         wave += weight*harmonic_wave
 
     # normalize

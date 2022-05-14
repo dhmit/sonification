@@ -41,14 +41,14 @@ export const EMEKA_QUOTE = {
 
 // Gestures:
 export const GRACE_QUOTE = {
-    quote: "It was really cool to see the intersections between math and programming and music, " +
-        "and how all of that could come together [... this project] helped me understand how the" +
+    quote: "It was really cool to see the intersections between math and programming and music. " +
+        " [... this project] helped me understand how the" +
          " different pieces fit together to form a product",
     firstName: "Grace",
     lastName: "Jau",
     classYear: 25,
     img: GRACE_IMG,
-    audio: GRACE_AUDIO,
+    // audio: GRACE_AUDIO,
 };
 
 export const PEIHUA_QUOTE = {
@@ -63,8 +63,7 @@ export const PEIHUA_QUOTE = {
 
 // Polygons
 export const ANGELINA_QUOTE = {
-    quote: "This project is all about making tools to get people to play with sound in hopefully " +
-        "new ways, so of course we had to ourselves stretch what we knew to different shapes. " +
+    quote: "We had to ourselves stretch what we knew to different shapes. " +
         "That creative process was really fun.",
     firstName: "Angelina",
     lastName: "Wu",

@@ -76,10 +76,10 @@ p {
     .sidebar-content {
         padding: 2em;
         min-height: 79%;
+        max-height: 79%;
     }
 
     footer {
-
         .sidebar-footer-content {
             border-top: 6px solid $color-blue;
             padding: 1em;
@@ -140,13 +140,13 @@ p {
 
 
 .quotation {
-    margin-bottom: 2em;
+    margin-bottom: .5em;
 
 
     blockquote {
         max-width: 90%;
         margin: 0 0 0 3em;
-        font-size: 1.3em;
+        font-size: 1.2em;
         font-family: $font-family-base;
     }
 
@@ -162,6 +162,7 @@ p {
         margin-top: -25px;
         margin-left: -10px;
 
+        transform: scale(.9);
         &.right {
             transform: scale(-.75, .75);
             right: -20px;

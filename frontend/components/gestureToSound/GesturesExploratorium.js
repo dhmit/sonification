@@ -182,7 +182,7 @@ export const GesturesExploratoriumSidebar = () => {
     return (<>
         <StudentQuote quoteData={PEIHUA_QUOTE} blob={1} color={"#A5E0EC"}
                       style={{
-                          top: "0",
+                          top: "100px",
                           width: "499px",
                           height: "600px",
                           right: "-100px"

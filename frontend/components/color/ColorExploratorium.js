@@ -4,7 +4,7 @@ import {rgb2hsv, hex2rgb, hsv2rgb, freqToHsv, freqToHue} from "./ColorSonifier";
 import ColorPadInstrument from "../instruments/ColorPadInstrument";
 import Loading from "../global/Loading";
 import ColorSonifier from "./ColorSonifier";
-import {StudentQuote, EMEKA_QUOTE} from "../../studentQuotes";
+import {StudentQuote, EMEKA_QUOTE, GRACE_QUOTE} from "../../studentQuotes";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
 import ExploratoriumLayout from "../global/ExploratoriumLayout";
@@ -476,9 +476,9 @@ const ColorExploratoriumMain = () => {
 
 
 export const ColorExploratoriumSidebar = () => {
-    return (
+    return (<>
         <StudentQuote quoteData={EMEKA_QUOTE} blob={3} style={{top: "-20px", left: "200px"}}/>
-    );
+    </>);
 };
 
 

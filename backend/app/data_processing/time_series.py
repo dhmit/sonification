@@ -87,11 +87,8 @@ def time_series_to_graph(request):
     x_num_labels = 10
     x_step = len(csv_data) / x_num_labels
     x_ticks = np.arange(0, len(csv_data), step=x_step)
-    print(headers)
-    print(x_ticks, len(x_ticks))
     x_time_step = total_duration / x_num_labels
     x_labels = [i * x_time_step for i in range(x_num_labels)]
-    print(x_labels, len(x_labels))
 
     plt.xticks(
         ticks=x_ticks,

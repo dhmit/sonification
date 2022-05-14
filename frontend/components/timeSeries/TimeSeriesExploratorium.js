@@ -30,7 +30,9 @@ const SUNRISE_SUNSET_BOSTON = {
     constants: DEFAULT_COLUMN_CONSTANTS,
     copy:
         "This sonification, developed by Moises Trejo ’22, puts Boston's sunrise and sunset " +
-         "times in counterpoint with each other. Listen for how the pitches representing the" +
+         "times in counterpoint with each other. Listen to how the pitches" +
+          " representing" +
+          " the" +
           " two times of the day slowly move away from each other until they reach the" +
            " longest day of the year—the summer solstice—and then gradually converge on the" +
             " Winter solstice."
@@ -50,8 +52,8 @@ const IRRATIONALS = {
     constants: DEFAULT_COLUMN_CONSTANTS,
     copy: "This sonification takes in the first 500 digits of the most famous irrational " +
      "numbers. By themselves, these digits are not meaningful, but in this context, they " +
-     "provide raw material for exploring this technique for music making. Each number has been " +
-     "transposed into its own range. Try toggling the individual tracks in and out."
+     "can provide raw material for exploring an unusual technique for music making. " +
+      "Each number has been transposed into its own range. Try toggling the individual tracks in and out."
 };
 
 
@@ -145,14 +147,14 @@ const TimeSeriesSonifier = ({data, audioContextRef, compressorRef}) => {
 
     return (
         <div className="row mb-4 p-2 py-4">
-            <div className="col-4">
+            <div className="col-6">
                 {graph && <img
                     src={`data:image/png;base64, ${graph}`}
                     className="img-fluid"
                     alt="A line chart showing the frequencies of the sonified data"
                 />}
             </div>
-            <div className="col-8">
+            <div className="col-6">
                 <div className="row mb-4">
                     <div className="col w-100">
                         <h2 className="mb-4">{title}</h2>

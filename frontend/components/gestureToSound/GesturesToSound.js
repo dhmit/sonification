@@ -3,6 +3,7 @@ import {fetchPost} from "../../common";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {base64AudioToDataURI} from "../../common";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
+import MarkP from "../global/MarkP";
 
 
 const scaleCoordsToCanvas = (canvasRef, rawCoords) => {
@@ -311,6 +312,7 @@ const GesturesToSound = ({audioContextRef}) => {
             width: canvas.width,
             height: canvas.height,
         };
+        console.log(allMouseCoords);
         const requestBody = {
             gestures: allMouseCoords,
             // parameters: gestureParams,
@@ -398,13 +400,13 @@ const GesturesToSound = ({audioContextRef}) => {
     );
 
     return (<>
-        <p>
+        <MarkP>
             First, draw something, then click Sonify! to hear your gestures in motion.
-        </p>
+        </MarkP>
 
-        <p>
+        <MarkP>
             Try drawing slowly vs. quickly, and explore the full space of the canvas.
-        </p>
+        </MarkP>
 
         <div className="canvas-row">
             <div className="canvas-side">

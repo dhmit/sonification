@@ -9,6 +9,7 @@ import {drawGesture, clearCanvas, MiniGestureCanvas, animateAllGestures} from ".
 import {StudentQuote, GRACE_QUOTE, PEIHUA_QUOTE} from "../../studentQuotes";
 import NiceAudioPlayer from "../instruments/NiceAudioPlayer";
 import ExploratoriumLayout from "../global/ExploratoriumLayout";
+import MarkP from "../global/MarkP";
 
 const GestureSonifier = ({coords, id, audioContextRef, children}) => {
     const mainCanvasRef = useRef(null);
@@ -137,40 +138,32 @@ const GesturesExploratoriumMain = () => {
 
     return (<>
         <GestureSonifier coords={GESTURE_WAVE} id={"wave"} audioContextRef={audioContextRef}>
-            <p>
+            <MarkP>
                 <mark>
                 Each of the drawings on this page appear to be two dimensional, but they have a
                 hidden third dimension: time.
                 </mark>
-            </p>
-            <p>
-                <mark>
+            </MarkP>
+            <MarkP>
                 Click "Play" to hear the full drawing, or click any of the individual gestures below.
-                </mark>
-            </p>
+            </MarkP>
         </GestureSonifier>
         <GestureSonifier coords={GESTURE_LINES} id={"wave"} audioContextRef={audioContextRef}>
-            <p>
-                <mark>
+            <MarkP>
                 The qualities of each gesture&mdash;speed, direction, starting and ending
                 positions&mdash;
-                are converted into pitch, volume, and tempo.
-                </mark>
-            </p>
-            <p>
-                <mark>
+                are converted into tempo, pitch, and volume.
+            </MarkP>
+            <MarkP>
                 Each of these strokes appears similar, but the speed and direction of each stroke is
-                preserved in the sonification.
-                </mark>
-            </p>
+                preserved in the sonification, even including pauses taken while drawing.
+            </MarkP>
         </GestureSonifier>
 
         <GestureSonifier coords={GESTURE_CORNERS} id={"wave"} audioContextRef={audioContextRef}>
-            <p>
-                <mark>
-                TODO: MORE COPY HERE -- probably a better sample gesture, too.
-                </mark>
-            </p>
+            <MarkP>
+                We recommend trying out some squiggles.
+            </MarkP>
         </GestureSonifier>
 
         <h3><mark>Make Your Own</mark></h3>

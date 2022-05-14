@@ -1,6 +1,7 @@
 import React from "react";
 import PropTypes from "prop-types";
-import Sidebar from "./global/Sidebar";
+import {StudentQuote, EVAN_QUOTE} from "../studentQuotes";
+import Blob2 from "../images/blobs/blob2.svg";
 
 const ProjectCard = ({title, description, route}) => {
     return (
@@ -31,7 +32,7 @@ const Home = () => {
         },
         {
             title: "Time Series",
-            description: "Hear the sound of time-based events",
+            description: "What sound does time make?",
             route: "/time-series/",
         },
         {
@@ -63,13 +64,29 @@ const Home = () => {
                         <a href='https://www.ziporyn.com/'>Prof. Evan Ziporyn</a>,&nbsp;
                         <a href='https://digitalhumanities.mit.edu/project/sonification-toolkit-for-musicians/'>
                             two dozen undergraduate research associates</a>,
-                        and the <a href='https://digitalhumanities.mit.edu/people/'> instructional
+                        and the <a
+                        href='https://digitalhumanities.mit.edu/people/'> instructional
                         staff</a> of the DH Lab.
                     </p>
                     <div className="projects">
                         {projectCards}
                     </div>
+                    <Blob2 className="extra-blob"/>
 
+                </div>
+                <div className="home-sidebar">
+                    <div className="sidebar-about">
+                        <a href="/about">About</a>
+                    </div>
+                    <div className="side-quote">
+                        <StudentQuote quoteData={EVAN_QUOTE}
+                                      color={"#FEDE6C"}
+                                      blob={3} style={{
+                            left: "1000px",
+                            top: "400px",
+                            height: "800px"
+                        }}/>
+                    </div>
                 </div>
             </main>
         </div>

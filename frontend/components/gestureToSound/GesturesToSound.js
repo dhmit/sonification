@@ -312,7 +312,6 @@ const GesturesToSound = ({audioContextRef}) => {
             width: canvas.width,
             height: canvas.height,
         };
-        console.log(allMouseCoords);
         const requestBody = {
             gestures: allMouseCoords,
             // parameters: gestureParams,

@@ -356,7 +356,7 @@ class PaintingSonifier extends React.Component {
 
         // TODO(ra): move all of this to CSS after getting out of CSS modules
         const imgStyle = {};
-        if (this.state.colorsPlaying.length > 0) imgStyle.border = "2px solid black";
+        if (this.state.colorsPlaying.length > 0) imgStyle.border = "4px solid black";
 
         return (
             <div className="row mb-4 py-4">

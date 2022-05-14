@@ -38,6 +38,7 @@ export const createAudioCallbacks = (samples, audioContext, loop=false) => {
     const startCallbacks = [];
     const endCallbacks = [];
     const unmuteCallbacks = [];
+    const startMutedCallbacks = [];
 
     buffers.forEach(buffer => {
         const gainNode = audioContext.createGain();

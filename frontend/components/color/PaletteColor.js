@@ -17,7 +17,7 @@ const PaletteColor = ({
     };
 
     if (selected) {
-        style.border = "2px solid black";
+        style.border = "4px solid black";
     }
 
     let isPlaying = false;

@@ -53,5 +53,4 @@ def get_harmonic_weights(value):
     ], axis=0)
 
     interpolated_harmonics = np.clip(interpolated_harmonics, -0.025, 0.025)
-    print(interpolated_harmonics)
     return interpolated_harmonics

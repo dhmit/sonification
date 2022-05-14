@@ -131,7 +131,6 @@ const TimeSeriesSonifier = ({data, audioContextRef, compressorRef}) => {
     };
 
     const toggleOneTrack = (i) => {
-        // TODO(ra): start global playing with individual track toggles?
         if (!playing) return;
 
         let newTracksPlaying = [];
@@ -142,6 +141,8 @@ const TimeSeriesSonifier = ({data, audioContextRef, compressorRef}) => {
             newTracksPlaying = [...tracksPlaying, i];
             unmuteCallbacks[i]();
         }
+
+        if (newTracksPlaying.length === 0) setPlaying(false);
         setTracksPlaying(newTracksPlaying);
     };
 
@@ -173,20 +174,22 @@ const TimeSeriesSonifier = ({data, audioContextRef, compressorRef}) => {
                                     text="Play all tracks"
                                     extraClass="mb-4"
                                 />
-                                <p>
-                                Toggle each track:
-                                </p>
-                                {samples.map((sample, i) =>
-                                    <button
-                                        key={i}
-                                        className={
-                                            `btn btn-sonification btn-primary mr-2 audio-player
-                                             ${tracksPlaying.includes(i) && "audio-player-on"}`}
-                                        onClick={() => toggleOneTrack(i)}
-                                    >
-                                        {headers[i]}
-                                    </button>
-                                )}
+                                {playing && <>
+                                    <p>
+                                    Toggle each track:
+                                    </p>
+                                    {samples.map((sample, i) =>
+                                        <button
+                                            key={i}
+                                            className={
+                                                `btn btn-sonification btn-primary mr-2 audio-player
+                                                 ${tracksPlaying.includes(i) && "audio-player-on"}`}
+                                            onClick={() => toggleOneTrack(i)}
+                                        >
+                                            {headers[i]}
+                                        </button>
+                                    )}
+                                </>}
                             </>
 
                             : <Loading/>

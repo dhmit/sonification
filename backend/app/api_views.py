@@ -93,8 +93,9 @@ def color_to_audio(request):
     :return: wav file of the generated music as well as a list of samples for the pad instrument.
     """
     colors = request.data['colors']
+    sine_only = True
 
-    samples = color_processing.generate_samples(colors)
+    samples = color_processing.generate_samples(colors, sine_only=sine_only)
     raw_audio = np.hstack(samples)
     wav_file_base64 = audio_samples_to_wav_base64(raw_audio)
     samples_base64 = [audio_samples_to_wav_base64(s) for s in samples]

@@ -17,6 +17,8 @@ To create color themes
  */
 
 const sortRGBsByHue = (rgbA, rgbB) => rgb2hsv(rgbA).h - rgb2hsv(rgbB).h;
+const filterRGBsByValue = (rgbA) => rgb2hsv(rgbA).v > 40;
+const filterRGBsBySaturation = (rgbA) => rgb2hsv(rgbA).s > 30;
 
 import MURAKAMI_IMG from "../../images/paintings/murakami.jpg";
 
@@ -41,7 +43,7 @@ const MURAKAMI_COLORS = [
     hex2rgb("#1A86C6"),
     hex2rgb("#0EA5BD"),
     hex2rgb("#29D4F0"),
-].sort(sortRGBsByHue);
+].sort(sortRGBsByHue).filter(filterRGBsByValue).filter(filterRGBsBySaturation);
 const MURAKAMI_DATA = {
     colors: MURAKAMI_COLORS,
     img: MURAKAMI_IMG,
@@ -49,35 +51,50 @@ const MURAKAMI_DATA = {
 };
 
 
-import JOAN_MITCHELL_IMG from "../../images/paintings/JoanMitchell.jpg";
+import BISA_BUTLER_IMG from "../../images/paintings/BisaButler.jpg";
 
-const JOAN_MITCHELL_COLORS = [
-    hex2rgb("#3F4F21"),
-    hex2rgb("#82822C"),
-    hex2rgb("#8C8E85"),
-    hex2rgb("#755E18"),
-    hex2rgb("#B4B091"),
-    hex2rgb("#060909"),
-    hex2rgb("#B4B4B3"),
-    hex2rgb("#F0EAE2"),
-    hex2rgb("#A89896"),
-    hex2rgb("#486466"),
-    hex2rgb("#D4CEB5"),
-    hex2rgb("#CFCECF"),
-    hex2rgb("#C9B9B6"),
-    hex2rgb("#F9F7F6"),
-    hex2rgb("#35699B"),
-    hex2rgb("#E2DCC9"),
-    hex2rgb("#C9B82D"),
-    hex2rgb("#E0C9CD"),
-    hex2rgb("#E0D4D7"),
-    hex2rgb("#64949C"),
-].sort(sortRGBsByHue);
-const JOAN_MITCHELL_DATA = {
-    colors: JOAN_MITCHELL_COLORS,
-    img: JOAN_MITCHELL_IMG,
-    title: "Joan Mitchell",
+const BISA_BUTLER_COLORS = [
+    hex2rgb("#E2A73F"),
+    hex2rgb("#9185AF"),
+    hex2rgb("#ACA031"),
+    hex2rgb("#07AFBA"),
+    hex2rgb("#BB122B"),
+    hex2rgb("#363857"),
+    hex2rgb("#C0D767"),
+    hex2rgb("#787492"),
+    hex2rgb("#33515B"),
+    hex2rgb("#208149"),
+    hex2rgb("#C2C1CD"),
+    hex2rgb("#2CABAE"),
+    hex2rgb("#84685C"),
+    hex2rgb("#CC8B30"),
+    hex2rgb("#306983"),
+    hex2rgb("#4180AD"),
+    hex2rgb("#322B3E"),
+    hex2rgb("#5B4045"),
+    hex2rgb("#3A734F"),
+    hex2rgb("#C22A3E"),
+    hex2rgb("#B579A1"),
+    hex2rgb("#305156"),
+    hex2rgb("#3A375F"),
+    hex2rgb("#462C3F"),
+    hex2rgb("#CBA17A"),
+    hex2rgb("#322321"),
+    hex2rgb("#221912"),
+    hex2rgb("#112530"),
+    hex2rgb("#DDEDEB"),
+    hex2rgb("#340B27"),
+].sort(sortRGBsByHue).filter(filterRGBsByValue).filter(filterRGBsBySaturation);
+
+
+const BISA_BUTLER_DATA = {
+    colors: BISA_BUTLER_COLORS,
+    img: BISA_BUTLER_IMG,
+    title: "I Go To Prepare A Place For You by Bisa Butler",
 };
+
+
+
 
 // TODO(ra): Probably reduce the resolution on this one
 import OKEEFFE_IMG from "../../images/paintings/GeorgiaOKeeffe.jpg";
@@ -103,7 +120,7 @@ const OKEEFFE_COLORS = [
     hex2rgb("#239548"),
     hex2rgb("#9E5471"),
     hex2rgb("#C7D6E7"),
-].sort(sortRGBsByHue);
+].sort(sortRGBsByHue).filter(filterRGBsByValue).filter(filterRGBsBySaturation);
 const OKEEFFE_DATA = {
     colors: OKEEFFE_COLORS,
     img: OKEEFFE_IMG,
@@ -139,7 +156,7 @@ const STARRY_NIGHT_COLORS = [
     hex2rgb("#402CA7"),
     hex2rgb("#25422F"),
     hex2rgb("#190989"),
-].sort(sortRGBsByHue);
+].sort(sortRGBsByHue).filter(filterRGBsByValue).filter(filterRGBsBySaturation);
 const STARRY_NIGHT_DATA = {
     colors: STARRY_NIGHT_COLORS,
     img: STARRY_NIGHT_IMG,
@@ -173,6 +190,7 @@ const M3_COLORS = produceColorsForRatio(55, 5, 4, 10);
 const FIFTH_COLORS = produceColorsForRatio(55, 3, 2, 6);
 const OCTAVE_COLORS = produceColorsForRatio(55, 2, 1, 4);
 const OVERTONE_SEMITONE_COLORS = produceColorsForRatio(220, 17, 16, 12);
+const MICROTONE_COLORS = produceColorsForRatio(300, 35, 34, 12);
 
 const DESATURATING_COLORS = [
     hex2rgb("#0000FF"),
@@ -262,7 +280,10 @@ class PaintingSonifier extends React.Component {
     }
 
     async componentDidMount() {
-        const requestBody = {colors: this.colors.map(color => rgb2hsv(color))};
+        const requestBody = {
+            colors: this.colors.map(color => rgb2hsv(color)),
+            sineOnly: true,
+        };
         await fetchPost('/api/color_to_audio/', requestBody, response => {
             const [startCallbacks, endCallbacks] =
                 createAudioCallbacks(response.samples, this.audioContextRef.current, true);
@@ -297,14 +318,27 @@ class PaintingSonifier extends React.Component {
     }
 
     toggleAllColors = () => {
-        // TODO(ra): visual indicator of playing
+
+
+
 
         const colorsPlaying = [];
         if (this.state.colorsPlaying.length === 0) {
-            // Start everything!
+            // Start a random chord!
+            const numToStartRandomly = 4;
+            const startIndices = [];
+            while (startIndices.length < numToStartRandomly) {
+                const i = Math.floor(Math.random() * this.colors.length);
+                if (!startIndices.includes(i)) {
+                    startIndices.push(i);
+                }
+            }
+
             this.state.audioStartCallbacks.forEach((startCallback, i) => {
-                startCallback();
-                colorsPlaying.push(i);
+                if (startIndices.includes(i)) {
+                    startCallback();
+                    colorsPlaying.push(i);
+                }
             });
         } else {
             // Turn everything that's playing off
@@ -398,12 +432,9 @@ const ColorExploratoriumMain = () => {
             </p>
         </ColorSonifierExplainer>
 
-        <ColorSonifierExplainer colors={VALUE_COLORS_BLUE}>
+        <ColorSonifierExplainer colors={MICROTONE_COLORS}>
             <p>
-
-                Copy here about how the value maps to timbre. Explain value in HSV.
-                Maybe make a more contrast-y example of the timbre changing.
-
+                Microtone example: roughly 1/4 tones.
             </p>
         </ColorSonifierExplainer>
 
@@ -412,9 +443,14 @@ const ColorExploratoriumMain = () => {
         <InfoCard>
             <h2>The Sound of Paintings</h2>
             <div className='col'>
-                <p>Below, we've sonified a few paintings.
-                    Click on the painting itself to start or pause a loop representing all of the
-                    colors in the painting. Click the buttons next to the painting to toggle
+                <p>
+                    Below, we've sonified a few paintings.
+                </p>
+                <p>
+                    Click on the painting itself to start playing a chord picked from the painting's colors.
+                </p>
+                <p>
+                    Click the buttons next to the painting to toggle
                     individual colors on or off.
                 </p>
             </div>
@@ -422,7 +458,7 @@ const ColorExploratoriumMain = () => {
 
         <PaintingSonifier data={OKEEFFE_DATA}/>
         <PaintingSonifier data={MURAKAMI_DATA}/>
-        <PaintingSonifier data={JOAN_MITCHELL_DATA}/>
+        <PaintingSonifier data={BISA_BUTLER_DATA}/>
         <PaintingSonifier data={STARRY_NIGHT_DATA}/>
     </>);
 };

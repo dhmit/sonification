@@ -43,7 +43,7 @@ urlpatterns = [
 
     # View paths
     path('', views.index, name='index'),
-    path('about', views.about, name='about'),
+    path('about/', views.about, name='about'),
     path('colors-original/', views.colors),
     path('gestures-original/', views.gestures),
     path('polygons-original/', views.polygons),

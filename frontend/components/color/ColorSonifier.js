@@ -4,6 +4,7 @@ import PaletteColor from "./PaletteColor";
 import ColorPicker from "./ColorPicker";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import Loading from "../global/Loading";
+import MarkP from "../global/MarkP";
 
 /*********************************************************************************
  * COLOR UTILITIES
@@ -181,13 +182,9 @@ class ColorSonifier extends React.Component {
                                     color={color}
                                     selected={i === Number(this.state.selected)}
                                     handlePaletteClick={this.handlePaletteClick}
-                                    keyBind={keyMap[i]}
                                     startCallback={() => this.handleKeypress(i)}
                                     endCallback={this.state.endCallbacks[i]}>
-                                    {i === this.state.loading
-                                        ? <Loading/>
-                                        : <>{keyMap[i]}</>
-                                    }
+                                    {i === this.state.loading && <Loading />}
                                 </PaletteColor>
                             </div>
                         )}
@@ -197,18 +194,20 @@ class ColorSonifier extends React.Component {
         );
 
         return (<div className="row mb-4">
-            <h3>Try it out!</h3>
-            <p>
-                <mark>
-                    <strong>Click</strong> on a color button and <strong>drag</strong> the circles
-                    to change the colors below.
-                </mark>
-            </p>
-            <p className="mb-5">
-                <mark>
-                    <strong>Play</strong> your palette using the letters Q-Y on the keyboard.
-                </mark>
-            </p>
+            <h3><mark>Try it out!</mark></h3>
+            <MarkP>
+                <strong>Click</strong> on a color button and <strong>drag</strong> the circles
+                to change the colors below.
+            </MarkP>
+            <MarkP>
+                Try creating a palette of colors close to each other, or far apart,
+                and listen for the relationships between the colors you chose.
+            </MarkP>
+            {/*<p className="mb-5">*/}
+            {/*    <mark>*/}
+            {/*        <strong>Play</strong> your palette using the letters Q-Y on the keyboard.*/}
+            {/*    </mark>*/}
+            {/*</p>*/}
             {toolLayout}
         </div>);
     }

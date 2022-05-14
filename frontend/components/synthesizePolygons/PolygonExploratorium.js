@@ -290,14 +290,10 @@ const PolygonExploratoriumMain = () => {
                     audioContextRef={audioContextRef} compressorRef={compressorRef}/>
             }>
             <p>
-                <mark>
-                    This module takes polygons and turns them into arpeggios and scales.
-                </mark>
+                This module takes polygons and turns them into arpeggios and scales.
             </p>
             <p>
-                <mark>
-                    Click on any of the polygons on this page to activate or deactivate them!
-                </mark>
+                Click on any of the polygons on this page to activate or deactivate them!
             </p>
         </PolygonExplainer>
 

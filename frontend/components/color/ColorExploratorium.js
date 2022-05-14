@@ -9,6 +9,7 @@ import {createAudioCallbacks} from "../instruments/SamplePlayer";
 import {createAudioContextWithCompressor} from "../instruments/common";
 import ExploratoriumLayout from "../global/ExploratoriumLayout";
 import PaletteColor from "./PaletteColor";
+import MarkP from "../global/MarkP.js";
 
 /*
 Using:
@@ -241,9 +242,14 @@ class ColorSonifierExplainer extends React.Component {
 
     render() {
         return (
-            <div className="row mb-4 py-4">
+            <div className="row mb-2 py-4">
                 <div className="col">
-                    <div className="row mb-3">
+                    <div className="row">
+                        <div className="col">
+                            {this.props.children}
+                        </div>
+                    </div>
+                    <div className="row">
                         <div className="col">
                             {this.state.music && this.state.instrumentSamples &&
                             <ColorPadInstrument
@@ -251,11 +257,6 @@ class ColorSonifierExplainer extends React.Component {
                                 colors={this.colors}
                             />
                             }
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col">
-                            {this.props.children}
                         </div>
                     </div>
                 </div>
@@ -400,43 +401,53 @@ export const InfoCard = ({children}) => {
 
 const ColorExploratoriumMain = () => {
     return (<>
-        <ColorSonifierExplainer colors={M3_COLORS}>
-            <p>
+        <div className="row">
+            <div className="col-8">
+                <MarkP>
+                    This module takes individual colors and converts them into sounds.
+                    Click the color swatches to hear them.
+                </MarkP>
 
-                Example of ascending pure (5/4) major thirds traversing the hue/pitch space.
+                {/*<img src="https://upload.wikimedia.org/wikipedia/commons/a/ad/HueScale.svg" />*/}
 
-            </p>
-        </ColorSonifierExplainer>
+                <ColorSonifierExplainer colors={M3_COLORS}>
+                    <MarkP>
+                        Each color's hue is mapped to a pitch in the human hearing range.
+                        This series of intervals traverses the entire space of visible colors:
+                    </MarkP>
+                </ColorSonifierExplainer>
 
-        <ColorSonifierExplainer colors={FIFTH_COLORS}>
-            <p>
+                <ColorSonifierExplainer colors={FIFTH_COLORS}>
+                    <MarkP>
+                        The further apart the colors are in our visual perception,
+                        the wider the distance between the pitches:
+                    </MarkP>
+                </ColorSonifierExplainer>
 
-                Example of ascending pure fifths traversing the hue/pitch space.
+                {/*<ColorSonifierExplainer colors={OCTAVE_COLORS}>*/}
+                {/*    <p>*/}
 
-            </p>
-        </ColorSonifierExplainer>
+                {/*        Example of ascending octaves traversing the hue/pitch space.*/}
 
-        <ColorSonifierExplainer colors={OCTAVE_COLORS}>
-            <p>
+                {/*    </p>*/}
+                {/*</ColorSonifierExplainer>*/}
 
-                Example of ascending octaves traversing the hue/pitch space.
+                <ColorSonifierExplainer colors={OVERTONE_SEMITONE_COLORS}>
+                    <MarkP>
+                        These closely spaced colors produce (roughly!) the twelve notes of the Western
+                        chromatic scale:
+                    </MarkP>
+                </ColorSonifierExplainer>
 
-            </p>
-        </ColorSonifierExplainer>
-
-        <ColorSonifierExplainer colors={OVERTONE_SEMITONE_COLORS}>
-            <p>
-
-                Example of ascending 17/16 semitones traversing the hue/pitch space.
-
-            </p>
-        </ColorSonifierExplainer>
-
-        <ColorSonifierExplainer colors={MICROTONE_COLORS}>
-            <p>
-                Microtone example: roughly 1/4 tones.
-            </p>
-        </ColorSonifierExplainer>
+                <ColorSonifierExplainer colors={MICROTONE_COLORS}>
+                    <MarkP>
+                        Colors even closer together produce notes that cannot be played
+                        on a normal piano: the notes here are about twice as dense
+                        as the notes on a piano.
+                    </MarkP>
+                </ColorSonifierExplainer>
+            </div>
+        </div>
 
         <ColorSonifier/>
 

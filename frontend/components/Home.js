@@ -32,14 +32,14 @@ const Home = () => {
             route: "/gestures/",
         },
         {
-            title: "Time Series",
-            description: "What does time sound like?",
-            route: "/time-series/",
-        },
-        {
             title: "Polygons",
             description: "What sound does a shape make?",
             route: "/polygons/",
+        },
+        {
+            title: "Time Series",
+            description: "What do events in time sound like?",
+            route: "/time-series/",
         },
     ];
 

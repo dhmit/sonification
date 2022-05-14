@@ -35,7 +35,13 @@ const About = () => {
                                     </a>
                                 </div>
                             </nav>
-                            <StudentQuote quoteData={EVAN_QUOTE2} blob={6} color={"#FEDE6C"}/>
+                            <div className='pr-4'>
+                                <StudentQuote
+                                    quoteData={EVAN_QUOTE2}
+                                    blob={6}
+                                    color={"#FEDE6C"}
+                                />
+                            </div>
                         </div>
                         <ul className="list-inline photo-row">
                             <li className="list-inline-item">

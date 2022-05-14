@@ -180,6 +180,7 @@ export const StudentQuote = ({quoteData, color, blob, style}) => {
                 </blockquote>
                 <QuoteIcon className={"quote-icon right"}/>
                 <footer className="blockquote-footer">
+                    {firstName === 'Evan' && "Prof. "}
                     {firstName} {lastName} {classYear
                     ? "’" + classYear
                     : ""}
@@ -189,7 +190,8 @@ export const StudentQuote = ({quoteData, color, blob, style}) => {
             <NiceAudioPlayer
                 src={audio}
                 extraClass={"mb-5"}
-                text={`Click to hear more from ${firstName}`}
+                text={`Click to hear more from
+                    ${firstName === 'Evan' ? 'Professor Ziporyn' : firstName}`}
             />}
 
         </div>

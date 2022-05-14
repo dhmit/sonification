@@ -86,7 +86,7 @@ const Home = () => {
                             height: "800px"
                         }}/>
                         <a href="https://digitalhumanities.mit.edu/">
-                            <DHLogo width={"400px"} height={"130px"} fill={"#343a40"}/>
+                            <DHLogo width={"400px"} height={"130px"} fill={"#44616B"}/>
                         </a>
                     </div>
 

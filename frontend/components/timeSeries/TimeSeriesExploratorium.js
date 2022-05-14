@@ -28,17 +28,30 @@ const SUNRISE_SUNSET_BOSTON = {
         'Sunset',
     ],
     constants: DEFAULT_COLUMN_CONSTANTS,
+    copy:
+        "This sonification, developed by Moises Trejo ’22, puts Boston's sunrise and sunset " +
+         "times in counterpoint with each other. Listen for how the pitches representing the" +
+          " two times of the day slowly move away from each other until they reach the" +
+           " longest day of the year—the summer solstice—and then gradually converge on the" +
+            " Winter solstice."
+
+
+
 };
 
 const IRRATIONALS = {
     title: "Irrational Numbers",
     filename: "irrationals_demo",
     headers: [
-        'Fibonnaci',
-        'Golden Ratio',
         'Pi',
+        'Phi (the Golden Ratio)',
+        'e',
     ],
     constants: DEFAULT_COLUMN_CONSTANTS,
+    copy: "This sonification takes in the first 500 digits of the most famous irrational " +
+     "numbers. By themselves, these digits are not meaningful, but in this context, they " +
+     "provide raw material for exploring this technique for music making. Each number has been " +
+     "transposed into its own range. Try toggling the individual tracks in and out."
 };
 
 
@@ -50,6 +63,7 @@ const TimeSeriesSonifier = ({data, audioContextRef, compressorRef}) => {
     const title = data.title;
     const filename = data.filename;
     const headers = data.headers;
+    const copy = data.copy;
     const defaultColumnConstants = data.constants;
     const [playing, setPlaying] = useState(false);
     const [graph, setGraph] = useState();
@@ -83,6 +97,7 @@ const TimeSeriesSonifier = ({data, audioContextRef, compressorRef}) => {
                     duration,
                     everyN: INITIAL_EVERY_N,
                     constants: newColumnConstants,
+                    headers: headers,
                 };
 
                 await fetchPost('/api/time_series_to_audio/', requestBody, response => {
@@ -129,7 +144,7 @@ const TimeSeriesSonifier = ({data, audioContextRef, compressorRef}) => {
     };
 
     return (
-        <div className="row mb-4 border p-2 py-4">
+        <div className="row mb-4 p-2 py-4">
             <div className="col-4">
                 {graph && <img
                     src={`data:image/png;base64, ${graph}`}
@@ -140,9 +155,9 @@ const TimeSeriesSonifier = ({data, audioContextRef, compressorRef}) => {
             <div className="col-8">
                 <div className="row mb-4">
                     <div className="col w-100">
-                        <h4 className="mb-4">{title}</h4>
+                        <h2 className="mb-4">{title}</h2>
                         <p>
-                            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aenean vel est sollicitudin, scelerisque nunc at, dictum orci. Ut ut ultrices ex, in tristique leo. Orci varius natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Vestibulum ultrices neque nec turpis mollis, non ornare lacus ullamcorper. Quisque efficitur tincidunt diam, et porta sapien volutpat a. Ut non tortor orci. Duis fringilla pharetra vulputate. Ut placerat est eget nibh vulputate, quis fermentum nunc euismod. Pellentesque ultricies tincidunt tortor, ac posuere purus posuere dapibus. Vivamus ut mi tortor.
+                            {copy}
                         </p>
                     </div>
                 </div>
@@ -163,7 +178,7 @@ const TimeSeriesSonifier = ({data, audioContextRef, compressorRef}) => {
                                     <button
                                         key={i}
                                         className={
-                                            `btn btn-sonification btn-primary audio-player
+                                            `btn btn-sonification btn-primary mr-2 audio-player
                                              ${tracksPlaying.includes(i) && "audio-player-on"}`}
                                         onClick={() => toggleOneTrack(i)}
                                     >

@@ -4,6 +4,7 @@ from time import sleep
 
 import matplotlib
 import matplotlib.pyplot as plt
+from matplotlib.ticker import FormatStrFormatter
 
 import numpy as np
 
@@ -23,6 +24,9 @@ def time_series_to_graph(request):
     """
     csv_data = request.data['parsedCSV']
     column_constants = request.data['constants']
+    headers = request.data['headers']
+    durationPerSample = float(request.data['duration'])
+    total_duration = durationPerSample * len(csv_data)
     new_csv = []
 
     csv_data_cols = np.array(csv_data)
@@ -55,24 +59,47 @@ def time_series_to_graph(request):
     # pyplot is a stateful interface, so tricky to get this working on multiple processes at once
     while plt.fignum_exists(1):
         sleep(1)
-    figure = plt.figure(1)
+    figure = plt.figure(1, tight_layout=True)
 
     plt.plot(time_steps, new_csv)
 
     min_f = np.amin(new_csv) - 10
     max_f = np.amax(new_csv) + 10
+
     for each in NOTES:
         f = each["Frequency (Hz)"]
         if min_f <= f <= max_f:
             plt.axhline(y=f, color='grey', linestyle='-.')
-            plt.text(len(new_csv) - 1, f, each["Note"])
 
-    # TODO(ra) - let's add this back once it looks a bit nicer
-    # plt.legend(["Col " + str(i + 1) for i in range(len(new_csv[0]))])
+    plt.legend(headers)
+
+    # TODO(ra): Fix rounding on the y-axis
+    y_ticks = np.arange(min_f, max_f, step=(max_f - min_f)/20)
+    y_labels = [round(i) for i in y_ticks]
+
+    plt.yticks(
+        ticks=y_ticks,
+        labels=y_labels,
+    )
+
+
+    # TODO(ra): Probably better if this is a round number of seconds per tick
+    x_num_labels = 10
+    x_step = len(csv_data) / x_num_labels
+    x_ticks = np.arange(0, len(csv_data), step=x_step)
+    print(headers)
+    print(x_ticks, len(x_ticks))
+    x_time_step = total_duration / x_num_labels
+    x_labels = [i * x_time_step for i in range(x_num_labels)]
+    print(x_labels, len(x_labels))
+
+    plt.xticks(
+        ticks=x_ticks,
+        labels=x_labels,
+    )
 
     plt.xlabel("Time (Seconds)")
     plt.ylabel("Frequency (Hz)")
-    plt.yscale('log')
 
     buffer = BytesIO()
     plt.savefig(buffer, bbox_inches='tight', format='png')

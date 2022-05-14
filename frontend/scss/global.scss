@@ -70,11 +70,20 @@ p {
 
     .sidebar-content {
         padding: 2em;
+        min-height: 79%;
+    }
+
+    footer {
+
+        .sidebar-footer-content {
+            border-top: 6px solid $color-blue;
+            padding: 1em;
+        }
     }
 }
 
 .sidebar-top {
-    border-bottom: 0.2em solid $color-blue;
+    border-bottom: 6px solid $color-blue;
     font-size: 3em;
     display: grid;
     background-color: white;
@@ -83,7 +92,7 @@ p {
 
     .sidebar-about {
         grid-area: about;
-        border-right: 0.2em solid $color-blue;
+        border-right: 6px solid $color-blue;
         padding: 0.1em 0.2em 0 0.2em;
 
         a {
@@ -104,6 +113,7 @@ p {
 
         > a {
             cursor: pointer;
+
             &:hover {
                 svg {
                     fill: $color-link;

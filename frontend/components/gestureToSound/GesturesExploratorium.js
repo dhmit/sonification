@@ -145,7 +145,8 @@ const GesturesExploratoriumMain = () => {
                 hidden third dimension: time.
             </p>
             <p>
-                Click "Play" to hear the full drawing, or click any of the individual gestures below.
+                Click "Play" to hear the full drawing, or click any of the individual gestures
+                below.
             </p>
         </GestureSonifier>
         <GestureSonifier coords={GESTURE_LINES} id={"wave"} audioContextRef={audioContextRef}>
@@ -173,7 +174,13 @@ const GesturesExploratoriumMain = () => {
 
 export const GesturesExploratoriumSidebar = () => {
     return (<>
-        <StudentQuote quoteData={PEIHUA_QUOTE} blob={1} color={"#A5E0EC"}/>
+        <StudentQuote quoteData={PEIHUA_QUOTE} blob={1} color={"#A5E0EC"}
+                      style={{
+                          top: "0",
+                          width: "499px",
+                          height: "600px",
+                          right: "-100px"
+                      }}/>
         <StudentQuote quoteData={GRACE_QUOTE} blob={2} color={"#DAFBB1"}/>
     </>);
 };

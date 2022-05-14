@@ -1,7 +1,7 @@
 import React from "react";
 import * as PropTypes from "prop-types";
 import Home from "../../images/icons/home.svg";
-
+import DHLogo from "../../images/dh_logo.svg";
 
 const Sidebar = ({content}) => {
     return <div className='sidebar p-0'>
@@ -18,6 +18,13 @@ const Sidebar = ({content}) => {
         <div className="sidebar-content">
             {content}
         </div>
+        <footer className="sidebar-footer">
+            <div className="sidebar-footer-content">
+                <a href="https://digitalhumanities.mit.edu/">
+                    <DHLogo width={"400px"} height={"auto"}/>
+                </a>
+            </div>
+        </footer>
     </div>;
 };
 

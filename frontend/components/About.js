@@ -31,11 +31,12 @@ const About = () => {
                             <nav>
                                 <div className="sidebar-home mb-5">
                                     <a href={"/"}>
-                                        <Home width="110px" fill={"#EF724F"}/>
+                                        <Home width="70px" fill={"#EF724F"}/>
                                     </a>
                                 </div>
                             </nav>
-                            <StudentQuote quoteData={EVAN_QUOTE} blob={5} style={{top: "100px", left: "150px"}}/>
+                            <StudentQuote quoteData={EVAN_QUOTE} blob={5}
+                                          style={{top: "100px", left: "150px"}}/>
                             <StudentQuote quoteData={EVAN_QUOTE2} blob={6} color={"#FEDE6C"}/>
                         </div>
                         <ul className="list-inline photo-row">

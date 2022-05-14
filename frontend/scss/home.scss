@@ -27,14 +27,35 @@
     .description {
         font-size: 2em;
         max-width: 80%;
+
+        a {
+            color: $color-link;
+            text-decoration: none;
+            border-bottom: 2px solid $color-link;
+        }
     }
 
     .home-sidebar {
         grid-area: sidebar;
+
         .sidebar-about {
-            font-size: 2em;
+            font-size: 3em;
             text-align: right;
-            margin-right: 1em;
+            a {
+                border-bottom: 3px solid $color-link;
+                text-decoration: none;
+            }
+        }
+
+        .footer-content {
+            position: absolute;
+            bottom: 20px;
+            right: 20px;
+
+            svg {
+                position: relative;
+                bottom: 0;
+            }
         }
     }
 

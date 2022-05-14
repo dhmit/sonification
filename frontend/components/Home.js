@@ -2,6 +2,7 @@ import React from "react";
 import PropTypes from "prop-types";
 import {StudentQuote, EVAN_QUOTE} from "../studentQuotes";
 import Blob2 from "../images/blobs/blob2.svg";
+import DHLogo from "../images/dh_logo.svg";
 
 const ProjectCard = ({title, description, route}) => {
     return (
@@ -32,7 +33,7 @@ const Home = () => {
         },
         {
             title: "Time Series",
-            description: "What sound does time make?",
+            description: "What does time sound like?",
             route: "/time-series/",
         },
         {
@@ -56,6 +57,9 @@ const Home = () => {
         <div id="main-container">
             <main id="home" className="container" role="main">
                 <div className="content">
+                     <a href="https://digitalhumanities.mit.edu/">
+                            <DHLogo width={"400px"} height={"130px"}/>
+                        </a>
                     <h1 className="title">Sonification<br/>
                         Toolkit</h1>
                     <p className="description">
@@ -76,6 +80,7 @@ const Home = () => {
                 </div>
                 <div className="home-sidebar">
                     <div className="sidebar-about">
+
                         <a href="/about">About</a>
                     </div>
                     <div className="side-quote">
@@ -87,6 +92,7 @@ const Home = () => {
                             height: "800px"
                         }}/>
                     </div>
+
                 </div>
             </main>
         </div>

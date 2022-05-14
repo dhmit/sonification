@@ -21,7 +21,7 @@ const Sidebar = ({content}) => {
         <footer className="sidebar-footer">
             <div className="sidebar-footer-content">
                 <a href="https://digitalhumanities.mit.edu/">
-                    <DHLogo width={"400px"} height={"auto"}/>
+                    <DHLogo width={"400px"} height={"auto"} fill={"#44616B"}/>
                 </a>
             </div>
         </footer>

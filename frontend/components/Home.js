@@ -58,7 +58,7 @@ const Home = () => {
             <main id="home" className="container" role="main">
                 <div className="content">
                      <a href="https://digitalhumanities.mit.edu/">
-                            <DHLogo width={"400px"} height={"130px"}/>
+                            <DHLogo width={"400px"} height={"130px"} fill={"#343a40"}/>
                         </a>
                     <h1 className="title">Sonification<br/>
                         Toolkit</h1>

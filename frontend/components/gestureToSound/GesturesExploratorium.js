@@ -1,9 +1,6 @@
 import React, {useCallback, useEffect, useState, useRef} from "react";
-import STYLES from "./GesturesToSound.module.scss";
 import {base64AudioToDataURI, fetchPost} from "../../common";
-import {InfoCard} from "../color/ColorExploratorium";
 import Loading from "../global/Loading";
-import MoveIcon from "../../images/MoveIcon.svg";
 import GesturesToSound from "./GesturesToSound";
 import {GESTURE_WAVE, GESTURE_LINES, GESTURE_CORNERS} from "./GesturesData";
 import {createAudioCallbacks} from "../instruments/SamplePlayer";

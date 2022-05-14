@@ -32,7 +32,6 @@ p {
     padding: 1em 2em;
 
     > main.container {
-        width: 100%;
         display: grid;
         grid-template-areas: "content sidebar";
         grid-template-columns: 75% 25%;
@@ -67,7 +66,7 @@ p {
     right: 0;
     top: 0;
     height: 100%;
-    width: 25%;
+    max-width: 25%;
 
     .sidebar-content {
         padding: 2em;

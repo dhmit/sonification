@@ -402,7 +402,7 @@ export const InfoCard = ({children}) => {
 const ColorExploratoriumMain = () => {
     return (<>
         <div className="row">
-            <div className="col-8">
+            <div className="col-9">
                 <MarkP>
                     This module takes individual colors and converts them into sounds.
                     Click the color swatches to hear them.

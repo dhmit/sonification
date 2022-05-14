@@ -35,7 +35,7 @@ const About = () => {
                                     </a>
                                 </div>
                             </nav>
-                            <StudentQuote quoteData={EVAN_QUOTE} blob={5}
+                            <StudentQuote quoteData={EVAN_QUOTE} blob={null}
                                           style={{top: "100px", left: "150px"}}/>
                             <StudentQuote quoteData={EVAN_QUOTE2} blob={6} color={"#FEDE6C"}/>
                         </div>
@@ -54,10 +54,10 @@ const About = () => {
                     </div>
 
                     <div className="container pl-0">
-                        <div className="row pl-0">
-                            <div className="col pl-0">
-                                <h3>About the lab (continued)</h3>
-                                <p>
+                        <div className="row pt-4">
+                            <div className="col">
+                                <h3>About the lab</h3>
+                                <p >
                                     Now serving the largest cohort of UROP students at MIT, each
                                     semester the lab centers on approximately 30 undergraduate
                                     researchers who work closely with fellows, staff, and SHASS

@@ -23,7 +23,7 @@ export const PlayToggleButton = ({onClick, playing, extraClass, simpleButton, te
                                 }
                             </span>
                 </div>
-                <div className="col-9 text-left align-right">
+                <div className="col-9 my-auto text-left align-right">
                     {text}
                 </div>
             </div>}

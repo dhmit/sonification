@@ -163,7 +163,7 @@ p {
         margin-left: -10px;
 
         &.right {
-            transform: scaleX(-1);
+            transform: scale(-.75, .75);
             right: -20px;
             margin-top: -40px;
         }

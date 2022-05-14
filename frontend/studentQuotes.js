@@ -42,8 +42,8 @@ export const EMEKA_QUOTE = {
 // Gestures:
 export const GRACE_QUOTE = {
     quote: "It was really cool to see the intersections between math and programming and music, " +
-        "and how all of that could come together to form a final project. [...] It really " +
-        "helped me understand how the different pieces fit together to form a product.",
+        "and how all of that could come together [... this project] helped me understand how the" +
+         " different pieces fit together to form a product",
     firstName: "Grace",
     lastName: "Jau",
     classYear: 25,
@@ -52,9 +52,7 @@ export const GRACE_QUOTE = {
 };
 
 export const PEIHUA_QUOTE = {
-    quote: "My favorite part of the project was learning more about how pitches and notes " +
-        "work and seeing our final feature at the end. I personally don’t have any " +
-        "musical background, so a lot of this was new to me. [...] Normally when you look at " +
+    quote: "I personally don’t have any musical background, so a lot of this was new to me. [...] Normally when you look at " +
         "something visual, you don’t think ‘Oh, this is what it would sound like.’",
     firstName: "Peihua",
     lastName: "Huang",
@@ -87,7 +85,7 @@ export const QUINCY_QUOTE = {
 
 // Time Series
 export const EESHA_QUOTE = {
-    quote: "I really enjoyed was the imagination that had to go into it in order to find " +
+    quote: "What I really enjoyed was the imagination that had to go into it in order to find " +
         "connections between two different types of data.",
     firstName: "Eesha",
     lastName: "Banerjee",
@@ -97,9 +95,8 @@ export const EESHA_QUOTE = {
 };
 
 export const MOISES_QUOTE = {
-    quote: "I really enjoyed being able to use computer science to make something out of nothing. " +
-        "It felt like I could make music out of thin air, out of sunset data, out of CO2 " +
-        "emission data, and use it to make something that could move people.",
+    quote: "It felt like I could make music out of thin air: out of sunset data, out of CO2 " +
+        "emission data... and use it to make something that could move people.",
     firstName: "Moises",
     lastName: "Trejo",
     classYear: 22,
@@ -109,15 +106,15 @@ export const MOISES_QUOTE = {
 
 
 export const EVAN_QUOTE = {
-    quote: "Sonification is to sound as Data Visualization is to sight, " +
+    quote: "Sonification is to sound as Data Visualization is to sight: " +
         "both allow us to understand information in a different way.",
-    firstName: "Evan",
+    firstName: "Prof. Evan",
     lastName: "Ziporyn",
     classYear: ""
 };
 
 export const EVAN_QUOTE2 = {
-    quote: "[Explored] fundamental relationships between sound and color, " +
+    quote: "[This project explores] fundamental relationships between sound and color, " +
         "sound and gesture, sound and shape",
     firstName: "Evan",
     lastName: "Ziporyn",
@@ -155,7 +152,10 @@ export const StudentQuote = ({quoteData, color, blob, style}) => {
     ];
 
     useEffect(() => {
-        if (blob) {
+        if (blob === null) {
+            // Use null to mean no blob plz
+            setRandomBlob(null);
+        } else if (blob) {
             setRandomBlob(blobs[blob - 1]);
         } else {
             setRandomBlob(blobs[Math.floor(Math.random() * blobs.length)]);
@@ -163,35 +163,33 @@ export const StudentQuote = ({quoteData, color, blob, style}) => {
     }, []);
     const {quote, firstName, lastName, classYear, img, audio} = quoteData;
     return (
-        <div className="mb-2">
-            <div className="row">
-                {/*<div className="col-1">*/}
-                {/*    <img*/}
-                {/*        className='img-fluid'*/}
-                {/*        alt={`Headshot of ${firstName} ${lastName}`} src={img}*/}
-                {/*    />*/}
-                {/*</div>*/}
-                {randomBlob}
-                <div className="col-11 quotation">
-                    <QuoteIcon className={"quote-icon"}/>
-                    <blockquote className="blockquote">
-                        {quote}
-                    </blockquote>
-                    <QuoteIcon className={"quote-icon right"}/>
-                    <footer className="blockquote-footer">
-                        {firstName} {lastName} {classYear
-                        ? "’" + classYear
-                        : ""}
-                    </footer>
-                </div>
-                {audio &&
-                <NiceAudioPlayer
-                    src={audio}
-                    extraClass={"mb-5"}
-                    text={`Click to hear ${firstName} say more about this project`}
-                />}
-
+        <div className="row mb-2">
+            {/*<div className="col-1">*/}
+            {/*    <img*/}
+            {/*        className='img-fluid'*/}
+            {/*        alt={`Headshot of ${firstName} ${lastName}`} src={img}*/}
+            {/*    />*/}
+            {/*</div>*/}
+            {randomBlob}
+            <div className="col-11 quotation">
+                <QuoteIcon className={"quote-icon"}/>
+                <blockquote className="blockquote">
+                    {quote}
+                </blockquote>
+                <QuoteIcon className={"quote-icon right"}/>
+                <footer className="blockquote-footer">
+                    {firstName} {lastName} {classYear
+                    ? "’" + classYear
+                    : ""}
+                </footer>
             </div>
+            {audio &&
+            <NiceAudioPlayer
+                src={audio}
+                extraClass={"mb-5"}
+                text={`Click to hear more from ${firstName}`}
+            />}
+
         </div>
     );
 };

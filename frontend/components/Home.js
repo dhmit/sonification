@@ -57,20 +57,13 @@ const Home = () => {
         <div id="main-container">
             <main id="home" className="container" role="main">
                 <div className="content">
-                     <a href="https://digitalhumanities.mit.edu/">
-                            <DHLogo width={"400px"} height={"130px"} fill={"#343a40"}/>
-                        </a>
                     <h1 className="title">Sonification<br/>
                         Toolkit</h1>
                     <p className="description">
                         This project was created in the MIT Digital Humanities Lab
-                        as a collaboration between DH Fall 2021 Faculty Fellow&nbsp;
-                        <a href='https://www.ziporyn.com/'>Prof. Evan Ziporyn</a>,&nbsp;
-                        <a href='https://digitalhumanities.mit.edu/project/sonification-toolkit-for-musicians/'>
-                            two dozen undergraduate research associates</a>,
-                        and the <a
-                        href='https://digitalhumanities.mit.edu/people/'> instructional
-                        staff</a> of the DH Lab.
+                        as a collaboration between DH Fall 2021 Faculty Fellow
+                        Evan Ziporyn, two dozen undergraduate research associates,
+                        and the instructional staff of the DH Lab.
                     </p>
                     <div className="projects">
                         {projectCards}
@@ -81,16 +74,20 @@ const Home = () => {
                 <div className="home-sidebar">
                     <div className="sidebar-about">
 
-                        <a href="/about">About</a>
+                        <a href="/about/">About</a>
                     </div>
+                    {/* TODO(ra): See if I can restore the yellow blob with correct scrolling */}
                     <div className="side-quote">
                         <StudentQuote quoteData={EVAN_QUOTE}
                                       color={"#FEDE6C"}
-                                      blob={3} style={{
+                                      blob={null} style={{
                             left: "1000px",
                             top: "400px",
                             height: "800px"
                         }}/>
+                        <a href="https://digitalhumanities.mit.edu/">
+                            <DHLogo width={"400px"} height={"130px"} fill={"#343a40"}/>
+                        </a>
                     </div>
 
                 </div>

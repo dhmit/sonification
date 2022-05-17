@@ -131,7 +131,7 @@ const UploadTimeSeriesFileInput = ({
                     (constants[columnNumber][constantName])}>
                         <u>{constantsDefaults[constantName]["label"]}</u></label>
                     <select className="my-3" onChange={e => {updateConstant(
-                        columnNumber, constantName, e.target.value, true)}}>
+                        columnNumber, constantName, e.target.value, true);}}>
                         {constantsDefaults[constantName]["options"].map((each, i) =>
                             <option value={each} key={i}>{each}</option>)}
                     </select>
@@ -216,7 +216,8 @@ const UploadTimeSeriesFileInput = ({
                                 />
                             </div>
                             <div className="form-group col-md-6">
-                                <label htmlFor="duration">Use every Nth data point where N = {everyN}</label>
+                                <label htmlFor="duration">Use every Nth data point
+                                    where N = {everyN}</label>
                                 <input
                                     className="form-control" type="number" id="step"
                                     min={1}

@@ -38,14 +38,18 @@ const UploadTimeSeriesFileInput = ({
 
     const constantsDefaults = {
         "multiplier": {"label": "Multiplier", "min": null, "max": null, "step": null,
-            "tooltip": (val) => `Each value will be multiplied by ${val} Hz. [A, B, C] will become [A * ${val}, B * ${val}, C * ${val}] = [A', B', C']`},
+            "tooltip": (val) => `Each value will be multiplied by ${val} Hz. [A, B, C]
+             will become [A * ${val}, B * ${val}, C * ${val}] = [A', B', C']`},
         "base_frequency": {"label": "Base Frequency", "min": null, "max": null, "step": null,
-            "tooltip": (val) => `Each value will be transposed by ${val} Hz. [A', B', C'] will become [A' + ${val}, B' + ${val}, C' + ${val}] = [A'', B'', C'']`},
+            "tooltip": (val) => `Each value will be transposed by ${val} Hz. [A', B', C'] will
+             become [A' + ${val}, B' + ${val}, C' + ${val}] = [A'', B'', C'']`},
         "a_percentage": {"label": "A", "min": 0, "max": 1, "step": .1, "tooltip": () => null},
         "d_percentage": {"label": "D", "min": 0, "max": 1, "step": .1, "tooltip": () => null},
         "s_percentage": {"label": "S", "min": 0, "max": 1, "step": .1, "tooltip": () => null},
         "r_percentage": {"label": "R", "min": 0, "max": 1, "step": .1, "tooltip": () => null},
-        "wave_pattern": {"label": "Wave Pattern", "min": null, "max": null, "step": null, "tooltip": () => "Choose from sin, square, or sawtooth patterns", "options": ["sin", "square", "sawtooth"]},
+        "wave_pattern": {"label": "Wave Pattern", "min": null, "max": null, "step": null,
+            "tooltip": () => "Choose from sin, square, or sawtooth patterns",
+            "options": ["sin", "square", "sawtooth"]},
     };
 
     const setParsedCsvAndUpdateConstants = (parsedData) => {
@@ -101,7 +105,9 @@ const UploadTimeSeriesFileInput = ({
         return (
             <div className="col">
                 <div className="form-group col-md-6" key={constantsDefaults[constantName]["label"]}>
-                    <label htmlFor="input" data-tip={constantsDefaults[constantName]["tooltip"](constants[columnNumber][constantName])}><u>{constantsDefaults[constantName]["label"]}</u></label>
+                    <label htmlFor="input" data-tip={constantsDefaults[constantName]["tooltip"]
+                    (constants[columnNumber][constantName])}>
+                        <u>{constantsDefaults[constantName]["label"]}</u></label>
                     <input
                         className="form-control my-3" type="number" id="input"
                         min={constantsDefaults[constantName]["min"]}
@@ -121,11 +127,13 @@ const UploadTimeSeriesFileInput = ({
         return (
             <div className="col">
                 <div className="form-group col-md-6" key={constantsDefaults[constantName]["label"]}>
-                    <label htmlFor="input" data-tip={constantsDefaults[constantName]["tooltip"](constants[columnNumber][constantName])}><u>{constantsDefaults[constantName]["label"]}</u></label>
-                    <select className="my-3" onChange={e => {
-                            updateConstant(columnNumber, constantName, e.target.value, true);
-                        }}>
-                        {constantsDefaults[constantName]["options"].map((each, i) => <option value={each} key={i}>{each}</option>)}
+                    <label htmlFor="input" data-tip={constantsDefaults[constantName]["tooltip"]
+                    (constants[columnNumber][constantName])}>
+                        <u>{constantsDefaults[constantName]["label"]}</u></label>
+                    <select className="my-3" onChange={e => {updateConstant(
+                        columnNumber, constantName, e.target.value, true)}}>
+                        {constantsDefaults[constantName]["options"].map((each, i) =>
+                            <option value={each} key={i}>{each}</option>)}
                     </select>
                 </div>
             </div>

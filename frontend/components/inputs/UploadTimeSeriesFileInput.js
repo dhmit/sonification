@@ -2,16 +2,17 @@ import React, {useEffect, useState} from "react";
 import {fetchPost} from "../../common";
 import PropTypes from "prop-types";
 import FileInput from "./FileInput";
+import ReactTooltip from 'react-tooltip';
 
 
 const DEFAULT_COLUMN_CONSTANTS = {
     "base_frequency": 220,
-    "multiplier": 4,
-    "offset": 0,
+    "multiplier": 220,
     "a_percentage": .2,
     "d_percentage": .1,
     "s_percentage": .5,
     "r_percentage": .2,
+    "wave_pattern": "sin",
 };
 
 const INITIAL_EVERY_N = 1;
@@ -22,7 +23,7 @@ const UploadTimeSeriesFileInput = ({
 }) => {
     const [parsedCSV, setParsedCSV] = useState(null);
     const [duration, setDuration] = useState(INITIAL_DURATION);
-    const [everyN] = useState(INITIAL_EVERY_N);
+    const [everyN, setEveryN] = useState(INITIAL_EVERY_N);
     const [constants, setConstants] = useState([]);
     const [activeColumn, setActiveColumn] = useState(0);
 
@@ -36,13 +37,19 @@ const UploadTimeSeriesFileInput = ({
     }, [parsedCSV, duration, everyN, constants]);
 
     const constantsDefaults = {
-        "base_frequency": {"label": "Base Frequency", "min": null, "max": null, "step": null},
-        "multiplier": {"label": "Multiplier", "min": null, "max": null, "step": null},
-        "offset": {"label": "Offset", "min": null, "max": null, "step": null},
-        "a_percentage": {"label": "A", "min": 0, "max": 1, "step": .1},
-        "d_percentage": {"label": "D", "min": 0, "max": 1, "step": .1},
-        "s_percentage": {"label": "S", "min": 0, "max": 1, "step": .1},
-        "r_percentage": {"label": "R", "min": 0, "max": 1, "step": .1},
+        "multiplier": {"label": "Multiplier", "min": null, "max": null, "step": null,
+            "tooltip": (val) => `Each value will be multiplied by ${val} Hz. [A, B, C]
+             will become [A * ${val}, B * ${val}, C * ${val}] = [A', B', C']`},
+        "base_frequency": {"label": "Base Frequency", "min": null, "max": null, "step": null,
+            "tooltip": (val) => `Each value will be transposed by ${val} Hz. [A', B', C'] will
+             become [A' + ${val}, B' + ${val}, C' + ${val}] = [A'', B'', C'']`},
+        "a_percentage": {"label": "A", "min": 0, "max": 1, "step": .1, "tooltip": () => null},
+        "d_percentage": {"label": "D", "min": 0, "max": 1, "step": .1, "tooltip": () => null},
+        "s_percentage": {"label": "S", "min": 0, "max": 1, "step": .1, "tooltip": () => null},
+        "r_percentage": {"label": "R", "min": 0, "max": 1, "step": .1, "tooltip": () => null},
+        "wave_pattern": {"label": "Wave Pattern", "min": null, "max": null, "step": null,
+            "tooltip": () => "Choose from sin, square, or sawtooth patterns",
+            "options": ["sin", "square", "sawtooth"]},
     };
 
     const setParsedCsvAndUpdateConstants = (parsedData) => {
@@ -76,18 +83,20 @@ const UploadTimeSeriesFileInput = ({
         void fetchPost('/api/time_series_sample_data/', {name}, setParsedCsvAndUpdateConstants);
     };
 
-    const updateConstant = (colNumber, constantName, val) => {
+    const updateConstant = (colNumber, constantName, val, isString = false) => {
         setConstants(prevState => {
             let temp = Object.assign([], prevState);
-            temp[colNumber][constantName] = parseFloat(val);
+            temp[colNumber][constantName] = isString ? val : parseFloat(val);
             return temp;
         });
     };
 
     const makeColumnControls = (columnNumber) => {
         return (<form className="container">
-            <div className="row">
+            <div>
+                {makeControl(columnNumber, "multiplier")}
                 {makeControl(columnNumber, "base_frequency")}
+                {makeDropdownControl(columnNumber, "wave_pattern")}
             </div>
         </form>);
     };
@@ -96,7 +105,9 @@ const UploadTimeSeriesFileInput = ({
         return (
             <div className="col">
                 <div className="form-group col-md-6" key={constantsDefaults[constantName]["label"]}>
-                    <label htmlFor="input">{constantsDefaults[constantName]["label"]}</label>
+                    <label htmlFor="input" data-tip={constantsDefaults[constantName]["tooltip"]
+                    (constants[columnNumber][constantName])}>
+                        <u>{constantsDefaults[constantName]["label"]}</u></label>
                     <input
                         className="form-control my-3" type="number" id="input"
                         min={constantsDefaults[constantName]["min"]}
@@ -107,6 +118,23 @@ const UploadTimeSeriesFileInput = ({
                         }}
                         value={constants[columnNumber][constantName]}
                     />
+                </div>
+            </div>
+        );
+    };
+
+    const makeDropdownControl = (columnNumber, constantName) => {
+        return (
+            <div className="col">
+                <div className="form-group col-md-6" key={constantsDefaults[constantName]["label"]}>
+                    <label htmlFor="input" data-tip={constantsDefaults[constantName]["tooltip"]
+                    (constants[columnNumber][constantName])}>
+                        <u>{constantsDefaults[constantName]["label"]}</u></label>
+                    <select className="my-3" onChange={e => {updateConstant(
+                        columnNumber, constantName, e.target.value, true);}}>
+                        {constantsDefaults[constantName]["options"].map((each, i) =>
+                            <option value={each} key={i}>{each}</option>)}
+                    </select>
                 </div>
             </div>
         );
@@ -187,10 +215,22 @@ const UploadTimeSeriesFileInput = ({
                                     value={duration}
                                 />
                             </div>
+                            <div className="form-group col-md-6">
+                                <label htmlFor="duration">Use every Nth data point
+                                    where N = {everyN}</label>
+                                <input
+                                    className="form-control" type="number" id="step"
+                                    min={1}
+                                    step={1}
+                                    onChange={e => setEveryN(e.target.value)}
+                                    value={everyN}
+                                />
+                            </div>
                         </div>
                     </div>
                 </form>
                 <hr />
+                <ReactTooltip />
             </>}
         </>
     );

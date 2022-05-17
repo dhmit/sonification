@@ -43,14 +43,24 @@ def time_series_to_music(request):
                 continue
             column_constant = column_constants[j]
 
+            multiplier = column_constant["multiplier"]
             base_freq = column_constant["base_frequency"]
+            wave_pattern = column_constant["wave_pattern"]
             min_freq = column_mins[j]
             max_freq = column_maxes[j]
-            frequency = base_freq * (1 + (frequency-min_freq)/(max_freq-min_freq))
+            frequency = (multiplier * (1 + (frequency-min_freq)/(max_freq-min_freq))) + base_freq
 
             new_csv_row += [frequency]
 
-            note = synths.generate_sine_wave_with_envelope(
+            generator = None
+            if wave_pattern == "sin":
+                generator = synths.generate_sine_wave_with_envelope
+            if wave_pattern == "square":
+                generator = synths.generate_square_wave_with_envelope
+            if wave_pattern == "sawtooth":
+                generator = synths.generate_sawtooth_wave_with_envelope
+
+            note = generator(
                 frequency=frequency,
                 duration=duration,
                 a_percentage=column_constant["a_percentage"],
@@ -72,7 +82,7 @@ def time_series_to_music(request):
 
     time_steps = np.arange(0, len(csv_data))
     new_csv = np.array(new_csv)
-    plt.plot(time_steps, new_csv)
+    plt.plot(time_steps, new_csv, marker='o')
 
     min_f = np.amin(new_csv) - 10
     max_f = np.amax(new_csv) + 10
@@ -117,7 +127,7 @@ def time_series_to_samples(request):
     for j, frequency in enumerate(csv_row_av):
         column_constant = column_constants[j]
         freq_to_generate = column_constant["base_frequency"] + (
-            float(frequency) + column_constant["offset"]) * column_constant[
+            float(frequency)) * column_constant[
                                "multiplier"]
         note = synths.generate_sine_wave_with_envelope(
             frequency=freq_to_generate,
